@@ -1,13 +1,14 @@
 {
   "schema": 1,
-  "image_count": 384,
-  "preview_bytes": 1478950,
+  "image_count": 385,
+  "preview_bytes": 1488348,
   "sources": {
     "cleveland": 150,
     "met": 34,
-    "rijks": 80,
     "nga": 60,
-    "smithsonian": 60
+    "rijks": 80,
+    "smithsonian": 60,
+    "getty": 1
   },
   "rights_gate": "individual source rights, official image host and WebP decode",
   "image_max_bytes": 22000,
