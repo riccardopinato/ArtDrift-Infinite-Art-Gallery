@@ -37,3 +37,18 @@ get("https://openaccess-api.clevelandart.org/api/artworks/?"+urllib.parse.urlenc
  "q":"painting","cc0":"1","has_image":"1","limit":"2","skip":"0"}),limit=18000)
 
 # 2026-11-21 official-source probe version 2.
+
+# Walters museum-published static open dataset; inspect schema, not full CSV.
+import csv, io
+for endpoint in ("art.csv","media.csv"):
+ url=f"https://raw.githubusercontent.com/WaltersArtMuseum/api-thewalters-org/master/{endpoint}"
+ try:
+  with urllib.request.urlopen(urllib.request.Request(url,headers={
+       "User-Agent":"ArtDrift-global-source-audit/1.0"}),timeout=35) as r:
+   text=io.TextIOWrapper(r,encoding="utf-8-sig",newline="")
+   stream=csv.DictReader(text)
+   print("WALTERS_SCHEMA",endpoint,stream.fieldnames,flush=True)
+   for i,row in enumerate(stream):
+    if i>=3:break
+    print("WALTERS_SAMPLE",endpoint,repr(row)[:2000],flush=True)
+ except Exception as e:print("WALTERS_SCHEMA_ERROR",endpoint,type(e).__name__,str(e)[:180],flush=True)
