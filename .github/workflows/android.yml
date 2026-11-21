@@ -1,0 +1,50 @@
+name: ArtDrift Android — analyze, test, APK
+on:
+  push:
+    branches: [main, 'feat/**']
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Extract initial source (bootstrap-only)
+        shell: bash
+        run: |
+          if [ -f app-source.tar.xz.b64 ]; then
+            base64 -d app-source.tar.xz.b64 | tar -xJf -
+          fi
+      - name: Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Flutter stable
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - name: Create Android shell
+        run: flutter create --project-name artdrift --org com.riccardopinato --platforms=android .
+      - name: Patch native platform
+        run: python3 scripts/patch_android.py
+      - name: Dependencies
+        run: flutter pub get
+      - name: Analyze
+        run: flutter analyze --no-fatal-infos
+      - name: Tests
+        run: flutter test
+      - name: Build Android APK (debug only)
+        run: flutter build apk --debug
+      - name: Upload test APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: ArtDrift-Android-debug-${{ github.sha }}
+          path: build/app/outputs/flutter-apk/app-debug.apk
+          if-no-files-found: error
