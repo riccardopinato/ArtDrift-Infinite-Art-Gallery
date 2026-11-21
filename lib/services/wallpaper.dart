@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'dart:math' as math;
 import 'dart:typed_data';
 import 'dart:ui' as ui;
@@ -19,7 +19,7 @@ class AndroidWallpaper {
         .timeout(const Duration(seconds: 25));
     if (response.statusCode != 200 || response.bodyBytes.isEmpty ||
         response.bodyBytes.length > 24 * 1024 * 1024) {
-      throw const HttpException('Immagine non disponibile per lo sfondo');
+      throw StateError('Immagine non disponibile per lo sfondo');
     }
     final codec = await ui.instantiateImageCodec(response.bodyBytes,
       targetWidth: 843);
@@ -52,6 +52,9 @@ class AndroidWallpaper {
   }
 
   static Future<void> apply(Uint8List bytes, String target) async {
+    if (kIsWeb) {
+      throw UnsupportedError('Lo sfondo di sistema è disponibile solo su Android.');
+    }
     if (bytes.length > 24 * 1024 * 1024) {
       throw StateError('Sfondo troppo grande per questo dispositivo');
     }

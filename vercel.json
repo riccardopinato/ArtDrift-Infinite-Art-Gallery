@@ -1,0 +1,6 @@
+{
+  "framework": null,
+  "buildCommand": "bash scripts/web_preview_build.sh",
+  "installCommand": "echo 'Flutter SDK is provisioned by the build script'",
+  "outputDirectory": "build/web"
+}

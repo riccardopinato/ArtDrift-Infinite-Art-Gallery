@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -euo pipefail
+if ! command -v flutter >/dev/null 2>&1; then
+  FLUTTER_ROOT="${TMPDIR:-/tmp}/artdrift-flutter-3.50.1"
+  if [[ ! -x "$FLUTTER_ROOT/bin/flutter" ]]; then
+    git clone --depth 1 --branch 3.50.1 https://github.com/flutter/flutter.git "$FLUTTER_ROOT"
+  fi
+  export PATH="$FLUTTER_ROOT/bin:$PATH"
+fi
+flutter --version
+flutter config --enable-web
+flutter create --project-name artdrift --org com.riccardopinato --platforms=web .
+rm -f test/widget_test.dart
+flutter pub get
+flutter build web --release --base-href /
