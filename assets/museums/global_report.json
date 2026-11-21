@@ -1,0 +1,23 @@
+{
+  "schema_version": 2,
+  "records_global": 3915,
+  "records_bundled_existing": 457,
+  "records_total": 4372,
+  "catalog_bytes": 3598968,
+  "remote_images_only": 3915,
+  "local_webp_bytes_added": 0,
+  "institutions": {
+    "Art Institute of Chicago": 629,
+    "Cleveland Museum of Art": 827,
+    "National Gallery of Art, Washington": 739,
+    "Rijksmuseum": 160,
+    "SMK – National Gallery of Denmark": 500,
+    "Smithsonian American Art Museum": 350,
+    "Smithsonian National Museum of Asian Art": 350,
+    "Smithsonian National Portrait Gallery": 225,
+    "The Metropolitan Museum of Art": 135
+  },
+  "record_rights": "official item-specific CC0/PD flags only",
+  "media_verification": "official image host + provider media rights; network delivery deferred to device",
+  "store_rights_review_required": true
+}
