@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "image_count": 184,
+  "preview_bytes": 696194,
+  "sources": {
+    "cleveland": 150,
+    "met": 34
+  },
+  "rights_gate": "explicit source record rights + host allowlist + independently decoded tiny WebP",
+  "image_max_bytes": 22000,
+  "catalog_path": "assets/museums/catalog.json",
+  "license_reviews_required_before_store": true
+}
