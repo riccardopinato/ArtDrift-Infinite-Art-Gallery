@@ -22,7 +22,7 @@ The 47.5-second user-supplied reference shows a dark, edge-to-edge, dense mosaic
 - A small subset of public-domain paintings is retrieved from the Art Institute of Chicago. Repetition is possible in distant canvas regions until an approved, versioned large catalog is built.
 - Cached catalog metadata != offline images: images still require a network connection or Flutter image memory cache. A durable image cache/download manager is future scope.
 - Zoom-out/scroll jank and native wallpaper behavior need real Android device tests.
-- GitHub artifact is a **debug-signed APK for testing**, not a production-signed Google Play release.
+- GitHub artifacts are **testing APKs**, not production-signed Google Play releases. The ARM64 release-mode build uses the temporary Flutter scaffold signing identity, not persistent production signing.
 - This is a **source prototype**, not an independently verified reproduction of all original website behavior.
 
 ## Build on Windows
@@ -37,7 +37,7 @@ Debug APK: `build/app/outputs/flutter-apk/app-debug.apk`.
 
 ## GitHub Actions
 
-`.github/workflows/android.yml` runs Flutter analyze, widget/unit tests, and an Android debug APK build. The workflow unpacks initial source payload if necessary. Build artifacts are downloadable from the successful run's **Artifacts** section.
+`.github/workflows/android.yml` runs Flutter analyze, widget/unit tests, and an Android debug APK build. The workflow unpacks initial source payload if necessary. Build artifacts are downloadable from the successful run's **Artifacts** section. The current CI builds an optimized ARM64 **internal** APK using the scaffold's non-production test signing. The previously generated universal debug APK remains available in its earlier run. Do not assume APKs signed on different runners can update each other in-place.
 
 ## Copyright and data
 
