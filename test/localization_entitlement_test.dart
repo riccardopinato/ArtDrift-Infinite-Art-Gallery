@@ -23,7 +23,8 @@ void main() {
     for (final code in ArtDriftLocale.codes) {
       ArtDriftLocale.current.value = code;
       for (final key in ['search','searchTitle','settings','language',
-          'filterArtist','filterTitle','filterSubject','about','pro','close']) {
+          'filterArtist','filterTitle','filterSubject','about','pro','close',
+          'favorites','favoritesSubtitle','favoritesEmpty','removeFavorite']) {
         expect(ArtDriftLocale.text(key), isNotEmpty);
       }
     }

@@ -6,9 +6,10 @@ import 'parchment.dart';
 /// central third of available width, with nothing wider until it is tapped.
 class ArtDriftToolbar extends StatelessWidget {
   const ArtDriftToolbar({super.key, required this.onSearch,
-    required this.onSettings});
+    required this.onSettings, required this.onFavorites});
   final VoidCallback onSearch;
   final VoidCallback onSettings;
+  final VoidCallback onFavorites;
 
   @override
   Widget build(BuildContext context) =>
@@ -38,6 +39,18 @@ class ArtDriftToolbar extends StatelessWidget {
                       )),
                   )),
               ),
+              Positioned(right: 64, top: 5, child: Semantics(
+                key: const Key('artdrift-favorites-control'),
+                button: true, label: ArtDriftLocale.text('favorites'),
+                child: Material(color: Colors.transparent,
+                  child: InkWell(onTap: onFavorites,
+                    borderRadius: BorderRadius.circular(9),
+                    child: OrnateFrame(padding: const EdgeInsets.all(8),
+                      child: const SizedBox(width: 21, height: 21,
+                        child: Icon(Icons.favorite_border_rounded,
+                          color: ArtPaper.ink, size: 21))),
+                  )),
+              )),
               Positioned(right: 12, top: 5, child: Semantics(
                 key: const Key('artdrift-settings-control'),
                 button: true,label: ArtDriftLocale.text('settings'),
