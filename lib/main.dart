@@ -2,13 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 
 import 'canvas/infinite_gallery.dart';
+import 'screens/search_sheet.dart';
+import 'screens/settings_sheet.dart';
+import 'ui/gallery_toolbar.dart';
+import 'ui/localization.dart';
 import 'models/artwork.dart';
 import 'screens/artwork_detail.dart';
 import 'services/catalog_service.dart';
 import 'services/favorites.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await ArtDriftLocale.initialize();
   PaintingBinding.instance.imageCache.maximumSize = 110;
   PaintingBinding.instance.imageCache.maximumSizeBytes = 48 * 1024 * 1024;
   runApp(const ArtDriftApp());
@@ -63,13 +68,21 @@ class _GalleryHomeState extends State<GalleryHome> {
     }
   }
 
+  Future<void> _openSearch() async {
+    final selected = await showArtSearchSheet(context, _artworks);
+    if (!mounted || selected == null) return;
+    _open(selected);
+  }
+
   void _open(Artwork artwork) {
-    final index = _artworks.indexWhere((a) => a.id == artwork.id);
-    if (index < 0) return;
+    final index = _artworks.indexWhere((a) => a.catalogKey == artwork.catalogKey);
+    // Remote discoveries open in detail without perturbing the pinned canvas.
+    final group = index < 0 ? <Artwork>[artwork] : _artworks;
+    final start = index < 0 ? 0 : index;
     Navigator.of(context).push(PageRouteBuilder<void>(
       pageBuilder: (context, animation, secondaryAnimation) => ArtworkDetail(
-        artworks: _artworks,
-        initialIndex: index,
+        artworks: group,
+        initialIndex: start,
         isFavorite: _favorites.contains,
         onToggleFavorite: _favorites.toggle,
       ),
@@ -118,9 +131,13 @@ class _GalleryHomeState extends State<GalleryHome> {
         ]),
       )));
     }
-    return Scaffold(body: InfiniteGallery(
-      artworks: _artworks,
-      onOpen: _open,
-    ));
+    return Scaffold(body: Stack(fit: StackFit.expand, children: [
+      InfiniteGallery(artworks: _artworks, onOpen: _open),
+      Positioned(top: 0, left: 0, right: 0,
+        child: SafeArea(bottom: false, child: ArtDriftToolbar(
+          onSearch: _openSearch,
+          onSettings: () => showArtDriftSettings(context),
+        ))),
+    ]));
   }
 }
