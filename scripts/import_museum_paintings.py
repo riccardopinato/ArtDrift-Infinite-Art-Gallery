@@ -434,3 +434,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+# Single-task version: 2026-11-21 / no consumer-code mutations.
