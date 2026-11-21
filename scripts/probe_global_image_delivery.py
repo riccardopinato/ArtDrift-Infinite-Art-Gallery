@@ -50,5 +50,12 @@ report={"samples":len(results),"passed":sum(x["pass"] for x in results),
     "caveat":"Sample only, source runner network differs from Android; 3915 individual HTTP checks NOT performed"}
 Path("global_image_preview_probe.json").write_text(json.dumps(report,ensure_ascii=False,indent=2)+"\n")
 print("IMAGE_PROBE_REPORT",json.dumps(report,ensure_ascii=False),flush=True)
+# A broad importer must fail closed on a consistently unreachable institution.
+# A single transient image/network error stays visible in the report.
+if report["passed"] < int(report["samples"]*.85) or any(
+    counts["fail"] >= 3 for counts in totals.values()
+):
+    raise SystemExit("IMAGE_SOURCE_QUARANTINE_REQUIRED: systematic preview delivery failures")
+
 
 # Evidence run for pinned 3915-record worldwide catalog.
