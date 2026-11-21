@@ -35,10 +35,13 @@ void main() {
       () async {
     final art=await const MuseumCatalog().bundled();
     final global=art.where((a) => !a.hasBundledPreview).toList();
-    expect(global.length, greaterThanOrEqualTo(1200));
+    expect(global.length, greaterThanOrEqualTo(4000));
     expect(global.map((a)=>a.museumName).toSet().length,
-      greaterThanOrEqualTo(7));
+      greaterThanOrEqualTo(8));
     expect(global.map((a)=>a.catalogKey).toSet().length, global.length);
+    // All new AIC IIIF previews failed live HTTP smoke test (7/7 HTTP403).
+    // Keep its original 72 offline paintings, exclude unviewable remote AIC.
+    expect(global.where((a)=>a.museumSource=='aic'),isEmpty);
     final metadata=await rootBundle.loadString('assets/museums/catalog_global.json');
     expect(metadata.length, lessThan(7500000));
     for (final a in global) {
@@ -66,6 +69,7 @@ void main() {
     final all=await c.load();
     expect(originals.length,72);
     expect(all.length, originals.length+more.length);
+    expect(all.length, 4500);
     for (var i=0;i<72;i++) {
       expect(all[i].catalogKey,originals[i].catalogKey);
       expect(all[i].hasBundledPreview,isTrue);
