@@ -9,6 +9,8 @@ This script runs only as a one-time explicit GitHub Actions import job.
 from __future__ import annotations
 
 import csv
+import hashlib
+import xml.etree.ElementTree as ET
 import io
 import json
 import os
@@ -24,17 +26,18 @@ from PIL import Image, ImageOps
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "assets" / "museums"
 THUMBS = OUT / "thumbs"
-LIMIT = int(os.environ.get("ARTDRIFT_MUSEUM_LIMIT", "350"))
+LIMIT = int(os.environ.get("ARTDRIFT_MUSEUM_LIMIT", "450"))
 MAX_BYTES = 2_500_000  # a remotely fetched small JPEG must not be multi-MB
 MAX_SUM = 2_600_000  # total WebP snapshot is deliberately tiny
 HEADERS = {"User-Agent": "ArtDrift-Museum-OpenAccess/0.1 (community gallery; low-rate)", "Accept": "*/*"}
-CAPS = {"met": 160, "cleveland": 150, "rijks": 80, "nga": 60, "getty": 3}
+CAPS = {"met": 160, "cleveland": 150, "rijks": 80, "nga": 60, "getty": 3, "smithsonian": 60}
 SOURCE_LABELS = {
     "met": "The Metropolitan Museum of Art",
     "cleveland": "Cleveland Museum of Art",
     "rijks": "Rijksmuseum",
     "nga": "National Gallery of Art, Washington",
     "getty": "J. Paul Getty Museum",
+    "smithsonian": "Smithsonian American Art Museum",
 }
 ALLOWED_HOSTS = {
     "met": {"images.metmuseum.org"},
@@ -42,6 +45,7 @@ ALLOWED_HOSTS = {
     "rijks": {"iiif.micr.io"},
     "nga": {"api.nga.gov", "media.nga.gov"},
     "getty": {"media.getty.edu"},
+    "smithsonian": {"ids.si.edu", "www.si.edu", "si.edu"},
 }
 RIGHTS = ("creativecommons.org/publicdomain/zero/1.0", "creativecommons.org/publicdomain/mark/1.0")
 
@@ -109,9 +113,9 @@ def _record(source, native_id, title, artist, date, medium, image, *,
     # Existing Met/Cleveland IDs stay compatible with the already-live search.
     prefixes = {"met": 10_000_000, "cleveland": 20_000_000,
                 "rijks": 3_000_000_000, "nga": 4_000_000_000,
-                "getty": 5_000_000_000}
+                "getty": 5_000_000_000, "smithsonian": 6_000_000_000}
     unique_id = native_id + prefixes[source]
-    if source in ("rijks", "nga", "getty") and native_id >= 990_000_000:
+    if source in ("rijks", "nga", "getty", "smithsonian") and native_id >= 990_000_000:
         return None
     if full and not _url_ok(full, source): full = ""
     return {
@@ -222,118 +226,165 @@ def _first_link(record, key):
     return ""
 
 def _rijks_label(value):
-    if isinstance(value, dict):
-        if isinstance(value.get("_label"), str): return value["_label"]
-        for k in ("identified_by", "referred_to_by"):
-            seq = value.get(k) or []
-            for item in seq:
-                if isinstance(item, dict) and isinstance(item.get("content"), str):
-                    return item["content"]
+    if not isinstance(value, dict): return ""
+    for key in ("_label", "content"):
+        if isinstance(value.get(key), str) and value[key].strip():
+            return value[key].strip()
+    for entry in value.get("notation") or []:
+        if isinstance(entry, dict) and isinstance(entry.get("@value"), str):
+            return entry["@value"]
+    for key in ("identified_by", "referred_to_by"):
+        for item in value.get(key) or []:
+            found=_rijks_label(item)
+            if found: return found
     return ""
 
 def _rijks_first_name(record):
-    labels = []
-    for info in record.get("identified_by") or []:
-        if isinstance(info, dict) and info.get("type") == "Name":
-            txt = _rijks_label(info)
-            if txt: labels.append(txt)
+    labels=[]
+    for item in record.get("identified_by") or []:
+        if not isinstance(item,dict):continue
+        if item.get("type")=="Name":
+            txt=_rijks_label(item)
+            if txt:labels.append(txt)
     return labels[0] if labels else _rijks_label(record)
 
+def _edm_rights(url):
+    """The official EDM representation is RDF/XML, not JSON-LD.
+    Parse only <edm:rights rdf:resource="...">, no guess from website.
+    """
+    data=_fetch(url,size=500000)
+    doc=ET.fromstring(data)
+    for elt in doc.iter():
+        if not (elt.tag.endswith("}rights") or elt.tag=="rights"):continue
+        allvalues=[elt.text or ""]+list(elt.attrib.values())
+        for value in allvalues:
+            if _valid_right(value): return value
+    return ""
+
+def _rijks_artist_and_date(record):
+    produced=record.get("produced_by") or {}
+    artist=""
+    date=""
+    parts=[produced]+[p for p in produced.get("part") or [] if isinstance(p,dict)]
+    for part in parts:
+        if not artist:
+            for person in part.get("carried_out_by") or []:
+                artist=_rijks_label(person)
+                if artist:break
+        if not date:
+            timespan=part.get("timespan") or part.get("time_span") or {}
+            date=_rijks_label(timespan)
+            if not date:
+                start=_value(timespan,"begin_of_the_begin")
+                date=start[:4] if start else ""
+    return artist,date
+
 def rijks_candidates():
-    print("SOURCE rijks: resolving Linked Art -> IIIF with per-item license", flush=True)
-    records = []
+    print("SOURCE rijks: JSON-LD + official EDM RDF/XML rights",flush=True)
     try:
-        search = _json("https://data.rijksmuseum.nl/search/collection?" +
-                       urlencode({"type":"painting", "imageAvailable":"true"}))
+        pages=_json("https://data.rijksmuseum.nl/search/collection?"+
+             urlencode({"type":"painting","imageAvailable":"true"}))
     except Exception as e:
-        print(f"SOURCE rijks search unavailable {type(e).__name__}: {e}", flush=True)
+        print("RIJKS_SEARCH_HELD",type(e).__name__,str(e)[:110],flush=True)
         return []
-    items = search.get("orderedItems") or []
-    def work(item):
-        uri = _rijks_uri(item.get("id")) if isinstance(item, dict) else ""
-        if not uri: return None
-        obj = _json(uri, size=1000000)
-        # The EDM representation provides machine-readable rights metadata.
-        edm = _json(uri.replace("_profile=la-framed", "_profile=edm"), size=1000000)
-        if not _marked_public(edm):
-            return None
-        vurl = _first_link(obj, "shows")
-        if not vurl: return None
-        visual = _json(vurl, size=500000)
-        durl = _first_link(visual, "digitally_shown_by")
-        if not durl: return None
-        digital = _json(durl, size=500000)
-        pointer = next((_value(x, "id") for x in digital.get("access_point") or []
-                        if isinstance(x, dict) and
-                        _value(x, "id").startswith("https://iiif.micr.io/")), "")
-        found = re.fullmatch(r"https://iiif\.micr\.io/([A-Za-z0-9_-]+)/.*", pointer)
-        if not found: return None
-        image_id = found.group(1)
-        native = _int(urlparse(uri).path.strip("/"))
-        title = _rijks_first_name(obj)
-        if not native or not title: return None
-        produced = obj.get("produced_by") or {}
-        artist = ""
-        for part in produced.get("carried_out_by") or []:
-            artist = _rijks_label(part)
-            if artist: break
-        period = produced.get("timespan") or produced.get("time_span") or {}
-        date = _rijks_label(period)
-        if not date: date = _value(period, "begin_of_the_begin")[:4]
-        return _record("rijks", native, title, artist, date, "",
-                       f"https://iiif.micr.io/{image_id}/full/220,/0/default.jpg",
-                       full=f"https://iiif.micr.io/{image_id}/full/1000,/0/default.jpg",
-                       detail=f"https://www.rijksmuseum.nl/en/collection/{native}",
-                       rights="Public Domain / CC0", evidence=urlparse(uri)._replace(query="_profile=edm").geturl())
+    records=[]
+    items=pages.get("orderedItems") or []
+    def resolve(item):
+        uri=_rijks_uri(item.get("id")) if isinstance(item,dict) else ""
+        if not uri:return None
+        obj=_json(uri,size=1000000)
+        rightsurl=uri.replace("_profile=la-framed","_profile=edm")
+        rights=_edm_rights(rightsurl)
+        if not rights:return None
+        vurl=_first_link(obj,"shows")
+        if not vurl:return None
+        visual=_json(vurl,size=500000)
+        durl=_first_link(visual,"digitally_shown_by")
+        if not durl:return None
+        digital=_json(durl,size=500000)
+        pointer=next((_value(x,"id") for x in digital.get("access_point") or []
+                      if isinstance(x,dict) and _value(x,"id").startswith("https://iiif.micr.io/")),"")
+        match=re.fullmatch(r"https://iiif\.micr\.io/([A-Za-z0-9_-]+)/.*",pointer)
+        if not match:return None
+        native=_int(urlparse(uri).path.strip("/"))
+        if not native:return None
+        title=_rijks_first_name(obj)
+        if not title:return None
+        author,date=_rijks_artist_and_date(obj)
+        imageid=match.group(1)
+        licence="CC0" if "zero" in rights.lower() else "Public Domain Mark"
+        return _record("rijks",native,title,author,date,"",
+             f"https://iiif.micr.io/{imageid}/full/220,/0/default.jpg",
+             full=f"https://iiif.micr.io/{imageid}/full/1000,/0/default.jpg",
+             detail=f"https://data.rijksmuseum.nl/{native}",
+             rights=licence,evidence=rightsurl)
     with ThreadPoolExecutor(max_workers=3) as pool:
-        futures = [pool.submit(work, item) for item in items[:140]]
-        for f in as_completed(futures):
+        tasks=[pool.submit(resolve,v) for v in items[:105]]
+        for f in as_completed(tasks):
             try:
-                v=f.result()
-                if v: records.append(v)
+                row=f.result()
+                if row:records.append(row)
             except Exception as e:
-                if len(records)<2: print(f"rijks item held: {type(e).__name__}: {str(e)[:70]}", flush=True)
-    print(f"SOURCE rijks: rights-approved={len(records)}", flush=True)
-    return sorted(records, key=lambda x:x["id"])[:CAPS["rijks"]]
+                if len(records)<3:print("RIJKS_HELD",type(e).__name__,str(e)[:80],flush=True)
+    print(f"SOURCE rijks: rights-approved={len(records)}",flush=True)
+    return sorted(records,key=lambda x:x["id"])[:CAPS["rijks"]]
+
+def _csv_stream(url):
+    request=Request(url,headers=HEADERS)
+    response=urlopen(request,timeout=50)
+    # Streaming permits 80-100 MB official NGA CSV data without bundling it
+    # or allocating a giant 100 MB byte string.
+    return response, csv.DictReader(io.TextIOWrapper(response,encoding="utf-8-sig",newline=""))
 
 def nga_candidates():
-    """NGA source CSV explicitly distinguishes openaccess=1 imagery from metadata."""
-    print("SOURCE nga: checking CC0 CSV + openaccess image flag", flush=True)
-    # The dataset is large; hard cap each GET and skip on changed provider schema.
+    print("SOURCE nga: streaming official openaccess-only published images",flush=True)
     base="https://raw.githubusercontent.com/NationalGalleryOfArt/opendata/main/data/"
+    image_map={}
     try:
-        art_bytes=_fetch(base+"objects.csv",size=42000000)
-        images_bytes=_fetch(base+"published_images.csv",size=30000000)
+        response,rows=_csv_stream(base+"published_images.csv")
+        try:
+            for i,row in enumerate(rows):
+                if i>=32000:break
+                if (row.get("openaccess") or "").strip().lower() not in ("1","true"):continue
+                ident=_int(row.get("depictstmsobjectid"))
+                if not ident or ident in image_map:continue
+                baseurl=(row.get("iiifurl") or "").strip().removesuffix("/info.json").rstrip("/")
+                if not _url_ok(baseurl,"nga"):continue
+                image_map[ident]=baseurl
+        finally:
+            response.close()
     except Exception as e:
-        print(f"SOURCE nga not loaded (CSV): {type(e).__name__}: {str(e)[:90]}", flush=True)
+        print("NGA_IMAGES_HELD",type(e).__name__,str(e)[:90],flush=True)
         return []
-    data={}
-    for row in csv.DictReader(io.StringIO(art_bytes.decode("utf-8-sig"))):
-        ident=_int(row.get("objectid"))
-        if not ident: continue
-        typefield=(row.get("classification") or row.get("subclassification") or "").lower()
-        if "paint" not in typefield: continue
-        data[ident]=row
-    results=[]
-    for row in csv.DictReader(io.StringIO(images_bytes.decode("utf-8-sig"))):
-        if (row.get("openaccess") or "").strip() not in ("1","true","True"): continue
-        ident=_int(row.get("depictstmsobjectid") or row.get("associatedtmsobjectid"))
-        if not ident or ident not in data: continue
-        src=data[ident]
-        url=(row.get("iiifurl") or "").strip().rstrip("/")
-        if not _url_ok(url, "nga"): continue
-        image=url+"/full/220,/0/default.jpg"
-        record=_record("nga",ident,(src.get("title") or ""), "",
-                      (src.get("displaydate") or ""), (src.get("medium") or ""),
-                      image,full=url+"/full/1000,/0/default.jpg",
-                      detail=f"https://www.nga.gov/artworks/{ident}",
-                      rights="Public Domain / NGA Open Access",
-                      evidence="https://www.nga.gov/artworks/free-images-and-open-access",
-                      credit=src.get("creditline",""),dimensions=src.get("dimensions",""))
-        if record: results.append(record)
-        if len(results)>=CAPS["nga"]: break
-    print(f"SOURCE nga: eligible={len(results)}", flush=True)
-    return results
+    print(f"NGA_IMAGE_CANDIDATES={len(image_map)}",flush=True)
+    if not image_map:return []
+    found=[]
+    try:
+        response,rows=_csv_stream(base+"objects.csv")
+        try:
+            for row in rows:
+                native=_int(row.get("objectid"))
+                if not native or native not in image_map:continue
+                kind=(row.get("classification") or "")+" "+(row.get("subclassification") or "")
+                if "paint" not in kind.lower():continue
+                imagebase=image_map[native]
+                image=imagebase+"/full/220,/0/default.jpg"
+                record=_record("nga",native,row.get("title",""),
+                     row.get("attribution",""),row.get("displaydate",""),
+                     row.get("medium",""),image,
+                     full=imagebase+"/full/1000,/0/default.jpg",
+                     detail=f"https://www.nga.gov/artworks/{native}",
+                     rights="Public Domain / NGA Open Access",
+                     evidence="https://www.nga.gov/artworks/free-images-and-open-access",
+                     credit=row.get("creditline",""),dimensions=row.get("dimensions",""))
+                if record:found.append(record)
+                if len(found)>=CAPS["nga"]:break
+        finally:
+            response.close()
+    except Exception as e:
+        print("NGA_OBJECTS_HELD",type(e).__name__,str(e)[:90],flush=True)
+    print(f"SOURCE nga: eligible={len(found)}",flush=True)
+    return found
 
 def getty_candidates():
     """Getty Linked Art: no general enumerate API. Probe one documented item
@@ -369,6 +420,66 @@ def getty_candidates():
     print(f"SOURCE getty: eligible={len(out)}", flush=True)
     return out[:CAPS["getty"]]
 
+def smithsonian_candidates():
+    """Keyless Smithsonian Open Access official public S3 EDAN metadata.
+    Only SAAM paintings, each media item independently marked CC0.
+    """
+    print("SOURCE smithsonian: public SAAM NDJSON no API key",flush=True)
+    results={}
+    base="https://smithsonian-open-access.s3-us-west-2.amazonaws.com/metadata/edan/saam/"
+    def textitems(section,key):
+        values=section.get(key) or []
+        return [v.get("content","").strip() for v in values
+                if isinstance(v,dict) and isinstance(v.get("content"),str)]
+    for number in range(70):
+        if len(results)>=CAPS["smithsonian"]:break
+        shard=f"{number:02x}"
+        try:
+            raw=_fetch(base+shard+".txt",size=1700000)
+            for line in raw.splitlines():
+                if not line.strip():continue
+                row=json.loads(line)
+                payload=row.get("content") or {}
+                info=payload.get("descriptiveNonRepeating") or {}
+                ft=payload.get("freetext") or {}
+                if not any("paint" in term.lower() for term in textitems(ft,"objectType")):
+                    continue
+                if (info.get("metadata_usage") or {}).get("access")!="CC0":continue
+                media=(info.get("online_media") or {}).get("media") or []
+                matched=[]
+                for item in media:
+                    if not isinstance(item,dict):continue
+                    rights=(item.get("usage") or {}).get("access")
+                    if rights!="CC0":continue
+                    url=item.get("thumbnail") or item.get("content") or ""
+                    if _url_ok(url,"smithsonian"):matched.append(url)
+                if not matched:continue
+                recordid=info.get("record_ID") or row.get("id") or ""
+                if not recordid:continue
+                native=(int(hashlib.sha256(recordid.encode()).hexdigest()[:8],16)
+                        %800000000)+1
+                nameinfo=info.get("title") or {}
+                title=nameinfo.get("content") if isinstance(nameinfo,dict) else ""
+                title=title or row.get("title") or ""
+                link=info.get("record_link") or ""
+                date=next(iter(textitems(ft,"date")),"")
+                artist=next(iter(textitems(ft,"name")),"")
+                medium=next(iter(textitems(ft,"physicalDescription")),"")
+                descriptions=textitems(ft,"physicalDescription")
+                scale=next((v for v in descriptions if any(c in v.lower() for c in
+                         ("cm","inch","in.","×"," x "))),"")
+                record=_record("smithsonian",native,title,artist,date,medium,
+                        matched[0],detail=link,rights="CC0",
+                        evidence="https://www.si.edu/openaccess",
+                        credit=next(iter(textitems(ft,"creditLine")),""),
+                        dimensions=scale,tags=textitems(ft,"topic"))
+                if record:results[record["id"]]=record
+        except Exception as e:
+            if number<2:print("SI_SHARD_HELD",shard,type(e).__name__,str(e)[:80],flush=True)
+        if number%16==0:print(f"SI_SHARDS={number+1} accepted={len(results)}",flush=True)
+    print(f"SOURCE smithsonian: eligible={len(results)}",flush=True)
+    return sorted(results.values(),key=lambda x:x["id"])[:CAPS["smithsonian"]]
+
 def _encode_preview(url,source):
     if not _url_ok(url,source): raise ValueError("invalid image provenance")
     data=_fetch(url)
@@ -388,20 +499,57 @@ def _encode_preview(url,source):
 def main():
     OUT.mkdir(parents=True,exist_ok=True)
     THUMBS.mkdir(parents=True,exist_ok=True)
-    collected=[]
-    connectors=(met_candidates,cleveland_candidates,rijks_candidates,nga_candidates,getty_candidates)
-    for connector in connectors:
-        try:
-            entries=connector()
-            collected.extend(entries)
-        except Exception as e:
-            print(f"Source {connector.__name__} failed: {type(e).__name__} {str(e)[:110]}",flush=True)
-    canonical={r["id"]:r for r in collected if r}
-    print("CANDIDATES", len(canonical), flush=True)
+    catalog=OUT/"catalog.json"
     entries=[]
-    total=0
+    if catalog.exists():
+        try:
+            prior=json.loads(catalog.read_text(encoding="utf-8"))
+            for row in prior:
+                expected=f'{row["museum_source"]}_{row["id"]}.webp'
+                asset=THUMBS/expected
+                if (asset.exists() and asset.stat().st_size<=22000
+                    and row.get("bootstrap_asset")=="assets/museums/thumbs/"+expected):
+                    entries.append(row)
+        except Exception as e:
+            print("EXISTING_CATALOG_INVALID",type(e).__name__,str(e)[:120],flush=True)
+            entries=[]
+    saved={row["id"] for row in entries}
+    total=sum((THUMBS/f'{row["museum_source"]}_{row["id"]}.webp').stat().st_size for row in entries)
     sourcecounts={}
-    for row in sorted(canonical.values(), key=lambda r:(r["museum_source"],r["id"])):
+    for row in entries:
+        sourcecounts[row["museum_source"]]=sourcecounts.get(row["museum_source"],0)+1
+    print("EXISTING",len(entries),sourcecounts,total,flush=True)
+    # Preserve previously generated records/bytes. Second pass only for missing
+    # museum connectors, making the catalog revision incremental and idempotent.
+    functions={
+        "met":met_candidates,
+        "cleveland":cleveland_candidates,
+        "rijks":rijks_candidates,
+        "nga":nga_candidates,
+        "getty":getty_candidates,
+        "smithsonian":smithsonian_candidates,
+    }
+    candidates=[]
+    for source in ("rijks","nga","smithsonian","getty","met","cleveland"):
+        if sourcecounts.get(source,0)>0:continue
+        try:
+            candidates+=functions[source]()
+        except Exception as e:
+            print("PROVIDER_HELD",source,type(e).__name__,str(e)[:110],flush=True)
+    bysource={}
+    for row in candidates:
+        if row["id"] in saved:continue
+        bysource.setdefault(row["museum_source"],[]).append(row)
+    for value in bysource.values():value.sort(key=lambda row:row["id"])
+    # Source round-robin prevents large providers from starving Rijks/Smithsonian.
+    order=("rijks","nga","smithsonian","getty","met","cleveland")
+    ordered=[]
+    maxitems=max((len(v) for v in bysource.values()),default=0)
+    for i in range(maxitems):
+        for source in order:
+            group=bysource.get(source,[])
+            if i<len(group):ordered.append(group[i])
+    for row in ordered:
         if len(entries)>=LIMIT:break
         try:
             blob,iw,ih=_encode_preview(row["remote_preview_url"],row["museum_source"])
@@ -416,16 +564,16 @@ def main():
             if len(entries)%25==0:
                 print(f"ASSET {len(entries)} images={total}B by={sourcecounts}",flush=True)
         except Exception as e:
-            if len(entries)<12:
-                print(f"image held {row['museum_source']}:{row['id']} {type(e).__name__}: {str(e)[:90]}",flush=True)
-        time.sleep(.1)
+            if sourcecounts.get(row["museum_source"],0)<3:
+                print("IMAGE_HELD",row["museum_source"],type(e).__name__,str(e)[:95],flush=True)
+        time.sleep(.08)
     if len(entries)<48 or len(sourcecounts)<2:
-        raise SystemExit(f"FAIL CLOSED insufficient rights-approved images: {len(entries)} from {sourcecounts}")
+        raise SystemExit(f"FAIL CLOSED insufficient rights-approved images: {len(entries)} {sourcecounts}")
     entries.sort(key=lambda row:(row["museum_source"],row["id"]))
-    (OUT/"catalog.json").write_text(json.dumps(entries,ensure_ascii=False,separators=(",",":"))+"\n",encoding="utf-8")
+    catalog.write_text(json.dumps(entries,ensure_ascii=False,separators=(",",":"))+"\n",encoding="utf-8")
     report={
       "schema":1,"image_count":len(entries),"preview_bytes":total,
-      "sources":sourcecounts,"rights_gate":"explicit source record rights + host allowlist + independently decoded tiny WebP",
+      "sources":sourcecounts,"rights_gate":"individual source rights, official image host and WebP decode",
       "image_max_bytes":22000,"catalog_path":"assets/museums/catalog.json",
       "license_reviews_required_before_store":True,
     }
@@ -434,5 +582,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-# Single-task version: 2026-11-21 / no consumer-code mutations.
