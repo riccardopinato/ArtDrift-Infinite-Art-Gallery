@@ -61,6 +61,9 @@ class Artwork {
       museumSource == 'nga' ? 'National Gallery of Art, Washington' :
       museumSource == 'getty' ? 'J. Paul Getty Museum' :
       museumSource == 'smithsonian' ? 'Smithsonian American Art Museum' :
+      museumSource == 'smk' ? 'SMK – National Gallery of Denmark' :
+      museumSource == 'mia' ? 'Minneapolis Institute of Art' :
+      museumSource == 'walters' ? 'The Walters Art Museum' :
       'Art Institute of Chicago';
   String get displayedLicense => rightsLicense.isNotEmpty ? rightsLicense :
       museumSource == 'aic' ? 'Public Domain' : 'CC0';
@@ -78,6 +81,9 @@ class Artwork {
       'nga': {'api.nga.gov', 'media.nga.gov'},
       'getty': {'media.getty.edu'},
       'smithsonian': {'ids.si.edu', 'www.si.edu', 'si.edu'},
+      'smk': {'iip.smk.dk', 'iip-thumb.smk.dk'},
+      'mia': {'api.artsmia.org'},
+      'walters': {'images.thewalters.org', 'art.thewalters.org'},
     };
     return hosts[museum]?.contains(uri.host.toLowerCase()) ?? false;
   }
@@ -92,7 +98,7 @@ class Artwork {
       return _imageIdPattern.hasMatch(imageId) &&
           (artworkType.isEmpty || artworkType.toLowerCase() == 'painting');
     }
-    if (!const <String>{'met','cleveland','rijks','nga','getty','smithsonian'}
+    if (!const <String>{'met','cleveland','rijks','nga','getty','smithsonian','smk','mia','walters'}
         .contains(museumSource)) return false;
     return artworkType.toLowerCase() == 'painting' &&
         officialImageUrl(remotePreviewUrl, museumSource) &&
@@ -111,7 +117,11 @@ class Artwork {
     if (museumSource != 'aic') {
       if (width >= 600 && remoteFullUrl.isNotEmpty &&
          (museumSource == 'rijks' || museumSource == 'nga' ||
-          museumSource == 'getty')) return remoteFullUrl;
+          museumSource == 'getty' || museumSource == 'smk' ||
+          museumSource == 'smithsonian')) return remoteFullUrl;
+      return remotePreviewUrl;
+    }
+    if (!hasBundledPreview && width <= 400 && remotePreviewUrl.isNotEmpty) {
       return remotePreviewUrl;
     }
     final safeWidth = <int>{112, 200, 400, 600, 800, 843, 1200, 1686}
@@ -128,7 +138,11 @@ class Artwork {
       'rijks': {'www.rijksmuseum.nl','rijksmuseum.nl','data.rijksmuseum.nl'},
       'nga': {'www.nga.gov','nga.gov'},
       'getty': {'www.getty.edu','getty.edu','data.getty.edu'},
-      'smithsonian': {'americanart.si.edu','www.si.edu','si.edu'},
+      'smithsonian': {'americanart.si.edu','www.si.edu','si.edu',
+        'npg.si.edu','asia.si.edu'},
+      'smk': {'open.smk.dk', 'www.open.smk.dk', 'www.smk.dk', 'smk.dk'},
+      'mia': {'collections.artsmia.org'},
+      'walters': {'art.thewalters.org', 'www.thewalters.org'},
     };
     if (uri != null && uri.scheme == 'https' && uri.userInfo.isEmpty &&
         (hosts[museumSource]?.contains(uri.host) ?? false)) {
@@ -140,7 +154,10 @@ class Artwork {
       'rijks':'https://www.rijksmuseum.nl/en',
       'nga':'https://www.nga.gov/',
       'getty':'https://www.getty.edu/art/collection/',
-      'smithsonian':'https://americanart.si.edu/',
+      'smithsonian':'https://www.si.edu/',
+      'smk':'https://open.smk.dk/',
+      'mia':'https://collections.artsmia.org/',
+      'walters':'https://art.thewalters.org/',
     };
     return home[museumSource] ?? 'https://www.artic.edu/';
   }
