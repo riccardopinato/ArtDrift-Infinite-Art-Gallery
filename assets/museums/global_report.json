@@ -1,14 +1,13 @@
 {
   "schema_version": 2,
-  "records_global": 3915,
+  "records_global": 4043,
   "records_bundled_existing": 457,
-  "records_total": 4372,
-  "catalog_bytes": 3598968,
+  "records_total": 4500,
+  "catalog_bytes": 3691868,
   "remote_images_only": 3915,
   "local_webp_bytes_added": 0,
   "institutions": {
-    "Art Institute of Chicago": 629,
-    "Cleveland Museum of Art": 827,
+    "Cleveland Museum of Art": 1584,
     "National Gallery of Art, Washington": 739,
     "Rijksmuseum": 160,
     "SMK – National Gallery of Denmark": 500,
@@ -19,5 +18,11 @@
   },
   "record_rights": "official item-specific CC0/PD flags only",
   "media_verification": "official image host + provider media rights; network delivery deferred to device",
-  "store_rights_review_required": true
+  "store_rights_review_required": true,
+  "removed_unreachable_aic_remote": 629,
+  "replacement_cma_cc0_added": 757,
+  "replacement_cma_pages_checked": 3,
+  "remote_preview_sample_gate": "AIC remote 7/7 HTTP403 excluded; 8 other institution groups 56/56 pass",
+  "original_aic_offline_preserved": 72,
+  "image_qa": "sample of image HTTP 200 only; device and complete corpus QA open"
 }
