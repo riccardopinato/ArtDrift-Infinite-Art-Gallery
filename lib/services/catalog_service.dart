@@ -1,11 +1,11 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:http/http.dart' as http;
-import 'package:path_provider/path_provider.dart';
 import 'package:flutter/services.dart';
 
 import '../models/artwork.dart';
+import 'catalog_cache_web.dart'
+    if (dart.library.io) 'catalog_cache_io.dart' as catalog_cache;
 import '../museums/museum_catalog.dart';
 
 /// Museum Open Access client. Does not scrape or consume anotherboring.day.
@@ -18,16 +18,11 @@ class CatalogService {
       'is_public_domain,artwork_type_title,medium_display,'
       'credit_line,place_of_origin,thumbnail';
 
-  Future<File> _cacheFile() async {
-    final directory = await getApplicationSupportDirectory();
-    return File('${directory.path}/artdrift-catalog-v1.json');
-  }
-
   Future<List<Artwork>> cached() async {
     try {
-      final file = await _cacheFile();
-      if (!await file.exists()) return const [];
-      final data = jsonDecode(await file.readAsString());
+      final cachedText = await catalog_cache.read();
+      if (cachedText == null) return const [];
+      final data = jsonDecode(cachedText);
       if (data is! List) return const [];
       return data.whereType<Map<String, dynamic>>()
           .map(Artwork.fromJson).where((a) => a.displayable).toList();
@@ -109,11 +104,8 @@ class CatalogService {
     final works = collected.values.toList()
       ..sort((a, b) => a.id.compareTo(b.id));
     try {
-      final file = await _cacheFile();
-      final pending = File('${file.path}.pending');
-      await pending.writeAsString(jsonEncode(works.map((a) => a.toJson()).toList()),
-        flush: true);
-      await pending.rename(file.path);
+      await catalog_cache.write(
+          jsonEncode(works.map((a) => a.toJson()).toList()));
     } catch (_) {
       // Viewing online still works when persistence is unavailable.
     }
