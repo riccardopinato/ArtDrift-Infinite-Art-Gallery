@@ -165,3 +165,5 @@ if __name__ == "__main__":
     main()
 
 # Bootstrap collection is version-pinned after the first successful run.
+
+# Artifact size policy: 2 MB aggregate for bundled artwork previews.
