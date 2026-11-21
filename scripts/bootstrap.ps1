@@ -1,6 +1,7 @@
 $ErrorActionPreference = 'Stop'
 flutter create --project-name artdrift --org com.riccardopinato --platforms=android .
 if ($LASTEXITCODE -ne 0) { throw 'flutter create failed' }
+Remove-Item -Force test/widget_test.dart -ErrorAction SilentlyContinue
 python scripts/patch_android.py
 if ($LASTEXITCODE -ne 0) { throw 'Android patch failed' }
 flutter pub get
