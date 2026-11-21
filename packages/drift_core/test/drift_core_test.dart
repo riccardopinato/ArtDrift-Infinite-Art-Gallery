@@ -48,6 +48,67 @@ void main() {
     expect(find.text('50%'), findsOneWidget);
   });
 
+  testWidgets('Auto moves actual tiles on 60 Hz frames and stops on pause',
+      (tester) async {
+    await tester.pumpWidget(MaterialApp(home: Scaffold(
+      body: DriftCanvas<String>(
+        items: const ['art'], onOpen: (_) {},
+        tileBuilder: (_, item, zoom) => const ColoredBox(color: Colors.black),
+        cameraKey: 'test.60hz', compactBrand: 'A∞',
+        fullBrand: 'artdrift ∞', hintText: 'Canvas',
+        recenterTooltip: 'Center'),
+    )));
+    await tester.pump();
+    final tile = find.byKey(const ValueKey('0:0'));
+    expect(tile, findsOneWidget);
+    final startY = tester.widget<Positioned>(tile).top!;
+
+    await tester.tap(find.byKey(const ValueKey('drift-auto-toggle')));
+    await tester.pump();
+    expect(find.text('Pausa'), findsOneWidget);
+
+    // 16 ms is deliberately shorter than the 30 ms render throttle.
+    // Previous code reset its reference on every frame and never moved.
+    for (var i = 0; i < 36; i++) {
+      await tester.pump(const Duration(milliseconds: 16));
+    }
+    final movedY = tester.widget<Positioned>(tile).top!;
+    expect(movedY, lessThan(startY - 8));
+
+    await tester.tap(find.byKey(const ValueKey('drift-auto-toggle')));
+    await tester.pump();
+    expect(find.text('Auto'), findsOneWidget);
+    final pausedY = tester.widget<Positioned>(tile).top!;
+    for (var i = 0; i < 16; i++) {
+      await tester.pump(const Duration(milliseconds: 16));
+    }
+    expect(tester.widget<Positioned>(tile).top!, closeTo(pausedY, 0.001));
+  });
+
+  testWidgets('Auto also accumulates high-refresh 120 Hz frames',
+      (tester) async {
+    await tester.pumpWidget(MaterialApp(home: Scaffold(
+      body: DriftCanvas<String>(
+        items: const ['art'], onOpen: (_) {},
+        tileBuilder: (_, item, zoom) => const ColoredBox(color: Colors.black),
+        cameraKey: 'test.120hz', compactBrand: 'A∞',
+        fullBrand: 'artdrift ∞', hintText: 'Canvas',
+        recenterTooltip: 'Center'),
+    )));
+    await tester.pump();
+    final tile = find.byKey(const ValueKey('0:0'));
+    expect(tile, findsOneWidget);
+    final startY = tester.widget<Positioned>(tile).top!;
+    await tester.tap(find.byKey(const ValueKey('drift-auto-toggle')));
+    await tester.pump();
+    for (var i = 0; i < 72; i++) {
+      await tester.pump(const Duration(milliseconds: 8));
+    }
+    expect(tester.widget<Positioned>(tile).top!, lessThan(startY - 8));
+    await tester.tap(find.byKey(const ValueKey('drift-auto-toggle')));
+    await tester.pump();
+  });
+
   testWidgets('ahead-of-viewport items are scheduled for warmup',
       (tester) async {
     var warmed = 0;
