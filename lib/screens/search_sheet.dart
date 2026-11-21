@@ -210,7 +210,7 @@ class _SearchSheetState extends State<_SearchSheet> {
           Center(child: Text(t('offline'),
             style: const TextStyle(color: Color(0xFF80684B),fontSize:10))),
         ])),
-      )),
+      ),
     );
   }
 

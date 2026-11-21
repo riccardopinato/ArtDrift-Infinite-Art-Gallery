@@ -34,7 +34,7 @@ void main() {
     expect(MuseumSearchService.parseCleveland({...base,
       'share_license_status': 'Copyrighted'}), isNull);
     expect(MuseumSearchService.parseCleveland({...base, 'images': {
-      'web': {'url': 'http://openaccess-cdn.clevelandart.org/image.jpg'}}), isNull);
+      'web': {'url': 'http://openaccess-cdn.clevelandart.org/image.jpg'}}}), isNull);
   });
 
   test('museum search is explicit, bounded, source unique and rights filtered', () async {
