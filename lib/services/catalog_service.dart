@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
+import 'package:flutter/services.dart';
 
 import '../models/artwork.dart';
 
@@ -34,7 +35,27 @@ class CatalogService {
     }
   }
 
+  /// Tiny images + metadata are bundled at build time, so the very first
+  /// screen is real paintings rather than a remote-API loading spinner.
+  Future<List<Artwork>> bundled() async {
+    try {
+      final source = await rootBundle.loadString('assets/gallery/catalog.json');
+      final data = jsonDecode(source);
+      if (data is! List) return const [];
+      return data.whereType<Map<String, dynamic>>()
+          .map(Artwork.fromJson)
+          .where((a) => a.displayable && a.hasBundledPreview)
+          .toList(growable: false);
+    } catch (_) {
+      return const [];
+    }
+  }
+
   Future<List<Artwork>> load({bool refresh = false}) async {
+    final builtIn = await bundled();
+    // A known-good build-time snapshot is authoritative for initial display.
+    // This also preserves which artwork occupies which stable world tile.
+    if (builtIn.isNotEmpty && !refresh) return builtIn;
     final existing = await cached();
     if (existing.isNotEmpty && !refresh) return existing;
     final collected = <int, Artwork>{};
@@ -78,6 +99,7 @@ class CatalogService {
       }
     }
     if (collected.isEmpty) {
+      if (builtIn.isNotEmpty) return builtIn;
       if (existing.isNotEmpty) return existing;
       throw StateError('Catalogo non disponibile: ${lastError ?? 'rete assente'}');
     }
