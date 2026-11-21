@@ -44,6 +44,14 @@ All'interno di Flutter test: numero di opere, ID univoci, licenza, provenienza, 
 - **Run incrementale #44900334157 PASS:** **384 nuove opere**, ripartite **Cleveland 150 / Met 34 / Rijksmuseum 80 / NGA 60 / Smithsonian 60**. Nuovi WebP: **1.478.950 byte** totali; JSON di metadati: ~378 KB. Il totale dell'app comprende inoltre 72 opere AIC originali, quindi **456 opere**.
 - Importer incrementale idempotente: preserva i primi 184 file, non riscarica miniature già verificate, memorizza provenienza, diritti e metadati; termina se il corpus non supera il gate minimo.
 - La connessione Smithsonian tramite S3 ufficiale è confermata keyless con filtro CC0 su **singola immagine**, distinta dalla API Smithsonian che richiede una chiave.
-- Getty: manifest IIIF3 per *Irises* riporta diritti CC0 sia al livello manifest sia al livello Canvas; il campione singolo può essere aggiunto soltanto dopo download e test asset. Il numero totale definitivo dipende dall'ultimo import e dai test Flutter esatti.
+- **Getty: 1 opera reale aggiunta**, *Irises* (Vincent van Gogh, **1889**, tecnica/medium registrati) con manifest e Canvas IIIF3 CC0 verificati. Il campo anno e l'artista sono derivati dai dati Linked Art ufficiali, non da stringhe costruite.
 - Per NGA, dati Open Data CSV ~83/92 MB vengono **letti esclusivamente nel runner CI come stream**, non aggiunti al repository e non distribuiti con l'APK. Solo metadati/miniature finali.
 - Resta aperto il collaudo Play/licenze commerciali e la scelta comune di mapping stabile con PR #8.
+
+## Stato consolidato della PR #9 (senza merge)
+
+- **385 opere internazionali reali**, 6 musei: Cleveland 150, Rijksmuseum 80, National Gallery of Art 60, Smithsonian American Art Museum 60, Metropolitan 34, Getty 1.
+- 72 opere AIC preesistenti e intatte: **457 quadri totali disponibili nel canvas dell'app dopo un merge coordinato**.
+- I 385 WebP aggiunti pesano **1.488.348 byte** (meno di 1,5 MB); catalogo internazionale JSON ~380 KB; nessuna foto ad alta risoluzione è stata incorporata.
+- L'ultimo import di riparazione metadati Getty è terminato con successo nella [GitHub Actions #44900885772](https://github.com/riccardopinato/ArtDrift-Infinite-Art-Gallery/actions/runs/44900885772). La CI Flutter e APK dell'head esatto deve essere valutata separatamente.
+- Nessuna modifica della PR è stata ancora integrata in `main`; il merge sarà coordinato con Drift Core PR #8 e Gallery Drift.
