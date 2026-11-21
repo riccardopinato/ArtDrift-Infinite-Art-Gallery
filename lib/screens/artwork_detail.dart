@@ -12,8 +12,8 @@ class ArtworkDetail extends StatefulWidget {
     required this.onToggleFavorite});
   final List<Artwork> artworks;
   final int initialIndex;
-  final bool Function(int) isFavorite;
-  final Future<void> Function(int) onToggleFavorite;
+  final bool Function(Artwork) isFavorite;
+  final Future<void> Function(Artwork) onToggleFavorite;
 
   @override
   State<ArtworkDetail> createState() => _ArtworkDetailState();
@@ -68,7 +68,7 @@ class _ArtworkDetailState extends State<ArtworkDetail> {
   }
 
   Future<void> _favorite() async {
-    await widget.onToggleFavorite(art.id);
+    await widget.onToggleFavorite(art);
     if (mounted) setState(() {});
   }
 
@@ -137,11 +137,11 @@ class _ArtworkDetailState extends State<ArtworkDetail> {
             IconButton(tooltip: 'Successivo', icon: const Icon(Icons.arrow_forward),
               color: Colors.white70, onPressed: () => _next(1)),
             IconButton(
-              tooltip: widget.isFavorite(current.id)
+              tooltip: widget.isFavorite(current)
                   ? 'Rimuovi dai preferiti' : 'Aggiungi ai preferiti',
-              icon: Icon(widget.isFavorite(current.id)
+              icon: Icon(widget.isFavorite(current)
                   ? Icons.favorite : Icons.favorite_border),
-              color: widget.isFavorite(current.id)
+              color: widget.isFavorite(current)
                   ? const Color(0xFFF5B1A8) : Colors.white70,
               onPressed: _favorite),
           ])),

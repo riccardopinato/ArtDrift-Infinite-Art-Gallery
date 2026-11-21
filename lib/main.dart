@@ -4,6 +4,7 @@ import 'package:flutter/painting.dart';
 import 'canvas/infinite_gallery.dart';
 import 'screens/search_sheet.dart';
 import 'screens/settings_sheet.dart';
+import 'screens/favorites_sheet.dart';
 import 'ui/gallery_toolbar.dart';
 import 'ui/localization.dart';
 import 'models/artwork.dart';
@@ -74,6 +75,19 @@ class _GalleryHomeState extends State<GalleryHome> {
     _open(selected);
   }
 
+  Future<void> _toggleFavorite(Artwork artwork) async {
+    await _favorites.toggle(artwork);
+    if (mounted) setState(() {});
+  }
+
+  Future<void> _openFavorites() async {
+    final selected = await showArtFavoritesSheet(context,
+      favorites: _favorites, catalog: _artworks,
+      onToggleFavorite: _toggleFavorite);
+    if (!mounted || selected == null) return;
+    _open(selected);
+  }
+
   void _open(Artwork artwork) {
     final index = _artworks.indexWhere((a) => a.catalogKey == artwork.catalogKey);
     // Remote discoveries open in detail without perturbing the pinned canvas.
@@ -84,7 +98,7 @@ class _GalleryHomeState extends State<GalleryHome> {
         artworks: group,
         initialIndex: start,
         isFavorite: _favorites.contains,
-        onToggleFavorite: _favorites.toggle,
+        onToggleFavorite: _toggleFavorite,
       ),
       transitionsBuilder: (context, animation, secondaryAnimation, child) =>
         FadeTransition(opacity: animation, child: child),
@@ -136,6 +150,7 @@ class _GalleryHomeState extends State<GalleryHome> {
       Positioned(top: 0, left: 0, right: 0,
         child: SafeArea(bottom: false, child: ArtDriftToolbar(
           onSearch: _openSearch,
+          onFavorites: _openFavorites,
           onSettings: () => showArtDriftSettings(context),
         ))),
     ]));

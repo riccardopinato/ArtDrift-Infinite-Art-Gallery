@@ -42,6 +42,7 @@ void main() {
     await tester.pumpWidget(MaterialApp(home: Scaffold(body: ArtDriftToolbar(
       onSearch: () => opened = true,
       onSettings: () {},
+      onFavorites: () {},
     ))));
     final control = find.byKey(const Key('artdrift-search-control'));
     expect(control, findsOneWidget);
