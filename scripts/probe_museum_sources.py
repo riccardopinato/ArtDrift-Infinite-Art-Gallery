@@ -107,3 +107,18 @@ try:
                             print("SI_PAINTING_SAMPLE",repr(m)[:1300],flush=True)
     print("SI_PAINTING_STATS",repr(seen),flush=True)
 except Exception as e:print("SI_DEEP_ERROR",type(e).__name__,str(e)[:160],flush=True)
+
+# Getty image details must prove rights from specific manifest, not object-level title.
+try:
+    u="https://media.getty.edu/iiif/manifest/3/53be857e-41e8-4198-b45d-2e0f52d3051b"
+    with urllib.request.urlopen(urllib.request.Request(u, headers={
+       "Accept":"application/json", "User-Agent":"ArtDrift museum license probe"}),timeout=20) as r:
+        obj=json.load(r)
+    print("GETTY_IIIF_KEYS",list(obj),flush=True)
+    print("GETTY_IIIF_RIGHTS",repr(obj.get("rights")),flush=True)
+    print("GETTY_IIIF_THUMB",repr(obj.get("thumbnail"))[:500],flush=True)
+    pages=obj.get("items") or []
+    print("GETTY_IIIF_ITEMS",len(pages),flush=True)
+    if pages:
+        print("GETTY_IIIF_PAGE",repr(pages[0])[:2100],flush=True)
+except Exception as e:print("GETTY_IIIF_ERROR",type(e).__name__,str(e)[:160],flush=True)
