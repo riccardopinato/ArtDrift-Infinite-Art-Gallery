@@ -193,9 +193,9 @@ class _DriftCanvasState<T> extends State<DriftCanvas<T>>
                 decoration: BoxDecoration(
                   color: const Color(0xB8111116),
                   borderRadius: BorderRadius.circular(30)),
-                child: const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 17, vertical: 9),
-                  child: Text('Trascina per esplorare  ·  Tocca un’opera',
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 17, vertical: 9),
+                  child: Text(widget.hintText,
                     textAlign: TextAlign.center,
                     style: TextStyle(color: Colors.white70, fontSize: 11)),
                 ),
