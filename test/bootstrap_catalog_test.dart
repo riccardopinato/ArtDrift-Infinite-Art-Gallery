@@ -17,7 +17,7 @@ void main() {
     for (final painting in works) {
       final bytes = await rootBundle.load(painting.bootstrapAsset);
       expect(bytes.lengthInBytes, greaterThan(100));
-      expect(bytes.lengthInBytes, lessThanOrEqualTo(45_000));
+      expect(bytes.lengthInBytes, lessThanOrEqualTo(45000));
       compressedBytes += bytes.lengthInBytes;
     }
     expect(compressedBytes, lessThan(2 * 1024 * 1024));
