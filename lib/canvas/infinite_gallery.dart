@@ -202,8 +202,8 @@ class _InfiniteGalleryState extends State<InfiniteGallery>
           ),
         ),
         Positioned(
-          right: 16, top: 14,
-          child: SafeArea(
+          right: 16, bottom: 73,
+          child: SafeArea(top: false,
             child: Tooltip(
               message: 'Torna al centro',
               child: IconButton.filledTonal(
