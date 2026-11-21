@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../models/artwork.dart';
+import '../ui/art_remote_image.dart';
 import '../services/wallpaper.dart';
 
 /// Full-screen viewer inspired by the reference interaction, with our own UI,
@@ -90,24 +92,32 @@ class _ArtworkDetailState extends State<ArtworkDetail> {
         final caption = _Caption(
           artwork: current,
           onMuseum: _openMuseum,
-          onWallpaper: _busy ? null : _setWallpaper,
+          onWallpaper: _busy || kIsWeb ? null : _setWallpaper,
         );
         final painting = InteractiveViewer(
           key: ValueKey('detail-${current.id}'),
           minScale: 0.9, maxScale: 5,
-          child: Center(child: Image.network(
-            current.imageUrl(width: 843),
+          child: Center(child: ArtRemoteImage(
+            artwork: current,
+            width: 843,
             fit: BoxFit.contain,
-            errorBuilder: (_, error, stack) => current.hasBundledPreview
+            fallback: current.hasBundledPreview
                 ? Image.asset(current.bootstrapAsset, fit: BoxFit.contain)
-                : const Center(child: Text('Immagine non raggiungibile',
-                    style: TextStyle(color: Colors.white70))),
-            loadingBuilder: (context, child, progress) => progress == null
-                ? child
-                : current.hasBundledPreview
-                    ? Image.asset(current.bootstrapAsset, fit: BoxFit.contain)
-                    : const Center(child: CircularProgressIndicator(
-                        color: Colors.white54)),
+                : Center(child: Column(mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.account_balance_outlined,
+                          color: Colors.white54, size: 36),
+                      const SizedBox(height: 14),
+                      const Text('Anteprima non disponibile da questo museo',
+                          style: TextStyle(color: Colors.white70)),
+                      const SizedBox(height: 8),
+                      Text(current.displayedMuseum,
+                          style: const TextStyle(color: Colors.white38)),
+                    ])),
+            loading: current.hasBundledPreview
+                ? Image.asset(current.bootstrapAsset, fit: BoxFit.contain)
+                : const Center(child: CircularProgressIndicator(
+                    color: Colors.white54)),
           )),
         );
         return Stack(children: [
@@ -188,10 +198,11 @@ class _Caption extends StatelessWidget {
               color: Colors.white54, fontSize: 11, height: 1.4)),
           ],
           const SizedBox(height: 18),
-          TextButton.icon(onPressed: onWallpaper,
-            icon: const Icon(Icons.wallpaper_outlined, size: 17),
-            label: const Text('Imposta come sfondo'),
-            style: TextButton.styleFrom(foregroundColor: Colors.white)),
+          if (!kIsWeb)
+            TextButton.icon(onPressed: onWallpaper,
+              icon: const Icon(Icons.wallpaper_outlined, size: 17),
+              label: const Text('Imposta come sfondo'),
+              style: TextButton.styleFrom(foregroundColor: Colors.white)),
           TextButton.icon(onPressed: onMuseum,
             icon: const Icon(Icons.open_in_new, size: 17),
             label: const Text('Scheda originale del museo'),
