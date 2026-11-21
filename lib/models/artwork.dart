@@ -74,6 +74,7 @@ class Artwork {
     if (uri == null || uri.scheme != 'https' || uri.userInfo.isNotEmpty ||
         (uri.hasPort && uri.port != 443)) return false;
     const hosts = <String, Set<String>>{
+      'aic': {'www.artic.edu'},
       'met': {'images.metmuseum.org'},
       'cleveland': {'openaccess-cdn.clevelandart.org',
         'clevelandart.org', 'www.clevelandart.org'},
@@ -96,7 +97,8 @@ class Artwork {
     if (id <= 0 || !publicDomain) return false;
     if (museumSource == 'aic') {
       return _imageIdPattern.hasMatch(imageId) &&
-          (artworkType.isEmpty || artworkType.toLowerCase() == 'painting');
+          (artworkType.isEmpty || artworkType.toLowerCase() == 'painting') &&
+          (remotePreviewUrl.isEmpty || officialImageUrl(remotePreviewUrl, 'aic'));
     }
     if (!const <String>{'met','cleveland','rijks','nga','getty','smithsonian','smk','mia','walters'}
         .contains(museumSource)) return false;
@@ -121,7 +123,8 @@ class Artwork {
           museumSource == 'smithsonian')) return remoteFullUrl;
       return remotePreviewUrl;
     }
-    if (!hasBundledPreview && width <= 400 && remotePreviewUrl.isNotEmpty) {
+    if (!hasBundledPreview && width <= 400 &&
+        officialImageUrl(remotePreviewUrl, 'aic')) {
       return remotePreviewUrl;
     }
     final safeWidth = <int>{112, 200, 400, 600, 800, 843, 1200, 1686}
