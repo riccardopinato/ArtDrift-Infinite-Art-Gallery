@@ -19,6 +19,13 @@ class Artwork {
     this.remotePreviewUrl = '',
     this.remoteMuseumUrl = '',
     this.subjectTerms = const [],
+    this.museumName = '',
+    this.museumNativeId = '',
+    this.rightsLicense = '',
+    this.rightsEvidenceUrl = '',
+    this.dimensions = '',
+    this.technique = '',
+    this.remoteFullUrl = '',
   });
 
   final int id;
@@ -40,29 +47,55 @@ class Artwork {
   final String remotePreviewUrl;
   final String remoteMuseumUrl;
   final List<String> subjectTerms;
+  final String museumName;
+  final String museumNativeId;
+  final String rightsLicense;
+  final String rightsEvidenceUrl;
+  final String dimensions;
+  final String technique;
+  final String remoteFullUrl;
+  String get displayedMuseum => museumName.isNotEmpty ? museumName :
+      museumSource == 'met' ? 'The Metropolitan Museum of Art' :
+      museumSource == 'cleveland' ? 'Cleveland Museum of Art' :
+      museumSource == 'rijks' ? 'Rijksmuseum' :
+      museumSource == 'nga' ? 'National Gallery of Art, Washington' :
+      museumSource == 'getty' ? 'J. Paul Getty Museum' :
+      'Art Institute of Chicago';
+  String get displayedLicense => rightsLicense.isNotEmpty ? rightsLicense :
+      museumSource == 'aic' ? 'Public Domain' : 'CC0';
   String get catalogKey => '$museumSource:$id';
 
   static bool officialImageUrl(String url, String museum) {
     final uri = Uri.tryParse(url);
-    if (uri == null || uri.scheme != 'https' || uri.userInfo.isNotEmpty) return false;
-    final host = uri.host.toLowerCase();
-    if (museum == 'met') return host == 'images.metmuseum.org' || host.endsWith('.metmuseum.org');
-    if (museum == 'cleveland') return host.endsWith('.clevelandart.org');
-    return false;
+    if (uri == null || uri.scheme != 'https' || uri.userInfo.isNotEmpty ||
+        (uri.hasPort && uri.port != 443)) return false;
+    const hosts = <String, Set<String>>{
+      'met': {'images.metmuseum.org'},
+      'cleveland': {'openaccess-cdn.clevelandart.org',
+        'clevelandart.org', 'www.clevelandart.org'},
+      'rijks': {'iiif.micr.io'},
+      'nga': {'api.nga.gov', 'media.nga.gov'},
+      'getty': {'media.getty.edu'},
+    };
+    return hosts[museum]?.contains(uri.host.toLowerCase()) ?? false;
   }
-  bool get hasBundledPreview =>
-      bootstrapAsset == 'assets/gallery/thumbs/$id.webp';
+  bool get hasBundledPreview => museumSource == 'aic'
+      ? bootstrapAsset == 'assets/gallery/thumbs/$id.webp'
+      : bootstrapAsset == 'assets/museums/thumbs/' + museumSource + '_$id.webp';
 
   static final RegExp _imageIdPattern = RegExp(r'^[0-9a-fA-F-]{16,64}$');
   bool get displayable {
     if (id <= 0 || !publicDomain) return false;
     if (museumSource == 'aic') {
       return _imageIdPattern.hasMatch(imageId) &&
-        (artworkType.isEmpty || artworkType.toLowerCase() == 'painting');
+          (artworkType.isEmpty || artworkType.toLowerCase() == 'painting');
     }
-    if (museumSource != 'met' && museumSource != 'cleveland') return false;
+    if (!const <String>{'met','cleveland','rijks','nga','getty'}
+        .contains(museumSource)) return false;
     return artworkType.toLowerCase() == 'painting' &&
-        officialImageUrl(remotePreviewUrl, museumSource);
+        officialImageUrl(remotePreviewUrl, museumSource) &&
+        (remoteFullUrl.isEmpty ||
+         officialImageUrl(remoteFullUrl, museumSource));
   }
 
   double get naturalAspectRatio {
@@ -73,7 +106,12 @@ class Artwork {
   }
 
   String imageUrl({int width = 400}) {
-    if (museumSource != 'aic') return remotePreviewUrl;
+    if (museumSource != 'aic') {
+      if (width >= 600 && remoteFullUrl.isNotEmpty &&
+         (museumSource == 'rijks' || museumSource == 'nga' ||
+          museumSource == 'getty')) return remoteFullUrl;
+      return remotePreviewUrl;
+    }
     final safeWidth = <int>{112, 200, 400, 600, 800, 843, 1200, 1686}
         .contains(width) ? width : 843;
     return 'https://www.artic.edu/iiif/2/$imageId/full/$safeWidth,/0/default.jpg';
@@ -81,18 +119,40 @@ class Artwork {
 
   String get museumUrl {
     if (museumSource == 'aic') return 'https://www.artic.edu/artworks/$id';
-    if (remoteMuseumUrl.startsWith('https://')) return remoteMuseumUrl;
-    return museumSource == 'met' ? 'https://www.metmuseum.org/' :
-       'https://www.clevelandart.org/';
+    final uri = Uri.tryParse(remoteMuseumUrl);
+    const hosts = <String, Set<String>>{
+      'met': {'www.metmuseum.org','metmuseum.org'},
+      'cleveland': {'www.clevelandart.org','clevelandart.org'},
+      'rijks': {'www.rijksmuseum.nl','rijksmuseum.nl','data.rijksmuseum.nl'},
+      'nga': {'www.nga.gov','nga.gov'},
+      'getty': {'www.getty.edu','getty.edu','data.getty.edu'},
+    };
+    if (uri != null && uri.scheme == 'https' && uri.userInfo.isEmpty &&
+        (hosts[museumSource]?.contains(uri.host) ?? false)) {
+      return remoteMuseumUrl;
+    }
+    const home = <String,String>{
+      'met':'https://www.metmuseum.org/',
+      'cleveland':'https://www.clevelandart.org/',
+      'rijks':'https://www.rijksmuseum.nl/en',
+      'nga':'https://www.nga.gov/',
+      'getty':'https://www.getty.edu/art/collection/',
+    };
+    return home[museumSource] ?? 'https://www.artic.edu/';
   }
 
   /// Original factual caption built solely from metadata, not museum prose.
+  /// Concise original prose assembled only from museum factual fields.
   String get shortDescription {
     final creator = artist.isEmpty ? 'un artista non identificato' : artist;
     final when = date.isEmpty ? '' : ', datata $date';
-    final how = medium.isEmpty ? '' : ' La tecnica registrata è: $medium.';
-    final where = origin.isEmpty ? '' : ' Provenienza: $origin.';
-    return '«$title» è un’opera attribuita a $creator$when.$how$where';
+    final method = technique.isNotEmpty ? technique : medium;
+    final how = method.isEmpty ? '' : ' Tecnica e materiali: $method.';
+    final scale = dimensions.isEmpty ? '' : ' Dimensioni: $dimensions.';
+    final where = origin.isEmpty ? '' : ' Origine: $origin.';
+    final museum = museumSource == 'aic' ? '' :
+        ' Conservata presso $displayedMuseum.';
+    return '«$title» è un’opera attribuita a $creator$when.$how$scale$where$museum';
   }
 
   static String _str(Object? value) => value is String ? value.trim() : '';
@@ -118,6 +178,13 @@ class Artwork {
       bootstrapAsset: _str(json['bootstrap_asset']),
       museumSource: _str(json['museum_source']).isEmpty ? 'aic' : _str(json['museum_source']),
       remotePreviewUrl: _str(json['remote_preview_url']),
+      remoteFullUrl: _str(json['remote_full_url']),
+      museumName: _str(json['museum_name']),
+      museumNativeId: _str(json['museum_native_id']),
+      rightsLicense: _str(json['rights_license']),
+      rightsEvidenceUrl: _str(json['rights_evidence_url']),
+      dimensions: _str(json['dimensions_display']),
+      technique: _str(json['technique_display']),
       remoteMuseumUrl: _str(json['remote_museum_url']),
       subjectTerms: (json['subject_terms'] is List)
           ? (json['subject_terms'] as List).whereType<String>().take(32).toList(growable: false)
@@ -142,5 +209,12 @@ class Artwork {
         if (remotePreviewUrl.isNotEmpty) 'remote_preview_url': remotePreviewUrl,
         if (remoteMuseumUrl.isNotEmpty) 'remote_museum_url': remoteMuseumUrl,
         if (subjectTerms.isNotEmpty) 'subject_terms': subjectTerms,
+        if (remoteFullUrl.isNotEmpty) 'remote_full_url': remoteFullUrl,
+        if (museumName.isNotEmpty) 'museum_name': museumName,
+        if (museumNativeId.isNotEmpty) 'museum_native_id': museumNativeId,
+        if (rightsLicense.isNotEmpty) 'rights_license': rightsLicense,
+        if (rightsEvidenceUrl.isNotEmpty) 'rights_evidence_url': rightsEvidenceUrl,
+        if (dimensions.isNotEmpty) 'dimensions_display': dimensions,
+        if (technique.isNotEmpty) 'technique_display': technique,
       };
 }
