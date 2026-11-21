@@ -281,7 +281,7 @@ class _DriftCanvasState<T> extends State<DriftCanvas<T>>
         Tooltip(
           message: _autoRunning ? 'Ferma lo scorrimento automatico' :
               'Avvia lo scorrimento automatico',
-          child: SizedBox(height: 40, width: 88,
+          child: SizedBox(height: 40, width: 104,
             child: FilledButton(
               key: const ValueKey('drift-auto-toggle'),
               onPressed: _toggleAuto,
