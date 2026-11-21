@@ -416,7 +416,7 @@ def getty_candidates():
             for txt in production.get("referred_to_by") or []:
                 if not isinstance(txt,dict):continue
                 label=_value(txt,"_label").lower()
-                if "producer name" in label:
+                if 'name' in label and ('producer' in label or 'artist' in label):
                     creator=_value(txt,"content")
                     if creator:break
             title=_value(obj,"_label").split(" (")[0]
@@ -424,10 +424,13 @@ def getty_candidates():
             date=""
             timespan=production.get("timespan") or {}
             if isinstance(timespan,dict):
-                date=_rijks_label(timespan) or _value(timespan,"begin_of_the_begin")[:4]
-            if not date:
-                # The date is unknown rather than guessed from an example.
-                date=""
+                for item in timespan.get("identified_by") or []:
+                    if isinstance(item,dict):
+                        parsed=_value(item,"content")
+                        if parsed and any(ch.isdigit() for ch in parsed):
+                            date=parsed
+                            break
+                if not date:date=_value(timespan,"begin_of_the_begin")[:4]
             medium=""
             for material in obj.get("made_of") or []:
                 medium=_value(material,"_label")
@@ -557,6 +560,21 @@ def main():
         except Exception as e:
             print("EXISTING_CATALOG_INVALID",type(e).__name__,str(e)[:120],flush=True)
             entries=[]
+    # Repair sourced metadata from the authoritative IIIF3/Linked Art record
+    # without re-downloading or re-encoding an already pinned painting.
+    # The previous pilot incorrectly read the Getty label "Dates" as the year.
+    if any(row["museum_source"]=="getty" for row in entries):
+        try:
+            current={work["id"]:work for work in getty_candidates()}
+            for idx,oldrow in enumerate(entries):
+                newer=current.get(oldrow["id"])
+                if newer and oldrow["museum_source"]=="getty":
+                    merged={**newer,
+                      "bootstrap_asset":oldrow["bootstrap_asset"],
+                      "thumbnail":oldrow.get("thumbnail",{})}
+                    entries[idx]=merged
+        except Exception as err:
+            print("GETTY_METADATA_REFRESH_HELD",type(err).__name__,str(err)[:90],flush=True)
     saved={row["id"] for row in entries}
     total=sum((THUMBS/f'{row["museum_source"]}_{row["id"]}.webp').stat().st_size for row in entries)
     sourcecounts={}
