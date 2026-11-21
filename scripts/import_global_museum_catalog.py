@@ -513,3 +513,5 @@ def main():
     print("GLOBAL_MUSEUM_IMPORT_SUCCESS",json.dumps(report,ensure_ascii=False),flush=True)
 
 if __name__=="__main__":main()
+
+# Global catalog import run: 2026-11-21 / primary-source rights only.
