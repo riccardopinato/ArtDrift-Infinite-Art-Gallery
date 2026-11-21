@@ -100,11 +100,17 @@ class _DriftCanvasState<T> extends State<DriftCanvas<T>>
   void _tickAuto(Duration elapsed) {
     if (!_autoRunning || !mounted) return;
     final previous = _lastAutoFrame;
+    if (previous == null) {
+      _lastAutoFrame = elapsed;
+      return;
+    }
+    // Accumulate short 60/90/120 Hz frames. Updating the reference timestamp
+    // before this gate would discard every sub-30 ms frame and freeze Auto.
+    final elapsedSinceMove = elapsed - previous;
+    if (elapsedSinceMove < const Duration(milliseconds: 30)) return;
     _lastAutoFrame = elapsed;
-    if (previous == null) return;
-    // Do not rebuild a 180-tile scene on every high-refresh-rate tick.
-    if ((elapsed - previous).inMilliseconds < 30) return;
-    final seconds = ((elapsed - previous).inMicroseconds / 1000000.0)
+    // Cap long suspended frames: no sudden jump when a tab becomes active.
+    final seconds = (elapsedSinceMove.inMicroseconds / 1000000.0)
         .clamp(0.0, 0.05);
     if (seconds <= 0) return;
     // Move the artwork up so the camera explores new rows below it.
