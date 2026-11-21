@@ -122,3 +122,17 @@ try:
     if pages:
         print("GETTY_IIIF_PAGE",repr(pages[0])[:2100],flush=True)
 except Exception as e:print("GETTY_IIIF_ERROR",type(e).__name__,str(e)[:160],flush=True)
+
+try:
+    with urllib.request.urlopen(urllib.request.Request(
+      "https://data.getty.edu/museum/collection/object/c88b3df0-de91-4f5b-a9ef-7b2b9a6d8abb",
+      headers={"Accept":"application/ld+json","User-Agent":"ArtDrift museum metadata probe"}),timeout=15) as r:
+        o=json.load(r)
+    prod=o.get("produced_by") or {}
+    print("GETTY_PRODUCER_TEXT",
+      [(x.get("_label"),x.get("content")) for x in prod.get("referred_to_by") or []
+       if isinstance(x,dict)][:20],flush=True)
+    print("GETTY_PROD_KEYS",list(prod),flush=True)
+    print("GETTY_TIMESPAN",repr(prod.get("timespan"))[:2000],flush=True)
+    print("GETTY_PART",repr(prod.get("part"))[:1800],flush=True)
+except Exception as e:print("GETTY_PRODUCER_PROBE_ERROR",type(e).__name__,str(e)[:120],flush=True)
