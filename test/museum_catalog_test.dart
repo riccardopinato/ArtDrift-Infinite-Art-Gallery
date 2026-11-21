@@ -9,9 +9,9 @@ void main() {
 
   test('Open Access museum records, full provenance, rights and tiny WebP', () async {
     final works = await const MuseumCatalog().bundled();
-    expect(works.length, greaterThanOrEqualTo(48));
-    expect(works.map((a) => a.museumSource).toSet().length,
-      greaterThanOrEqualTo(2));
+    expect(works.length, greaterThanOrEqualTo(385));
+    expect(works.map((a) => a.museumSource).toSet(),
+      containsAll({'met','cleveland','rijks','nga','smithsonian','getty'}));
     expect(works.map((a) => a.catalogKey).toSet().length, works.length);
     var total = 0;
     for (final art in works) {
@@ -34,6 +34,13 @@ void main() {
       expect(blob.lengthInBytes, lessThanOrEqualTo(22000));
       total += blob.lengthInBytes;
     }
+    final getty = works.where((w) => w.museumSource == 'getty').toList();
+    expect(getty, isNotEmpty);
+    expect(getty.first.title, 'Irises');
+    expect(getty.first.artist, 'Vincent van Gogh');
+    expect(getty.first.date, '1889');
+    expect(getty.first.rightsEvidenceUrl,
+      startsWith('https://media.getty.edu/iiif/manifest/3/'));
     expect(total, lessThanOrEqualTo(2600000));
   });
 
