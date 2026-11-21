@@ -24,7 +24,7 @@ class _ArtDriftSettingsState extends State<_ArtDriftSettingsSheet> {
     final height = MediaQuery.sizeOf(context).height;
     final maxHeight = math.min(height * .84,
         height - MediaQuery.viewInsetsOf(context).bottom - 24);
-    return SizedBox(height: math.max(280, maxHeight),
+    return SizedBox(height: math.max(280.0, maxHeight),
       child: ParchmentPanel(child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

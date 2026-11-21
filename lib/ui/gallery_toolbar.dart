@@ -19,7 +19,7 @@ class ArtDriftToolbar extends StatelessWidget {
             final w = constraints.maxWidth;
             return SizedBox(height: 53, child: Stack(children: [
               Positioned(left: w / 3, width: w / 3, top: 5,
-                child: Semantics(button: true, label: ArtDriftLocale.text('searchTitle'),
+                child: Semantics(key: const Key('artdrift-search-control'), button: true, label: ArtDriftLocale.text('searchTitle'),
                   child: Material(color: Colors.transparent,
                     child: InkWell(
                       onTap: onSearch, borderRadius: BorderRadius.circular(9),
@@ -39,6 +39,7 @@ class ArtDriftToolbar extends StatelessWidget {
                   )),
               ),
               Positioned(right: 12, top: 5, child: Semantics(
+                key: const Key('artdrift-settings-control'),
                 button: true,label: ArtDriftLocale.text('settings'),
                 child: Material(color: Colors.transparent,
                   child: InkWell(onTap: onSettings,

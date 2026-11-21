@@ -79,7 +79,7 @@ class GallerySearch {
       documents: docs,
       // The certified feature-hash engine is used as a deterministic ranker,
       // but weak non-lexical collisions are filtered out in artwork discovery.
-      semanticAvailable: true, limit: limit.clamp(1, 100));
+      semanticAvailable: true, limit: limit.clamp(1, 100).toInt());
     return result.hits.where((h) => h.reasons.contains('lexical'))
         .map((h) => indexed[h.document.id]).whereType<Artwork>()
         .toList(growable: false);
