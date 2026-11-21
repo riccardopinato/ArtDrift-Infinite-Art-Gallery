@@ -6,6 +6,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:flutter/services.dart';
 
 import '../models/artwork.dart';
+import '../museums/museum_catalog.dart';
 
 /// Museum Open Access client. Does not scrape or consume anotherboring.day.
 /// A saved catalogue snapshot keeps artwork placement stable across launches.
@@ -52,7 +53,9 @@ class CatalogService {
   }
 
   Future<List<Artwork>> load({bool refresh = false}) async {
-    final builtIn = await bundled();
+    final original = await bundled();
+    final extended = await const MuseumCatalog().bundled();
+    final builtIn = MuseumCatalog.combine(original, extended);
     // A known-good build-time snapshot is authoritative for initial display.
     // This also preserves which artwork occupies which stable world tile.
     if (builtIn.isNotEmpty && !refresh) return builtIn;
@@ -114,7 +117,7 @@ class CatalogService {
     } catch (_) {
       // Viewing online still works when persistence is unavailable.
     }
-    return works;
+    return MuseumCatalog.combine(works, extended);
   }
 
   void close() => _client.close();
