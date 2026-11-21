@@ -1,0 +1,25 @@
+name: Museum images — sampled remote delivery QA
+on:
+  push:
+    branches: [feat/artdrift-open-access-museums-20261121]
+    paths: [scripts/probe_global_image_delivery.py]
+  workflow_dispatch:
+permissions: {contents: read}
+jobs:
+  check-images:
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - run: python -m py_compile scripts/probe_global_image_delivery.py
+      - name: Probe seven images per sourced institution
+        run: python -u scripts/probe_global_image_delivery.py
+      - name: Save source/host availability evidence
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: artdrift-global-preview-sample
+          path: global_image_preview_probe.json
+          if-no-files-found: warn
