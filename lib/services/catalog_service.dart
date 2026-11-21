@@ -77,7 +77,7 @@ class CatalogService {
           'AIC-User-Agent': 'ArtDrift/0.1 (independent Android art viewer)',
         }).timeout(const Duration(seconds: 18));
         if (response.statusCode != 200) {
-          throw HttpException('Art Institute API HTTP ${response.statusCode}');
+          throw StateError('Art Institute API HTTP ${response.statusCode}');
         }
         final decoded = jsonDecode(utf8.decode(response.bodyBytes));
         if (decoded is! Map<String, dynamic> || decoded['data'] is! List) {
