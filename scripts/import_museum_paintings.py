@@ -387,38 +387,82 @@ def nga_candidates():
     return found
 
 def getty_candidates():
-    """Getty Linked Art: no general enumerate API. Probe one documented item
-    and only use image if its explicit subject_to classification is CC0.
+    """Getty IIIF3 manifests encode per-manifest/per-canvas CC0 rights.
+    Use only individual images whose official IIIF3 manifest says CC0.
+    No narrative copy, no hardcoded creator/date, no unlicensed related media.
     """
-    print("SOURCE getty: official documented CC0 item probe", flush=True)
-    # Full dataset harvesting is not possible through the Getty REST enumeration API.
-    obj_id="c88b3df0-de91-4f5b-a9ef-7b2b9a6d8abb"  # Irises (official API docs)
-    url=f"https://data.getty.edu/museum/collection/object/{obj_id}"
-    try:
-        obj=_json(url,size=1500000)
-    except Exception as e:
-        print(f"SOURCE getty unavailable: {type(e).__name__} {str(e)[:80]}", flush=True)
-        return []
-    title=_rijks_first_name(obj) or "Irises"
-    visual=obj.get("shows") or []
-    out=[]
-    for show in visual:
-        # Do not reuse ambiguous images or unlicensed narrative descriptions.
-        if not isinstance(show, dict):continue
-        if not _marked_public(show): continue
-        image = ""
-        for objpart in show.get("digitally_shown_by") or []:
-            if isinstance(objpart,dict) and "media.getty.edu" in str(objpart):
-                image=_value(objpart,"id")
-        if not _url_ok(image,"getty"): continue
-        native=int.from_bytes(obj_id.encode()[:5],"little")%800000000
-        record=_record("getty",native,title,"Vincent van Gogh","1889",
-                       "Oil on canvas",image,
-                       detail="https://www.getty.edu/art/collection/",
-                       rights="CC0",evidence=url)
-        if record: out.append(record)
-    print(f"SOURCE getty: eligible={len(out)}", flush=True)
-    return out[:CAPS["getty"]]
+    print("SOURCE getty: IIIF3 per-image CC0 rights probe",flush=True)
+    # Official Getty API's documented painting sample. Open Access bulk
+    # search is a separate provider discovery contract.
+    candidates=("c88b3df0-de91-4f5b-a9ef-7b2b9a6d8abb",)
+    works=[]
+    for obj_id in candidates:
+        try:
+            url=f"https://data.getty.edu/museum/collection/object/{obj_id}"
+            obj=_json(url,size=1500000)
+            if obj.get("type")!="HumanMadeObject":continue
+            manifesturls=[]
+            detail=""
+            for item in obj.get("subject_of") or []:
+                if not isinstance(item,dict):continue
+                link=_value(item,"id")
+                if link.startswith("https://media.getty.edu/iiif/manifest/3/"):
+                    manifesturls.append(link)
+                if link.startswith("https://www.getty.edu/art/collection/object/"):
+                    detail=link
+            if not manifesturls:continue
+            creator=""
+            production=obj.get("produced_by") or {}
+            for txt in production.get("referred_to_by") or []:
+                if not isinstance(txt,dict):continue
+                label=_value(txt,"_label").lower()
+                if "producer name" in label:
+                    creator=_value(txt,"content")
+                    if creator:break
+            title=_value(obj,"_label").split(" (")[0]
+            if not title:continue
+            date=""
+            timespan=production.get("timespan") or {}
+            if isinstance(timespan,dict):
+                date=_rijks_label(timespan) or _value(timespan,"begin_of_the_begin")[:4]
+            if not date:
+                # The date is unknown rather than guessed from an example.
+                date=""
+            medium=""
+            for material in obj.get("made_of") or []:
+                medium=_value(material,"_label")
+                if medium:break
+            native=int(hashlib.sha256(obj_id.encode()).hexdigest()[:8],16)%800000000+1
+            for manifesturl in manifesturls[:2]:
+                manifest=_json(manifesturl,size=1500000)
+                if not _valid_right(manifest.get("rights","")):continue
+                for canvas in manifest.get("items") or []:
+                    if not isinstance(canvas,dict) or not _valid_right(canvas.get("rights","")):
+                        continue
+                    label=canvas.get("label") or {}
+                    lbl=" ".join(str(x) for arr in label.values() for x in arr) if isinstance(label,dict) else ""
+                    if lbl and "front" not in lbl.lower():continue
+                    for thumb in canvas.get("thumbnail") or []:
+                        if not isinstance(thumb,dict):continue
+                        service=thumb.get("service") or []
+                        base=next((_value(x,"id") for x in service
+                                  if isinstance(x,dict) and _value(x,"id").startswith(
+                                   "https://media.getty.edu/iiif/image/")),"")
+                        if not _url_ok(base,"getty"):continue
+                        # IIIF Image API version 3 - use explicit bounded widths.
+                        image=base+"/full/220,/0/default.jpg"
+                        full=base+"/full/1000,/0/default.jpg"
+                        work=_record("getty",native,title,creator,date,medium,
+                           image,full=full,detail=detail,
+                           rights="CC0",evidence=manifesturl)
+                        if work:works.append(work)
+                        break
+                    if works:break
+                if works:break
+        except Exception as e:
+            print("GETTY_ITEM_HELD",type(e).__name__,str(e)[:120],flush=True)
+    print(f"SOURCE getty: eligible={len(works)}",flush=True)
+    return works[:CAPS["getty"]]
 
 def smithsonian_candidates():
     """Keyless Smithsonian Open Access official public S3 EDAN metadata.
