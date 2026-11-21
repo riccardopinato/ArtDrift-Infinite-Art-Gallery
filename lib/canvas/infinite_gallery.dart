@@ -191,10 +191,11 @@ class _InfiniteGalleryState extends State<InfiniteGallery>
                 decoration: BoxDecoration(
                   color: const Color(0xB5101015),
                   borderRadius: BorderRadius.circular(6)),
-                child: const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  child: Text('artdrift  ∞',
-                    style: TextStyle(color: Colors.white, fontSize: 18,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                  child: Text(_viewport.width < 460 ? 'A∞' : 'artdrift  ∞',
+                    style: TextStyle(color: Colors.white,
+                      fontSize: _viewport.width < 460 ? 16 : 18,
                       letterSpacing: -0.5, fontWeight: FontWeight.w700)),
                 ),
               ),

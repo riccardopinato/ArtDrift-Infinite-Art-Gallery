@@ -2,7 +2,6 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../ui/localization.dart';
 import '../ui/parchment.dart';
-import '../monetization/entitlement.dart';
 
 Future<void> showArtDriftSettings(BuildContext context) =>
     showModalBottomSheet<void>(
@@ -64,9 +63,7 @@ class _ArtDriftSettingsState extends State<_ArtDriftSettingsSheet> {
             _ActionTile(
               icon: Icons.auto_awesome_outlined, title: t('pro'),
               subtitle: t('proStatus'), onTap: () => _showDocument(context,
-                t('pro'), t('proDescription') + '\n\n' + t('proComing') +
-                '\n\n' + (ProAccess.mayOfferPurchase ? '' :
-                  'Gli acquisti non sono ancora disponibili.')),
+                t('pro'), t('proDescription') + '\n\n' + t('proComing')),
             ),
             _ActionTile(
               icon: Icons.verified_user_outlined, title: t('about'),
