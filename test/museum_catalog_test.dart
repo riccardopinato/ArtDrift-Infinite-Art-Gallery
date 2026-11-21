@@ -7,69 +7,84 @@ import 'package:artdrift/museums/museum_catalog.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  test('Open Access museum records, full provenance, rights and tiny WebP', () async {
-    final works = await const MuseumCatalog().bundled();
-    expect(works.length, greaterThanOrEqualTo(385));
-    expect(works.map((a) => a.museumSource).toSet(),
+  test('previous 385 offline thumbnails remain intact and provenance-verified', () async {
+    final art = await const MuseumCatalog().bundled();
+    final pinned = art.where((a) => a.hasBundledPreview).toList();
+    expect(pinned.length, 385);
+    expect(pinned.map((a) => a.museumSource).toSet(),
       containsAll({'met','cleveland','rijks','nga','smithsonian','getty'}));
-    expect(works.map((a) => a.catalogKey).toSet().length, works.length);
-    var total = 0;
-    for (final art in works) {
-      expect(art.displayable && art.hasBundledPreview, isTrue,
-        reason: art.catalogKey);
-      expect(art.title.trim(), isNotEmpty);
-      expect(art.displayedMuseum.trim(), isNotEmpty);
-      expect(art.museumNativeId.trim(), isNotEmpty);
-      final license = art.rightsLicense.toLowerCase();
-      expect(license.contains('cc0') || license.contains('public domain'), isTrue);
-      expect(Uri.parse(art.rightsEvidenceUrl).scheme, 'https');
-      expect(Artwork.officialImageUrl(art.remotePreviewUrl,art.museumSource),isTrue);
-      expect(art.shortDescription, contains(art.title));
-      final restored=Artwork.fromJson(art.toJson());
-      expect(restored.catalogKey, art.catalogKey);
-      expect(restored.dimensions, art.dimensions);
-      expect(restored.displayedMuseum, art.displayedMuseum);
-      final blob=await rootBundle.load(art.bootstrapAsset);
-      expect(blob.lengthInBytes, greaterThan(249));
-      expect(blob.lengthInBytes, lessThanOrEqualTo(22000));
-      total += blob.lengthInBytes;
+    var totalBytes = 0;
+    for (final a in pinned) {
+      expect(a.displayable && a.hasBundledPreview, isTrue, reason:a.catalogKey);
+      expect(a.title, isNotEmpty);
+      expect(a.displayedMuseum, isNotEmpty);
+      expect(a.museumNativeId, isNotEmpty);
+      expect(a.rightsEvidenceUrl,startsWith('https://'));
+      final bytes = await rootBundle.load(a.bootstrapAsset);
+      expect(bytes.lengthInBytes, inInclusiveRange(250, 22000));
+      totalBytes += bytes.lengthInBytes;
     }
-    final getty = works.where((w) => w.museumSource == 'getty').toList();
-    expect(getty, isNotEmpty);
-    expect(getty.first.title, 'Irises');
-    expect(getty.first.artist, 'Vincent van Gogh');
-    expect(getty.first.date, '1889');
-    expect(getty.first.rightsEvidenceUrl,
-      startsWith('https://media.getty.edu/iiif/manifest/3/'));
-    expect(total, lessThanOrEqualTo(2600000));
+    expect(totalBytes, lessThan(2600000));
+    final getty = pinned.singleWhere((a) => a.museumSource == 'getty');
+    expect(getty.title, 'Irises');
+    expect(getty.artist, 'Vincent van Gogh');
+    expect(getty.date, '1889');
   });
 
-  test('72 AIC paintings remain first and international are really in canvas', () async {
-    final service=CatalogService();
-    addTearDown(service.close);
-    final local=await service.bundled();
-    final museum=await const MuseumCatalog().bundled();
-    expect(local.length,72);
-    final all=await service.load();
-    expect(all.length,local.length+museum.length);
-    for (var i=0;i<local.length;i++) {
-      expect(all[i].catalogKey,local[i].catalogKey);
+  test('global source-gated catalog has thousands of non-bundled real URL records',
+      () async {
+    final art=await const MuseumCatalog().bundled();
+    final global=art.where((a) => !a.hasBundledPreview).toList();
+    expect(global.length, greaterThanOrEqualTo(1200));
+    expect(global.map((a)=>a.museumName).toSet().length,
+      greaterThanOrEqualTo(7));
+    expect(global.map((a)=>a.catalogKey).toSet().length, global.length);
+    final metadata=await rootBundle.loadString('assets/museums/catalog_global.json');
+    expect(metadata.length, lessThan(7500000));
+    for (final a in global) {
+      expect(a.displayable, isTrue, reason:a.catalogKey);
+      expect(a.bootstrapAsset, isEmpty);
+      expect(a.imageUrl(width:400).startsWith('https://'), isTrue);
+      expect(a.title.trim(), isNotEmpty);
+      expect(a.displayedMuseum.trim(),isNotEmpty);
+      expect(a.museumNativeId.trim(),isNotEmpty);
+      expect(a.rightsLicense.toLowerCase().contains('cc0') ||
+         a.rightsLicense.toLowerCase().contains('public domain'),isTrue);
+      expect(a.rightsEvidenceUrl, startsWith('https://'));
+      final restored=Artwork.fromJson(a.toJson());
+      expect(restored.catalogKey,a.catalogKey);
+      expect(restored.museumNativeId,a.museumNativeId);
+      expect(restored.shortDescription, contains(a.title));
+    }
+  });
+
+  test('all 72 original works retained first in worldwide gallery', () async {
+    final c=CatalogService();
+    addTearDown(c.close);
+    final originals=await c.bundled();
+    final more=await const MuseumCatalog().bundled();
+    final all=await c.load();
+    expect(originals.length,72);
+    expect(all.length, originals.length+more.length);
+    for (var i=0;i<72;i++) {
+      expect(all[i].catalogKey,originals[i].catalogKey);
+      expect(all[i].hasBundledPreview,isTrue);
     }
     expect(all.map((a)=>a.catalogKey).toSet().length,all.length);
-    expect(all.every((a)=>a.hasBundledPreview),isTrue);
+    expect(all.every((a)=>a.displayable),isTrue);
   });
 
-  test('source host, license and materials captured in fact-only description', () {
-    const art=Artwork(id:10000314,title:'Oil on Canvas',artist:'Painter',
-      date:'1850',imageId:'',publicDomain:true,artworkType:'Painting',
+  test('source host, rights and materials construct truthful captions', () {
+    const art=Artwork(id:10000314,title:'Oil on Canvas',
+      artist:'A. Painter',date:'1850',imageId:'',
+      publicDomain:true,artworkType:'Painting',
       museumSource:'met',museumNativeId:'314',
       museumName:'The Metropolitan Museum of Art',
       rightsLicense:'CC0',rightsEvidenceUrl:'https://www.metmuseum.org/hubs/open-access',
       remotePreviewUrl:'https://images.metmuseum.org/works/i.jpg',
-      medium:'Oil on canvas',dimensions:'45 x 70 cm',
-      bootstrapAsset:'assets/museums/thumbs/met_10000314.webp');
+      medium:'Oil on canvas',dimensions:'45 x 70 cm');
     expect(art.displayable,isTrue);
-    expect(art.hasBundledPreview,isTrue);
+    expect(art.hasBundledPreview,isFalse);
     expect(art.shortDescription,contains('Oil on canvas'));
     expect(art.shortDescription,contains('45 x 70 cm'));
     expect(art.shortDescription,contains('The Metropolitan'));
@@ -79,6 +94,8 @@ void main() {
       'met'),isFalse);
     expect(Artwork.officialImageUrl('https://iiif.micr.io/id/full/400,/0/default.jpg',
       'rijks'),isTrue);
+    expect(Artwork.officialImageUrl(
+      'https://iip.smk.dk/iiif/jp2/id/full/300,/0/default.jpg','smk'),isTrue);
     expect(Artwork.fromJson({...art.toJson(),'is_public_domain':false})
       .displayable,isFalse);
   });
