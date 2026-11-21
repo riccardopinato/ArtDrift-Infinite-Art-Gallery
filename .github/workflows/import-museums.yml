@@ -1,0 +1,54 @@
+name: Museum Open Access — one-time tiny artwork import
+on:
+  push:
+    branches: [feat/artdrift-open-access-museums-20261121]
+    paths:
+      - scripts/import_museum_paintings.py
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  import-curated:
+    runs-on: ubuntu-latest
+    timeout-minutes: 29
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Pillow
+        run: python -m pip install --disable-pip-version-check Pillow==11.3.0
+      - name: Validate importer syntax first
+        run: python -m py_compile scripts/import_museum_paintings.py
+      - name: Import official public-domain painting metadata and tiny WebP
+        run: python -u scripts/import_museum_paintings.py
+      - name: Assert rights, images and byte budget
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json
+          folder=Path("assets/museums")
+          works=json.loads((folder/"catalog.json").read_text())
+          report=json.loads((folder/"import_report.json").read_text())
+          assert len(works)>=48 and len(report["sources"])>=2
+          assert len({x["id"] for x in works})==len(works)
+          assert all(x["is_public_domain"] and x["artwork_type_title"]=="Painting" for x in works)
+          images=list((folder/"thumbs").glob("*.webp"))
+          assert len(images)==len(works)
+          assert sum(x.stat().st_size for x in images)<=2600000
+          assert all(x["bootstrap_asset"]=="assets/museums/thumbs/"+x["museum_source"]+"_"+str(x["id"])+".webp" for x in works)
+          print("MUSEUM_ARTIFACT_VALIDATED",report)
+          PY
+      - name: Commit museum snapshot ONLY on museum development branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/museums/
+          if ! git diff --cached --quiet; then
+            git commit -m "assets(museums): curated tiny CC0 thumbnails and provenanced metadata"
+            git fetch origin feat/artdrift-open-access-museums-20261121
+            git rebase origin/feat/artdrift-open-access-museums-20261121
+            git push origin HEAD:feat/artdrift-open-access-museums-20261121
+          fi
