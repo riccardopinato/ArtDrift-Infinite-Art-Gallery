@@ -45,5 +45,7 @@ jobs:
           git add assets/gallery
           if ! git diff --cached --quiet; then
             git commit -m "assets: pin verified Open Access paintings as tiny WebP bootstrap"
+            git fetch origin feat/lightweight-real-artwork-bootstrap
+            git rebase origin/feat/lightweight-real-artwork-bootstrap
             git push origin "HEAD:feat/lightweight-real-artwork-bootstrap"
           fi
