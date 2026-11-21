@@ -87,7 +87,7 @@ def main():
     # Remove ONLY unbundled AIC remote IIIF, not approved 72 offline images.
     keep=[row for row in original if row.get("museum_source")!="aic"]
     removed=len(original)-len(keep)
-    assert removed>=500, f"Unexpected AIC count: {removed}"
+    assert removed==0 or removed>=500, f"Unexpected AIC count: {removed}"
     keys={(x.get("museum_source","aic"),str(x.get("museum_native_id",x.get("id"))))
           for x in keep+pinned+aic}
     gained=0
@@ -143,9 +143,10 @@ def main():
        "records_total":len(interleaved)+existing,
        "catalog_bytes":len(raw),
        "institutions":counts,
-       "removed_unreachable_aic_remote":removed,
-       "replacement_cma_cc0_added":gained,
-       "replacement_cma_pages_checked":sourcepages,
+       "removed_unreachable_aic_remote":removed+oldreport.get("removed_unreachable_aic_remote",0),
+       "replacement_cma_cc0_added":gained+oldreport.get("replacement_cma_cc0_added",0),
+       "replacement_cma_pages_checked":sourcepages+oldreport.get("replacement_cma_pages_checked",0),
+       "remote_images_only":len(interleaved),
        "remote_preview_sample_gate":"AIC remote 7/7 HTTP403 excluded; 8 other institution groups 56/56 pass",
        "original_aic_offline_preserved":len(aic),
        "image_qa":"sample of image HTTP 200 only; device and complete corpus QA open",
