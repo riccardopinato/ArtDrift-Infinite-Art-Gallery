@@ -28,7 +28,7 @@ ID stabile del provider, museo, titolo, autore se presente, anno/data se present
 
 ## Peso, immagini, privacy
 
-- Ogni nuova opera riceve una miniatura WebP di circa 220 px compressa a qualità 60. **Budget massimo 2,6 MB** di nuove miniature, massimo 22 KB per immagine; nessuna immagine full HD incorporata.
+- **Due livelli per evitare APK enormi:** le prime 457 opere dispongono di miniature WebP offline (72 iniziali + 385 da sei musei); le successive 4.043 opere hanno **solo metadati** in un JSON da 3,69 MB e anteprime ufficiali via rete caricate a richiesta. Nessuna immagine HD incorporata.
 - Gli originali restano sui server ufficiali e vengono richiesti solo all'apertura o durante lo zoom. L'app conserva lo stesso limite alla cache RAM già previsto per il canvas.
 - I 72 dipinti AIC e i relativi file sono mantenuti nello stesso ordine in catalogo. La galleria virtuale può ripetere le opere lontano; una futura sostituzione del mapping modulo catalogo è lavoro del Drift Core, **non da questa PR**. Espandere il catalogo modifica inevitabilmente l'associazione opera-cella: verificare dopo integrazione.
 - L'import automatico e i controlli per licenze avvengono solo in CI su richiesta, senza API IA a pagamento e senza chiavi nel client; niente fetching massivo su dispositivi degli utenti.
@@ -55,3 +55,15 @@ All'interno di Flutter test: numero di opere, ID univoci, licenza, provenienza, 
 - I 385 WebP aggiunti pesano **1.488.348 byte** (meno di 1,5 MB); catalogo internazionale JSON ~380 KB; nessuna foto ad alta risoluzione è stata incorporata.
 - L'ultimo import di riparazione metadati Getty è terminato con successo nella [GitHub Actions #44900885772](https://github.com/riccardopinato/ArtDrift-Infinite-Art-Gallery/actions/runs/44900885772). La CI Flutter e APK dell'head esatto deve essere valutata separatamente.
 - Nessuna modifica della PR è stata ancora integrata in `main`; il merge sarà coordinato con Drift Core PR #8 e Gallery Drift.
+
+## Espansione globale definitiva — 21/11/2026 (PR #9, senza merge)
+
+- **4.500 opere complessive**: 72 WebP AIC iniziali + 385 WebP di altri musei + **4.043 record internazionali remoti**. Nessun file WebP aggiuntivo in questa ondata.
+- **10 istituzioni uniche nel complesso**; il nuovo livello internazionale distribuisce: Cleveland 1.584, National Gallery of Art Washington 739, SMK Danimarca 500, Smithsonian American Art Museum 350, Smithsonian National Museum of Asian Art 350, Smithsonian National Portrait Gallery 225, Rijksmuseum 160, Metropolitan Museum of Art 135.
+- **3.691.868 byte** di catalogo globale (non immagini), JSON con URL immagine ufficiale, titolo, autore e anno se presenti, mezzo/tecnica, dimensioni se presenti, museo, fonte e licenza, ID e revisioni. Totale delle miniature WebP offline nuove dalle wave precedenti: **1.488.348 byte**.
+- **Importazione base globale:** [Actions #44901874348 SUCCESS](https://github.com/riccardopinato/ArtDrift-Infinite-Art-Gallery/actions/runs/44901874348) ha acquisito 3.915 record preliminari (inclusi 629 AIC remoti).
+- **QA immagini reale:** [Actions #44902484571](https://github.com/riccardopinato/ArtDrift-Infinite-Art-Gallery/actions/runs/44902484571), 7 anteprime per gruppo: otto gruppi 56/56 HTTP 200, ma AIC remoto 0/7 (HTTP 403). La pipeline di smoke test iniziale *non* certificava la raggiungibilità nonostante il successo del job.
+- **Quarantena AIC remoto:** eliminati 629 record non visualizzabili e sostituiti con **757 dipinti Cleveland CC0** (fonte e singoli diritti verificati), senza toccare i 72 dipinti AIC già disponibili offline. [Actions #44902738744 SUCCESS](https://github.com/riccardopinato/ArtDrift-Infinite-Art-Gallery/actions/runs/44902738744); controllo idempotente/conteggi [#44902810169 SUCCESS](https://github.com/riccardopinato/ArtDrift-Infinite-Art-Gallery/actions/runs/44902810169).
+- **QA finale disponibilità anteprime:** [Actions #44902826929 SUCCESS](https://github.com/riccardopinato/ArtDrift-Infinite-Art-Gallery/actions/runs/44902826929): 56/56 anteprime funzionanti in otto gruppi remoti, **zero errori nel campione**. La singola immagine tra le 4.043 potrebbe comunque non rispondere o avere condizioni di rete diverse su Android: collaudo completo/device non certificato.
+- **Dati mancanti non inventati**: alcuni record non hanno autore, dimensioni o tecnica; schede sintetiche originali costruite solo da metadati effettivamente acquisiti. La descrizione museale coperta da copyright non viene copiata.
+- **Coordinamento ancora aperto**: questo ramo non ha cambiato canvas motore/camera e non ha fatto merge in main. La stabilità posizione->opera dopo espansione dipende dalla versione del Drift Core nell'altra chat; la PR #9 conserva il proprio gate di accorpamento.
