@@ -23,10 +23,9 @@ class ArtRemoteImage extends StatelessWidget {
   final Widget fallback;
   final Widget loading;
 
-  @visibleForTesting
   static WebHtmlElementStrategy strategyFor({required bool isWeb}) =>
       isWeb
-          ? WebHtmlElementStrategy.fallback
+          ? WebHtmlElementStrategy.prefer
           : WebHtmlElementStrategy.never;
 
   @visibleForTesting

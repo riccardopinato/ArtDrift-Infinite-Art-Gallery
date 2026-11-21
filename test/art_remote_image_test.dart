@@ -4,9 +4,9 @@ import 'package:artdrift/models/artwork.dart';
 import 'package:artdrift/ui/art_remote_image.dart';
 
 void main() {
-  test('browser retries cross-origin images through HTML; Android unchanged', () {
+  test('browser prefers HTML images to avoid repeated cross-origin fetch delays', () {
     expect(ArtRemoteImage.strategyFor(isWeb: true),
-        WebHtmlElementStrategy.fallback);
+        WebHtmlElementStrategy.prefer);
     expect(ArtRemoteImage.strategyFor(isWeb: false),
         WebHtmlElementStrategy.never);
   });

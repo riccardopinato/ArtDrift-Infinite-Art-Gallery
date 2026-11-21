@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:drift_core/drift_core.dart';
 import '../models/artwork.dart';
 import '../ui/art_remote_image.dart';
+import '../services/art_thumbnail_prefetch.dart';
 
 /// Art-specific adapter. Visual appearance, preview and camera keys preserved.
 class InfiniteGallery extends StatelessWidget {
@@ -66,6 +67,7 @@ class InfiniteGallery extends StatelessWidget {
   Widget build(BuildContext context) => DriftCanvas<Artwork>(
     items: artworks, onOpen: onOpen,
     tileBuilder: (context, art, zoom) => _tileImage(art, zoom),
+    prefetchItem: ArtThumbnailPrefetch.instance.warm,
     cameraKey: 'artdrift.camera',
     compactBrand: 'A∞',
     fullBrand: 'artdrift  ∞',
