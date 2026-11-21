@@ -1,0 +1,50 @@
+name: ArtDrift global museum catalog — rights and image repair
+on:
+  push:
+    branches: [feat/artdrift-open-access-museums-20261121]
+    paths: [scripts/sanitize_global_museums.py]
+  workflow_dispatch:
+permissions: {contents: write}
+concurrency:
+  group: artdrift-global-museums-repair
+  cancel-in-progress: false
+jobs:
+  repair-catalog:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - name: Add reliably displayable CC0 paintings without APK image bloat
+        run: python -u scripts/sanitize_global_museums.py
+      - name: Source-rights, image URL and ID verification
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path("assets/museums")
+          data=json.loads((p/"catalog_global.json").read_text())
+          report=json.loads((p/"global_report.json").read_text())
+          assert len(data)>=3800, len(data)
+          assert len(data)+457>=4300
+          assert len({(r["museum_source"],r["museum_native_id"]) for r in data})==len(data)
+          assert not any(x["museum_source"]=="aic" for x in data)
+          assert all(x["is_public_domain"] and x["artwork_type_title"]=="Painting" and
+                     x["rights_evidence_url"].startswith("https://") for x in data)
+          assert all(not x.get("bootstrap_asset") for x in data)
+          assert (p/"catalog_global.json").stat().st_size<7500000
+          assert report["records_total"]==len(data)+457
+          print("GLOBAL_MUSEUM_REPAIR_PASS",report)
+          PY
+      - name: Commit deterministic content-only repair to museum PR branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/museums/catalog_global.json assets/museums/global_report.json
+          if ! git diff --cached --quiet; then
+            git commit -m "assets(museums): replace unavailable AIC previews with verified CMA CC0 works"
+            git fetch origin feat/artdrift-open-access-museums-20261121
+            git rebase origin/feat/artdrift-open-access-museums-20261121
+            git push origin HEAD:feat/artdrift-open-access-museums-20261121
+          fi
