@@ -102,6 +102,8 @@ class _DriftCanvasState<T> extends State<DriftCanvas<T>>
     final previous = _lastAutoFrame;
     _lastAutoFrame = elapsed;
     if (previous == null) return;
+    // Do not rebuild a 180-tile scene on every high-refresh-rate tick.
+    if ((elapsed - previous).inMilliseconds < 30) return;
     final seconds = ((elapsed - previous).inMicroseconds / 1000000.0)
         .clamp(0.0, 0.05);
     if (seconds <= 0) return;
