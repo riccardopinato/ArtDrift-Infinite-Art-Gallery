@@ -264,9 +264,7 @@ class _SearchSheetState extends State<_SearchSheet> {
                   maxLines: 1, overflow: TextOverflow.ellipsis,
                   style: const TextStyle(color: Color(0xFF78634C),fontSize: 11)),
                 const SizedBox(height: 4),
-                Text(art.museumSource == 'met' ? 'The Met · CC0' :
-                  art.museumSource == 'cleveland' ? 'Cleveland · CC0' :
-                  'Art Institute of Chicago · Public Domain',
+                Text(art.displayedMuseum + ' · ' + art.displayedLicense,
                   maxLines: 1, overflow: TextOverflow.ellipsis,
                   style: const TextStyle(color: Color(0xFF896A45),fontSize: 9)),
               ])),
