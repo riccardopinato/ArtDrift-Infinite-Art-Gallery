@@ -154,3 +154,5 @@ def main():
     print("GLOBAL_SANITIZE_SUCCESS",json.dumps(report,ensure_ascii=False),flush=True)
 
 if __name__=="__main__":main()
+
+# Observed 2026-11-21 source-image QA: eight non-AIC groups 56/56 passed.
