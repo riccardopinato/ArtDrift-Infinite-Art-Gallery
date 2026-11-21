@@ -25,4 +25,5 @@ flutter:
     - assets/gallery/catalog.json
     - assets/gallery/thumbs/
     - assets/museums/catalog.json
+    - assets/museums/catalog_global.json
     - assets/museums/thumbs/
