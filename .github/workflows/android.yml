@@ -33,6 +33,12 @@ jobs:
         run: python3 scripts/patch_android.py
       - name: Dependencies
         run: flutter pub get
+      - name: Shared engine dependencies
+        run: cd packages/drift_core && flutter pub get
+      - name: Shared engine analyze
+        run: cd packages/drift_core && flutter analyze --no-fatal-infos
+      - name: Shared engine tests
+        run: cd packages/drift_core && flutter test
       - name: Analyze
         run: flutter analyze --no-fatal-infos
       - name: Tests
