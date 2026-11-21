@@ -46,7 +46,7 @@ class ArtDriftToolbar extends StatelessWidget {
                     borderRadius: BorderRadius.circular(9),
                     child: OrnateFrame(padding: const EdgeInsets.all(8),
                       child: const SizedBox(width: 21,height: 21,
-                        child: Icon(Icons.tune_rounded,
+                        child: Icon(Icons.settings_rounded,
                           color: ArtPaper.ink,size: 21))),
                   )),
               )),

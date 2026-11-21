@@ -9,6 +9,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  drift_core:
+    path: packages/drift_core
   http: ^1.6.0
   path_provider: ^2.1.6
   shared_preferences: ^2.5.3
