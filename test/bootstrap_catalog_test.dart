@@ -28,6 +28,7 @@ void main() {
     addTearDown(service.close);
     final art = await service.load();
     expect(art.length, greaterThanOrEqualTo(28));
-    expect(art.every((a) => a.hasBundledPreview), isTrue);
+    expect(art.take(72).every((a) => a.hasBundledPreview), isTrue);
+    expect(art.every((a) => a.displayable), isTrue);
   });
 }

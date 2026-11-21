@@ -197,11 +197,18 @@ class _Caption extends StatelessWidget {
             label: const Text('Scheda originale del museo'),
             style: TextButton.styleFrom(foregroundColor: Colors.white70)),
           const SizedBox(height: 10),
-          Text(artwork.museumSource == 'met'
-              ? 'Fonte: The Metropolitan Museum of Art · CC0'
-              : artwork.museumSource == 'cleveland'
-                  ? 'Fonte: Cleveland Museum of Art · CC0'
-                  : 'Fonte: Art Institute of Chicago · Public Domain',
+          Text('Museo: ' + artwork.displayedMuseum,
+            style: const TextStyle(color: Colors.white70, fontSize: 11)),
+          if (artwork.medium.isNotEmpty || artwork.technique.isNotEmpty)
+            Text('Tecnica: ' +
+                (artwork.technique.isNotEmpty ? artwork.technique : artwork.medium),
+              style: const TextStyle(color: Colors.white54, fontSize: 11)),
+          if (artwork.dimensions.isNotEmpty)
+            Text('Dimensioni: ' + artwork.dimensions,
+              style: const TextStyle(color: Colors.white54, fontSize: 11)),
+          const SizedBox(height: 8),
+          Text('Immagine: ' + artwork.displayedLicense +
+              ' · Fonte: ' + artwork.displayedMuseum,
             style: const TextStyle(color: Colors.white38, fontSize: 10)),
         ],
       )),

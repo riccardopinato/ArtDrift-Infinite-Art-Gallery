@@ -1,0 +1,59 @@
+name: ArtDrift worldwide museum catalog — 3-lane bulk import
+on:
+  push:
+    branches: [feat/artdrift-open-access-museums-20261121]
+    paths:
+      - scripts/import_global_museum_catalog.py
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: artdrift-global-museums-import
+  cancel-in-progress: false
+jobs:
+  import-global:
+    runs-on: ubuntu-latest
+    timeout-minutes: 34
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Dependency for shared official API helpers
+        run: python -m pip install --disable-pip-version-check Pillow==11.3.0
+      - name: Validate source syntax
+        run: python -m py_compile scripts/import_global_museum_catalog.py scripts/import_museum_paintings.py
+      - name: Read verified public-domain records from independent museum providers
+        run: python -u scripts/import_global_museum_catalog.py
+      - name: Validate metadata-only global corpus and rights evidence
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path("assets/museums/catalog_global.json")
+          data=json.loads(p.read_text())
+          report=json.loads(Path("assets/museums/global_report.json").read_text())
+          assert len(data)>=1200 and len(data)==report["records_global"]
+          assert len({(r["museum_source"],r["museum_native_id"]) for r in data})==len(data)
+          assert len({r["museum_name"] for r in data})>=6, report["institutions"]
+          assert all(r["is_public_domain"] and r["artwork_type_title"]=="Painting" for r in data)
+          assert all(r["remote_preview_url"].startswith("https://") and
+                    r["rights_evidence_url"].startswith("https://") and
+                    (r["rights_license"].lower().find("cc0")>=0 or
+                     r["rights_license"].lower().find("public domain")>=0)
+                     for r in data)
+          assert not any("bootstrap_asset" in r for r in data)
+          assert p.stat().st_size<=7500000
+          print("GLOBAL_ART_CATALOG_VERIFIED",report)
+          PY
+      - name: Commit only museum catalog JSON and QA report into museum branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/museums/catalog_global.json assets/museums/global_report.json
+          if ! git diff --cached --quiet; then
+            git commit -m "assets(museums): thousands of source-verified world painting records"
+            git fetch origin feat/artdrift-open-access-museums-20261121
+            git rebase origin/feat/artdrift-open-access-museums-20261121
+            git push origin HEAD:feat/artdrift-open-access-museums-20261121
+          fi

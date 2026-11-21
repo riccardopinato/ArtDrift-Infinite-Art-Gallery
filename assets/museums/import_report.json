@@ -1,0 +1,17 @@
+{
+  "schema": 1,
+  "image_count": 385,
+  "preview_bytes": 1488348,
+  "sources": {
+    "cleveland": 150,
+    "getty": 1,
+    "met": 34,
+    "nga": 60,
+    "rijks": 80,
+    "smithsonian": 60
+  },
+  "rights_gate": "individual source rights, official image host and WebP decode",
+  "image_max_bytes": 22000,
+  "catalog_path": "assets/museums/catalog.json",
+  "license_reviews_required_before_store": true
+}
