@@ -4,11 +4,11 @@
   "preview_bytes": 1488348,
   "sources": {
     "cleveland": 150,
+    "getty": 1,
     "met": 34,
     "nga": 60,
     "rijks": 80,
-    "smithsonian": 60,
-    "getty": 1
+    "smithsonian": 60
   },
   "rights_gate": "individual source rights, official image host and WebP decode",
   "image_max_bytes": 22000,
