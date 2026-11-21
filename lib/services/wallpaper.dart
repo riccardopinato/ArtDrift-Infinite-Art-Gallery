@@ -15,14 +15,14 @@ class AndroidWallpaper {
   static Future<Uint8List> compose(Artwork artwork,
       {bool entireImage = true}) async {
     if (!artwork.displayable) throw StateError('Opera non autorizzata.');
-    final response = await http.get(Uri.parse(artwork.imageUrl(width: 1686)))
+    final response = await http.get(Uri.parse(artwork.imageUrl(width: 843)))
         .timeout(const Duration(seconds: 25));
     if (response.statusCode != 200 || response.bodyBytes.isEmpty ||
         response.bodyBytes.length > 24 * 1024 * 1024) {
       throw const HttpException('Immagine non disponibile per lo sfondo');
     }
     final codec = await ui.instantiateImageCodec(response.bodyBytes,
-      targetWidth: 1686);
+      targetWidth: 843);
     final frame = await codec.getNextFrame();
     codec.dispose();
     final image = frame.image;
