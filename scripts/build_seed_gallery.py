@@ -163,3 +163,5 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
+# Bootstrap collection is version-pinned after the first successful run.
