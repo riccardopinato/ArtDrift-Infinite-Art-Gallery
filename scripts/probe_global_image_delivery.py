@@ -59,3 +59,5 @@ if report["passed"] < int(report["samples"]*.85) or any(
 
 
 # Evidence run for pinned 3915-record worldwide catalog.
+
+# Post-quarantine smoke sample: 8 remote institution groups + 10 total with offline baseline.
