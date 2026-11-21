@@ -96,14 +96,18 @@ class _ArtworkDetailState extends State<ArtworkDetail> {
           key: ValueKey('detail-${current.id}'),
           minScale: 0.9, maxScale: 5,
           child: Center(child: Image.network(
-            current.imageUrl(width: 1686),
+            current.imageUrl(width: 843),
             fit: BoxFit.contain,
-            errorBuilder: (_, error, stack) => const Center(child: Text(
-              'Immagine non raggiungibile',
-              style: TextStyle(color: Colors.white70))),
+            errorBuilder: (_, error, stack) => current.hasBundledPreview
+                ? Image.asset(current.bootstrapAsset, fit: BoxFit.contain)
+                : const Center(child: Text('Immagine non raggiungibile',
+                    style: TextStyle(color: Colors.white70))),
             loadingBuilder: (context, child, progress) => progress == null
-                ? child : const Center(child: CircularProgressIndicator(
-                    color: Colors.white54)),
+                ? child
+                : current.hasBundledPreview
+                    ? Image.asset(current.bootstrapAsset, fit: BoxFit.contain)
+                    : const Center(child: CircularProgressIndicator(
+                        color: Colors.white54)),
           )),
         );
         return Stack(children: [

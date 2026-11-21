@@ -14,6 +14,7 @@ class Artwork {
     this.artworkType = '',
     this.imageWidth,
     this.imageHeight,
+    this.bootstrapAsset = '',
   });
 
   final int id;
@@ -28,6 +29,10 @@ class Artwork {
   final String artworkType;
   final int? imageWidth;
   final int? imageHeight;
+  /// Compact verified painting preview shipped with the app.
+  final String bootstrapAsset;
+  bool get hasBundledPreview =>
+      bootstrapAsset == 'assets/gallery/thumbs/$id.webp';
 
   static final RegExp _imageIdPattern = RegExp(r'^[0-9a-fA-F-]{16,64}$');
   bool get displayable =>
@@ -78,6 +83,7 @@ class Artwork {
       artworkType: _str(json['artwork_type_title']),
       imageWidth: _int(image['width']),
       imageHeight: _int(image['height']),
+      bootstrapAsset: _str(json['bootstrap_asset']),
     );
   }
 
@@ -93,5 +99,6 @@ class Artwork {
         'credit_line': creditLine,
         'artwork_type_title': artworkType,
         'thumbnail': {'width': imageWidth, 'height': imageHeight},
+        if (hasBundledPreview) 'bootstrap_asset': bootstrapAsset,
       };
 }

@@ -103,6 +103,44 @@ class _InfiniteGalleryState extends State<InfiniteGallery>
     super.dispose();
   }
 
+  Widget _preview(Artwork art) {
+    if (art.hasBundledPreview) {
+      return Image.asset(
+        art.bootstrapAsset,
+        fit: BoxFit.cover,
+        filterQuality: FilterQuality.low,
+        cacheWidth: 240,
+        gaplessPlayback: true,
+        errorBuilder: (_, error, stack) => const ColoredBox(
+          color: Color(0xFF24232A),
+          child: Center(child: Icon(Icons.image_not_supported_outlined,
+              color: Colors.white30, size: 22)),
+        ),
+      );
+    }
+    return const ColoredBox(
+      color: Color(0xFF24232A),
+      child: Center(child: Icon(Icons.image_not_supported_outlined,
+          color: Colors.white30, size: 22)),
+    );
+  }
+
+  Widget _tileImage(Artwork art) {
+    // Real bundled WebP previews show on the very first frame even offline.
+    // Zooming in opts into a higher-detail remote IIIF rendition only then.
+    if (art.hasBundledPreview && _zoom <= 1.65) return _preview(art);
+    return Image.network(
+      art.imageUrl(width: 400),
+      fit: BoxFit.cover,
+      filterQuality: FilterQuality.low,
+      cacheWidth: 400,
+      gaplessPlayback: true,
+      loadingBuilder: (context, child, progress) =>
+          progress == null ? child : _preview(art),
+      errorBuilder: (_, error, stack) => _preview(art),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (context, constraints) {
@@ -138,24 +176,7 @@ class _InfiniteGalleryState extends State<InfiniteGallery>
                     onTap: () => widget.onOpen(widget.artworks[tile.artworkIndex]),
                     child: ColoredBox(
                       color: const Color(0xFF24232A),
-                      child: Image.network(
-                        widget.artworks[tile.artworkIndex].imageUrl(width: 400),
-                        fit: BoxFit.cover,
-                        filterQuality: FilterQuality.low,
-                        cacheWidth: 400,
-                        gaplessPlayback: true,
-                        frameBuilder: (context, child, frame, synchronous) {
-                          if (synchronous) return child;
-                          return AnimatedOpacity(
-                            duration: const Duration(milliseconds: 250),
-                            opacity: frame == null ? 0 : 1,
-                            child: child,
-                          );
-                        },
-                        errorBuilder: (_, error, stackTrace) =>
-                            const Center(child: Icon(Icons.image_not_supported_outlined,
-                              color: Colors.white30, size: 22)),
-                      ),
+                      child: _tileImage(widget.artworks[tile.artworkIndex]),
                     ),
                   ),
                 ),
