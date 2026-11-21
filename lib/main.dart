@@ -9,7 +9,8 @@ import 'services/favorites.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  PaintingBinding.instance.imageCache.maximumSizeBytes = 110 * 1024 * 1024;
+  PaintingBinding.instance.imageCache.maximumSize = 110;
+  PaintingBinding.instance.imageCache.maximumSizeBytes = 48 * 1024 * 1024;
   runApp(const ArtDriftApp());
 }
 
@@ -94,7 +95,7 @@ class _GalleryHomeState extends State<GalleryHome> {
         SizedBox(height: 24),
         CircularProgressIndicator(color: Color(0xFFD2BB9C)),
         SizedBox(height: 20),
-        Text('Prepariamo la tua galleria…',
+        Text('Carichiamo le opere del tuo museo…',
           style: TextStyle(color: Colors.white54)),
       ],
     )));
