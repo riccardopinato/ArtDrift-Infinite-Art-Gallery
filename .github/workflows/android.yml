@@ -1,4 +1,4 @@
-name: ArtDrift Android — analyze, test, APK
+name: ArtDrift Android — analyze, test, ARM64 APK
 on:
   push:
     branches: [main, 'feat/**']
@@ -37,11 +37,11 @@ jobs:
         run: flutter analyze --no-fatal-infos
       - name: Tests
         run: flutter test
-      - name: Build Android APK (debug only)
-        run: flutter build apk --debug
-      - name: Upload test APK
+      - name: Build optimized Android ARM64 APK (internal test signing)
+        run: flutter build apk --release --target-platform android-arm64
+      - name: Upload optimized ARM64 APK
         uses: actions/upload-artifact@v4
         with:
-          name: ArtDrift-Android-debug-${{ github.sha }}
-          path: build/app/outputs/flutter-apk/app-debug.apk
+          name: ArtDrift-Android-ARM64-internal-${{ github.sha }}
+          path: build/app/outputs/flutter-apk/app-release.apk
           if-no-files-found: error
