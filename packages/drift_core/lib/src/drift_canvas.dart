@@ -1,29 +1,53 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'world_layout.dart';
 
-/// One full-screen canvas. The widget tree contains only visible artwork tiles.
-/// A detail route does not dispose this view or reset its camera.
+/// Optional, source-owned warmup for artwork or local-device thumbnails.
+/// Implementations must bound I/O and memory; the core never reads user files.
+typedef DriftPrefetchItem<T> = Future<void> Function(
+    BuildContext context, T item, double zoom);
+
+/// Infinite mosaic shared by Art Drift and Gallery Drift.
+/// Camera/world mapping and tile identity remain unchanged.
 class DriftCanvas<T> extends StatefulWidget {
-  const DriftCanvas({super.key, required this.items, required this.onOpen,
-    required this.tileBuilder, required this.cameraKey,
-    required this.compactBrand, required this.fullBrand,
-    required this.hintText, required this.recenterTooltip});
+  const DriftCanvas({
+    super.key,
+    required this.items,
+    required this.onOpen,
+    required this.tileBuilder,
+    required this.cameraKey,
+    required this.compactBrand,
+    required this.fullBrand,
+    required this.hintText,
+    required this.recenterTooltip,
+    this.prefetchItem,
+  });
 
   final List<T> items;
   final ValueChanged<T> onOpen;
   final Widget Function(BuildContext, T, double) tileBuilder;
   final String cameraKey, compactBrand, fullBrand, hintText, recenterTooltip;
+  final DriftPrefetchItem<T>? prefetchItem;
 
   @override
   State<DriftCanvas<T>> createState() => _DriftCanvasState<T>();
 }
 
 class _DriftCanvasState<T> extends State<DriftCanvas<T>>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   final _world = const InfiniteWorld();
   late final AnimationController _momentum;
+  late final Ticker _autoTicker;
+  Duration? _lastAutoFrame;
+  Timer? _dimTimer;
+  Timer? _prefetchTimer;
+  Rect _prefetchBounds = Rect.zero;
+  final Set<String> _warmKeys = <String>{};
+  final List<String> _warmOrder = <String>[];
+
   Offset _offset = Offset.zero;
   Offset _worldAtGestureStart = Offset.zero;
   Offset _flingFrom = Offset.zero;
@@ -31,7 +55,20 @@ class _DriftCanvasState<T> extends State<DriftCanvas<T>>
   double _zoom = 1;
   double _zoomAtGestureStart = 1;
   bool _cameraInitialized = false;
+  bool _autoRunning = false;
+  bool _controlsDimmed = false;
+  int _autoSpeed = 25;
   Size _viewport = Size.zero;
+
+  static const int _prefetchBatchSize = 8;
+  static const int _warmHistoryLimit = 256;
+
+  @visibleForTesting
+  static int nextSpeed(int current) => current >= 100 ? 25 : current + 25;
+
+  @visibleForTesting
+  static double speedPixelsPerSecond(int percent) =>
+      (percent.clamp(25, 100) / 25) * 36.0;
 
   @override
   void initState() {
@@ -43,29 +80,93 @@ class _DriftCanvasState<T> extends State<DriftCanvas<T>>
         final progress = Curves.decelerate.transform(_momentum.value);
         setState(() => _offset = _flingFrom + _flingDistance * progress);
       });
+    _autoTicker = createTicker(_tickAuto);
+    _scheduleDim();
     _restoreCamera();
+  }
+
+  void _scheduleDim() {
+    _dimTimer?.cancel();
+    _dimTimer = Timer(const Duration(seconds: 3), () {
+      if (mounted) setState(() => _controlsDimmed = true);
+    });
+  }
+
+  void _activateControls() {
+    if (_controlsDimmed) setState(() => _controlsDimmed = false);
+    _scheduleDim();
+  }
+
+  void _tickAuto(Duration elapsed) {
+    if (!_autoRunning || !mounted) return;
+    final previous = _lastAutoFrame;
+    _lastAutoFrame = elapsed;
+    if (previous == null) return;
+    final seconds = ((elapsed - previous).inMicroseconds / 1000000.0)
+        .clamp(0.0, 0.05);
+    if (seconds <= 0) return;
+    // Move the artwork up so the camera explores new rows below it.
+    setState(() => _offset = Offset(
+      _offset.dx, _offset.dy - speedPixelsPerSecond(_autoSpeed) * seconds));
+  }
+
+  void _pauseAuto() {
+    if (!_autoRunning) return;
+    _autoTicker.stop();
+    _lastAutoFrame = null;
+    _autoRunning = false;
+    _saveCamera();
+  }
+
+  void _toggleAuto() {
+    _activateControls();
+    _momentum.stop();
+    setState(() {
+      if (_autoRunning) {
+        _pauseAuto();
+      } else {
+        _autoRunning = true;
+        _lastAutoFrame = null;
+        _autoTicker.start();
+      }
+    });
+  }
+
+  Future<void> _changeSpeed() async {
+    _activateControls();
+    setState(() => _autoSpeed = nextSpeed(_autoSpeed));
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('${widget.cameraKey}.autoSpeed', _autoSpeed);
   }
 
   Future<void> _restoreCamera() async {
     final prefs = await SharedPreferences.getInstance();
-    if (!mounted || !prefs.containsKey(widget.cameraKey + '.x')) return;
+    if (!mounted) return;
+    final speed = prefs.getInt('${widget.cameraKey}.autoSpeed');
     setState(() {
-      _offset = Offset(prefs.getDouble(widget.cameraKey + '.x') ?? 0,
-          prefs.getDouble(widget.cameraKey + '.y') ?? 0);
-      _zoom = (prefs.getDouble(widget.cameraKey + '.zoom') ?? 1)
-          .clamp(0.55, 2.7).toDouble();
-      _cameraInitialized = true;
+      if (speed != null && const [25, 50, 75, 100].contains(speed)) {
+        _autoSpeed = speed;
+      }
+      if (prefs.containsKey('${widget.cameraKey}.x')) {
+        _offset = Offset(
+          prefs.getDouble('${widget.cameraKey}.x') ?? 0,
+          prefs.getDouble('${widget.cameraKey}.y') ?? 0);
+        _zoom = (prefs.getDouble('${widget.cameraKey}.zoom') ?? 1)
+            .clamp(0.55, 2.7).toDouble();
+        _cameraInitialized = true;
+      }
     });
   }
 
   Future<void> _saveCamera() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setDouble(widget.cameraKey + '.x', _offset.dx);
-    await prefs.setDouble(widget.cameraKey + '.y', _offset.dy);
-    await prefs.setDouble(widget.cameraKey + '.zoom', _zoom);
+    await prefs.setDouble('${widget.cameraKey}.x', _offset.dx);
+    await prefs.setDouble('${widget.cameraKey}.y', _offset.dy);
+    await prefs.setDouble('${widget.cameraKey}.zoom', _zoom);
   }
 
   void _resetCamera() {
+    _pauseAuto();
     _momentum.stop();
     setState(() {
       _offset = Offset(_viewport.width / 2, _viewport.height / 2);
@@ -75,9 +176,11 @@ class _DriftCanvasState<T> extends State<DriftCanvas<T>>
   }
 
   void _start(ScaleStartDetails details) {
+    _pauseAuto(); // A manual gesture always has priority.
     _momentum.stop();
     _zoomAtGestureStart = _zoom;
     _worldAtGestureStart = (details.localFocalPoint - _offset) / _zoom;
+    _activateControls();
   }
 
   void _update(ScaleUpdateDetails details) {
@@ -102,10 +205,120 @@ class _DriftCanvasState<T> extends State<DriftCanvas<T>>
     }
   }
 
+  void _queuePrefetch(Rect visible) {
+    if (widget.prefetchItem == null || widget.items.isEmpty) return;
+    _prefetchBounds = visible;
+    if (_prefetchTimer != null) return;
+    _prefetchTimer = Timer(const Duration(milliseconds: 260), () {
+      _prefetchTimer = null;
+      if (mounted) _warmNearby(_prefetchBounds);
+    });
+  }
+
+  void _warmNearby(Rect visible) {
+    final prefetch = widget.prefetchItem;
+    if (!mounted || prefetch == null || widget.items.isEmpty ||
+        visible.isEmpty) return;
+    final horizon = visible.height * (_autoRunning ? 1.6 : 0.9);
+    final nearby = Rect.fromLTRB(
+      visible.left - visible.width * 0.6,
+      visible.top - visible.height * 0.65,
+      visible.right + visible.width * 0.6,
+      visible.bottom + horizon,
+    );
+    final futureTiles = _world.visible(nearby, widget.items.length, limit: 240);
+    final focus = Offset(visible.center.dx,
+        _autoRunning ? visible.bottom + visible.height * 0.4 : visible.center.dy);
+    futureTiles.sort((a, b) {
+      final aDelta = (a.rect.center - focus).distanceSquared;
+      final bDelta = (b.rect.center - focus).distanceSquared;
+      return aDelta.compareTo(bDelta);
+    });
+    var warmed = 0;
+    final tier = _zoom > 1.65 ? 2 : 1;
+    for (final tile in futureTiles) {
+      if (warmed >= _prefetchBatchSize) break;
+      final key = '${tile.artworkIndex}:$tier';
+      if (!_warmKeys.add(key)) continue;
+      _warmOrder.add(key);
+      if (_warmOrder.length > _warmHistoryLimit) {
+        _warmKeys.remove(_warmOrder.removeAt(0));
+      }
+      warmed++;
+      // No dependency on any museum API, photo permission, or decoder here.
+      unawaited(Future.sync(() =>
+          prefetch(context, widget.items[tile.artworkIndex], _zoom))
+          .catchError((Object error, StackTrace trace) {}));
+    }
+    if (warmed == _prefetchBatchSize) _queuePrefetch(visible);
+  }
+
+  @override
+  void didUpdateWidget(covariant DriftCanvas<T> oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!identical(oldWidget.items, widget.items)) {
+      _warmKeys.clear();
+      _warmOrder.clear();
+    }
+  }
+
   @override
   void dispose() {
+    _autoTicker.dispose();
     _momentum.dispose();
+    _dimTimer?.cancel();
+    _prefetchTimer?.cancel();
     super.dispose();
+  }
+
+  Widget _autoControls() {
+    final label = _autoRunning ? 'Pausa' : 'Auto';
+    final labelIcon = _autoRunning ? Icons.pause_rounded : Icons.play_arrow_rounded;
+    return AnimatedOpacity(
+      duration: const Duration(milliseconds: 350),
+      opacity: _controlsDimmed ? 0.32 : 1.0,
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Tooltip(
+          message: _autoRunning ? 'Ferma lo scorrimento automatico' :
+              'Avvia lo scorrimento automatico',
+          child: SizedBox(height: 40, width: 88,
+            child: FilledButton(
+              key: const ValueKey('drift-auto-toggle'),
+              onPressed: _toggleAuto,
+              style: FilledButton.styleFrom(
+                padding: const EdgeInsets.symmetric(horizontal: 5),
+                backgroundColor: const Color(0xE51B1B22),
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  side: BorderSide(color: _autoRunning
+                      ? const Color(0xFFE5C8A5) : Colors.white24),
+                  borderRadius: BorderRadius.circular(9))),
+              child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                Icon(labelIcon, size: 17),
+                const SizedBox(width: 4),
+                Text(label, style: const TextStyle(fontSize: 12)),
+              ]))),
+        ),
+        const SizedBox(height: 5),
+        Tooltip(
+          message: 'Velocità scorrimento automatico: premi per cambiare',
+          child: SizedBox(height: 37, width: 68,
+            child: OutlinedButton(
+              key: const ValueKey('drift-auto-speed'),
+              onPressed: _changeSpeed,
+              style: OutlinedButton.styleFrom(
+                backgroundColor: const Color(0xD91B1B22),
+                foregroundColor: Colors.white,
+                padding: EdgeInsets.zero,
+                side: const BorderSide(color: Colors.white30),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8))),
+              child: Text('$_autoSpeed%',
+                style: const TextStyle(
+                  fontSize: 12, fontWeight: FontWeight.w600)))),
+        ),
+      ]),
+    );
   }
 
   @override
@@ -116,7 +329,7 @@ class _DriftCanvasState<T> extends State<DriftCanvas<T>>
         _offset = Offset(_viewport.width / 2, _viewport.height / 2);
         _cameraInitialized = true;
       }
-      // Only draw what the user can see, plus a narrow prefetch margin.
+      // Narrow render overdraw stays bounded; separate prefetch is farther out.
       final bounds = Rect.fromLTRB(
         (-_offset.dx - 240) / _zoom,
         (-_offset.dy - 240) / _zoom,
@@ -124,6 +337,12 @@ class _DriftCanvasState<T> extends State<DriftCanvas<T>>
         (_viewport.height - _offset.dy + 240) / _zoom,
       );
       final tiles = _world.visible(bounds, widget.items.length);
+      final actualViewport = Rect.fromLTRB(
+        -_offset.dx / _zoom, -_offset.dy / _zoom,
+        (_viewport.width - _offset.dx) / _zoom,
+        (_viewport.height - _offset.dy) / _zoom,
+      );
+      _queuePrefetch(actualViewport);
       return Stack(fit: StackFit.expand, children: [
         GestureDetector(
           behavior: HitTestBehavior.opaque,
@@ -140,10 +359,14 @@ class _DriftCanvasState<T> extends State<DriftCanvas<T>>
                   width: tile.rect.width * _zoom,
                   height: tile.rect.height * _zoom,
                   child: GestureDetector(
-                    onTap: () => widget.onOpen(widget.items[tile.artworkIndex]),
+                    onTap: () {
+                      _pauseAuto();
+                      widget.onOpen(widget.items[tile.artworkIndex]);
+                    },
                     child: ColoredBox(
                       color: const Color(0xFF24232A),
-                      child: widget.tileBuilder(context, widget.items[tile.artworkIndex], _zoom),
+                      child: widget.tileBuilder(context,
+                          widget.items[tile.artworkIndex], _zoom),
                     ),
                   ),
                 ),
@@ -152,20 +375,28 @@ class _DriftCanvasState<T> extends State<DriftCanvas<T>>
         ),
         Positioned(
           left: 19, top: 14,
-          child: IgnorePointer(
-            child: SafeArea(
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  color: const Color(0xB5101015),
-                  borderRadius: BorderRadius.circular(6)),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                  child: Text(_viewport.width < 460 ? widget.compactBrand : widget.fullBrand,
-                    style: TextStyle(color: Colors.white,
-                      fontSize: _viewport.width < 460 ? 16 : 18,
-                      letterSpacing: -0.5, fontWeight: FontWeight.w700)),
-                ),
-              ),
+          child: SafeArea(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                IgnorePointer(child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    color: const Color(0xB5101015),
+                    borderRadius: BorderRadius.circular(6)),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10, vertical: 8),
+                    child: Text(_viewport.width < 460
+                        ? widget.compactBrand : widget.fullBrand,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: _viewport.width < 460 ? 16 : 18,
+                        letterSpacing: -0.5, fontWeight: FontWeight.w700)),
+                  ),
+                )),
+                const SizedBox(height: 6),
+                _autoControls(),
+              ],
             ),
           ),
         ),
@@ -194,10 +425,12 @@ class _DriftCanvasState<T> extends State<DriftCanvas<T>>
                   color: const Color(0xB8111116),
                   borderRadius: BorderRadius.circular(30)),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 17, vertical: 9),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 17, vertical: 9),
                   child: Text(widget.hintText,
                     textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.white70, fontSize: 11)),
+                    style: const TextStyle(
+                      color: Colors.white70, fontSize: 11)),
                 ),
               )),
             ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:drift_core/drift_core.dart';
 import '../models/artwork.dart';
 import '../ui/art_remote_image.dart';
@@ -66,6 +67,20 @@ class InfiniteGallery extends StatelessWidget {
   Widget build(BuildContext context) => DriftCanvas<Artwork>(
     items: artworks, onOpen: onOpen,
     tileBuilder: (context, art, zoom) => _tileImage(art, zoom),
+    prefetchItem: (context, art, zoom) async {
+      if (!context.mounted) return;
+      if (art.hasBundledPreview && zoom <= 1.65) {
+        await precacheImage(AssetImage(art.bootstrapAsset), context,
+            onError: (error, stack) {});
+        return;
+      }
+      // Mirror ArtRemoteImage's browser strategy and image dimensions.
+      final provider = NetworkImage(art.imageUrl(width: 400),
+        webHtmlElementStrategy: ArtRemoteImage.strategyFor(isWeb: kIsWeb));
+      await precacheImage(
+        ResizeImage.resizeIfNeeded(kIsWeb ? null : 400, null, provider),
+        context, onError: (error, stack) {});
+    },
     cameraKey: 'artdrift.camera',
     compactBrand: 'A∞',
     fullBrand: 'artdrift  ∞',
