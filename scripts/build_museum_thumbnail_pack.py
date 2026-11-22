@@ -142,8 +142,14 @@ def main():
  (ROOT/"manifest.json").write_text(json.dumps(manifest,separators=(",",":"))+"\n")
  counts=collections.Counter(result[1] for result in results)
  providers=collections.Counter(k.split(":")[0] for k in packed)
+ policy_eligible={k for k,row in candidates.items() if eligible_new_download(row)}
  summary={"schema_version":1,"catalog_total":len(data),
-          "license_eligible":len(candidates),"web_thumbnails_available":len(packed),
+          "license_eligible":len(candidates),
+          "new_download_policy_eligible":len(policy_eligible),
+          "new_download_policy_hold":len(candidates)-len(policy_eligible),
+          "existing_legacy_pack_requires_image_rights_review":
+            len([k for k in packed if k not in policy_eligible]),
+          "web_thumbnails_available":len(packed),
           "web_thumbnails_missing":len(candidates)-len(packed),
           "batch_requested":len(selected),"status_counts":dict(sorted(counts.items())),
           "available_by_source":dict(sorted(providers.items())),
