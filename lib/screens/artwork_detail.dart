@@ -24,6 +24,7 @@ class ArtworkDetail extends StatefulWidget {
 class _ArtworkDetailState extends State<ArtworkDetail> {
   late int _index;
   bool _busy = false;
+  bool _contemplation = false;
 
   @override
   void initState() {
@@ -94,7 +95,10 @@ class _ArtworkDetailState extends State<ArtworkDetail> {
           onMuseum: _openMuseum,
           onWallpaper: _busy || kIsWeb ? null : _setWallpaper,
         );
-        final painting = InteractiveViewer(
+        final painting = GestureDetector(
+          behavior: HitTestBehavior.translucent,
+          onTap: () => setState(() => _contemplation = !_contemplation),
+          child: InteractiveViewer(
           key: ValueKey('detail-${current.id}'),
           minScale: 0.9, maxScale: 5,
           child: Center(child: ArtRemoteImage(
@@ -128,11 +132,11 @@ class _ArtworkDetailState extends State<ArtworkDetail> {
                             color: Colors.white54)),
                   ),
           )),
-        );
+        ));
         return Stack(children: [
           Padding(
-            padding: const EdgeInsets.only(top: 56),
-            child: wide
+            padding: EdgeInsets.only(top: _contemplation ? 0 : 56),
+            child: _contemplation ? Center(child: painting) : wide
                 ? Row(children: [
                     SizedBox(width: 290, child: caption),
                     Expanded(child: Padding(
@@ -145,12 +149,12 @@ class _ArtworkDetailState extends State<ArtworkDetail> {
                     SizedBox(height: constraints.maxHeight * 0.31, child: caption),
                   ]),
           ),
-          Positioned(left: 8, top: 3, child: IconButton(
+          if (!_contemplation) Positioned(left: 8, top: 3, child: IconButton(
             tooltip: 'Torna alla galleria',
             color: Colors.white,
             icon: const Icon(Icons.close_rounded),
             onPressed: () => Navigator.of(context).pop())),
-          Positioned(right: 8, top: 3, child: Row(children: [
+          if (!_contemplation) Positioned(right: 8, top: 3, child: Row(children: [
             IconButton(tooltip: 'Precedente', icon: const Icon(Icons.arrow_back),
               color: Colors.white70, onPressed: () => _next(-1)),
             IconButton(tooltip: 'Successivo', icon: const Icon(Icons.arrow_forward),
