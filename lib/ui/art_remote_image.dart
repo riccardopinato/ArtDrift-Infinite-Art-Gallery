@@ -134,9 +134,6 @@ class _ArtRemoteImageState extends State<ArtRemoteImage> {
       );
     }
 
-    if (nativeAsset != null && widget.width <= 400) {
-      return nativePreview(onError: () => imageAt(0));
-    }
     if (localUrl != null && widget.width <= 400) {
       return packaged(onError: () => imageAt(0));
     }
