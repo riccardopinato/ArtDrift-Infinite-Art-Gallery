@@ -40,8 +40,10 @@ class ArtOfflineThumbnailIndex {
       try {
         loadFromManifest(await rootBundle.loadString(
             'web/museum_thumbs/manifest.json'));
-      } catch (_) {
+      } catch (error) {
         // The original bundled museum previews remain usable independently.
+        // Keep a debug-only diagnostic so pack/asset mistakes are observable.
+        if (kDebugMode) debugPrint('Mobile thumbnail manifest: $error');
       }
       return;
     }
