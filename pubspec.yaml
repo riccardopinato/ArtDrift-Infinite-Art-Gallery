@@ -29,3 +29,6 @@ flutter:
     - assets/museums/catalog.json
     - assets/museums/catalog_global.json
     - assets/museums/thumbs/
+    # Previously Web-only verified WebP pack: also bundle it in the Android APK.
+    # Images stay source-bound; no runtime copying or extra image host.
+    - web/museum_thumbs/
