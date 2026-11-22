@@ -1,7 +1,7 @@
 name: ArtDrift Web Preview — source and build
 on:
   push:
-    branches: ['feat/artdrift-web-preview*']
+    branches: ['feat/artdrift-web-preview*', 'feat/artdrift-maxi-integration-*']
   pull_request:
     branches: [main]
   workflow_dispatch:
@@ -44,8 +44,12 @@ jobs:
               assert file.is_file() and 250<=file.stat().st_size<=24000
           print("REAL_PACKED_WEB_IMAGES",len(keys))
           PY
-      - name: Build web preview
-        run: flutter build web --release --base-href /
+      - name: Build web preview without duplicate Flutter thumbnail bytes
+        run: |
+          flutter build web --release --base-href /
+          if [[ -s build/web/museum_thumbs/manifest.json ]]; then
+            rm -rf build/web/assets/web/museum_thumbs
+          fi
       - name: Upload immutable web build
         uses: actions/upload-artifact@v4
         with:
