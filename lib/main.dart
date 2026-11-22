@@ -9,6 +9,8 @@ import 'ui/gallery_toolbar.dart';
 import 'ui/localization.dart';
 import 'models/artwork.dart';
 import 'screens/artwork_detail.dart';
+import 'screens/collection_canvas.dart';
+import 'collections/art_collections.dart';
 import 'services/catalog_service.dart';
 import 'services/favorites.dart';
 import 'services/art_offline_thumbnail_index.dart';
@@ -84,7 +86,9 @@ class _GalleryHomeState extends State<GalleryHome> {
   }
 
   Future<void> _openSearch() async {
-    final selected = await showArtSearchSheet(context, _artworks);
+    final selected = await showArtSearchSheet(context, _artworks,
+      collectionCatalog: _canvasArtworks,
+      onOpenCollection: _openCollection);
     if (!mounted || selected == null) return;
     _open(selected);
   }
@@ -102,10 +106,23 @@ class _GalleryHomeState extends State<GalleryHome> {
     _open(selected);
   }
 
-  void _open(Artwork artwork) {
-    final index = _artworks.indexWhere((a) => a.catalogKey == artwork.catalogKey);
-    // Remote discoveries open in detail without perturbing the pinned canvas.
-    final group = index < 0 ? <Artwork>[artwork] : _artworks;
+  void _open(Artwork artwork) => _openArtworkInGroup(artwork, _artworks);
+
+  void _openCollection(ArtCollection collection) {
+    final selected = ArtCollections.members(collection, _canvasArtworks);
+    if (selected.isEmpty || !mounted) return;
+    Navigator.of(context).push(MaterialPageRoute<void>(
+      builder: (_) => ArtCollectionCanvasScreen(
+        collection: collection,
+        artworks: selected,
+        onOpen: _openArtworkInGroup,
+      ),
+    ));
+  }
+
+  void _openArtworkInGroup(Artwork artwork, List<Artwork> artworks) {
+    final index = artworks.indexWhere((a) => a.catalogKey == artwork.catalogKey);
+    final group = index < 0 ? <Artwork>[artwork] : artworks;
     final start = index < 0 ? 0 : index;
     Navigator.of(context).push(PageRouteBuilder<void>(
       pageBuilder: (context, animation, secondaryAnimation) => ArtworkDetail(
