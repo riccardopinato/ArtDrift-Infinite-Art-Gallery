@@ -29,47 +29,53 @@ class ArtCollectionCanvasScreen extends StatelessWidget {
           onOpen: (art) => onOpen(art, artworks),
           cameraKey: 'artdrift.collection.${collection.id}.camera',
         ),
+        // Reserve the top-left area for the shared canvas brand, Auto
+        // and speed controls; collection navigation stays on the right.
         Positioned(
-          top: 0, left: 0, right: 0,
+          top: 0, right: 12,
           child: SafeArea(
             bottom: false,
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(12, 8, 12, 0),
-              child: Row(children: [
-                Material(
-                  color: const Color(0xE51B1B22),
-                  borderRadius: BorderRadius.circular(12),
-                  child: IconButton(
-                    key: const ValueKey('collection-back'),
-                    tooltip: 'Back',
-                    onPressed: () => Navigator.of(context).pop(),
-                    color: Colors.white,
-                    icon: const Icon(Icons.arrow_back_rounded),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(child: DecoratedBox(
-                  decoration: BoxDecoration(
+            child: SizedBox(
+              width: MediaQuery.sizeOf(context).width * 0.46,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Material(
                     color: const Color(0xE51B1B22),
-                    borderRadius: BorderRadius.circular(12)),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(collection.title(language),
-                          maxLines: 1, overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(color: Colors.white,
-                            fontSize: 16, fontWeight: FontWeight.w600)),
-                        Text('${artworks.length} · ${collection.subtitle(language)}',
-                          maxLines: 1, overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(color: Colors.white70,
-                            fontSize: 10)),
-                      ],
+                    borderRadius: BorderRadius.circular(12),
+                    child: IconButton(
+                      key: const ValueKey('collection-back'),
+                      tooltip: 'Back',
+                      onPressed: () => Navigator.of(context).pop(),
+                      color: Colors.white,
+                      icon: const Icon(Icons.arrow_back_rounded),
                     ),
                   ),
-                )),
-              ]),
+                  const SizedBox(height: 6),
+                  DecoratedBox(
+                    decoration: BoxDecoration(
+                      color: const Color(0xE51B1B22),
+                      borderRadius: BorderRadius.circular(12)),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10, vertical: 8),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(collection.title(language),
+                            maxLines: 1, overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(color: Colors.white,
+                              fontSize: 15, fontWeight: FontWeight.w600)),
+                          Text('${artworks.length} · ${collection.subtitle(language)}',
+                            maxLines: 1, overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(color: Colors.white70,
+                              fontSize: 10)),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
