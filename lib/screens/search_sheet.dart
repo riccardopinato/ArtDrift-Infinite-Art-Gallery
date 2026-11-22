@@ -8,17 +8,21 @@ import '../ui/localization.dart';
 import '../ui/parchment.dart';
 
 Future<Artwork?> showArtSearchSheet(BuildContext context, List<Artwork> catalog,
-    {void Function(ArtCollection)? onOpenCollection}) =>
+    {void Function(ArtCollection)? onOpenCollection,
+     List<Artwork>? collectionCatalog}) =>
     showModalBottomSheet<Artwork>(
       context: context, isScrollControlled: true, useSafeArea: true,
       backgroundColor: Colors.transparent,
       builder: (_) => _SearchSheet(artworks: catalog,
+          collectionCatalog: collectionCatalog ?? catalog,
           onOpenCollection: onOpenCollection),
     );
 
 class _SearchSheet extends StatefulWidget {
-  const _SearchSheet({required this.artworks, this.onOpenCollection});
+  const _SearchSheet({required this.artworks,
+    required this.collectionCatalog, this.onOpenCollection});
   final List<Artwork> artworks;
+  final List<Artwork> collectionCatalog;
   final void Function(ArtCollection)? onOpenCollection;
   @override
   State<_SearchSheet> createState() => _SearchSheetState();
@@ -43,7 +47,7 @@ class _SearchSheetState extends State<_SearchSheet> {
   void initState() {
     super.initState();
     _search = GallerySearch(widget.artworks);
-    _collections = ArtCollections.available(widget.artworks);
+    _collections = ArtCollections.available(widget.collectionCatalog);
     _text.addListener(_updateLocal);
   }
 
@@ -236,7 +240,7 @@ class _SearchSheetState extends State<_SearchSheet> {
 
   Widget _collectionRow(ArtCollection collection) {
     final language = ArtDriftLocale.current.value;
-    final count = widget.artworks.where(collection.contains).length;
+    final count = widget.collectionCatalog.where(collection.contains).length;
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: OrnateFrame(shadow: false, padding: EdgeInsets.zero,
