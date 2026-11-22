@@ -96,10 +96,10 @@ class ArtCollections {
   static final _year19 = RegExp(r'(?<!\d)18\d{2}(?!\d)');
   static final _year20 = RegExp(r'(?<!\d)19\d{2}(?!\d)');
   static final _nineteenth = RegExp(
-    r'19th century|xix(?:e|ème)? siècle|siglo xix|19\\. jahrhundert',
+    r'19th century|xix(?:e|ème)? siècle|siglo xix|19\. jahrhundert',
     caseSensitive: false);
   static final _twentieth = RegExp(
-    r'20th century|xx(?:e|ème)? siècle|siglo xx|20\\. jahrhundert',
+    r'20th century|xx(?:e|ème)? siècle|siglo xx|20\. jahrhundert',
     caseSensitive: false);
   static final _nonLetter = RegExp(r'[^a-zà-ÿ0-9]+');
 
