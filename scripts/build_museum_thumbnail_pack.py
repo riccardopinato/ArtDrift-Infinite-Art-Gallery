@@ -20,6 +20,20 @@ ALLOWED = {
  "mia":{"api.artsmia.org"},
  "walters":{"images.thewalters.org","art.thewalters.org"}
 }
+# This automated wave is limited to providers whose *image* Open Access
+# policy was independently checked. Museum metadata CC0 alone is insufficient.
+# Getty/Mia/SMK and other sources remain HOLD pending image-level evidence.
+MOBILE_PACK_SOURCES = {
+  "met", "cleveland", "nga", "rijks", "smithsonian",
+}
+RIGHTS_EVIDENCE_HOSTS = {
+  "met": {"www.metmuseum.org", "metmuseum.org"},
+  "cleveland": {"www.clevelandart.org", "clevelandart.org"},
+  "nga": {"www.nga.gov", "nga.gov"},
+  "rijks": {"data.rijksmuseum.nl", "www.rijksmuseum.nl", "rijksmuseum.nl"},
+  "smithsonian": {"www.si.edu", "si.edu", "ids.si.edu"},
+}
+
 Image.MAX_IMAGE_PIXELS = 24_000_000
 HOST_LOCKS = collections.defaultdict(lambda: __import__('threading').BoundedSemaphore(2))
 HEADERS = {"User-Agent":"ArtDrift/0.3.5 (open-access image cache validator)",
@@ -36,10 +50,17 @@ def official(url, source):
 def eligible(row):
  if row.get("is_public_domain") is not True or row.get("bootstrap_asset"): return False
  source=row.get("museum_source","")
- if source not in ALLOWED or not official(row.get("remote_preview_url",""),source): return False
+ if source not in MOBILE_PACK_SOURCES: return False
+ if not official(row.get("remote_preview_url",""),source): return False
  license=str(row.get("rights_license","")).lower()
- if "cc0" not in license and "public domain" not in license: return False
- if not str(row.get("rights_evidence_url","")).startswith("https://"): return False
+ if source in {"met","cleveland","smithsonian"}:
+  if "cc0" not in license: return False
+ elif "cc0" not in license and "public domain" not in license: return False
+ try:
+  evidence=urlparse(row.get("rights_evidence_url",""))
+  if evidence.scheme!="https" or evidence.hostname not in RIGHTS_EVIDENCE_HOSTS[source]:
+   return False
+ except (TypeError,ValueError): return False
  if not str(row.get("museum_native_id","")).strip(): return False
  try:
   return int(row["id"])>0
@@ -99,7 +120,7 @@ def main():
  data=json.loads(CATALOG.read_text(encoding="utf-8"))
  if not isinstance(data,list):raise SystemExit("invalid catalog")
  candidates={key(x):x for x in data if eligible(x)}
- if len(candidates)<3000:raise SystemExit(f"rights/provenance gate failed: {len(candidates)}")
+ if len(candidates)<300:raise SystemExit(f"rights/provenance gate failed: {len(candidates)}")
  ordered=sorted(candidates.values(),key=lambda x:hashlib.sha256(
   ("artdrift-pack-v1/"+key(x)).encode()).hexdigest())
  missing=[x for x in ordered if not location(x).is_file()]
