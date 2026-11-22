@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/painting.dart';
 
 import 'canvas/infinite_gallery.dart';
@@ -48,6 +49,7 @@ class _GalleryHomeState extends State<GalleryHome> {
   final CatalogService _catalog = CatalogService();
   final Favorites _favorites = Favorites();
   List<Artwork> _artworks = [];
+  List<Artwork> _canvasArtworks = [];
   bool _loading = true;
   String? _error;
 
@@ -65,7 +67,18 @@ class _GalleryHomeState extends State<GalleryHome> {
       await ArtOfflineThumbnailIndex.instance.initialize();
       final works = await _catalog.load(refresh: refresh);
       if (!mounted) return;
-      setState(() { _artworks = works; _loading = false; });
+      // Android visual-first mode: only artworks with an actual offline WebP
+      // occupy canvas tiles. All 4,500 records remain in search and detail.
+      // Never show another painting in place of the selected artwork.
+      final visible = kIsWeb ? works : works.where((art) =>
+          art.hasBundledPreview ||
+          ArtOfflineThumbnailIndex.instance.assetFor(art) != null)
+          .toList(growable: false);
+      setState(() {
+        _artworks = works;
+        _canvasArtworks = visible.isEmpty ? works : visible;
+        _loading = false;
+      });
     } catch (error) {
       if (!mounted) return;
       setState(() { _loading = false; _error = '$error'; });
@@ -149,7 +162,7 @@ class _GalleryHomeState extends State<GalleryHome> {
       )));
     }
     return Scaffold(body: Stack(fit: StackFit.expand, children: [
-      InfiniteGallery(artworks: _artworks, onOpen: _open),
+      InfiniteGallery(artworks: _canvasArtworks, onOpen: _open),
       Positioned(top: 0, left: 0, right: 0,
         child: SafeArea(bottom: false, child: ArtDriftToolbar(
           onSearch: _openSearch,
