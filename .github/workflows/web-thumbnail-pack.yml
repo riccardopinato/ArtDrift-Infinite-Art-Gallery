@@ -16,8 +16,10 @@ jobs:
           persist-credentials: true
       - name: Install image tooling
         run: python3 -m pip install --user "Pillow==11.3.0" "requests==2.32.5"
-      - name: Download and compress verified public-domain thumbnails
-        run: python3 scripts/build_museum_thumbnail_pack.py --max-new 1500 --workers 8
+      - name: Validate generator before provider requests
+        run: python3 -m py_compile scripts/build_museum_thumbnail_pack.py
+      - name: Download and compress source-policy-gated thumbnails
+        run: python3 scripts/build_museum_thumbnail_pack.py --max-new 1200 --workers 8
       - name: Validate all packed files
         run: |
           python3 - <<'PY'
