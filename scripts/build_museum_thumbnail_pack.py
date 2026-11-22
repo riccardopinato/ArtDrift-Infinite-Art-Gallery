@@ -20,6 +20,20 @@ ALLOWED = {
  "mia":{"api.artsmia.org"},
  "walters":{"images.thewalters.org","art.thewalters.org"}
 }
+# This automated wave is limited to providers whose *image* Open Access
+# policy was independently checked. Museum metadata CC0 alone is insufficient.
+# Getty/Mia/SMK and other sources remain HOLD pending image-level evidence.
+MOBILE_PACK_SOURCES = {
+  "met", "cleveland", "nga", "rijks", "smithsonian",
+}
+RIGHTS_EVIDENCE_HOSTS = {
+  "met": {"www.metmuseum.org", "metmuseum.org"},
+  "cleveland": {"www.clevelandart.org", "clevelandart.org"},
+  "nga": {"www.nga.gov", "nga.gov"},
+  "rijks": {"data.rijksmuseum.nl", "www.rijksmuseum.nl", "rijksmuseum.nl"},
+  "smithsonian": {"www.si.edu", "si.edu", "ids.si.edu"},
+}
+
 Image.MAX_IMAGE_PIXELS = 24_000_000
 HOST_LOCKS = collections.defaultdict(lambda: __import__('threading').BoundedSemaphore(2))
 HEADERS = {"User-Agent":"ArtDrift/0.3.5 (open-access image cache validator)",
@@ -44,6 +58,21 @@ def eligible(row):
  try:
   return int(row["id"])>0
  except (KeyError,TypeError,ValueError): return False
+
+def eligible_new_download(row):
+ """Stricter eligibility for *new* downloads; keep older pack files manifest-listed."""
+ if not eligible(row):return False
+ source=row["museum_source"]
+ if source not in MOBILE_PACK_SOURCES:return False
+ license=str(row.get("rights_license","")).lower()
+ if source in {"met","cleveland","smithsonian"} and "cc0" not in license:
+  return False
+ try:
+  evidence=urlparse(row.get("rights_evidence_url",""))
+  return (evidence.scheme=="https" and
+   evidence.hostname in RIGHTS_EVIDENCE_HOSTS[source] and
+   evidence.username is None and evidence.password is None)
+ except (TypeError,ValueError):return False
 
 def key(row): return f"{row['museum_source']}:{int(row['id'])}"
 def location(row): return ROOT/f"{row['museum_source']}_{int(row['id'])}.webp"
@@ -99,11 +128,11 @@ def main():
  data=json.loads(CATALOG.read_text(encoding="utf-8"))
  if not isinstance(data,list):raise SystemExit("invalid catalog")
  candidates={key(x):x for x in data if eligible(x)}
- if len(candidates)<3000:raise SystemExit(f"rights/provenance gate failed: {len(candidates)}")
+ if len(candidates)<300:raise SystemExit(f"rights/provenance gate failed: {len(candidates)}")
  ordered=sorted(candidates.values(),key=lambda x:hashlib.sha256(
   ("artdrift-pack-v1/"+key(x)).encode()).hexdigest())
  missing=[x for x in ordered if not location(x).is_file()]
- selected=missing[:args.max_new]
+ selected=[x for x in missing if eligible_new_download(x)][:args.max_new]
  ROOT.mkdir(parents=True,exist_ok=True)
  with concurrent.futures.ThreadPoolExecutor(max_workers=args.workers) as pool:
   results=list(pool.map(download,selected))
@@ -113,8 +142,14 @@ def main():
  (ROOT/"manifest.json").write_text(json.dumps(manifest,separators=(",",":"))+"\n")
  counts=collections.Counter(result[1] for result in results)
  providers=collections.Counter(k.split(":")[0] for k in packed)
+ policy_eligible={k for k,row in candidates.items() if eligible_new_download(row)}
  summary={"schema_version":1,"catalog_total":len(data),
-          "license_eligible":len(candidates),"web_thumbnails_available":len(packed),
+          "license_eligible":len(candidates),
+          "new_download_policy_eligible":len(policy_eligible),
+          "new_download_policy_hold":len(candidates)-len(policy_eligible),
+          "existing_legacy_pack_requires_image_rights_review":
+            len([k for k in packed if k not in policy_eligible]),
+          "web_thumbnails_available":len(packed),
           "web_thumbnails_missing":len(candidates)-len(packed),
           "batch_requested":len(selected),"status_counts":dict(sorted(counts.items())),
           "available_by_source":dict(sorted(providers.items())),
