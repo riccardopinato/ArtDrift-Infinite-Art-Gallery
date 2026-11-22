@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/painting.dart';
 
 import 'canvas/infinite_gallery.dart';
@@ -13,6 +12,7 @@ import 'screens/artwork_detail.dart';
 import 'services/catalog_service.dart';
 import 'services/favorites.dart';
 import 'services/art_offline_thumbnail_index.dart';
+import 'services/art_mobile_canvas_selection.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -67,13 +67,11 @@ class _GalleryHomeState extends State<GalleryHome> {
       await ArtOfflineThumbnailIndex.instance.initialize();
       final works = await _catalog.load(refresh: refresh);
       if (!mounted) return;
-      // Android visual-first mode: only artworks with an actual offline WebP
-      // occupy canvas tiles. All 4,500 records remain in search and detail.
-      // Never show another painting in place of the selected artwork.
-      final visible = kIsWeb ? works : works.where((art) =>
-          art.hasBundledPreview ||
-          ArtOfflineThumbnailIndex.instance.assetFor(art) != null)
-          .toList(growable: false);
+      // Keep mobile tile-to-artwork assignment pinned across catalog updates.
+      // Every image comes from the exact same artwork; all remote-only entries
+      // remain searchable and may be viewed individually.
+      final visible = await ArtMobileCanvasSelection.select(works);
+      if (!mounted) return;
       setState(() {
         _artworks = works;
         _canvasArtworks = visible.isEmpty ? works : visible;
