@@ -51,7 +51,7 @@ jobs:
       - name: Upload import artifact, no cloud deployment
         uses: actions/upload-artifact@v4
         with:
-          name: ArtDrift-MoMA-D1-SQL-\${{ github.sha }}
+          name: ArtDrift-MoMA-D1-SQL-${{ github.sha }}
           path: build/moma-d1/
           retention-days: 30
           compression-level: 6
