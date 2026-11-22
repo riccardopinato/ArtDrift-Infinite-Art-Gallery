@@ -1,0 +1,63 @@
+name: ArtDrift — GitHub Pages Web Preview
+on:
+  push:
+    branches:
+      - feat/artdrift-maxi-integration-fullpack-20261122
+    paths:
+      - '.github/workflows/artdrift-pages-preview.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: artdrift-pages-preview
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: '3.50.1'
+          cache: true
+      - name: Build Art Drift Web for Pages subpath
+        run: |
+          flutter create --project-name artdrift --org com.riccardopinato --platforms=web .
+          rm -f test/widget_test.dart
+          flutter pub get
+          flutter build web --release --base-href /ArtDrift-Infinite-Art-Gallery/
+          # Museum previews are served as static URLs, avoid a redundant
+          # second copy in the Flutter asset directory on web.
+          if [[ -s build/web/museum_thumbs/manifest.json ]]; then
+            rm -rf build/web/assets/web/museum_thumbs
+          fi
+          test -s build/web/index.html
+          test -s build/web/museum_thumbs/manifest.json
+          touch build/web/.nojekyll
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+      - name: Upload Pages static bundle
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: build/web
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy Art Drift preview
+        id: deployment
+        uses: actions/deploy-pages@v4
