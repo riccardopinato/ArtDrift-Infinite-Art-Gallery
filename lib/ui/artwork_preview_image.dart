@@ -38,7 +38,7 @@ class ArtworkPreviewImage extends StatelessWidget {
         cacheWidth: cacheWidth,
         gaplessPlayback: true,
         filterQuality: FilterQuality.low,
-        errorBuilder: (_, _, _) => unavailable(),
+        errorBuilder: (context, error, stack) => unavailable(),
       );
     }
     final webThumb = ArtOfflineThumbnailIndex.instance.urlFor(artwork);
@@ -52,7 +52,7 @@ class ArtworkPreviewImage extends StatelessWidget {
       filterQuality: FilterQuality.low,
       webHtmlElementStrategy: ArtRemoteImage.strategyFor(isWeb: kIsWeb &&
           webThumb == null),
-      errorBuilder: (_, _, _) => unavailable(),
+      errorBuilder: (context, error, stack) => unavailable(),
     );
   }
 }
