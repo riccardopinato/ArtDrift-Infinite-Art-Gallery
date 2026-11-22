@@ -1,0 +1,54 @@
+name: MoMA full CC0 metadata export — no images
+on:
+  push:
+    branches:
+      - 'data/moma-full-metadata-export-*'
+    paths:
+      - 'scripts/export_moma_collection.py'
+      - '.github/workflows/export-moma-metadata.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Syntax and unit tests
+        run: |
+          python3 -m py_compile scripts/export_moma_collection.py
+          python3 -m unittest discover -s scripts/tests -p 'test_moma_export.py'
+      - name: Download verified immutable MoMA LFS dataset and export metadata
+        run: python3 scripts/export_moma_collection.py --out dist/moma
+      - name: Validate exported count, schema and offline database
+        run: |
+          python3 - <<'PY'
+          import csv, json, sqlite3
+          from pathlib import Path
+          p=Path("dist/moma")
+          m=json.loads((p/"MoMA_export_manifest.json").read_text())
+          assert m["artworks"] > 150000 and m["artists"] > 15000
+          assert not m["images_included"] and not m["images_licensed_by_export"]
+          db=sqlite3.connect(p/"MoMA_full_metadata.sqlite")
+          assert db.execute("SELECT COUNT(*) FROM artworks").fetchone()[0]==m["artworks"]
+          assert db.execute("SELECT COUNT(*) FROM artists").fetchone()[0]==m["artists"]
+          assert db.execute("SELECT COUNT(*) FROM artwork_artists").fetchone()[0]==m["artwork_artist_links"]
+          assert db.execute("PRAGMA integrity_check").fetchone()[0]=="ok"
+          db.close()
+          with (p/"Artworks.csv").open(newline="",encoding="utf-8-sig") as stream:
+            assert sum(1 for _ in csv.DictReader(stream))==m["artworks"]
+          assert sum(1 for _ in (p/"MoMA_ArtDrift_metadata_only.jsonl").open())==m["artworks"]
+          print("MOMA_METADATA_EXPORT_VERIFIED",m["artworks"],m["artists"],m["artwork_artist_links"])
+          PY
+      - name: Save full MoMA metadata export as a GitHub downloadable artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: MoMA-full-CC0-metadata-export
+          path: dist/moma/
+          retention-days: 30
+          if-no-files-found: error
+          compression-level: 6
