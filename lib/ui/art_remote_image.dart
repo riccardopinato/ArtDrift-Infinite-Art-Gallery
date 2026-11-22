@@ -82,6 +82,15 @@ class _ArtRemoteImageState extends State<ArtRemoteImage> {
     if (urls.isEmpty) return widget.fallback;
 
     final localUrl = ArtOfflineThumbnailIndex.instance.urlFor(widget.artwork);
+    final nativeAsset = ArtOfflineThumbnailIndex.instance.assetFor(widget.artwork);
+    Widget nativePreview({required Widget Function() onError}) => Image.asset(
+          nativeAsset!,
+          fit: widget.fit,
+          cacheWidth: 240,
+          filterQuality: FilterQuality.low,
+          gaplessPlayback: true,
+          errorBuilder: (context, error, stack) => onError(),
+        );
     // Local files are tiny same-origin WebP; unlike museum HTML platform views,
     // Flutter can decode them efficiently into a regular image layer.
     Widget packaged({required Widget Function() onError}) => Image.network(
@@ -92,12 +101,16 @@ class _ArtRemoteImageState extends State<ArtRemoteImage> {
           webHtmlElementStrategy: WebHtmlElementStrategy.never,
           errorBuilder: (context, error, stack) => onError(),
         );
-    Widget initialPreview() => localUrl == null
-        ? widget.loading
-        : packaged(onError: () => widget.loading);
-    Widget finalFallback() => localUrl == null
-        ? widget.fallback
-        : packaged(onError: () => widget.fallback);
+    Widget initialPreview() => nativeAsset != null
+        ? nativePreview(onError: () => widget.loading)
+        : localUrl != null
+            ? packaged(onError: () => widget.loading)
+            : widget.loading;
+    Widget finalFallback() => nativeAsset != null
+        ? nativePreview(onError: () => widget.fallback)
+        : localUrl != null
+            ? packaged(onError: () => widget.fallback)
+            : widget.fallback;
 
     Widget imageAt(int index) {
       final url = urls[index];
@@ -121,6 +134,9 @@ class _ArtRemoteImageState extends State<ArtRemoteImage> {
       );
     }
 
+    if (nativeAsset != null && widget.width <= 400) {
+      return nativePreview(onError: () => imageAt(0));
+    }
     if (localUrl != null && widget.width <= 400) {
       return packaged(onError: () => imageAt(0));
     }
