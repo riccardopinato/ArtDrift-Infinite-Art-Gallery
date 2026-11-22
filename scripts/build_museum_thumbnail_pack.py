@@ -50,21 +50,29 @@ def official(url, source):
 def eligible(row):
  if row.get("is_public_domain") is not True or row.get("bootstrap_asset"): return False
  source=row.get("museum_source","")
- if source not in MOBILE_PACK_SOURCES: return False
- if not official(row.get("remote_preview_url",""),source): return False
+ if source not in ALLOWED or not official(row.get("remote_preview_url",""),source): return False
  license=str(row.get("rights_license","")).lower()
- if source in {"met","cleveland","smithsonian"}:
-  if "cc0" not in license: return False
- elif "cc0" not in license and "public domain" not in license: return False
- try:
-  evidence=urlparse(row.get("rights_evidence_url",""))
-  if evidence.scheme!="https" or evidence.hostname not in RIGHTS_EVIDENCE_HOSTS[source]:
-   return False
- except (TypeError,ValueError): return False
+ if "cc0" not in license and "public domain" not in license: return False
+ if not str(row.get("rights_evidence_url","")).startswith("https://"): return False
  if not str(row.get("museum_native_id","")).strip(): return False
  try:
   return int(row["id"])>0
  except (KeyError,TypeError,ValueError): return False
+
+def eligible_new_download(row):
+ """Stricter eligibility for *new* downloads; keep older pack files manifest-listed."""
+ if not eligible(row):return False
+ source=row["museum_source"]
+ if source not in MOBILE_PACK_SOURCES:return False
+ license=str(row.get("rights_license","")).lower()
+ if source in {"met","cleveland","smithsonian"} and "cc0" not in license:
+  return False
+ try:
+  evidence=urlparse(row.get("rights_evidence_url",""))
+  return (evidence.scheme=="https" and
+   evidence.hostname in RIGHTS_EVIDENCE_HOSTS[source] and
+   evidence.username is None and evidence.password is None)
+ except (TypeError,ValueError):return False
 
 def key(row): return f"{row['museum_source']}:{int(row['id'])}"
 def location(row): return ROOT/f"{row['museum_source']}_{int(row['id'])}.webp"
@@ -124,7 +132,7 @@ def main():
  ordered=sorted(candidates.values(),key=lambda x:hashlib.sha256(
   ("artdrift-pack-v1/"+key(x)).encode()).hexdigest())
  missing=[x for x in ordered if not location(x).is_file()]
- selected=missing[:args.max_new]
+ selected=[x for x in missing if eligible_new_download(x)][:args.max_new]
  ROOT.mkdir(parents=True,exist_ok=True)
  with concurrent.futures.ThreadPoolExecutor(max_workers=args.workers) as pool:
   results=list(pool.map(download,selected))
