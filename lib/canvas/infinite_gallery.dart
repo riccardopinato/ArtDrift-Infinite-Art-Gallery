@@ -8,7 +8,7 @@ import '../services/art_offline_thumbnail_index.dart';
 /// Art-specific adapter. Visual appearance, preview and camera keys preserved.
 class InfiniteGallery extends StatelessWidget {
   const InfiniteGallery({super.key, required this.artworks, required this.onOpen,
-    this.cameraKey = 'artdrift.camera'};
+    this.cameraKey = 'artdrift.camera'});
   final List<Artwork> artworks;
   final ValueChanged<Artwork> onOpen;
   final String cameraKey;
