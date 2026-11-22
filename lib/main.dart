@@ -11,6 +11,7 @@ import 'models/artwork.dart';
 import 'screens/artwork_detail.dart';
 import 'services/catalog_service.dart';
 import 'services/favorites.dart';
+import 'services/art_offline_thumbnail_index.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -60,6 +61,8 @@ class _GalleryHomeState extends State<GalleryHome> {
     setState(() { _loading = true; _error = null; });
     try {
       await _favorites.load();
+      // Fetch a tiny same-origin index before mounting remote image widgets.
+      await ArtOfflineThumbnailIndex.instance.initialize();
       final works = await _catalog.load(refresh: refresh);
       if (!mounted) return;
       setState(() { _artworks = works; _loading = false; });

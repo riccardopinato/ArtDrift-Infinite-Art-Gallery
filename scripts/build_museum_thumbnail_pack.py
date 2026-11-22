@@ -1,0 +1,126 @@
+#!/usr/bin/env python3
+"""Generate a bounded pack of CC0/public-domain Web thumbnails using official image URLs."""
+import argparse, collections, concurrent.futures, hashlib, io, json, os, time
+from pathlib import Path
+from urllib.parse import urlparse
+import requests
+from PIL import Image, ImageOps, UnidentifiedImageError
+
+CATALOG = Path("assets/museums/catalog_global.json")
+ROOT = Path("web/museum_thumbs")
+REPORT = Path("docs/generated/MUSEUM_THUMBNAIL_COVERAGE.json")
+ALLOWED = {
+ "met":{"images.metmuseum.org"},
+ "cleveland":{"openaccess-cdn.clevelandart.org","www.clevelandart.org","clevelandart.org"},
+ "rijks":{"iiif.micr.io"},
+ "nga":{"media.nga.gov","api.nga.gov"},
+ "getty":{"media.getty.edu"},
+ "smithsonian":{"ids.si.edu","www.si.edu","si.edu"},
+ "smk":{"iip.smk.dk","iip-thumb.smk.dk"},
+ "mia":{"api.artsmia.org"},
+ "walters":{"images.thewalters.org","art.thewalters.org"}
+}
+Image.MAX_IMAGE_PIXELS = 24_000_000
+HOST_LOCKS = collections.defaultdict(lambda: __import__('threading').BoundedSemaphore(2))
+HEADERS = {"User-Agent":"ArtDrift/0.3.5 (open-access image cache validator)",
+           "Accept":"image/jpeg,image/png,image/webp"}
+
+def official(url, source):
+ try:
+  u=urlparse(url)
+  return (u.scheme=="https" and u.hostname in ALLOWED.get(source,set())
+    and u.username is None and u.password is None and u.port in (None,443))
+ except (ValueError,TypeError):
+  return False
+
+def eligible(row):
+ if row.get("is_public_domain") is not True or row.get("bootstrap_asset"): return False
+ source=row.get("museum_source","")
+ if source not in ALLOWED or not official(row.get("remote_preview_url",""),source): return False
+ license=str(row.get("rights_license","")).lower()
+ if "cc0" not in license and "public domain" not in license: return False
+ if not str(row.get("rights_evidence_url","")).startswith("https://"): return False
+ if not str(row.get("museum_native_id","")).strip(): return False
+ try:
+  return int(row["id"])>0
+ except (KeyError,TypeError,ValueError): return False
+
+def key(row): return f"{row['museum_source']}:{int(row['id'])}"
+def location(row): return ROOT/f"{row['museum_source']}_{int(row['id'])}.webp"
+
+def download(row):
+ source=row["museum_source"]; url=row["remote_preview_url"]; target=location(row)
+ if target.is_file() and 250<=target.stat().st_size<=24000: return key(row),"present",source
+ with HOST_LOCKS[urlparse(url).hostname]:
+  try:
+   with requests.get(url,headers=HEADERS,stream=True,timeout=(5,9),allow_redirects=True) as response:
+    if not official(response.url,source): return key(row),"redirect_blocked",source
+    if response.status_code!=200: return key(row),f"http_{response.status_code}",source
+    if not response.headers.get("Content-Type","").lower().startswith("image/"):
+     return key(row),"not_image",source
+    if int(response.headers.get("Content-Length",0))>3000000:
+     return key(row),"source_too_large",source
+    fragments=[]; count=0
+    for part in response.iter_content(chunk_size=32768):
+     count+=len(part)
+     if count>3000000: return key(row),"source_too_large",source
+     fragments.append(part)
+   with Image.open(io.BytesIO(b"".join(fragments))) as image:
+    if min(image.size)<36 or getattr(image,"is_animated",False):
+     return key(row),"unsupported_image",source
+    image=ImageOps.exif_transpose(image)
+    image.thumbnail((256,256),Image.Resampling.LANCZOS)
+    if image.mode=="RGBA":
+     base=Image.new("RGB",image.size,(26,26,29))
+     base.paste(image,mask=image.getchannel("A"))
+     image=base
+    elif image.mode!="RGB": image=image.convert("RGB")
+    data=None
+    for quality in (60,48,36):
+     output=io.BytesIO()
+     image.save(output,format="WEBP",quality=quality,method=4)
+     if output.tell()<=24000:
+      data=output.getvalue();break
+    if data is None:return key(row),"thumbnail_too_large",source
+   target.parent.mkdir(parents=True,exist_ok=True)
+   tmp=target.with_suffix(".webp.tmp")
+   tmp.write_bytes(data); os.replace(tmp,target)
+   return key(row),"downloaded",source
+  except (requests.RequestException,OSError,ValueError,
+          UnidentifiedImageError,Image.DecompressionBombError):
+   return key(row),"network_or_decode_failure",source
+
+def main():
+ ap=argparse.ArgumentParser()
+ ap.add_argument("--max-new",type=int,default=1200)
+ ap.add_argument("--workers",type=int,default=8)
+ args=ap.parse_args()
+ if not 1<=args.max_new<=4500 or not 1<=args.workers<=8:ap.error("invalid limits")
+ data=json.loads(CATALOG.read_text(encoding="utf-8"))
+ if not isinstance(data,list):raise SystemExit("invalid catalog")
+ candidates={key(x):x for x in data if eligible(x)}
+ if len(candidates)<3000:raise SystemExit(f"rights/provenance gate failed: {len(candidates)}")
+ ordered=sorted(candidates.values(),key=lambda x:hashlib.sha256(
+  ("artdrift-pack-v1/"+key(x)).encode()).hexdigest())
+ missing=[x for x in ordered if not location(x).is_file()]
+ selected=missing[:args.max_new]
+ ROOT.mkdir(parents=True,exist_ok=True)
+ with concurrent.futures.ThreadPoolExecutor(max_workers=args.workers) as pool:
+  results=list(pool.map(download,selected))
+ packed=sorted(k for k,x in candidates.items() if location(x).is_file()
+               and 250<=location(x).stat().st_size<=24000)
+ manifest={"schema_version":1,"keys":packed}
+ (ROOT/"manifest.json").write_text(json.dumps(manifest,separators=(",",":"))+"\n")
+ counts=collections.Counter(result[1] for result in results)
+ providers=collections.Counter(k.split(":")[0] for k in packed)
+ summary={"schema_version":1,"catalog_total":len(data),
+          "license_eligible":len(candidates),"web_thumbnails_available":len(packed),
+          "web_thumbnails_missing":len(candidates)-len(packed),
+          "batch_requested":len(selected),"status_counts":dict(sorted(counts.items())),
+          "available_by_source":dict(sorted(providers.items())),
+          "packed_bytes":sum(location(candidates[k]).stat().st_size for k in packed)}
+ REPORT.parent.mkdir(parents=True,exist_ok=True)
+ REPORT.write_text(json.dumps(summary,sort_keys=True,indent=2)+"\n")
+ print(json.dumps(summary,indent=2))
+ if not packed:raise SystemExit("NO_PACKAGED_IMAGES: no improvement verified")
+if __name__=="__main__":main()

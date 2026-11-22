@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../models/artwork.dart';
+import '../services/art_offline_thumbnail_index.dart';
 
 /// Displays the museum's own image. Web images use HTML platform views to
 /// avoid CORS failures; no third-party proxy or substituted artwork is used.
@@ -80,6 +81,24 @@ class _ArtRemoteImageState extends State<ArtRemoteImage> {
         widget.artwork, width: widget.width);
     if (urls.isEmpty) return widget.fallback;
 
+    final localUrl = ArtOfflineThumbnailIndex.instance.urlFor(widget.artwork);
+    // Local files are tiny same-origin WebP; unlike museum HTML platform views,
+    // Flutter can decode them efficiently into a regular image layer.
+    Widget packaged({required Widget Function() onError}) => Image.network(
+          localUrl!,
+          fit: widget.fit,
+          cacheWidth: kIsWeb ? null : widget.width,
+          gaplessPlayback: true,
+          webHtmlElementStrategy: WebHtmlElementStrategy.never,
+          errorBuilder: (context, error, stack) => onError(),
+        );
+    Widget initialPreview() => localUrl == null
+        ? widget.loading
+        : packaged(onError: () => widget.loading);
+    Widget finalFallback() => localUrl == null
+        ? widget.fallback
+        : packaged(onError: () => widget.fallback);
+
     Widget imageAt(int index) {
       final url = urls[index];
       return Image.network(
@@ -93,15 +112,18 @@ class _ArtRemoteImageState extends State<ArtRemoteImage> {
         // frameBuilder avoids rebuilding on every byte of network progress.
         // Keep the lower-quality artwork visible until a full frame arrives.
         frameBuilder: (context, child, frame, wasSynchronouslyLoaded) =>
-            wasSynchronouslyLoaded || frame != null ? child : widget.loading,
+            wasSynchronouslyLoaded || frame != null ? child : initialPreview(),
         errorBuilder: (_, error, stack) {
           if (index + 1 < urls.length) return imageAt(index + 1);
           _retryWhenVisible();
-          return widget.fallback;
+          return finalFallback();
         },
       );
     }
 
+    if (localUrl != null && widget.width <= 400) {
+      return packaged(onError: () => imageAt(0));
+    }
     return imageAt(0);
   }
 }
