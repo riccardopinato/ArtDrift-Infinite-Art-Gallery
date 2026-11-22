@@ -7,7 +7,7 @@
     "smithsonian": 924,
     "smk": 96
   },
-  "batch_requested": 21,
+  "batch_requested": 7,
   "catalog_total": 4043,
   "existing_legacy_pack_requires_image_rights_review": 96,
   "license_eligible": 4043,
@@ -16,7 +16,6 @@
   "packed_bytes": 16448528,
   "schema_version": 1,
   "status_counts": {
-    "downloaded": 14,
     "http_404": 1,
     "unsupported_image": 6
   },
