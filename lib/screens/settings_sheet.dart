@@ -2,6 +2,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../services/art_frame_performance.dart';
+import '../services/art_image_delivery_metrics.dart';
 import '../ui/localization.dart';
 import '../ui/parchment.dart';
 
@@ -120,7 +121,8 @@ class _ArtDriftSettingsState extends State<_ArtDriftSettingsSheet> {
         builder: (dialogContext) => StatefulBuilder(
           builder: (dialogContext, update) {
             final monitor = ArtFramePerformance.instance;
-            final report = monitor.snapshot().report;
+            final report = monitor.snapshot().report + '\n\n' +
+                ArtImageDeliveryMetrics.instance.report;
             final language = ArtDriftLocale.current.value;
             String label(String italian, String english) =>
                 language == 'it' ? italian : english;
@@ -152,7 +154,8 @@ class _ArtDriftSettingsState extends State<_ArtDriftSettingsSheet> {
                 TextButton(
                   onPressed: () async {
                     await Clipboard.setData(ClipboardData(
-                      text: monitor.snapshot().report));
+                      text: monitor.snapshot().report + '\n\n' +
+                      ArtImageDeliveryMetrics.instance.report));
                   },
                   child: Text(label('Copia report','Copy report'),
                     style: const TextStyle(color: ArtPaper.ink)),
