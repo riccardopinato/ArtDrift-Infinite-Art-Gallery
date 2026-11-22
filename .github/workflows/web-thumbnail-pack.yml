@@ -20,9 +20,9 @@ jobs:
       - name: Install image tooling
         run: python3 -m pip install --user "Pillow==11.3.0" "requests==2.32.5"
       - name: Validate generator before provider requests
-        run: python3 -m py_compile scripts/build_museum_thumbnail_pack.py
-      - name: Smoke-check 3 SMK artwork rights against official per-object API
-        run: python3 scripts/verify_smk_object_rights.py --max-items 3 --workers 2
+        run: python3 -m py_compile scripts/build_museum_thumbnail_pack.py scripts/verify_smk_object_rights.py scripts/audit_museum_rights_and_coverage.py
+      - name: Recheck all 500 SMK artwork rights against the official per-object API
+        run: python3 scripts/verify_smk_object_rights.py --max-items 500 --workers 2
       - name: Download and compress source-policy-gated thumbnails
         run: python3 scripts/build_museum_thumbnail_pack.py --max-new 1200 --workers 8
       - name: Validate all packed files

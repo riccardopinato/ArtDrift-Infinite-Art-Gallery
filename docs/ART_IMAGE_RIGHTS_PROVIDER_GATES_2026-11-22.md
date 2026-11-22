@@ -14,7 +14,7 @@ Brand names/trademarks and third-party privacy/personality rights remain separat
 | Rijksmuseum | https://data.rijksmuseum.nl/policy/ | ELIGIBLE for Public Domain Mark/CC0 object data/image provenance |
 | Smithsonian | https://www.si.edu/termsofuse and https://www.si.edu/openaccess | ELIGIBLE only for CC0-designated media |
 | Getty | https://www.getty.edu/projects/open-content-program/faqs/ and https://data.getty.edu/museum/collection/docs/ | HOLD until **individual image** is demonstrably in Getty Open Content/CC0; not every Getty media URL qualifies |
-| SMK | https://connect.smk.dk/om/rettigheder and https://blog.smk.dk/how-to-do-things-with-data-creative-re-use-of-smks-digitized-collection | HOLD for new wave: per-image rights can differ |
+| SMK | https://blog.smk.dk/how-to-do-things-with-data-creative-re-use-of-smks-digitized-collection and https://api.smk.dk/api/v1/docs/ | CONDITIONAL: exact current official object `public_domain`, Public Domain Mark/CC0 rights URL and IIIF image must reconcile with catalog; no verified proof = HOLD |
 | Mia | https://new.artsmia.org/copyright-and-image-access | HOLD for new wave until image-specific terms; general site images have use restrictions |
 | Walters | https://thewalters.org/about/policies/rights-reproductions/ | HOLD for new wave pending verified object-level exception checks |
 | Art Institute Chicago | https://api.artic.edu/docs/ | Separate bundled seed workflow; confirm image availability and individual public-domain eligibility |
@@ -37,3 +37,20 @@ Brand names/trademarks and third-party privacy/personality rights remain separat
 
 This document describes a policy-screening heuristic and source references,
 not legal advice or a per-object rights clearance.
+
+## Live SMK per-object evidence gate (23 Nov 2026)
+
+SMK imported records were originally filtered on `public_domain=true`,
+object-level rights URI (CC0 or Public Domain Mark), and the image's IIIF ID.
+A **new live check** against `https://api.smk.dk/api/v1/art/?object_number=...`
+reconciles **each of the 500** source identities with the original license URI
+and *exact* IIIF image. The results and a SHA-256 of the canonical record are
+stored at `docs/generated/SMK_OBJECT_RIGHTS_RECHECK.json`. **Only exact
+live matches** may have their missing preview downloaded into the staging
+pack, using the existing host/MIME/size/decode guards. This is automated
+rights evidence, not blanket commercial rights or trademark certification.
+
+The audit ledger separately tracks confirmed image bytes and flags every
+record as commercially unverified until an actual rights/release review is
+completed. The downloader does not use redirects outside approved hosts,
+substitute images or treat a provider HTTP failure as a usable thumbnail.
