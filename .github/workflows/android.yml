@@ -77,9 +77,25 @@ jobs:
         run: flutter test
       - name: Build optimized Android ARM64 APK (internal test signing)
         run: flutter build apk --release --target-platform android-arm64
+      - name: Record exact internal APK identity and signer
+        shell: bash
+        run: |
+          set -euo pipefail
+          apk=build/app/outputs/flutter-apk/app-release.apk
+          test -s "$apk"
+          echo "SOURCE_SHA=${{ github.sha }}" > build/apk-integrity.txt
+          echo "SIGNING_CLASS=INTERNAL_TEST_ONLY" >> build/apk-integrity.txt
+          echo "ANDROID_PACKAGE=com.riccardopinato.artdrift" >> build/apk-integrity.txt
+          stat -c 'APK_SIZE_BYTES=%s' "$apk" >> build/apk-integrity.txt
+          sha256sum "$apk" >> build/apk-integrity.txt
+          tools_dir="$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -1)"
+          "$tools_dir/apksigner" verify --print-certs "$apk" > build/apk-signer-report.txt
       - name: Upload optimized ARM64 APK
         uses: actions/upload-artifact@v4
         with:
           name: ArtDrift-Android-ARM64-internal-${{ github.sha }}
-          path: build/app/outputs/flutter-apk/app-release.apk
+          path: |
+            build/app/outputs/flutter-apk/app-release.apk
+            build/apk-integrity.txt
+            build/apk-signer-report.txt
           if-no-files-found: error
