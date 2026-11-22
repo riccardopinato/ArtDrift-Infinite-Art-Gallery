@@ -1,0 +1,50 @@
+{
+  "catalog_smk_total": 500,
+  "commercial_release_cleared": false,
+  "not_checked": 497,
+  "objects_checked": 3,
+  "official_api": "https://api.smk.dk/api/v1/art/",
+  "reasons": {
+    "PDM_CC0_OBJECT_AND_EXACT_IIIF": 3
+  },
+  "schema_version": 1,
+  "statuses": {
+    "OFFICIAL_OBJECT_METADATA_MATCH": 3
+  },
+  "validated_for_bounded_download": 3,
+  "verified": [
+    {
+      "commercial_release_cleared": false,
+      "key": "smk:7000891258",
+      "native_id": "KMS8847",
+      "object_metadata_sha256": "ff43d662ff9ff3890c4363fc4dd520767e64d10d3f00ce16f17d1959d776de76",
+      "official_rights": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "provider_endpoint": "https://api.smk.dk/api/v1/art/?object_number=KMS8847&lang=en",
+      "reason": "PDM_CC0_OBJECT_AND_EXACT_IIIF",
+      "status": "OFFICIAL_OBJECT_METADATA_MATCH",
+      "verified_image_prefix": "https://iip.smk.dk/iiif/jp2/gt54kr53q_KMS8847_crop.tif.jp2"
+    },
+    {
+      "commercial_release_cleared": false,
+      "key": "smk:7002380694",
+      "native_id": "KMS508d",
+      "object_metadata_sha256": "8d5db067536bed3d8d4cb5fc406d5a62191af091dc791b92640880362cbe1dbc",
+      "official_rights": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "provider_endpoint": "https://api.smk.dk/api/v1/art/?object_number=KMS508d&lang=en",
+      "reason": "PDM_CC0_OBJECT_AND_EXACT_IIIF",
+      "status": "OFFICIAL_OBJECT_METADATA_MATCH",
+      "verified_image_prefix": "https://iip.smk.dk/iiif/jp2/gx41mn06k_KMSKMS508d-cropped.tif.jp2"
+    },
+    {
+      "commercial_release_cleared": false,
+      "key": "smk:7003205179",
+      "native_id": "KMS321",
+      "object_metadata_sha256": "61df0120b1e478c65939fb1206e65e0c651fadfa433c95014ae0248441d26bb3",
+      "official_rights": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "provider_endpoint": "https://api.smk.dk/api/v1/art/?object_number=KMS321&lang=en",
+      "reason": "PDM_CC0_OBJECT_AND_EXACT_IIIF",
+      "status": "OFFICIAL_OBJECT_METADATA_MATCH",
+      "verified_image_prefix": "https://iip.smk.dk/iiif/jp2/rf55zb916_KMS321.tif.reconstructed.tif.jp2"
+    }
+  ]
+}
