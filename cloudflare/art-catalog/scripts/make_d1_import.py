@@ -31,8 +31,7 @@ def convert(source,out,chunk=2500,verify=True):
     def save():
         if not batch:return
         name="import-%04d.sql"%(len(files)+1)
-        (out/name).write_text("BEGIN TRANSACTION;\n"+"\n".join(batch)+
-            "\nCOMMIT;\n",encoding="utf-8")
+        (out/name).write_text("\n".join(batch)+"\n",encoding="utf-8")
         files.append({"file":name,"works":len(batch)//2})
         batch.clear()
     with source.open(encoding="utf-8-sig",newline="") as stream:
