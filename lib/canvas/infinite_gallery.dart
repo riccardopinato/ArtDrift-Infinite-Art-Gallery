@@ -7,9 +7,11 @@ import '../services/art_offline_thumbnail_index.dart';
 
 /// Art-specific adapter. Visual appearance, preview and camera keys preserved.
 class InfiniteGallery extends StatelessWidget {
-  const InfiniteGallery({super.key, required this.artworks, required this.onOpen});
+  const InfiniteGallery({super.key, required this.artworks, required this.onOpen,
+    this.cameraKey = 'artdrift.camera'};
   final List<Artwork> artworks;
   final ValueChanged<Artwork> onOpen;
+  final String cameraKey;
 
   Widget _preview(Artwork art) {
     final localAsset = art.hasBundledPreview
@@ -75,7 +77,7 @@ class InfiniteGallery extends StatelessWidget {
     items: artworks, onOpen: onOpen,
     tileBuilder: (context, art, zoom) => _tileImage(art, zoom),
     prefetchItem: ArtThumbnailPrefetch.instance.warm,
-    cameraKey: 'artdrift.camera',
+    cameraKey: cameraKey,
     compactBrand: 'A∞',
     fullBrand: 'artdrift  ∞',
     hintText: 'Trascina per esplorare  ·  Tocca un’opera',
