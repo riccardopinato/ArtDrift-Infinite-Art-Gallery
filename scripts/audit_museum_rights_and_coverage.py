@@ -44,11 +44,16 @@ def inspect_asset(path):
             image.verify()
         with Image.open(path) as image:
             image.load()
-            if min(image.size) < 36 or max(image.size) > 256:
+            if min(image.size) < 1 or max(image.size) > 256:
                 result["reason"] = "INVALID_DIMENSIONS"
                 return result
             result.update({"state": "VERIFIED_BYTES", "width": image.width,
                            "height": image.height})
+            if min(image.size) < 36:
+                # Real narrow-aspect source images can legitimately downsample
+                # below 36 px on one dimension at the 256 px long-side cap.
+                # The codec is valid; record a visual review, not corruption.
+                result["visual_review"] = "VERY_THIN_ASPECT_OR_SMALL_PREVIEW"
     except (OSError, ValueError, SyntaxError) as exc:
         result["reason"] = type(exc).__name__
     return result
@@ -119,8 +124,13 @@ def audit():
         "policy_eligible_missing": counts["SOURCE_POLICY_ELIGIBLE_IMAGE_MISSING"],
         "policy_hold_missing": sum(
             not i["in_thumbnail_manifest"] and not i["provider_policy_gate"] for i in items),
-        "packaged_policy_hold": counts["IMAGE_SPECIFIC_COMMERCIAL_RIGHTS_REVIEW"],
+        "packaged_policy_hold": sum(
+            i["in_thumbnail_manifest"] and not i["provider_policy_gate"] for i in items),
         "invalid_packaged": counts["INVALID_IMAGE_HOLD"],
+        "packaged_very_thin_visual_review": sum(
+            i["in_thumbnail_manifest"] and
+            i["asset"].get("visual_review") == "VERY_THIN_ASPECT_OR_SMALL_PREVIEW"
+            for i in items),
         "verdicts": dict(sorted(counts.items())),
         "by_source": {k: dict(sorted(v.items())) for k, v in sorted(by_source.items())},
         "legally_certified_images": 0,
@@ -143,6 +153,7 @@ def audit():
         f"- Missing behind source/image-rights HOLD: **{summary['policy_hold_missing']}**",
         f"- Already packaged requiring image-specific rights review: **{summary['packaged_policy_hold']}**",
         f"- Manifest image bytes invalid: **{summary['invalid_packaged']}**",
+        f"- Valid but very thin previews needing visual review: **{summary['packaged_very_thin_visual_review']}**",
         "",
         "## Per-object evidence",
         "",
