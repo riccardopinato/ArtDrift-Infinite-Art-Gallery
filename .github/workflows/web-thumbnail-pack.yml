@@ -37,11 +37,13 @@ jobs:
               assert path.is_file() and 250<=path.stat().st_size<=24000
           print("PACKED_THUMBNAILS_VALIDATED",len(data["keys"]))
           PY
+      - name: Audit every museum image and exact media bytes (fail closed)
+        run: python3 scripts/audit_museum_rights_and_coverage.py
       - name: Commit valid Web-only pack to feature branch
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add web/museum_thumbs/ docs/generated/MUSEUM_THUMBNAIL_COVERAGE.json
+          git add web/museum_thumbs/ docs/generated/MUSEUM_THUMBNAIL_COVERAGE.json docs/generated/ART_IMAGE_ITEM_RIGHTS_AUDIT.json docs/ART_IMAGE_RIGHTS_AUDIT_2026-11-23.md
           if ! git diff --cached --quiet; then
             git commit -m "assets(web): CC0 WebP pack [thumbs generated]"
             git push origin "HEAD:${GITHUB_REF_NAME}"
