@@ -1,13 +1,16 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../models/artwork.dart';
 
-/// Art-only network image: on browsers, retry with an HTML image element if
-/// fetching bytes is blocked by a museum's cross-origin policy.
-/// This does not bypass HTTP 403/404, hotlink protection or image rights.
-/// Android retains its existing byte-decoding behavior.
-class ArtRemoteImage extends StatelessWidget {
+/// Displays the museum's own image. Web images use HTML platform views to
+/// avoid CORS failures; no third-party proxy or substituted artwork is used.
+///
+/// A bounded *visible-only* retry recovers short network interruptions.
+/// Non-transient 403/404/hotlink denials remain the museum's responsibility.
+class ArtRemoteImage extends StatefulWidget {
   const ArtRemoteImage({
     super.key,
     required this.artwork,
@@ -24,9 +27,7 @@ class ArtRemoteImage extends StatelessWidget {
   final Widget loading;
 
   static WebHtmlElementStrategy strategyFor({required bool isWeb}) =>
-      isWeb
-          ? WebHtmlElementStrategy.prefer
-          : WebHtmlElementStrategy.never;
+      isWeb ? WebHtmlElementStrategy.prefer : WebHtmlElementStrategy.never;
 
   @visibleForTesting
   static List<String> candidateUrls(Artwork artwork, {required int width}) {
@@ -38,22 +39,68 @@ class ArtRemoteImage extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
-    final urls = candidateUrls(artwork, width: width);
-    if (urls.isEmpty) return fallback;
+  State<ArtRemoteImage> createState() => _ArtRemoteImageState();
+}
 
-    Widget imageAt(int index) => Image.network(
-          urls[index],
-          fit: fit,
-          filterQuality: FilterQuality.low,
-          cacheWidth: width,
-          gaplessPlayback: true,
-          webHtmlElementStrategy: strategyFor(isWeb: kIsWeb),
-          loadingBuilder: (context, child, progress) =>
-              progress == null ? child : loading,
-          errorBuilder: (context, error, stack) =>
-              index + 1 < urls.length ? imageAt(index + 1) : fallback,
-        );
+class _ArtRemoteImageState extends State<ArtRemoteImage> {
+  static const maxRetryCount = 1;
+  static const retryDelay = Duration(milliseconds: 1600);
+  int _retryCount = 0;
+  Timer? _retryTimer;
+
+  @override
+  void didUpdateWidget(covariant ArtRemoteImage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.artwork.catalogKey != widget.artwork.catalogKey ||
+        oldWidget.width != widget.width) {
+      _retryTimer?.cancel();
+      _retryTimer = null;
+      _retryCount = 0;
+    }
+  }
+
+  void _retryWhenVisible() {
+    if (_retryCount >= maxRetryCount || _retryTimer != null) return;
+    // Never call setState synchronously inside Image.errorBuilder.
+    _retryTimer = Timer(retryDelay, () {
+      _retryTimer = null;
+      if (mounted) setState(() => _retryCount++);
+    });
+  }
+
+  @override
+  void dispose() {
+    _retryTimer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final urls = ArtRemoteImage.candidateUrls(
+        widget.artwork, width: widget.width);
+    if (urls.isEmpty) return widget.fallback;
+
+    Widget imageAt(int index) {
+      final url = urls[index];
+      return Image.network(
+        url,
+        key: ValueKey('${widget.artwork.catalogKey}:$index:$_retryCount'),
+        fit: widget.fit,
+        cacheWidth: kIsWeb ? null : widget.width,
+        filterQuality: FilterQuality.low,
+        gaplessPlayback: true,
+        webHtmlElementStrategy: ArtRemoteImage.strategyFor(isWeb: kIsWeb),
+        // frameBuilder avoids rebuilding on every byte of network progress.
+        // Keep the lower-quality artwork visible until a full frame arrives.
+        frameBuilder: (context, child, frame, wasSynchronouslyLoaded) =>
+            wasSynchronouslyLoaded || frame != null ? child : widget.loading,
+        errorBuilder: (_, error, stack) {
+          if (index + 1 < urls.length) return imageAt(index + 1);
+          _retryWhenVisible();
+          return widget.fallback;
+        },
+      );
+    }
 
     return imageAt(0);
   }

@@ -116,8 +116,17 @@ class _ArtworkDetailState extends State<ArtworkDetail> {
                     ])),
             loading: current.hasBundledPreview
                 ? Image.asset(current.bootstrapAsset, fit: BoxFit.contain)
-                : const Center(child: CircularProgressIndicator(
-                    color: Colors.white54)),
+                // Progressive detail: keep the same museum's smaller preview
+                // visible while its full-resolution source is still loading.
+                : Image.network(
+                    current.imageUrl(width: 400),
+                    fit: BoxFit.contain,
+                    webHtmlElementStrategy:
+                        ArtRemoteImage.strategyFor(isWeb: kIsWeb),
+                    errorBuilder: (_, error, stack) =>
+                        const Center(child: CircularProgressIndicator(
+                            color: Colors.white54)),
+                  ),
           )),
         );
         return Stack(children: [

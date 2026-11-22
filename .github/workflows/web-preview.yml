@@ -26,6 +26,8 @@ jobs:
           (cd packages/drift_core && flutter pub get && flutter analyze --no-fatal-infos && flutter test)
           flutter analyze --no-fatal-infos
           flutter test
+          # Compile and execute the browser-only HTML image preloader.
+          flutter test --platform chrome test/art_remote_image_test.dart test/art_thumbnail_prefetch_test.dart
       - name: Build web preview
         run: flutter build web --release --base-href /
       - name: Upload immutable web build
