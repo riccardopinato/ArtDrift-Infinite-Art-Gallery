@@ -7,6 +7,11 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+# Keep only the newest source revision in flight on each development branch.
+# Push and pull_request events for the same head branch share this group.
+concurrency:
+  group: artdrift-android-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: true
 jobs:
   android:
     runs-on: ubuntu-latest
