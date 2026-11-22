@@ -11,6 +11,21 @@ void main() {
         WebHtmlElementStrategy.never);
   });
 
+  test('candidate URLs preserve original museum identity and deduplicate', () {
+    const art = Artwork(
+      id: 77, title: 'Example', artist: '', date: '',
+      imageId: '', publicDomain: true, artworkType: 'Painting',
+      museumSource: 'met',
+      remotePreviewUrl: 'https://images.metmuseum.org/CRDImages/ep/web-large/test.jpg',
+    );
+    expect(ArtRemoteImage.candidateUrls(art, width: 400), [
+      'https://images.metmuseum.org/CRDImages/ep/web-large/test.jpg',
+    ]);
+    expect(ArtRemoteImage.candidateUrls(art, width: 843), [
+      'https://images.metmuseum.org/CRDImages/ep/web-large/test.jpg',
+    ]);
+  });
+
   test('full resolution tries a distinct museum preview on failure', () {
     final art = Artwork(
       id: 437655, title: 'Forest', artist: 'Seurat', date: '1881',
