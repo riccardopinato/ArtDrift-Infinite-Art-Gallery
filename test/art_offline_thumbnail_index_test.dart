@@ -6,6 +6,7 @@ import 'package:artdrift/models/artwork.dart';
 import 'package:artdrift/services/art_offline_thumbnail_index.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
   test('accepts only versioned, exact source IDs', () {
     final index = ArtOfflineThumbnailIndex.instance;
     index.loadFromManifest(
