@@ -4,6 +4,9 @@ on:
     branches: ['feat/artdrift-web-offline-thumbs-*']
 permissions:
   contents: write
+concurrency:
+  group: artdrift-web-thumbs-${{ github.ref }}
+  cancel-in-progress: false
 jobs:
   pack:
     if: "!contains(github.event.head_commit.message, '[thumbs generated]')"
