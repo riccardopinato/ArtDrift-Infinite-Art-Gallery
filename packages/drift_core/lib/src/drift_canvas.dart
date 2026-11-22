@@ -45,6 +45,8 @@ class _DriftCanvasState<T> extends State<DriftCanvas<T>>
   Timer? _dimTimer;
   Timer? _prefetchTimer;
   Rect _prefetchBounds = Rect.zero;
+  Offset? _previousPrefetchCenter;
+  Offset _movementSincePrefetch = Offset.zero;
   final Set<String> _warmKeys = <String>{};
   final List<String> _warmOrder = <String>[];
 
@@ -216,6 +218,16 @@ class _DriftCanvasState<T> extends State<DriftCanvas<T>>
   void _queuePrefetch(Rect visible) {
     if (widget.prefetchItem == null || widget.items.isEmpty) return;
     _prefetchBounds = visible;
+    // Accumulate movement during the batching window: a single 60/120 Hz
+    // frame is too small to indicate direction accurately.
+    final previous = _previousPrefetchCenter;
+    if (previous != null) {
+      final delta = visible.center - previous;
+      if (delta.distanceSquared < visible.longestSide * visible.longestSide) {
+        _movementSincePrefetch += delta;
+      }
+    }
+    _previousPrefetchCenter = visible.center;
     if (_prefetchTimer != null) return;
     _prefetchTimer = Timer(const Duration(milliseconds: 260), () {
       _prefetchTimer = null;
@@ -227,16 +239,16 @@ class _DriftCanvasState<T> extends State<DriftCanvas<T>>
     final prefetch = widget.prefetchItem;
     if (!mounted || prefetch == null || widget.items.isEmpty ||
         visible.isEmpty) return;
-    final horizon = visible.height * (_autoRunning ? 1.6 : 0.9);
-    final nearby = Rect.fromLTRB(
-      visible.left - visible.width * 0.6,
-      visible.top - visible.height * 0.65,
-      visible.right + visible.width * 0.6,
-      visible.bottom + horizon,
-    );
-    final futureTiles = _world.visible(nearby, widget.items.length, limit: 240);
-    final focus = Offset(visible.center.dx,
-        _autoRunning ? visible.bottom + visible.height * 0.4 : visible.center.dy);
+    final movement = _movementSincePrefetch;
+    _movementSincePrefetch = Offset.zero;
+    final nearby = DriftPrefetchPlan.window(
+        visible, movement, auto: _autoRunning);
+    final focus = DriftPrefetchPlan.focus(
+        visible, movement, auto: _autoRunning);
+    final priority = Rect.fromCenter(
+        center: focus, width: visible.width, height: visible.height);
+    final futureTiles = _world.visible(nearby, widget.items.length,
+        limit: 240, priorityViewport: priority);
     futureTiles.sort((a, b) {
       final aDelta = (a.rect.center - focus).distanceSquared;
       final bDelta = (b.rect.center - focus).distanceSquared;
@@ -267,6 +279,8 @@ class _DriftCanvasState<T> extends State<DriftCanvas<T>>
     if (!identical(oldWidget.items, widget.items)) {
       _warmKeys.clear();
       _warmOrder.clear();
+      _previousPrefetchCenter = null;
+      _movementSincePrefetch = Offset.zero;
     }
   }
 
@@ -344,12 +358,13 @@ class _DriftCanvasState<T> extends State<DriftCanvas<T>>
         (_viewport.width - _offset.dx + 240) / _zoom,
         (_viewport.height - _offset.dy + 240) / _zoom,
       );
-      final tiles = _world.visible(bounds, widget.items.length);
       final actualViewport = Rect.fromLTRB(
         -_offset.dx / _zoom, -_offset.dy / _zoom,
         (_viewport.width - _offset.dx) / _zoom,
         (_viewport.height - _offset.dy) / _zoom,
       );
+      final tiles = _world.visible(bounds, widget.items.length,
+          priorityViewport: actualViewport);
       _queuePrefetch(actualViewport);
       return Stack(fit: StackFit.expand, children: [
         GestureDetector(
