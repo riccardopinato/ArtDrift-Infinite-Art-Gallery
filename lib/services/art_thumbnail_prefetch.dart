@@ -4,6 +4,7 @@ import 'dart:collection';
 import 'package:flutter/material.dart';
 
 import '../models/artwork.dart';
+import 'art_offline_thumbnail_index.dart';
 import 'art_image_warm_native.dart'
     if (dart.library.html) 'art_image_warm_web.dart' as image_warm;
 
@@ -93,8 +94,19 @@ class ArtThumbnailPrefetch {
       BuildContext context, Artwork art, bool bundledPreview) async {
     if (!context.mounted) return false;
     if (!bundledPreview) {
-      return image_warm.warmMuseumImage(
-        context, art.imageUrl(width: 400));
+      final localUrl = ArtOfflineThumbnailIndex.instance.urlFor(art);
+      if (localUrl != null) {
+        var failed = false;
+        try {
+          await precacheImage(NetworkImage(localUrl), context,
+              onError: (error, stack) { failed = true; })
+              .timeout(const Duration(seconds: 5));
+          return !failed;
+        } catch (_) {
+          return false;
+        }
+      }
+      return image_warm.warmMuseumImage(context, art.imageUrl(width: 400));
     }
     var failed = false;
     try {

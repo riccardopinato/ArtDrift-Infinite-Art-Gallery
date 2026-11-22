@@ -1,0 +1,43 @@
+name: ArtDrift — rights-gated Web thumbnail pack
+on:
+  push:
+    branches: ['feat/artdrift-web-offline-thumbs-*']
+permissions:
+  contents: write
+jobs:
+  pack:
+    if: "!contains(github.event.head_commit.message, '[thumbs generated]')"
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - name: Checkout exact branch
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: true
+      - name: Install image tooling
+        run: python3 -m pip install --user "Pillow==11.3.0" "requests==2.32.5"
+      - name: Download and compress verified public-domain thumbnails
+        run: python3 scripts/build_museum_thumbnail_pack.py --max-new 1500 --workers 8
+      - name: Validate all packed files
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          data=json.loads(Path("web/museum_thumbs/manifest.json").read_text())
+          assert data["schema_version"]==1 and data["keys"]
+          assert len(data["keys"])==len(set(data["keys"]))
+          for k in data["keys"]:
+              src,ident=k.split(":")
+              path=Path(f"web/museum_thumbs/{src}_{int(ident)}.webp")
+              assert path.is_file() and 250<=path.stat().st_size<=24000
+          print("PACKED_THUMBNAILS_VALIDATED",len(data["keys"]))
+          PY
+      - name: Commit valid Web-only pack to feature branch
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add web/museum_thumbs/ docs/generated/MUSEUM_THUMBNAIL_COVERAGE.json
+          if ! git diff --cached --quiet; then
+            git commit -m "assets(web): CC0 WebP pack [thumbs generated]"
+            git push origin "HEAD:${GITHUB_REF_NAME}"
+          fi
