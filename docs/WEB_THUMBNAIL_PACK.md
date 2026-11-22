@@ -22,3 +22,11 @@ viewer, and falls back to the museum for missing pack entries.
 
 Do not call build PASS proof that images were downloaded; inspect the real
 coverage report and generated binary assets on the feature branch before merge.
+
+
+## Verified batch 2 (2026-11-22)
+
+The second bounded run produced 1,391 additional WebP files, bringing the
+verified Web-only pack to 2,533 of 4,043 remote catalog records (11,408,854
+bytes). The remaining 1,510 records require a final bounded attempt and a
+per-provider failure review. No 100% claim is made at this stage.
