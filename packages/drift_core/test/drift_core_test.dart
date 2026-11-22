@@ -7,6 +7,36 @@ import 'package:drift_core/drift_core.dart';
 void main() {
   setUp(() => SharedPreferences.setMockInitialValues({}));
 
+  test('on-screen tiles win over far overdraw when the render cap hits', () {
+    const world = InfiniteWorld();
+    const actual = Rect.fromLTWH(0, 0, 620, 800);
+    const overdraw = Rect.fromLTWH(-3000, -2000, 6800, 6000);
+    final required = world.visible(actual, 400, limit: 180);
+    final prioritized = world.visible(overdraw, 400,
+        limit: 180, priorityViewport: actual);
+    expect(prioritized.length, lessThanOrEqualTo(180));
+    final actualKeys = required.map((e) => e.key).toSet();
+    final renderKeys = prioritized.map((e) => e.key).toSet();
+    expect(actualKeys.difference(renderKeys), isEmpty,
+        reason: 'No on-screen image may be dropped for offscreen overdraw');
+  });
+
+  test('look-ahead grows toward manual pan, auto moves downward', () {
+    const visible = Rect.fromLTWH(0, 0, 400, 800);
+    final movingRight = DriftPrefetchPlan.window(
+        visible, const Offset(120, 0));
+    final movingLeft = DriftPrefetchPlan.window(
+        visible, const Offset(-120, 0));
+    final stopped = DriftPrefetchPlan.window(visible, Offset.zero);
+    expect(movingRight.right, greaterThan(stopped.right));
+    expect(movingLeft.left, lessThan(stopped.left));
+    expect(movingRight.left, greaterThan(movingLeft.left));
+    final auto = DriftPrefetchPlan.window(visible, Offset.zero, auto: true);
+    expect(auto.bottom, greaterThan(stopped.bottom));
+    expect(DriftPrefetchPlan.focus(visible, Offset.zero, auto: true).dy,
+        greaterThan(visible.center.dy));
+  });
+
   test('deterministic bounded tiles at distant coordinates', () {
     const world = InfiniteWorld();
     const bounds = Rect.fromLTWH(-100000, 123456, 900, 1000);
