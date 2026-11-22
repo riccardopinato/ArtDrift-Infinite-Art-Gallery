@@ -13,3 +13,10 @@ flutter create --project-name artdrift --org com.riccardopinato --platforms=web 
 rm -f test/widget_test.dart
 flutter pub get
 flutter build web --release --base-href /
+# Android ships the validated WebP bundle as Flutter assets. On Web, these
+# same files are already served from /museum_thumbs/ and loaded as URLs.
+# Drop only the redundant Flutter asset copies in the generated output.
+# Do not touch the authoritative source files or the Web URL thumbnail pack.
+if [[ -s build/web/museum_thumbs/manifest.json ]]; then
+  rm -rf build/web/assets/web/museum_thumbs
+fi
