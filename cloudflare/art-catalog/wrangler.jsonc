@@ -1,0 +1,18 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "artdrift-moma-catalog",
+  "main": "src/worker.mjs",
+  "compatibility_date": "2026-11-20",
+  "workers_dev": true,
+  "d1_databases": [
+    {
+      "binding": "CATALOG_DB",
+      "database_name": "artdrift-moma-cc0",
+      "database_id": "REPLACE_WITH_YOUR_D1_DATABASE_UUID"
+    }
+  ],
+  "vars": {
+    "CATALOG_SOURCE_SHA": "6ca06d4cc92dd39b57cec63278a63059cfa6c1a6",
+    "ASSET_BASE_URL": ""
+  }
+}

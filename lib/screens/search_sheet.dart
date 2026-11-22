@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import '../models/artwork.dart';
 import '../search/gallery_search.dart';
 import '../search/museum_search.dart';
+import '../services/moma_cloud_catalog.dart';
+import 'moma_catalog_page.dart';
 import '../ui/localization.dart';
 import '../ui/parchment.dart';
 
@@ -23,6 +25,7 @@ class _SearchSheet extends StatefulWidget {
 class _SearchSheetState extends State<_SearchSheet> {
   final TextEditingController _text = TextEditingController();
   final MuseumSearchService _museums = MuseumSearchService();
+  final MomaCloudCatalog _moma = MomaCloudCatalog();
   late final GallerySearch _search;
   ArtworkSearchScope _scope = ArtworkSearchScope.all;
   List<Artwork> _local = const [];
@@ -85,12 +88,23 @@ class _SearchSheetState extends State<_SearchSheet> {
     }
   }
 
+  Future<void> _openMoma() async {
+    final text=_text.text.trim();
+    if(!_moma.enabled || text.length<2)return;
+    final scope=_scope == ArtworkSearchScope.artist ? 'artist' :
+      _scope == ArtworkSearchScope.title ? 'title' : 'all';
+    await Navigator.of(context).push<void>(MaterialPageRoute(
+      builder:(_)=>MomaCatalogPageScreen(
+        initialQuery:text,initialScope:scope)));
+  }
+
   @override
   void dispose() {
     _generation++;
     _text.removeListener(_updateLocal);
     _text.dispose();
     _museums.close();
+    _moma.close();
     super.dispose();
   }
 
@@ -187,6 +201,15 @@ class _SearchSheetState extends State<_SearchSheet> {
                 icon: const Icon(Icons.museum_outlined),
                 label: Text(_searching ? t('museumSearching') : t('museumSearch')),
               ),
+              if (_moma.enabled)
+                Padding(padding: const EdgeInsets.only(top: 8),
+                  child:OutlinedButton.icon(
+                    onPressed:_openMoma,
+                    icon:const Icon(Icons.auto_stories_outlined),
+                    label:Text(t('momaSearch')),
+                    style:OutlinedButton.styleFrom(
+                      foregroundColor:ArtPaper.ink,
+                      side:const BorderSide(color:ArtPaper.gold)))),
               Padding(padding: const EdgeInsets.symmetric(vertical: 6),
                 child: Text(t('queryDisclosure'),
                   style: const TextStyle(color: Color(0xFF765D42),
