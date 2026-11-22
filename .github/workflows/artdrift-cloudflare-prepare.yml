@@ -1,0 +1,58 @@
+name: Art Drift Cloudflare catalog - prepare only
+on:
+  push:
+    branches:
+      - 'feat/artdrift-cloudflare-catalog-cdn-*'
+    paths:
+      - 'cloudflare/art-catalog/**'
+      - '.github/workflows/artdrift-cloudflare-prepare.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Worker API tests
+        run: |
+          cd cloudflare/art-catalog
+          npm test
+      - name: SQL converter unit tests
+        run: python3 -m unittest discover -s cloudflare/art-catalog/scripts -p 'test_*.py' -v
+      - name: Verify original MoMA data SHA256
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p build/moma
+          curl -fLsS --retry 3 --max-time 180 "https://media.githubusercontent.com/media/MuseumofModernArt/collection/6ca06d4cc92dd39b57cec63278a63059cfa6c1a6/Artworks.csv" -o build/moma/Artworks.csv
+          echo "73056fe35477608d169b2dcc6ecfde617c5652fa8f61967e819610985423b1dd  build/moma/Artworks.csv" | sha256sum -c -
+          test "$(wc -c < build/moma/Artworks.csv)" -eq 73480509
+      - name: Prepare complete MoMA SQL shards
+        run: python3 cloudflare/art-catalog/scripts/make_d1_import.py --input build/moma/Artworks.csv --out build/moma-d1 --chunk 2500
+      - name: Verify source counts, no image data
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          m=json.loads(Path("build/moma-d1/manifest.json").read_text())
+          assert m["artworks"]==161038
+          assert not m["images_included"]
+          assert sum(x["works"] for x in m["shards"])==161038
+          print("MOMA_161038_WORKS_ACCOUNTED_FOR",len(m["shards"]))
+          PY
+      - name: Upload import artifact, no cloud deployment
+        uses: actions/upload-artifact@v4
+        with:
+          name: ArtDrift-MoMA-D1-SQL-\${{ github.sha }}
+          path: build/moma-d1/
+          retention-days: 30
+          compression-level: 6
+          if-no-files-found: error
