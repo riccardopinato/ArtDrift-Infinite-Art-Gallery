@@ -32,7 +32,7 @@ void main() {
   });
 
   test('a collection never substitutes an unrelated museum artwork', () {
-    final portraits = ArtCollections.all.single((x) => x.id == 'portraits');
+    final portraits = ArtCollections.all.singleWhere((x) => x.id == 'portraits');
     final candidate = art(100, 'Portrait of an artist', date: '1885');
     final unrelated = art(101, 'River bank', date: '1910');
     final denied = art(102, 'Portrait of a stranger', publicDomain: false);
@@ -42,7 +42,7 @@ void main() {
   });
 
   test('subject token matching avoids false positive substrings', () {
-    final marine = ArtCollections.all.single((x) => x.id == 'seascapes');
+    final marine = ArtCollections.all.singleWhere((x) => x.id == 'seascapes');
     expect(marine.contains(art(1, 'Season of flowers')), isFalse);
     expect(marine.contains(art(2, 'Sea and coast')), isTrue);
     expect(marine.contains(art(3, 'Untitled',
@@ -50,9 +50,9 @@ void main() {
   });
 
   test('period filters use explicit museum dates rather than guessed styles', () {
-    final c19 = ArtCollections.all.single(
+    final c19 = ArtCollections.all.singleWhere(
         (x) => x.id == 'nineteenth-century');
-    final c20 = ArtCollections.all.single(
+    final c20 = ArtCollections.all.singleWhere(
         (x) => x.id == 'twentieth-century');
     expect(c19.contains(art(1, 'Unknown', date: 'circa 1881')), isTrue);
     expect(c19.contains(art(2, 'Unknown', date: 'Unknown')), isFalse);
@@ -61,7 +61,7 @@ void main() {
   });
 
   test('museum groups are based on canonical source identity only', () {
-    final c = ArtCollections.all.single((x) => x.id == 'museum-met');
+    final c = ArtCollections.all.singleWhere((x) => x.id == 'museum-met');
     expect(c.contains(art(5, 'Landscape', source: 'met')), isTrue);
     expect(c.contains(art(6, 'Landscape', source: 'cleveland')), isFalse);
   });
