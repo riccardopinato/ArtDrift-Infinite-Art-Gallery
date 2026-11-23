@@ -9,21 +9,39 @@ class Favorites {
   static const keysKey = 'artdrift.favorites.keys.v2';
   static const snapshotsKey = 'artdrift.favorites.snapshots.v2';
 
+  String? _accountId;
+
+  /// null is the original guest store, preserving all v1/v2 installations.
+  String? get accountId => _accountId;
+
+  String get _keysStorageKey => _accountId == null
+      ? keysKey : 'artdrift.favorites.account.$_accountId.keys.v1';
+  String get _snapshotsStorageKey => _accountId == null
+      ? snapshotsKey : 'artdrift.favorites.account.$_accountId.snapshots.v1';
+
   final Set<String> keys = <String>{};
   final Map<String, Artwork> _snapshots = <String, Artwork>{};
+
+  Future<void> useAccount(String? accountId) async {
+    // Only the verified auth user ID may be passed by the coordinator.
+    _accountId = accountId;
+    await load();
+  }
+
+  Artwork? snapshotFor(String key) => _snapshots[key];
 
   Future<void> load() async {
     keys.clear();
     _snapshots.clear();
     final prefs = await SharedPreferences.getInstance();
-    final v2 = prefs.getStringList(keysKey);
-    if (v2 == null) {
+    final v2 = prefs.getStringList(_keysStorageKey);
+    if (v2 == null && _accountId == null) {
       keys.addAll((prefs.getStringList(legacyKey) ?? const <String>[])
           .map(int.tryParse).whereType<int>().map((id) => 'aic:$id'));
     } else {
-      keys.addAll(v2);
+      keys.addAll(v2 ?? const <String>[]);
     }
-    final raw = prefs.getString(snapshotsKey);
+    final raw = prefs.getString(_snapshotsStorageKey);
     if (raw == null) return;
     try {
       final decoded = jsonDecode(raw);
@@ -63,11 +81,33 @@ class Favorites {
       keys.add(key);
       _snapshots[key] = artwork;
     }
+    await _persist();
+  }
+
+  /// Replace only the active account view after a successful server read.
+  /// Never touches the guest store, and never writes another account's keys.
+  Future<void> replaceState(
+      Set<String> activeKeys, Map<String, Artwork> snapshots) async {
+    keys
+      ..clear()
+      ..addAll(activeKeys);
+    _snapshots
+      ..clear()
+      ..addEntries(snapshots.entries.where(
+        (e) => keys.contains(e.key) && e.value.catalogKey == e.key));
+    await _persist();
+  }
+
+  Future<void> _persist() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setStringList(keysKey, keys.toList()..sort());
-    await prefs.setString(snapshotsKey, jsonEncode({
+    final written = await prefs.setStringList(
+      _keysStorageKey, keys.toList()..sort());
+    final saved = await prefs.setString(_snapshotsStorageKey, jsonEncode({
       for (final entry in _snapshots.entries)
         if (keys.contains(entry.key)) entry.key: entry.value.toJson(),
     }));
+    if (!written || !saved) {
+      throw StateError('artdrift_favorites_local_write_failed');
+    }
   }
 }
