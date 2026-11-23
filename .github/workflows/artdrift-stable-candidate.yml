@@ -1,0 +1,97 @@
+name: ArtDrift — stable-signing candidate verification (no publication)
+on:
+  push:
+    branches: ['ci/artdrift-stable-signing-candidate-*']
+permissions:
+  contents: read
+jobs:
+  candidate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    steps:
+      - name: Checkout immutable actual app commit
+        uses: actions/checkout@v4
+        with:
+          ref: 'ab1f70dcff4a3813b75b5766cbc3f67c41e820f3'
+          persist-credentials: false
+      - name: Assert exact source SHA
+        run: test "$(git rev-parse HEAD)" = 'ab1f70dcff4a3813b75b5766cbc3f67c41e820f3'
+      - name: Require existing stable identity, without printing secrets
+        env:
+          KS: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          KP: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KA: ${{ secrets.ANDROID_KEY_ALIAS }}
+          AP: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          EXPECTED: ${{ vars.ANDROID_CERT_SHA256 }}
+        run: |
+          set -euo pipefail
+          for key in KS KP KA AP EXPECTED; do
+            test -n "${!key:-}" || { echo "::error::Stable signing identity missing: $key"; exit 1; }
+          done
+          echo "STABLE_SIGNING_INPUTS_PRESENT"
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: '3.50.1'
+          cache: true
+      - name: Prepare Android and icon
+        run: |
+          flutter create --project-name artdrift --org com.riccardopinato --platforms=android .
+          rm -f test/widget_test.dart
+          python3 scripts/patch_android.py
+          python3 -m pip install --disable-pip-version-check CairoSVG==2.7.1
+          python3 scripts/install_brand_icon.py
+      - name: Set up keystore transiently and configure Gradle
+        env:
+          KS: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          ANDROID_SIGNING_KEYSTORE_PATH: ${{ github.workspace }}/.signing/app.jks
+        run: |
+          set -euo pipefail
+          umask 077
+          mkdir -p .signing
+          printf '%s' "$KS" | base64 --decode > .signing/app.jks
+          test -s .signing/app.jks
+          python3 scripts/configure_release_signing.py
+      - name: Check all tests without exposing key
+        run: |
+          flutter pub get
+          flutter analyze --no-fatal-infos
+          flutter test
+      - name: Build ARM64 stable-signed candidate APK
+        env:
+          ANDROID_SIGNING_KEYSTORE_PATH: ${{ github.workspace }}/.signing/app.jks
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: flutter build apk --release --target-platform android-arm64
+      - name: Compare signing fingerprint and hash immutable artifact
+        env:
+          EXPECTED: ${{ vars.ANDROID_CERT_SHA256 }}
+        run: |
+          set -euo pipefail
+          APK=build/app/outputs/flutter-apk/app-release.apk
+          SDK_TOOLS="$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -1)"
+          "$SDK_TOOLS/apksigner" verify --print-certs "$APK" > build/signer-report.txt
+          actual="$(sed -n 's/.*Signer #1 certificate SHA-256 digest: //p' build/signer-report.txt | head -1 | tr -d ':[:space:]' | tr '[:upper:]' '[:lower:]')"
+          expected="$(printf '%s' "$EXPECTED" | tr -d ':[:space:]' | tr '[:upper:]' '[:lower:]')"
+          test -n "$actual" && test "$actual" = "$expected"
+          sha256sum "$APK" > build/apk-sha256.txt
+          echo 'STABLE_SIGNING_CERT_MATCH_PASS'
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ArtDrift-037-Build10-stable-signed-candidate
+          path: |
+            build/app/outputs/flutter-apk/app-release.apk
+            build/apk-sha256.txt
+            build/signer-report.txt
+          if-no-files-found: error
+      - name: Remove private signing inputs
+        if: always()
+        run: rm -rf .signing
