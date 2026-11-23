@@ -1,3 +1,5 @@
+import 'art_creation_date.dart';
+
 /// Public-domain artwork metadata from the Art Institute of Chicago API.
 /// The institute's narrative description is NOT copied or redistributed.
 class Artwork {
@@ -102,7 +104,15 @@ class Artwork {
     }
     if (!const <String>{'met','cleveland','rijks','nga','getty','smithsonian','smk','mia','walters'}
         .contains(museumSource)) return false;
-    return artworkType.toLowerCase() == 'painting' &&
+    final type = artworkType.toLowerCase();
+    // Legacy catalog remains painting-only. Only modern, item-licensed
+    // Cleveland artworks can additionally be prints, photographs, sculptures,
+    // ceramics, drawings or verified other museum artwork media.
+    final modernNonPainting = museumSource == 'cleveland' &&
+        rightsLicense.toUpperCase() == 'CC0' &&
+        ArtCreationDate.explicitYearFrom1950(date) != null &&
+        ArtCreationDate.eligibleModernMedium(artworkType);
+    return (type == 'painting' || modernNonPainting) &&
         officialImageUrl(remotePreviewUrl, museumSource) &&
         (remoteFullUrl.isEmpty ||
          officialImageUrl(remoteFullUrl, museumSource));
