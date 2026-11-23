@@ -129,7 +129,9 @@ def source_shards(out: Path):
             raise RuntimeError("Unsafe SQL shard filename")
         sqlfile = out / filename
         contents = sqlfile.read_text(encoding="utf-8")
-        if re.search(r"\b(BEGIN[ ]+TRANSACTION|COMMIT|DROP|DELETE|UPDATE|ATTACH)\b",
+        # Check only statement boundaries: titles legitimately contain words
+        # like "Drop" or "Update" and must not trigger false SQL alarms.
+        if re.search(r"(?m)^[ \t]*(BEGIN[ ]+TRANSACTION|COMMIT|DROP|DELETE|UPDATE|ATTACH)\s*;",
                      contents, re.I):
             raise RuntimeError("Unsafe D1 SQL statement in " + filename)
         n = contents.count("INSERT OR IGNORE INTO museum_works ")
