@@ -104,6 +104,7 @@ def normalize(item):
         "www.nga.gov","www.artic.edu","www.getty.edu",
         "www.rijksmuseum.nl","www.smk.dk","open.smk.dk",
         "media.getty.edu","data.rijksmuseum.nl","iiif.micr.io",
+        "creativecommons.org",
         "api.nga.gov","www.moma.org","www.artsmia.org",
         "collections.artsmia.org","www.thewalters.org",
         "art.thewalters.org"}):return None
