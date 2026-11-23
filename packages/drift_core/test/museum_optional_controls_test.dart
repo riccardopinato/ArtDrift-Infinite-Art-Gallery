@@ -8,7 +8,7 @@ void main() {
   testWidgets('museum controls are opt-in and speed menu persists a selection',
       (tester) async {
     await tester.pumpWidget(MaterialApp(home: Scaffold(body: DriftCanvas<String>(
-      items: const ['art'], onOpen: (_) {}, tileBuilder: (_, _, _) =>
+      items: const ['art'], onOpen: (_) {}, tileBuilder: (context, item, zoom) =>
           const ColoredBox(color: Colors.black),
       cameraKey: 'test.museum.menu', compactBrand: 'A∞',
       fullBrand: 'artdrift ∞', hintText: 'Canvas',
@@ -29,7 +29,7 @@ void main() {
       (tester) async {
     Rect? opened, longPressed;
     await tester.pumpWidget(MaterialApp(home: Scaffold(body: DriftCanvas<String>(
-      items: const ['art'], onOpen: (_) {}, tileBuilder: (_, _, _) =>
+      items: const ['art'], onOpen: (_) {}, tileBuilder: (context, item, zoom) =>
           const ColoredBox(color: Colors.black),
       cameraKey: 'test.museum.anchor', compactBrand: 'A∞',
       fullBrand: 'artdrift ∞', hintText: 'Canvas',
@@ -52,7 +52,7 @@ void main() {
       (tester) async {
     bool? current;
     await tester.pumpWidget(MaterialApp(home: Scaffold(body: DriftCanvas<String>(
-      items: const ['a'], onOpen: (_) {}, tileBuilder: (_, _, _) =>
+      items: const ['a'], onOpen: (_) {}, tileBuilder: (context, item, zoom) =>
           const ColoredBox(color: Colors.black),
       cameraKey: 'test.museum.quiet', compactBrand: 'A∞',
       fullBrand: 'artdrift ∞', hintText: 'Canvas',
