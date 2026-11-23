@@ -23,8 +23,6 @@ jobs:
         run: python3 -m py_compile scripts/build_museum_thumbnail_pack.py scripts/verify_smk_object_rights.py scripts/audit_museum_rights_and_coverage.py
       - name: Recheck all 500 SMK artwork rights against the official per-object API
         run: python3 scripts/verify_smk_object_rights.py --max-items 500 --workers 2
-      - name: Recover the single verified public-domain NPG object if its original IDS media is unavailable
-        run: python3 scripts/recover_npg_linn_exact_image.py
       - name: Download and compress source-policy-gated thumbnails
         run: python3 scripts/build_museum_thumbnail_pack.py --max-new 1200 --workers 8
       - name: Validate all packed files
