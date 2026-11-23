@@ -1,9 +1,32 @@
+import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:artdrift/ui/localization.dart';
 import 'package:artdrift/ui/museum_portal.dart';
 
 void main() {
+  setUpAll(() async {
+    TestWidgetsFlutterBinding.ensureInitialized();
+    final fonts = <String, String?>{
+      'Roboto': Platform.environment['ARTDRIFT_G3_SANS_FONT'],
+      'serif': Platform.environment['ARTDRIFT_G3_SERIF_FONT'],
+      'MaterialIcons': Platform.environment['ARTDRIFT_G3_ICONS_FONT'],
+    };
+    for (final entry in fonts.entries) {
+      final path = entry.value;
+      if (path == null || path.isEmpty || !File(path).existsSync()) {
+        if (entry.key == 'MaterialIcons') continue;
+        throw StateError('Missing G3 review font ${entry.key}: $path');
+      }
+      final bytes = await File(path).readAsBytes();
+      await (FontLoader(entry.key)
+        ..addFont(Future<ByteData>.value(ByteData.sublistView(bytes))))
+          .load();
+    }
+  });
+
   setUp(() => ArtDriftLocale.current.value = 'it');
 
   Future<void> setupCanvas(WidgetTester tester) async {
