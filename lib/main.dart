@@ -55,6 +55,7 @@ class _GalleryHomeState extends State<GalleryHome> {
   List<Artwork> _artworks = [];
   List<Artwork> _canvasArtworks = [];
   List<Artwork> _colorArtworks = [];
+  String _lastSearchQuery = '';
   bool _loading = true;
   String? _error;
 
@@ -99,7 +100,9 @@ class _GalleryHomeState extends State<GalleryHome> {
     final selected = await showArtSearchSheet(context, _artworks,
       collectionCatalog: _canvasArtworks,
       onOpenCollection: _openCollection,
-      visualPaletteAvailable: _colorArtworks.isNotEmpty);
+      visualPaletteAvailable: _colorArtworks.isNotEmpty,
+      initialQuery: _lastSearchQuery,
+      onQueryChanged: (value) => _lastSearchQuery = value);
     if (!mounted || selected == null) return;
     _open(selected);
   }
