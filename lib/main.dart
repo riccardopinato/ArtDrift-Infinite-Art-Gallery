@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:flutter/painting.dart';
 
 import 'canvas/infinite_gallery.dart';
@@ -25,6 +27,8 @@ import 'services/art_visual_color_selection.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // Web OAuth callback must reach the app's URL rather than a hash route.
+  if (kIsWeb) usePathUrlStrategy();
   await ArtDriftLocale.initialize();
   await ArtDriftAccount.instance.initialize();
   PaintingBinding.instance.imageCache.maximumSize = 110;
