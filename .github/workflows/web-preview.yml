@@ -1,7 +1,7 @@
 name: ArtDrift Web Preview — source and build
 on:
   push:
-    branches: ['feat/artdrift-web-preview*', 'feat/artdrift-maxi-integration-*']
+    branches: ['feat/artdrift-web-preview*', 'feat/artdrift-maxi-integration-*', 'feat/artdrift-clean-*']
   pull_request:
     branches: [main]
   workflow_dispatch:
