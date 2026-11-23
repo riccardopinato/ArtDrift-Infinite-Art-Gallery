@@ -79,6 +79,12 @@ void main() {
     await tester.enterText(find.byType(TextField), 'Mon');
     await tester.pump();
     expect(find.text('Claude Monet'), findsWidgets);
+    // The museum CTA sits further down in the approved editorial layout:
+    // verify it is still reachable and actionable, rather than requiring it
+    // to appear above the keyboard in the initial viewport.
+    await tester.scrollUntilVisible(
+      find.text('Cerca anche nei musei'), 200,
+      scrollable: find.byType(Scrollable).last);
     expect(find.text('Cerca anche nei musei'), findsOneWidget);
   });
 
@@ -96,6 +102,9 @@ void main() {
     await tester.tap(find.text('English'));
     await tester.pumpAndSettle();
     expect(find.text('Settings'), findsOneWidget);
+    await tester.scrollUntilVisible(
+      find.text('Current plan: Free'), 170,
+      scrollable: find.byType(Scrollable).last);
     expect(find.text('Current plan: Free'), findsOneWidget);
   });
 }

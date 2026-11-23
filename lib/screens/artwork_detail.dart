@@ -6,6 +6,7 @@ import '../models/artwork.dart';
 import '../ui/art_remote_image.dart';
 import '../ui/artwork_preview_image.dart';
 import '../services/wallpaper.dart';
+import '../ui/museum_wood_frame.dart';
 
 /// Full-screen viewer inspired by the reference interaction, with our own UI,
 /// factual caption and independent open-access catalogue.
@@ -26,6 +27,7 @@ class _ArtworkDetailState extends State<ArtworkDetail> {
   late int _index;
   bool _busy = false;
   bool _contemplation = false;
+  bool _captionExpanded = false;
 
   @override
   void initState() {
@@ -34,8 +36,10 @@ class _ArtworkDetailState extends State<ArtworkDetail> {
   }
 
   Artwork get art => widget.artworks[_index];
-  void _next(int direction) => setState(() =>
-      _index = (_index + direction + widget.artworks.length) % widget.artworks.length);
+  void _next(int direction) => setState(() {
+    _index = (_index + direction + widget.artworks.length) % widget.artworks.length;
+    _captionExpanded = false;
+  });
 
   Future<void> _setWallpaper() async {
     final selection = await showModalBottomSheet<String>(
@@ -93,6 +97,9 @@ class _ArtworkDetailState extends State<ArtworkDetail> {
         final wide = constraints.maxWidth >= 740;
         final caption = _Caption(
           artwork: current,
+          expanded: _captionExpanded,
+          onExpand: () => setState(
+            () => _captionExpanded = !_captionExpanded),
           onMuseum: _openMuseum,
           onWallpaper: _busy || kIsWeb ? null : _setWallpaper,
         );
@@ -100,60 +107,100 @@ class _ArtworkDetailState extends State<ArtworkDetail> {
           behavior: HitTestBehavior.translucent,
           onTap: () => setState(() => _contemplation = !_contemplation),
           child: InteractiveViewer(
-          key: ValueKey('detail-${current.id}'),
-          minScale: 0.9, maxScale: 5,
-          child: Center(child: ArtRemoteImage(
-            artwork: current,
-            width: 843,
-            fit: BoxFit.contain,
-            fallback: ArtworkPreviewImage(
-              artwork: current,
-              fit: BoxFit.contain,
-              cacheWidth: 240,
+            key: ValueKey('detail-${current.catalogKey}'),
+            minScale: .9, maxScale: 5,
+            child: Center(child: ArtRemoteImage(
+              artwork: current, width: 843, fit: BoxFit.contain,
+              fallback: ArtworkPreviewImage(
+                artwork: current, fit: BoxFit.contain, cacheWidth: 240),
+              loading: ArtworkPreviewImage(
+                artwork: current, fit: BoxFit.contain, cacheWidth: 240),
+            )),
+          ),
+        );
+        final imageWithFrame = MuseumWoodFrame(
+          child: AnimatedSwitcher(
+            key: const Key('artdrift-detail-switcher'),
+            duration: MediaQuery.disableAnimationsOf(context)
+                ? Duration.zero : const Duration(milliseconds: 180),
+            switchInCurve: Curves.easeIn,
+            switchOutCurve: Curves.easeOut,
+            transitionBuilder: (child, animation) =>
+                FadeTransition(opacity: animation, child: child),
+            child: SizedBox.expand(
+              key: ValueKey(current.catalogKey),
+              child: painting,
             ),
-            // Same-art packaged WebP appears immediately during HD loading.
-            loading: ArtworkPreviewImage(
-              artwork: current,
-              fit: BoxFit.contain,
-              cacheWidth: 240,
-            ),
-          )),
-        ));
+          ),
+        );
+        final tour = Row(children: [
+          SizedBox(width: 43, child: IconButton(
+            key: const Key('artdrift-detail-prev'),
+            tooltip: 'Precedente',
+            icon: const Icon(Icons.chevron_left_rounded),
+            iconSize: 34,
+            color: const Color(0xFFE8D6B9),
+            onPressed: widget.artworks.length > 1 ? () => _next(-1) : null)),
+          Expanded(child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 5),
+            child: imageWithFrame)),
+          SizedBox(width: 43, child: IconButton(
+            key: const Key('artdrift-detail-next'),
+            tooltip: 'Successivo',
+            icon: const Icon(Icons.chevron_right_rounded),
+            iconSize: 34,
+            color: const Color(0xFFE8D6B9),
+            onPressed: widget.artworks.length > 1 ? () => _next(1) : null)),
+        ]);
+        final tourCounter = Padding(
+          padding: const EdgeInsets.fromLTRB(46, 2, 46, 7),
+          child: Row(children: [
+            const Expanded(child: Text('ARTDRIFT · LA COLLEZIONE',
+              style: TextStyle(color: Color(0xFFC0A681),
+                fontSize: 9, letterSpacing: 1.2))),
+            Text('${_index + 1} / ${widget.artworks.length}',
+              key: const Key('artdrift-detail-counter'),
+              style: const TextStyle(color: Color(0xFFE5C595),
+                fontSize: 11)),
+          ]),
+        );
         return Stack(children: [
-          Padding(
-            padding: EdgeInsets.only(top: _contemplation ? 0 : 56),
-            child: _contemplation ? Center(child: painting) : wide
+          Column(children: [
+            if (!_contemplation) const SizedBox(height: 52),
+            Expanded(child: _contemplation
+              ? Center(child: painting)
+              : wide
                 ? Row(children: [
-                    SizedBox(width: 290, child: caption),
-                    Expanded(child: Padding(
-                      padding: const EdgeInsets.all(14), child: painting)),
+                    Expanded(child: tour),
+                    SizedBox(width: 295, child: caption),
                   ])
                 : Column(children: [
-                    Expanded(child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      child: painting)),
-                    SizedBox(height: constraints.maxHeight * 0.31, child: caption),
-                  ]),
-          ),
-          if (!_contemplation) Positioned(left: 8, top: 3, child: IconButton(
-            tooltip: 'Torna alla galleria',
-            color: Colors.white,
-            icon: const Icon(Icons.close_rounded),
-            onPressed: () => Navigator.of(context).pop())),
-          if (!_contemplation) Positioned(right: 8, top: 3, child: Row(children: [
-            IconButton(tooltip: 'Precedente', icon: const Icon(Icons.arrow_back),
-              color: Colors.white70, onPressed: () => _next(-1)),
-            IconButton(tooltip: 'Successivo', icon: const Icon(Icons.arrow_forward),
-              color: Colors.white70, onPressed: () => _next(1)),
-            IconButton(
+                    Expanded(child: tour),
+                    tourCounter,
+                    SizedBox(
+                      height: (constraints.maxHeight * .35).clamp(175.0, 310.0),
+                      child: caption,
+                    ),
+                  ])),
+            if (wide && !_contemplation) tourCounter,
+          ]),
+          if (!_contemplation) Positioned(left: 8, top: 3,
+            child: IconButton(
+              key: const Key('artdrift-detail-close'),
+              tooltip: 'Torna alla galleria',
+              color: const Color(0xFFF1E1C9),
+              icon: const Icon(Icons.close_rounded),
+              onPressed: () => Navigator.of(context).pop())),
+          if (!_contemplation) Positioned(right: 9, top: 3,
+            child: IconButton(
+              key: const Key('artdrift-detail-favorite'),
               tooltip: widget.isFavorite(current)
                   ? 'Rimuovi dai preferiti' : 'Aggiungi ai preferiti',
               icon: Icon(widget.isFavorite(current)
                   ? Icons.favorite : Icons.favorite_border),
               color: widget.isFavorite(current)
-                  ? const Color(0xFFF5B1A8) : Colors.white70,
-              onPressed: _favorite),
-          ])),
+                  ? const Color(0xFFCB986F) : const Color(0xFFE8D4B5),
+              onPressed: _favorite)),
           if (_busy) const Positioned.fill(child: ColoredBox(
             color: Color(0x70000000),
             child: Center(child: CircularProgressIndicator()))),
@@ -164,64 +211,103 @@ class _ArtworkDetailState extends State<ArtworkDetail> {
 }
 
 class _Caption extends StatelessWidget {
-  const _Caption({required this.artwork, required this.onMuseum,
-    required this.onWallpaper});
+  const _Caption({required this.artwork, required this.expanded,
+    required this.onExpand, required this.onMuseum, required this.onWallpaper});
   final Artwork artwork;
-  final VoidCallback onMuseum;
+  final bool expanded;
+  final VoidCallback onExpand, onMuseum;
   final VoidCallback? onWallpaper;
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(19, 12, 19, 16),
-      child: SingleChildScrollView(child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text('ARTDRIFT · L’OPERA',
-            style: TextStyle(color: Colors.white54,
-              fontSize: 10, letterSpacing: 2)),
-          const SizedBox(height: 15),
-          Text(artwork.title, style: const TextStyle(
-            color: Colors.white, fontFamily: 'serif',
-            fontSize: 22, fontWeight: FontWeight.w500)),
-          const SizedBox(height: 5),
-          Text('${artwork.artist.isEmpty ? 'Autore sconosciuto' : artwork.artist}'
-               '${artwork.date.isEmpty ? '' : ' · ${artwork.date}'}',
-            style: const TextStyle(color: Color(0xFFCBC9CC), fontSize: 12)),
-          const SizedBox(height: 18),
-          Text(artwork.shortDescription, style: const TextStyle(
-            color: Color(0xFFDFDCE1), fontSize: 13, height: 1.48)),
-          if (artwork.creditLine.isNotEmpty) ...[
-            const SizedBox(height: 12),
-            Text(artwork.creditLine, style: const TextStyle(
-              color: Colors.white54, fontSize: 11, height: 1.4)),
+    // All fields come from the current artwork. The prose is constructed from
+    // factual catalog metadata, not copied museum narratives or invented history.
+    final creator = artwork.artist.isEmpty ? 'Autore sconosciuto'
+        : artwork.artist;
+    final hasMore = artwork.medium.isNotEmpty || artwork.technique.isNotEmpty ||
+        artwork.creditLine.isNotEmpty || artwork.origin.isNotEmpty ||
+        artwork.dimensions.isNotEmpty || artwork.date.isNotEmpty;
+    return Container(
+      key: const Key('artdrift-room-label'),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(colors: [
+          Color(0xFFF6ECD9), Color(0xFFEBDEC8)]),
+        border: Border.all(color: const Color(0xFFC2A77D)),
+      ),
+      child: SingleChildScrollView(
+        key: const Key('artdrift-room-label-scroll'),
+        padding: const EdgeInsets.fromLTRB(17, 13, 17, 13),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(children: [
+              const Expanded(child: Text('ARTDRIFT · L’OPERA',
+                style: TextStyle(color: Color(0xFF987147),
+                  fontSize: 10, letterSpacing: 1.5))),
+              const Text('✦', style: TextStyle(
+                color: Color(0xFFAD8B5A), fontSize: 16)),
+            ]),
+            const Divider(color: Color(0xFFC5AC88)),
+            Text(artwork.title, key: const Key('artdrift-room-title'),
+              style: const TextStyle(color: Color(0xFF362B21),
+                fontFamily: 'serif', fontSize: 21)),
+            const SizedBox(height: 5),
+            Text(creator +
+              (artwork.date.isEmpty ? '' : ' · ${artwork.date}'),
+              style: const TextStyle(color: Color(0xFF765E44),
+                fontSize: 12, height: 1.4)),
+            const SizedBox(height: 10),
+            if (hasMore) ...[
+              TextButton(
+                key: const Key('artdrift-room-expand'),
+                onPressed: onExpand,
+                style: TextButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  foregroundColor: const Color(0xFF7A5834)),
+                child: Row(children: [
+                  Expanded(child: Text(expanded
+                    ? 'Riduci la scheda' : 'Leggi la scheda',
+                    style: const TextStyle(fontFamily: 'serif'))),
+                  Icon(expanded
+                    ? Icons.keyboard_arrow_up_rounded
+                    : Icons.keyboard_arrow_down_rounded),
+                ]),
+              ),
+              if (expanded) ...[
+                Text(artwork.shortDescription,
+                  style: const TextStyle(color: Color(0xFF59442F),
+                    fontSize: 12, height: 1.55)),
+                if (artwork.creditLine.isNotEmpty) ...[
+                  const SizedBox(height: 8),
+                  Text(artwork.creditLine, style: const TextStyle(
+                    color: Color(0xFF6A533C), fontSize: 11)),
+                ],
+              ],
+            ],
+            const SizedBox(height: 8),
+            Wrap(spacing: 7, runSpacing: 0, children: [
+              if (!kIsWeb)
+                TextButton.icon(
+                  onPressed: onWallpaper,
+                  style: TextButton.styleFrom(
+                    foregroundColor: const Color(0xFF59432F)),
+                  icon: const Icon(Icons.wallpaper_outlined, size: 16),
+                  label: const Text('Imposta come sfondo',
+                    style: TextStyle(fontSize: 11))),
+              TextButton.icon(
+                onPressed: onMuseum,
+                style: TextButton.styleFrom(
+                  foregroundColor: const Color(0xFF59432F)),
+                icon: const Icon(Icons.open_in_new, size: 16),
+                label: const Text('Scheda originale del museo',
+                  style: TextStyle(fontSize: 11))),
+            ]),
+            const SizedBox(height: 7),
+            Text(artwork.displayedMuseum + ' · ' + artwork.displayedLicense,
+              style: const TextStyle(color: Color(0xFF867258),
+                fontSize: 10)),
           ],
-          const SizedBox(height: 18),
-          if (!kIsWeb)
-            TextButton.icon(onPressed: onWallpaper,
-              icon: const Icon(Icons.wallpaper_outlined, size: 17),
-              label: const Text('Imposta come sfondo'),
-              style: TextButton.styleFrom(foregroundColor: Colors.white)),
-          TextButton.icon(onPressed: onMuseum,
-            icon: const Icon(Icons.open_in_new, size: 17),
-            label: const Text('Scheda originale del museo'),
-            style: TextButton.styleFrom(foregroundColor: Colors.white70)),
-          const SizedBox(height: 10),
-          Text('Museo: ' + artwork.displayedMuseum,
-            style: const TextStyle(color: Colors.white70, fontSize: 11)),
-          if (artwork.medium.isNotEmpty || artwork.technique.isNotEmpty)
-            Text('Tecnica: ' +
-                (artwork.technique.isNotEmpty ? artwork.technique : artwork.medium),
-              style: const TextStyle(color: Colors.white54, fontSize: 11)),
-          if (artwork.dimensions.isNotEmpty)
-            Text('Dimensioni: ' + artwork.dimensions,
-              style: const TextStyle(color: Colors.white54, fontSize: 11)),
-          const SizedBox(height: 8),
-          Text('Immagine: ' + artwork.displayedLicense +
-              ' · Fonte: ' + artwork.displayedMuseum,
-            style: const TextStyle(color: Colors.white38, fontSize: 10)),
-        ],
-      )),
+        ),
+      ),
     );
   }
 }

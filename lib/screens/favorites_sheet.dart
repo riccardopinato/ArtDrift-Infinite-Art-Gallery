@@ -77,37 +77,77 @@ class _FavoritesSheetState extends State<_FavoritesSheet> {
                 textAlign: TextAlign.center,
                 style: const TextStyle(color: ArtPaper.ink,
                   fontFamily: 'serif', fontSize: 16))))
-          : ListView.builder(
-              key: const Key('artdrift-favorites-list'),
-              itemCount: saved.length,
-              itemBuilder: (context, index) {
-                final art = saved[index];
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
-                  child: OrnateFrame(shadow: false, padding: EdgeInsets.zero,
-                    child: ListTile(
-                      contentPadding: const EdgeInsets.fromLTRB(9, 5, 5, 5),
-                      leading: ClipRRect(borderRadius: BorderRadius.circular(3),
-                        child: SizedBox(width: 55, height: 70,
-                          child: ArtworkPreviewImage(
-                              artwork: art, cacheWidth: 120))),
-                      title: Text(art.title, maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(color: ArtPaper.ink,
-                          fontFamily: 'serif', fontWeight: FontWeight.w600)),
-                      subtitle: Text(art.artist.isEmpty ? '—' : art.artist,
-                        maxLines: 1, overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(color: Color(0xFF735A3E),
-                          fontSize: 11)),
-                      trailing: IconButton(
-                        key: Key('artdrift-unfavorite-${art.catalogKey}'),
-                        tooltip: ArtDriftLocale.text('removeFavorite'),
-                        icon: const Icon(Icons.favorite, color: ArtPaper.gold),
-                        onPressed: _busy ? null : () => _remove(art)),
-                      onTap: () => Navigator.pop(context, art),
-                    )),
-                );
-              })),
+          : LayoutBuilder(builder: (context, bounds) {
+              final count = bounds.maxWidth >= 640 ? 4
+                  : bounds.maxWidth >= 440 ? 3 : 2;
+              return GridView.builder(
+                key: const Key('artdrift-favorites-grid'),
+                padding: const EdgeInsets.only(bottom: 16),
+                itemCount: saved.length,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: count,
+                  crossAxisSpacing: 9, mainAxisSpacing: 10,
+                  childAspectRatio: count == 4 ? .70 : .61),
+                itemBuilder: (context, index) {
+                  final art = saved[index];
+                  return OrnateFrame(
+                    shadow: false, padding: EdgeInsets.zero, radius: 5,
+                    child: Material(color: Colors.transparent,
+                      child: InkWell(
+                        key: Key('artdrift-favorite-open-${art.catalogKey}'),
+                        onTap: () => Navigator.pop(context, art),
+                        child: Padding(
+                          padding: const EdgeInsets.all(7),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(child: Stack(children: [
+                                Positioned.fill(child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(2),
+                                  child: ColoredBox(
+                                    color: const Color(0xFFDED1B9),
+                                    child: ArtworkPreviewImage(
+                                      artwork: art,
+                                      fit: BoxFit.contain, cacheWidth: 240),
+                                  ))),
+                                Positioned(right: 3, top: 3, child: DecoratedBox(
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xEAF4E9D4),
+                                    borderRadius: BorderRadius.circular(4),
+                                    border: Border.all(
+                                      color: ArtPaper.gold)),
+                                  child: SizedBox(width: 42, height: 42,
+                                    child: IconButton(
+                                      key: Key('artdrift-unfavorite-${art.catalogKey}'),
+                                      padding: EdgeInsets.zero,
+                                      tooltip: ArtDriftLocale.text('removeFavorite'),
+                                      icon: const Icon(Icons.favorite,
+                                        color: ArtPaper.gold, size: 20),
+                                      onPressed: _busy
+                                          ? null : () => _remove(art),
+                                    )))),
+                              ])),
+                              const SizedBox(height: 8),
+                              Text(art.title, maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  color: ArtPaper.ink, fontFamily: 'serif',
+                                  fontSize: 13, fontWeight: FontWeight.w600)),
+                              const SizedBox(height: 3),
+                              Text(art.artist.isEmpty ? '—' : art.artist,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  color: Color(0xFF735A3E), fontSize: 10)),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              );
+            })),
       ],
     )));
   }
