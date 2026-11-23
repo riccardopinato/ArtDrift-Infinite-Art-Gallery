@@ -158,6 +158,7 @@ class _GalleryHomeState extends State<GalleryHome> {
           : TileOriginFlight(
               animation: animation,
               originRect: tileRect,
+              originArtwork: artwork,
               originalArtworkKey: artwork.catalogKey,
               currentArtworkKey: displayIdentity,
               child: child),

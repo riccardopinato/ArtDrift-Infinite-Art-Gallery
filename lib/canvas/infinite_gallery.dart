@@ -44,8 +44,18 @@ class _InfiniteGalleryState extends State<InfiniteGallery> {
   void _open(Artwork artwork, Rect rect) {
     _dismiss();
     final precise = widget.onOpenAtRect;
-    if (precise == null) widget.onOpen(artwork);
-    else precise(artwork, rect);
+    if (precise == null) {
+      widget.onOpen(artwork);
+      return;
+    }
+    // Drift Core emits a canvas-viewport rect. Convert it to absolute
+    // screen coordinates BEFORE the page route is pushed; SafeArea and
+    // eventual banner inset can otherwise offset the origin.
+    final render = context.findRenderObject();
+    final topLeft = render is RenderBox
+        ? render.localToGlobal(Offset.zero)
+        : Offset.zero;
+    precise(artwork, rect.shift(topLeft));
   }
 
   Widget _preview(Artwork art) {
