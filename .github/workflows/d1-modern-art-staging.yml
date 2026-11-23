@@ -81,9 +81,9 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Acquire 200 Tate metadata-only modern paintings (NO Cloudflare writes)
+      - name: Acquire all matching Tate modern paintings up to 5000 (NO Cloudflare writes)
         run: |
-          python tools/artdrift_museum_ingest.py --source tate --max-records 200
+          python tools/artdrift_museum_ingest.py --source tate --max-records 5000
           python - <<'PY'
           import json
           from pathlib import Path
