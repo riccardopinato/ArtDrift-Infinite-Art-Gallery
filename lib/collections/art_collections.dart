@@ -1,4 +1,5 @@
 import '../models/artwork.dart';
+import '../models/art_creation_date.dart';
 
 /// A collection is an explainable, entirely local filter over *existing*
 /// museum metadata. It does not invent an image subject or artistic movement.
@@ -60,6 +61,16 @@ class ArtCollections {
       {'it':'Oggetti e composizioni', 'en':'Objects and arrangements',
        'fr':'Objets et compositions', 'es':'Objetos y composiciones',
        'de':'Objekte und Arrangements', 'pt':'Objetos e composições'}),
+    ArtCollection('modern-from-1950',
+      {'it':'Dal 1950 a oggi', 'en':'From 1950 onward',
+       'fr':'Depuis 1950', 'es':'Desde 1950',
+       'de':'Seit 1950', 'pt':'Desde 1950'},
+      {'it':'Arte moderna e contemporanea con immagini riutilizzabili',
+       'en':'Modern and contemporary art with reusable images',
+       'fr':'Art moderne et contemporain avec images réutilisables',
+       'es':'Arte moderno y contemporáneo con imágenes reutilizables',
+       'de':'Moderne und zeitgenössische Kunst mit frei nutzbaren Bildern',
+       'pt':'Arte moderna e contemporânea com imagens reutilizáveis'}),
     ArtCollection('nineteenth-century',
       {'it':'Ottocento', 'en':'19th century', 'fr':'XIXe siècle',
        'es':'Siglo XIX', 'de':'19. Jahrhundert', 'pt':'Século XIX'},
@@ -141,6 +152,8 @@ class ArtCollections {
       case 'still-life':
         return _hasTokens(art, ['still life','stillleben','natura morta',
           'nature morte','bodegón','bodegon','stilleven','naturaleza muerta']);
+      case 'modern-from-1950':
+        return ArtCreationDate.explicitYearFrom1950(art.date) != null;
       case 'nineteenth-century':
         return _year19.hasMatch(art.date) || _nineteenth.hasMatch(art.date);
       case 'twentieth-century':
