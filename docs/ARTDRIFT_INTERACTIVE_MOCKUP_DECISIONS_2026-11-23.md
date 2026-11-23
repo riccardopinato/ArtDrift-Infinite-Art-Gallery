@@ -23,8 +23,9 @@ Stato generale: **DESIGN REVIEW / NON IMPLEMENTATO**.
 | 1/10 | Home / canvas | **Quiet Canvas** — modalità Immersione: i controlli svaniscono dopo l'esplorazione, un comando discreto li richiama; conservare posizionamento e tema approvati | **APPROVATO** — conferma esplicita in chat 23/11/2026 | **NO** | Prototipo interattivo visto e approvato; comportamento visivo proposto, non funzionalità già esistente |
 | 2/10 | Home / anteprima opera | **Targhetta museale** — pressione prolungata su un'opera apre una targhetta discreta con titolo, autore, data, Apri opera e Preferiti; il tap breve mantiene il dettaglio completo | **APPROVATO** — conferma esplicita in chat 23/11/2026 | **NO** | Solo UX/visual proposta; nessuna modifica al catalogo o a preferiti reali |
 | 3/10 | Home → apertura opera | **Zoom contestuale con cornice museale** — la tessera selezionata si ingrandisce dalla sua posizione reale fino a una card centrale; durante il passaggio compare la cornice raffinata in noce decorato con dettagli dorati; X in alto a destra, ritorno animato alla stessa tessera, cornice assente nel canvas | **APPROVATO** — conferma esplicita in chat 23/11/2026 dopo revisioni 2 e 3 | **NO** | Nessun cambio camera/layout, preview responsiva e fallback reduced-motion; verifica rendering e performance Android in fase implementativa |
-| 4/10 | Scheda dell'opera incorniciata | **Cartellino di sala espandibile** — scheda editoriale discreta che mostra prima titolo/autore e, su richiesta, metadati reali e testo esistente, lasciando visibile l'opera | **IN ATTESA** | **NO** | Proposta di impaginazione e interazione, non nuovi metadati o funzionalità esterne |
-| 5–10 | — | Da proporre uno alla volta | **NON PRESENTATI** | **NO** | Vietato anticipare le decisioni |
+| 4/10 | Scheda dell'opera incorniciata | **Cartellino di sala espandibile** — scheda editoriale avorio sotto il quadro con titolo, autore e anno; comando «Leggi la scheda» per espandere i soli metadati e descrizioni esistenti; impaginazione dinamica sopra il banner AdMob se presente | **APPROVATO** — conferma «procedi, approvo» in chat del 23/11/2026 dopo precisazione sul futuro banner | **NO** | Rispettare il vincolo AdMob documentato: assente = piena area, presente = bordo superiore del banner; nessuna pubblicità implementata |
+| 5/10 | Home / Preferiti | **La mia collezione** — proposta estetica di galleria editoriale accessibile dal cuore in alto a destra; presentazione di opere salvate e ritorno al canvas senza perdere lo stato | **IN ATTESA** | **NO** | Mock-up interattivo in valutazione: non sostituisce automaticamente funzioni o navigazione esistenti |
+| 6–10 | — | Da proporre uno alla volta | **NON PRESENTATI** | **NO** | Vietato anticipare le decisioni |
 
 ## Slot 1/10 — contratto di design approvato
 
@@ -58,8 +59,19 @@ Stato generale: **DESIGN REVIEW / NON IMPLEMENTATO**.
 - Reference Design-App: `MOCK-STYLE-003` Vintage **ADATTATA** e Editorial UI **ADATTATA** a cornice museale; nessun asset o componente esterno copiato.
 - **Nota sullo stato:** approvazione estetica in chat non equivale a widget sorgente, CI, visual QA o collaudo fisico. Nessuna modifica Flutter effettuata.
 
+## Slot 4/10 — contratto di design approvato
+
+- Identità: **Scheda di sala**, cartellino avorio editoriale associato al quadro centrale incorniciato in noce (slot 3/10).
+- Vista iniziale compatta: **titolo, autore, anno**, più comando esplicito **Leggi la scheda**; la card con il quadro resta visibile e l'immagine mantiene le proporzioni originali.
+- L'espansione mostra soltanto le informazioni autentiche già disponibili nel catalogo: tecnica, provenienza, crediti, descrizione quando presenti. I campi assenti non vengono riempiti con dati fittizi.
+- Chiusura/riapertura reversibile, dimensioni di lettura e target accessibili; su telefoni piccoli contenuto scrollabile all'interno della scheda, senza tagliare il quadro.
+- **Vincolo aggiuntivo approvato prima della decisione**: `docs/ARTDRIFT_ADMOB_VIEWPORT_CONSTRAINT_2026-11-23.md`. Se **nessun banner AdMob è presente**, canvas, card e scheda usano tutta l'area disponibile; quando è **visibile**, la zona utile termina precisamente sul **bordo superiore del banner**, con altezza dinamica misurata e nessuno spazio inferiore vuoto fisso.
+- Il banner NON è stato introdotto; nessun SDK o ID pubblicitario va aggiunto in questa fase. La gestione degli inset di Android resta requisito di implementazione futura.
+- Continuità con i mock-up già approvati 1/10 Quiet Canvas, 2/10 Targhetta museale, 3/10 Zoom contestuale con cornice; nessuna modifica diretta alla home o alla logica del canvas.
+- Stile Design-App Vintage `MOCK-STYLE-003` ed Editorial UI **ADATTATI**, non copia di asset/font esterni.
+
 ## Stato implementativo
 
 **APPROVATO ≠ INTEGRATO.** Questo documento registra solo preferenze e decisioni; il codice Flutter attuale e le PR #33–#35 restano indipendenti. Il collaudo v0.3.8 e la relativa PR #35 non autorizzano la promozione estetica.
 
-La prossima decisione è sullo slot **4/10**. Non avanzare allo slot 5/10 prima di approvare, modificare o scartare esplicitamente il 4/10.
+La prossima decisione è sullo slot **5/10**. Non avanzare allo slot 6/10 prima di approvare, modificare o scartare esplicitamente il 5/10.
