@@ -8,10 +8,12 @@ class MuseumCloudWork {
     required this.key, required this.title, required this.museum,
     required this.artist, required this.date, required this.medium,
     required this.license, required this.credit,
+    required this.rightsEvidenceUrl,
     this.sourceUrl, this.imageUrl,
   });
 
   final String key,title,museum,artist,date,medium,license,credit;
+  final String rightsEvidenceUrl;
   final String? sourceUrl,imageUrl;
 
   static const _imageHosts=<String>{
@@ -56,7 +58,7 @@ class MuseumCloudWork {
     return MuseumCloudWork(
       key:key,title:title,museum:museum,artist:get('artist'),
       date:get('date'),medium:get('medium'),license:license,
-      credit:get('credit_line'),
+      credit:get('credit_line'),rightsEvidenceUrl:proof,
       sourceUrl:_https(detail,_detailHosts)?detail:null,
       imageUrl:_https(image,_imageHosts)?image:null,
     );
