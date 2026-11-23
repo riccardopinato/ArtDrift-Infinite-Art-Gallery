@@ -22,6 +22,8 @@ from urllib.request import Request, urlopen
 
 TATE_CSV = "https://raw.githubusercontent.com/tategallery/collection/master/artwork_data.csv"
 TATE_GUIDELINES = "https://github.com/tategallery/collection"
+MOMA_CSV = "https://raw.githubusercontent.com/MuseumofModernArt/collection/main/Artworks.csv"
+MOMA_REPO = "https://github.com/MuseumofModernArt/collection"
 WD_SPARQL = "https://query.wikidata.org/sparql"
 COMMONS_API = "https://commons.wikimedia.org/w/api.php"
 MUSEUMS = {
@@ -117,7 +119,7 @@ def record(*, provider: str, native_id: str, museum: str, title: str,
     if rights_status not in {"METADATA_ONLY", "IMAGE_REVIEW", "IMAGE_RIGHTS_VERIFIED"}:
         raise ValueError("Invalid rights status")
     if not safe_https(metadata_url, {
-        "www.tate.org.uk", "www.wikidata.org", "github.com",
+        "www.tate.org.uk", "www.wikidata.org", "github.com", "www.moma.org",
     }):
         raise ValueError("Unrecognized metadata URL")
     if rights_status == "IMAGE_RIGHTS_VERIFIED":
@@ -179,6 +181,47 @@ def collect_tate(max_records: int) -> list[dict]:
         r = tate_row(row)
         if r:
             result.append(r)
+            if len(result) >= max_records:
+                break
+    return result
+
+
+
+def moma_row(row: dict) -> dict | None:
+    """MoMA CC0 factual dataset: NEVER import its copyrighted image links."""
+    artist = clean(row.get("Artist"), 220)
+    title = clean(row.get("Title"))
+    type_ = clean(row.get("Classification"), 100).lower()
+    medium = clean(row.get("Medium"), 250)
+    ident = clean(row.get("ObjectID"), 128)
+    if not (ident.isdigit() and title and famous(artist)):
+        return None
+    if "paint" not in type_ and not re.search(
+            r"\\b(oil|acrylic|tempera|gouache|watercolou?r)\\b", medium, re.I):
+        return None
+    if type_ and "paint" not in type_:
+        return None
+    url = clean(row.get("URL"), 300)
+    if not safe_https(url, {"www.moma.org"}):
+        url = MOMA_REPO
+    return record(
+        provider="moma", native_id=ident, museum="Museum of Modern Art, New York",
+        title=title, artist=artist, year=clean(row.get("Date"), 90),
+        medium=medium, metadata_url=url,
+    )
+
+
+def collect_moma(max_records: int) -> list[dict]:
+    """Read primary-source CC0 metadata, not MoMA licensed image thumbnails."""
+    raw = request_bytes(MOMA_CSV, accept="text/csv", max_bytes=48 * 1024 * 1024)
+    reader = csv.DictReader(io.StringIO(raw.decode("utf-8-sig")))
+    if not {"ObjectID", "Title", "Artist", "Classification", "Medium"}.issubset(reader.fieldnames or []):
+        raise ValueError("MoMA CSV schema changed")
+    result = []
+    for row in reader:
+        rec = moma_row(row)
+        if rec:
+            result.append(rec)
             if len(result) >= max_records:
                 break
     return result
@@ -341,7 +384,7 @@ def export(records: list[dict], jsonl_path: Path, sql_path: Path) -> dict:
 
 def main() -> None:
     p = argparse.ArgumentParser(description=__doc__)
-    p.add_argument("--source", choices=("tate", "wikidata", "all"), default="tate")
+    p.add_argument("--source", choices=("tate", "moma", "wikidata", "all"), default="tate")
     p.add_argument("--max-records", type=int, default=200)
     p.add_argument("--museum", choices=sorted(MUSEUMS), default=None,
                    help="Limit Wikidata acquisition to one verified institution")
@@ -350,11 +393,13 @@ def main() -> None:
     args = p.parse_args()
     if not 1 <= args.max_records <= 5000:
         p.error("--max-records must be 1..5000")
-    if args.museum and args.source == "tate":
+    if args.museum and args.source in ("tate", "moma"):
         p.error("--museum applies only to wikidata source")
     works: list[dict] = []
     if args.source in ("tate", "all"):
         works.extend(collect_tate(args.max_records))
+    if args.source in ("moma", "all"):
+        works.extend(collect_moma(args.max_records))
     if args.source in ("wikidata", "all"):
         works.extend(collect_wikidata(args.max_records, args.museum))
     if not works:
