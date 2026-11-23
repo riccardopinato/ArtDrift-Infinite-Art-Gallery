@@ -11,10 +11,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: 'dc1b52e19b3686a1160b25c7165f5fa483939f7a'
+          ref: 'c89d426bb1c4129271df130f5ce18f35710273e4'
           persist-credentials: false
       - name: Verify exact immutable app source
-        run: test "$(git rev-parse HEAD)" = 'dc1b52e19b3686a1160b25c7165f5fa483939f7a'
+        run: test "$(git rev-parse HEAD)" = 'c89d426bb1c4129271df130f5ce18f35710273e4'
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -77,7 +77,7 @@ jobs:
           echo 'ARTDRIFT_TEST_APP_SIDE_BY_SIDE_PASS'
       - uses: actions/upload-artifact@v4
         with:
-          name: ArtDrift-2400-portrait70-safe-ARM64
+          name: ArtDrift-038-2400-portrait70-safe-ARM64
           path: |
             build/app/outputs/flutter-apk/app-release.apk
             build/preview-signature.txt
