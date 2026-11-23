@@ -67,9 +67,17 @@ def metrics(path):
             count=sum(hist.values())
             entropy=-sum((k/count)*math.log2(k/count) for k in hist.values())/math.log2(12)
         contrast=min(1,ImageStat.Stat(im.convert("L")).stddev[0]/90)
-        score=(.34*vibrant+.29*saturation+.19*entropy+.18*contrast)*(1-.65*(dark+white))
+        # A luminous chromatic area matters more than a few saturated pixels
+        # against a nearly black or sepia painting. These are objective
+        # image measures; they are not subjective beauty certifications.
+        bright_color=sum(s>.30 and v>.50 for h,s,v in hsv)/n
+        sepia=sum(.04<h<.16 and .17<s<.70 and .25<v<.73 for h,s,v in hsv)/n
+        score=(.24*vibrant+.17*saturation+.16*entropy+
+            .15*contrast+.28*bright_color)
+        score*=max(.1,1-.65*(dark+white)-.28*sepia)
         return {"score":round(score,5),"saturation":round(saturation,4),
-            "vibrant":round(vibrant,4),"entropy":round(entropy,4),
+            "vibrant":round(vibrant,4),"bright_color":round(bright_color,4),
+            "sepia":round(sepia,4),"entropy":round(entropy,4),
             "contrast":round(contrast,4),
             "hue":hist.most_common(1)[0][0] if hist else -1}
     except (OSError,ValueError):return None
@@ -95,11 +103,11 @@ def generate(root,out,count):
         artist=(row.get("artist_title") or row.get("artist_display") or "").strip()
         al=artist.lower().split("(")[0].strip() or "unknown"
         priority=any(word in al for word in FAVORITES)
-        role="color" if stat["vibrant"]>=.14 and stat["saturation"]>=.23 else "pause"
+        role="color" if stat["vibrant"]>=.18 and stat["saturation"]>=.27 else "pause"
         results.append({"key":key,"artist":artist,"author":al,
             "title":row.get("title") or "Untitled","file":str(file.relative_to(root)),
             "source":row.get("museum_source") or "aic","role":role,
-            "score":round(stat["score"]+(.13 if priority else 0),5),
+            "score":round(stat["score"]+(.16 if priority else 0),5),
             "color":stat,"priority_artist":priority})
     if len(results)<count:
         raise ValueError("Only "+str(len(results))+" assets found; expected at least "+str(count))
