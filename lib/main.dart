@@ -185,8 +185,8 @@ class _GalleryHomeState extends State<GalleryHome> {
     return Scaffold(body: ArtAdAwareViewport(
       // QA-only: defaults to zero. No AdMob SDK or artificial ad gap.
       // Once a real banner exists its measured height will replace this value.
-      bannerHeight: const double.fromEnvironment(
-          'ARTDRIFT_QA_AD_BANNER_HEIGHT', defaultValue: 0),
+      bannerHeight: const int.fromEnvironment(
+          'ARTDRIFT_QA_AD_BANNER_HEIGHT', defaultValue: 0).toDouble(),
       child: Stack(fit: StackFit.expand, children: [
       InfiniteGallery(
         artworks: _canvasArtworks,

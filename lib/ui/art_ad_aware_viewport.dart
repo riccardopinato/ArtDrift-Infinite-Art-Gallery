@@ -33,9 +33,9 @@ class ArtAdAwareViewport extends StatelessWidget {
             key: const Key('artdrift-qa-ad-reserved-region'),
             height: desired,
             width: double.infinity,
-            child: const Semantics(
+            child: Semantics(
               label: 'Area pubblicitaria simulata per collaudo',
-              child: ColoredBox(color: Color(0xFF302B29),
+              child: const ColoredBox(color: Color(0xFF302B29),
                 child: Center(child: Text('AD SLOT · QA ONLY',
                   style: TextStyle(
                     color: Color(0xFFD2C0A2), letterSpacing: 1.5,
