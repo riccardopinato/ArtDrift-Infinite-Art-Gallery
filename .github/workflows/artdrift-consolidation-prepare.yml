@@ -62,7 +62,7 @@ jobs:
           git add -A -- docs/ART_IMAGE_RIGHTS_AUDIT_2026-11-23.md docs/ART_IMAGE_RIGHTS_PROVIDER_GATES_2026-11-22.md docs/ARTDRIFT_MAXI_STEP_INTEGRATION_2026-11-22.md
           git add -A -- docs/generated/ART_IMAGE_ITEM_RIGHTS_AUDIT.json docs/generated/MUSEUM_THUMBNAIL_COVERAGE.json docs/generated/NPG_2007_11_COMMONS_EXCEPTION_EVIDENCE.json
           git add -A -- scripts/import_global_museum_catalog.py scripts/sanitize_global_museums.py scripts/recover_npg_linn_exact_image.py
-          git add -A -- test/museum_catalog_test.dart .github/workflows/web-thumbnail-pack.yml
+          git add -A -- test/museum_catalog_test.dart
           if ! git diff --cached --quiet; then
             git commit -m 'feat(catalog): remove unavailable Smithsonian artwork; reconcile 4499 complete previews'
             git push origin "HEAD:$GITHUB_REF_NAME"
