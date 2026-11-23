@@ -32,6 +32,7 @@ flutter:
     - assets/museums/catalog.json
     - assets/museums/catalog_global.json
     - assets/museums/catalog_modern_1950.json
+    - assets/museums/catalog_new_museums.json
     - assets/museums/canvas_visual_color_v1.json
     - assets/museums/thumbs/
     # Previously Web-only verified WebP pack: also bundle it in the Android APK.
