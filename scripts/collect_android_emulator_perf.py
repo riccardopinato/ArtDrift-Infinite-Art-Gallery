@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Evaluate an Art Drift Android emulator smoke, never fabricate FPS or physical QA."""
 import argparse
+import hashlib
 import json
 import re
 from pathlib import Path
@@ -31,8 +32,14 @@ def parse(root: Path, out: Path):
     rendered = match_number(gfx, r"Total frames rendered:\s*([\d,]+)")
     after_png = root / "screenshot.png"
     before_png = root / "screenshot_before.png"
+    mid_png = root / "screenshot_mid.png"
     screenshot_before_bytes = before_png.stat().st_size if before_png.exists() else 0
     screenshot_after_bytes = after_png.stat().st_size if after_png.exists() else 0
+    screenshot_mid_bytes = mid_png.stat().st_size if mid_png.exists() else 0
+    sha = lambda path: hashlib.sha256(path.read_bytes()).hexdigest() if path.exists() else None
+    before_hash, mid_hash, after_hash = map(sha, (before_png, mid_png, after_png))
+    ui_xml = "\\n".join(read(name).lower() for name in ("ui_before.xml", "ui_mid.xml", "ui_after.xml"))
+    dialog_detected = ("quickstep" in ui_xml and "responding" in ui_xml) or "isn't responding" in ui_xml or "not responding" in ui_xml
     offline_flag = read("airplane_mode.txt").strip() == "1"
     started = bool(read("pid_before.txt").strip())
     survived = bool(read("pid_after.txt").strip())
@@ -47,8 +54,12 @@ def parse(root: Path, out: Path):
         failures.append("process_not_running_after_pan")
     if completed != 48:
         failures.append("swipe_sequence_incomplete")
-    if screenshot_before_bytes < 4096 or screenshot_after_bytes < 4096:
+    if min(screenshot_before_bytes, screenshot_mid_bytes, screenshot_after_bytes) < 4096:
         failures.append("missing_or_tiny_screenshot")
+    if before_hash and mid_hash and before_hash == mid_hash:
+        failures.append("canvas_did_not_visibly_change_after_first_swipe")
+    if dialog_detected:
+        failures.append("system_anr_dialog_visible")
     if crash:
         failures.append("android_runtime_crash")
 
@@ -60,7 +71,12 @@ def parse(root: Path, out: Path):
         "app_running_after": survived,
         "swipe_gestures_completed": completed,
         "first_screenshot_bytes": screenshot_before_bytes,
+        "mid_screenshot_bytes": screenshot_mid_bytes,
         "after_screenshot_bytes": screenshot_after_bytes,
+        "screenshots_sha256": {"before": before_hash, "after_first_swipe": mid_hash, "after": after_hash},
+        "canvas_changed_after_first_swipe": bool(before_hash and mid_hash and before_hash != mid_hash),
+        "system_anr_dialog_visible": dialog_detected,
+        "system_dialog_recovery_attempted": bool(read("system_dialog_recovery.txt").strip()),
         "memory_pss_before_kib": total_pss(before),
         "memory_pss_after_kib": total_pss(after),
         "frames_rendered_reported": rendered,
@@ -77,7 +93,7 @@ def parse(root: Path, out: Path):
         "failures": failures,
         "caveats": (
             "Airplane setting plus disabled Wi-Fi/data is emulator evidence, not a network packet audit. "
-            "Screenshot file validity does not prove artwork visibility; visual review is separate. "
+            "All three screenshots and one directional swipe are compared, but visual review is separate. "
             "Emulator memory/FPS do not certify a physical device. "
             "Unavailable gfxinfo percentile fields are null, not zero."
         ),

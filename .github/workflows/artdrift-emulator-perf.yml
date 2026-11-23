@@ -1,11 +1,11 @@
-name: ArtDrift - Android emulator fast-pan and RAM probe
+name: Art Drift G2 - integrated candidate visual smoke (no app changes)
 on:
   push:
-    branches: ['feat/artdrift-integrated-preview-color-*']
+    branches: ['feat/artdrift-g2-visual-smoke-*']
     paths:
       - '.github/workflows/artdrift-emulator-perf.yml'
       - 'scripts/collect_android_emulator_perf.py'
-      - 'assets/museums/canvas_visual_color_v1.json'
+      - 'scripts/run_emulator_pan_probe.sh'
   workflow_dispatch:
 permissions:
   contents: read
@@ -53,7 +53,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: ArtDrift-Emulator-Pan-Memory-Report
+          name: ArtDrift-G2-Visual-Smoke-Report
           path: build/performance/emulator/
           if-no-files-found: warn
           retention-days: 30
