@@ -120,13 +120,24 @@ def record(*, provider: str, native_id: str, museum: str, title: str,
         raise ValueError("Invalid rights status")
     if not safe_https(metadata_url, {
         "www.tate.org.uk", "www.wikidata.org", "github.com", "www.moma.org",
+        *(host for allowed in OFFICIAL_METADATA_HOSTS.values() for host in allowed),
     }):
         raise ValueError("Unrecognized metadata URL")
     if rights_status == "IMAGE_RIGHTS_VERIFIED":
-        if not (safe_https(image_url, {"upload.wikimedia.org"}) and
-                safe_https(full_image_url, {"upload.wikimedia.org"}) and
-                safe_https(rights_evidence_url, {"commons.wikimedia.org"}) and
-                rights_license in {"CC0 1.0", "Public Domain Mark 1.0"}):
+        if provider == "wikidata":
+            image_hosts = {"upload.wikimedia.org"}
+            evidence_hosts = {"commons.wikimedia.org"}
+            accepted = {"CC0 1.0", "Public Domain Mark 1.0"}
+        elif provider in OFFICIAL_IMAGE_HOSTS:
+            image_hosts = OFFICIAL_IMAGE_HOSTS[provider]
+            evidence_hosts = OFFICIAL_EVIDENCE_HOSTS[provider]
+            accepted = {"CC0 1.0"}
+        else:
+            raise ValueError("No approved image provider policy")
+        if not (safe_https(image_url, image_hosts) and
+                safe_https(full_image_url, image_hosts) and
+                safe_https(rights_evidence_url, evidence_hosts) and
+                rights_license in accepted):
             raise ValueError("Missing independently verified file license")
     else:
         # Images in non-verified records are deliberately not stored.
@@ -227,6 +238,103 @@ def collect_moma(max_records: int) -> list[dict]:
             if len(result) >= max_records:
                 break
     return result
+
+
+
+# These hosts mirror the Art Drift catalog's pre-existing vetted museum adapters.
+# The existing catalog only claims per-object CC0/PD metadata; publication remains HOLD.
+OFFICIAL_IMAGE_HOSTS = {
+    "cleveland": {"openaccess-cdn.clevelandart.org", "www.clevelandart.org", "clevelandart.org"},
+    "met": {"images.metmuseum.org"},
+    "smithsonian": {"ids.si.edu", "www.si.edu", "si.edu"},
+    "smk": {"iip.smk.dk", "iip-thumb.smk.dk"},
+    "nga": {"api.nga.gov", "media.nga.gov"},
+    "rijks": {"iiif.micr.io"},
+    "getty": {"media.getty.edu"},
+}
+OFFICIAL_METADATA_HOSTS = {
+    "cleveland": {"www.clevelandart.org", "clevelandart.org"},
+    "met": {"www.metmuseum.org", "metmuseum.org"},
+    "smithsonian": {"www.si.edu", "si.edu", "americanart.si.edu", "npg.si.edu", "asia.si.edu"},
+    "smk": {"www.smk.dk", "smk.dk", "open.smk.dk"},
+    "nga": {"www.nga.gov", "nga.gov"},
+    "rijks": {"www.rijksmuseum.nl", "rijksmuseum.nl", "data.rijksmuseum.nl"},
+    "getty": {"www.getty.edu", "getty.edu", "data.getty.edu"},
+}
+OFFICIAL_EVIDENCE_HOSTS = {
+    "cleveland": {"www.clevelandart.org", "clevelandart.org"},
+    "met": {"www.metmuseum.org", "metmuseum.org"},
+    "smithsonian": {"www.si.edu", "si.edu"},
+    "smk": {"www.smk.dk", "smk.dk", "open.smk.dk"},
+    "nga": {"www.nga.gov", "nga.gov"},
+    "rijks": {"www.rijksmuseum.nl", "rijksmuseum.nl", "data.rijksmuseum.nl"},
+    "getty": {"www.getty.edu", "getty.edu"},
+}
+
+
+def existing_catalog_row(row: dict) -> dict | None:
+    """Admit ONLY pre-imported CC0 modernist paintings with official media hosts.
+
+    Reject all generic public-domain labels unless the explicit CC0 item
+    license and original publisher evidence are available. No new HTML scrape.
+    """
+    if not isinstance(row, dict):
+        return None
+    source = clean(row.get("museum_source"), 30)
+    artist = clean(row.get("artist_title") or row.get("artist_display"), 220)
+    if source not in OFFICIAL_IMAGE_HOSTS or not famous(artist):
+        return None
+    if row.get("is_public_domain") is not True:
+        return None
+    if clean(row.get("artwork_type_title")).casefold() != "painting":
+        return None
+    if clean(row.get("rights_license")).casefold() not in ("cc0", "cc0 1.0"):
+        return None
+    preview = clean(row.get("remote_preview_url"), 1800)
+    original = clean(row.get("remote_full_url"), 1800) or preview
+    evidence = clean(row.get("rights_evidence_url"), 800)
+    detail = clean(row.get("remote_museum_url"), 500)
+    if not (safe_https(preview, OFFICIAL_IMAGE_HOSTS[source]) and
+            safe_https(original, OFFICIAL_IMAGE_HOSTS[source]) and
+            safe_https(evidence, OFFICIAL_EVIDENCE_HOSTS[source]) and
+            safe_https(detail, OFFICIAL_METADATA_HOSTS[source])):
+        return None
+    native = clean(row.get("museum_native_id"), 128)
+    if not native or not clean(row.get("title")):
+        return None
+    return record(
+        provider=source, native_id=native, museum=clean(row.get("museum_name"), 200),
+        title=clean(row.get("title")), artist=artist,
+        year=clean(row.get("date_display"), 90),
+        medium=clean(row.get("medium_display"), 250), metadata_url=detail,
+        image_url=preview, full_image_url=original,
+        rights_license="CC0 1.0", rights_evidence_url=evidence,
+        rights_status="IMAGE_RIGHTS_VERIFIED",
+    )
+
+
+def collect_verified_catalog(max_records: int) -> list[dict]:
+    """Reuse existing Art Drift rights-checked works, not a second scraper."""
+    out = []
+    seen = set()
+    files = [
+        Path("assets/museums/catalog.json"),
+        Path("assets/museums/catalog_global.json"),
+    ]
+    for path in files:
+        if not path.is_file():
+            continue
+        records = json.loads(path.read_text(encoding="utf-8"))
+        if not isinstance(records, list):
+            raise ValueError("Unexpected Art Drift catalog format")
+        for original in records:
+            rec = existing_catalog_row(original)
+            if rec and rec["source_key"] not in seen:
+                seen.add(rec["source_key"])
+                out.append(rec)
+                if len(out) >= max_records:
+                    return out
+    return out
 
 
 def wd_query(max_records: int, museum_ids: tuple[str, ...] | None = None) -> str:
@@ -386,7 +494,7 @@ def export(records: list[dict], jsonl_path: Path, sql_path: Path) -> dict:
 
 def main() -> None:
     p = argparse.ArgumentParser(description=__doc__)
-    p.add_argument("--source", choices=("tate", "moma", "wikidata", "all"), default="tate")
+    p.add_argument("--source", choices=("tate", "moma", "verified", "wikidata", "all"), default="tate")
     p.add_argument("--max-records", type=int, default=200)
     p.add_argument("--museum", choices=sorted(MUSEUMS), default=None,
                    help="Limit Wikidata acquisition to one verified institution")
@@ -395,13 +503,15 @@ def main() -> None:
     args = p.parse_args()
     if not 1 <= args.max_records <= 5000:
         p.error("--max-records must be 1..5000")
-    if args.museum and args.source in ("tate", "moma"):
+    if args.museum and args.source in ("tate", "moma", "verified"):
         p.error("--museum applies only to wikidata source")
     works: list[dict] = []
     if args.source in ("tate", "all"):
         works.extend(collect_tate(args.max_records))
     if args.source in ("moma", "all"):
         works.extend(collect_moma(args.max_records))
+    if args.source in ("verified", "all"):
+        works.extend(collect_verified_catalog(args.max_records))
     if args.source in ("wikidata", "all"):
         works.extend(collect_wikidata(args.max_records, args.museum))
     if not works:
