@@ -61,7 +61,9 @@ adb shell input swipe "$((W/2))" "$((H*40/100))" "$((W/2))" "$((H*40/100))" 850
 sleep 3
 snapshot 07_long_press_plaque
 home
-tap "$((W*29/100))" "$((H*11/100))"
+# Verified via UIA 1080×2400: speed button bounds [302,283]–[473,388].
+# Aim at center (36% width, 14% height), not at artwork above the button.
+tap "$((W*36/100))" "$((H*14/100))"
 sleep 2
 snapshot 08_auto_speed_menu
 home
