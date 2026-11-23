@@ -29,13 +29,10 @@ Il bordo inferiore del contenuto è:
 
 **Non assumere che l'altezza del banner sia 50 px o 60 px**; leggere dimensione effettiva quando sarà implementato.
 
-## Stato decisioni estetiche — aggiornato dopo l'approvazione del 4/10
+## Stato decisioni estetiche — fonte unica
 
-- 1/10 Quiet Canvas: APPROVATO, non implementato.
-- 2/10 Targhetta museale: APPROVATO, non implementato.
-- 3/10 Zoom contestuale con cornice in noce: APPROVATO, non implementato.
-- 4/10 Scheda di sala espandibile: **APPROVATO**, non implementato (con questo vincolo AdMob).
-- 5/10 La mia collezione — preferiti: **IN ATTESA**, non implementato.
-- 6–10: non presentati.
+Al 23 novembre 2026, il ciclo interattivo dei **10 mock-up è stato interamente APPROVATO (10/10)**; **nessuno è implementato nel codice Flutter (0/10)**. La PR documentale #36 rimane Draft e non è stata fusa in `main`.
 
-Questo file documenta il vincolo funzionale sul viewport separatamente dalle decisioni estetiche; il registro di design conferma ora l'approvazione dello slot 4/10. Nessuna modifica al codice Flutter.
+Lo **stato aggiornato di ogni slot**, incluso l'esatto copy del mock-up 9/10, è mantenuto in `docs/ARTDRIFT_INTERACTIVE_MOCKUP_DECISIONS_2026-11-23.md`. Questo file resta il contratto di geometria per la futura monetizzazione; non contiene uno snapshot autonomo dei singoli slot, per evitare divergenze.
+
+**Nessuna pubblicità reale, modifica Flutter o APK è stata effettuata.**
