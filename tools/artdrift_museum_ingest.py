@@ -197,7 +197,7 @@ def moma_row(row: dict) -> dict | None:
     if not (ident.isdigit() and title and famous(artist)):
         return None
     if "paint" not in type_ and not re.search(
-            r"\\b(oil|acrylic|tempera|gouache|watercolou?r)\\b", medium, re.I):
+            r"\b(oil|acrylic|tempera|gouache|watercolou?r)\b", medium, re.I):
         return None
     if type_ and "paint" not in type_:
         return None
