@@ -27,6 +27,12 @@ COMMONS_API = "https://commons.wikimedia.org/w/api.php"
 MUSEUMS = {
     "Q201469": "Solomon R. Guggenheim Museum, New York",
     "Q1054284": "Peggy Guggenheim Collection, Venice",
+    "Q808462": "Barnes Foundation, Philadelphia",
+    "Q303139": "Oesterreichische Galerie Belvedere, Vienna",
+    "Q1568434": "Yale University Art Gallery, New Haven",
+    "Q754507": "Ateneum, Finnish National Gallery, Helsinki",
+    "Q857276": "Musee d'Art Moderne de Paris",
+    "Q1132918": "Nasjonalmuseet, Oslo",
 }
 NAMES = (
     "monet", "renoir", "van gogh", "gauguin", "cezanne", "c zanne",
@@ -35,6 +41,8 @@ NAMES = (
     "chagall", "paul klee", "franz marc", "francis bacon", "turner",
     "manet", "degas", "toulouse lautrec", "miro", "pollock", "zorn",
     "larsson", "de chirico", "boccioni", "balla", "okeeffe", "o keeffe",
+    "schjerfbeck", "gallen kallela", "edelfelt", "hammershoi", "koko schka",
+    "kokoschka", "signac", "seurat", "rousseau", "sisley", "pissarro", "kirchner",
 )
 UA = "ArtDrift-MuseumImporter/1.0 (public art research; GitHub riccardopinato/ArtDrift-Infinite-Art-Gallery)"
 MAX_SOURCE_BYTES = 48 * 1024 * 1024
@@ -176,10 +184,13 @@ def collect_tate(max_records: int) -> list[dict]:
     return result
 
 
-def wd_query(max_records: int) -> str:
-    # Query works located in one of two museum collections, never arbitrary
-    # artworks showing the museum building. P18 is only a candidate image.
-    ids = " ".join("wd:" + q for q in MUSEUMS)
+def wd_query(max_records: int, museum_ids: tuple[str, ...] | None = None) -> str:
+    # P195 is collection membership (not painting the museum building).
+    # Museum IDs are verified Wikidata entities, never user-provided free text.
+    choices = museum_ids if museum_ids is not None else tuple(MUSEUMS)
+    if not choices or any(q not in MUSEUMS for q in choices):
+        raise ValueError("Unknown museum ID")
+    ids = " ".join("wd:" + q for q in choices)
     return ("""
 SELECT DISTINCT ?work ?workLabel ?museum ?image ?creatorLabel ?death WHERE {
   VALUES ?museum { %s }
@@ -257,8 +268,8 @@ def wd_row(row: dict) -> dict | None:
                   rights_status="IMAGE_RIGHTS_VERIFIED")
 
 
-def collect_wikidata(max_records: int) -> list[dict]:
-    q = wd_query(max_records)
+def collect_wikidata(max_records: int, museum_id: str | None = None) -> list[dict]:
+    q = wd_query(max_records, (museum_id,) if museum_id else None)
     url = WD_SPARQL + "?" + urlencode({"query": q, "format": "json"})
     data = request_json(url)
     bindings = data.get("results", {}).get("bindings", [])
@@ -332,16 +343,20 @@ def main() -> None:
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--source", choices=("tate", "wikidata", "all"), default="tate")
     p.add_argument("--max-records", type=int, default=200)
+    p.add_argument("--museum", choices=sorted(MUSEUMS), default=None,
+                   help="Limit Wikidata acquisition to one verified institution")
     p.add_argument("--jsonl", type=Path, default=Path(".artdrift_ingest/modern_art.jsonl"))
     p.add_argument("--sql", type=Path, default=Path(".artdrift_ingest/modern_art.sql"))
     args = p.parse_args()
     if not 1 <= args.max_records <= 5000:
         p.error("--max-records must be 1..5000")
+    if args.museum and args.source == "tate":
+        p.error("--museum applies only to wikidata source")
     works: list[dict] = []
     if args.source in ("tate", "all"):
         works.extend(collect_tate(args.max_records))
     if args.source in ("wikidata", "all"):
-        works.extend(collect_wikidata(args.max_records))
+        works.extend(collect_wikidata(args.max_records, args.museum))
     if not works:
         raise SystemExit("FAIL CLOSED: provider returned no eligible source records")
     counts = export(works, args.jsonl, args.sql)
