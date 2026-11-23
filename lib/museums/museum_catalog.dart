@@ -15,6 +15,7 @@ class MuseumCatalog {
     for (final file in <String>[
       'assets/museums/catalog.json',
       'assets/museums/catalog_global.json',
+      'assets/museums/catalog_modern_1950.json',
     ]) {
       final isPreviewPack = file.endsWith('/catalog.json');
       try {
@@ -28,8 +29,15 @@ class MuseumCatalog {
               artwork.museumNativeId.trim().isEmpty ||
               artwork.rightsEvidenceUrl.trim().isEmpty) continue;
           final license = artwork.rightsLicense.toLowerCase();
+          final independentlyLicensed = artwork.museumSource == 'commons' &&
+              const <String>{'CC BY 3.0', 'CC BY 4.0',
+                'CC BY-SA 3.0', 'CC BY-SA 4.0'}
+                  .contains(artwork.rightsLicense) &&
+              artwork.rightsLicenseUrl.startsWith(
+                  'https://creativecommons.org/licenses/');
           if (!license.contains('cc0') &&
-              !license.contains('public domain')) continue;
+              !license.contains('public domain') &&
+              !independentlyLicensed) continue;
           final rights = Uri.tryParse(artwork.rightsEvidenceUrl);
           if (rights == null || rights.scheme != 'https' ||
               rights.userInfo.isNotEmpty ||
