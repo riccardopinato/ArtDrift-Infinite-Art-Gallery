@@ -166,8 +166,9 @@ def generate(fetch=fetch_year, output=OUT):
                     rows.setdefault(item["id"], item)
             except Exception as e:
                 failures.append(str(pending[future])+":"+type(e).__name__)
-    if failures:
-        raise RuntimeError("COMMONS_YEAR_COVERAGE_PARTIAL "+",".join(failures[:12]))
+    # Wikimedia's shared API may return 429/503 even with bounded requests.
+    # Admit ONLY the year buckets that completed successfully, and retain
+    # failures in the report. Never claim that the full horizon was indexed.
     decades=defaultdict(list)
     for item in rows.values():
         decades[(item["creation_year_verified"]//10)*10].append(item)
@@ -190,9 +191,10 @@ def generate(fetch=fetch_year, output=OUT):
     (output/"catalog_modern_1950.json").write_bytes(payload)
     report={
         "schema_version":1,
-        "status":"RIGHTS_AND_IMAGE_DELIVERY_REVIEW_PENDING",
+        "status":"PARTIAL_YEAR_SAMPLE_RIGHTS_AND_DELIVERY_REVIEW_PENDING",
         "provider":"Wikimedia Commons MediaWiki API",
-        "years":years_completed,"years_sampled":list(YEARS),"files_inspected":inspected,
+        "years":years_completed,"years_sampled":list(YEARS),
+        "years_failed":sorted(failures),"files_inspected":inspected,
         "admitted_records":len(result),
         "license_distribution":dict(sorted(Counter(r["rights_license"]
           for r in result).items())),
