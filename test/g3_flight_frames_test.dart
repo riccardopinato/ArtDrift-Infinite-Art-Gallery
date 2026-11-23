@@ -67,6 +67,35 @@ class MuseumBackground extends StatelessWidget {
   );
 }
 
+
+/// A schematic dark canvas composed only from bundled Art Drift WebP works.
+/// It is a visual test fixture, not a screenshot of Drift's world layout.
+class IllustrativeCanvas extends StatelessWidget {
+  const IllustrativeCanvas({super.key});
+
+  @override
+  Widget build(BuildContext context) => ColoredBox(
+    color: const Color(0xFF111219),
+    child: Stack(children: [
+      Positioned(left: 18, top: 32, width: 145, height: 115,
+        child: Image.asset('assets/gallery/thumbs/2169.webp',
+          fit: BoxFit.cover)),
+      Positioned(left: 190, top: 56, width: 160, height: 182,
+        child: Image.asset('assets/gallery/thumbs/4749.webp',
+          fit: BoxFit.cover)),
+      Positioned(left: 43, top: 220, width: 112, height: 132,
+        child: Image.asset('assets/gallery/thumbs/874.webp',
+          fit: BoxFit.cover)),
+      Positioned(left: 179, top: 410, width: 167, height: 136,
+        child: Image.asset('assets/gallery/thumbs/2169.webp',
+          fit: BoxFit.cover)),
+      Positioned(left: 27, top: 601, width: 130, height: 165,
+        child: Image.asset('assets/gallery/thumbs/4749.webp',
+          fit: BoxFit.cover)),
+    ]),
+  );
+}
+
 void main() {
   setUpAll(() async {
     TestWidgetsFlutterBinding.ensureInitialized();
@@ -98,43 +127,60 @@ void main() {
     final identity = ValueNotifier<String>('aic:874');
     addTearDown(identity.dispose);
 
+    // Warm the exact licensed package assets BEFORE phase 0. The first
+    // frame should never show an artificial blank placeholder caused solely
+    // by the golden harness loading an image for the first time.
+    await tester.pumpWidget(const MaterialApp(
+      home: Scaffold(body: IllustrativeCanvas())));
+    await tester.pumpAndSettle();
+
     for (final phase in const [
       (0.0, '00'), (.25, '25'), (.5, '50'), (.75, '75'), (1.0, '100'),
     ]) {
-      await tester.pumpWidget(MaterialApp(home: Scaffold(
-        body: TileOriginFlight(
-          animation: AlwaysStoppedAnimation<double>(phase.$1),
-          originRect: const Rect.fromLTWH(43, 220, 112, 132),
-          originArtwork: artwork,
-          originalArtworkKey: artwork.catalogKey,
-          currentArtworkKey: identity,
-          child: const MuseumBackground(),
-        ),
-      )));
+      await tester.pumpWidget(MaterialApp(
+        theme: ThemeData.dark().copyWith(
+          scaffoldBackgroundColor: const Color(0xFF111219)),
+        home: Scaffold(body: Stack(fit: StackFit.expand, children: [
+          const IllustrativeCanvas(),
+          TileOriginFlight(
+            animation: AlwaysStoppedAnimation<double>(phase.$1),
+            originRect: const Rect.fromLTWH(43, 220, 112, 132),
+            originArtwork: artwork,
+            originalArtworkKey: artwork.catalogKey,
+            currentArtworkKey: identity,
+            child: const MuseumBackground(),
+          ),
+        ])),
+      ));
       await tester.pump(const Duration(milliseconds: 70));
       final rect = find.byKey(const Key('artdrift-origin-flight'));
       expect(rect, phase.$1 < 1 ? findsOneWidget : findsNothing);
       expect(tester.takeException(), isNull);
-      await expectLater(find.byType(TileOriginFlight), matchesGoldenFile(
+      await expectLater(find.byType(Scaffold), matchesGoldenFile(
         'goldens/g3_tile_flight_${phase.$2}.png'));
     }
 
     // When the visited painting changes, the original one must never fly
     // back to its tile on exit. The view switches to a neutral fade.
     identity.value = 'aic:2169';
-    await tester.pumpWidget(MaterialApp(home: Scaffold(
-      body: TileOriginFlight(
-        animation: const AlwaysStoppedAnimation<double>(.5),
-        originRect: const Rect.fromLTWH(43, 220, 112, 132),
-        originArtwork: artwork,
-        originalArtworkKey: artwork.catalogKey,
-        currentArtworkKey: identity,
-        child: const MuseumBackground(),
-      ),
-    )));
+    await tester.pumpWidget(MaterialApp(
+      theme: ThemeData.dark().copyWith(
+        scaffoldBackgroundColor: const Color(0xFF111219)),
+      home: Scaffold(body: Stack(fit: StackFit.expand, children: [
+        const IllustrativeCanvas(),
+        TileOriginFlight(
+          animation: const AlwaysStoppedAnimation<double>(.5),
+          originRect: const Rect.fromLTWH(43, 220, 112, 132),
+          originArtwork: artwork,
+          originalArtworkKey: artwork.catalogKey,
+          currentArtworkKey: identity,
+          child: const MuseumBackground(),
+        ),
+      ])),
+    ));
     await tester.pump(const Duration(milliseconds: 70));
     expect(find.byKey(const Key('artdrift-origin-flight')), findsNothing);
-    await expectLater(find.byType(TileOriginFlight),
+    await expectLater(find.byType(Scaffold),
       matchesGoldenFile('goldens/g3_tile_flight_changed_identity.png'));
   });
 }
