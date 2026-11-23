@@ -1,0 +1,22 @@
+name: Art Drift — live Cloudflare staging Worker read-only QA
+on:
+  push:
+    branches: ['feat/artdrift-d1-unified-catalog-*']
+    paths:
+      - 'cloudflare/art-catalog/scripts/smoke_staging_worker.py'
+      - '.github/workflows/artdrift-worker-staging-smoke.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  smoke:
+    if: github.repository == 'riccardopinato/ArtDrift-Infinite-Art-Gallery'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify staging Worker health, 5084 remote works, indexed search and validation
+        run: python3 cloudflare/art-catalog/scripts/smoke_staging_worker.py
