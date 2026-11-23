@@ -24,8 +24,9 @@ Stato generale: **DESIGN REVIEW / NON IMPLEMENTATO**.
 | 2/10 | Home / anteprima opera | **Targhetta museale** — pressione prolungata su un'opera apre una targhetta discreta con titolo, autore, data, Apri opera e Preferiti; il tap breve mantiene il dettaglio completo | **APPROVATO** — conferma esplicita in chat 23/11/2026 | **NO** | Solo UX/visual proposta; nessuna modifica al catalogo o a preferiti reali |
 | 3/10 | Home → apertura opera | **Zoom contestuale con cornice museale** — la tessera selezionata si ingrandisce dalla sua posizione reale fino a una card centrale; durante il passaggio compare la cornice raffinata in noce decorato con dettagli dorati; X in alto a destra, ritorno animato alla stessa tessera, cornice assente nel canvas | **APPROVATO** — conferma esplicita in chat 23/11/2026 dopo revisioni 2 e 3 | **NO** | Nessun cambio camera/layout, preview responsiva e fallback reduced-motion; verifica rendering e performance Android in fase implementativa |
 | 4/10 | Scheda dell'opera incorniciata | **Cartellino di sala espandibile** — scheda editoriale avorio sotto il quadro con titolo, autore e anno; comando «Leggi la scheda» per espandere i soli metadati e descrizioni esistenti; impaginazione dinamica sopra il banner AdMob se presente | **APPROVATO** — conferma «procedi, approvo» in chat del 23/11/2026 dopo precisazione sul futuro banner | **NO** | Rispettare il vincolo AdMob documentato: assente = piena area, presente = bordo superiore del banner; nessuna pubblicità implementata |
-| 5/10 | Home / Preferiti | **La mia collezione** — proposta estetica di galleria editoriale accessibile dal cuore in alto a destra; presentazione di opere salvate e ritorno al canvas senza perdere lo stato | **IN ATTESA** | **NO** | Mock-up interattivo in valutazione: non sostituisce automaticamente funzioni o navigazione esistenti |
-| 6–10 | — | Da proporre uno alla volta | **NON PRESENTATI** | **NO** | Vietato anticipare le decisioni |
+| 5/10 | Home / Preferiti | **La mia collezione** — galleria editoriale personale accessibile dal cuore in alto a destra, fondo avorio e anteprime di opere salvate; apertura del quadro e ritorno al canvas senza perdere camera/zoom; area utile adattabile al banner AdMob reale | **APPROVATO** — conferma esplicita in chat 23/11/2026 | **NO** | La selezione/rimozione dei preferiti nel prototipo è simulata; quando il banner non c'è non va riservato spazio; quando appare il contenuto termina al suo bordo superiore |
+| 6/10 | Ricerca dal pennello centrale | **Atrio della ricerca** — anteprima interattiva di un overlay editoriale per interrogare l'indice locale esistente, suggerimenti e risultati con miniatura, senza lasciare il canvas o introdurre ricerca visiva/AI fittizia | **IN ATTESA** | **NO** | Proposta estetica soltanto, ricerca reale invariata; esiti demo fittizi e banner viewport dinamico |
+| 7–10 | — | Da proporre uno alla volta | **NON PRESENTATI** | **NO** | Vietato anticipare le decisioni |
 
 ## Slot 1/10 — contratto di design approvato
 
@@ -70,8 +71,18 @@ Stato generale: **DESIGN REVIEW / NON IMPLEMENTATO**.
 - Continuità con i mock-up già approvati 1/10 Quiet Canvas, 2/10 Targhetta museale, 3/10 Zoom contestuale con cornice; nessuna modifica diretta alla home o alla logica del canvas.
 - Stile Design-App Vintage `MOCK-STYLE-003` ed Editorial UI **ADATTATI**, non copia di asset/font esterni.
 
+## Slot 5/10 — contratto di design approvato
+
+- Identità: **La mia collezione**, presentazione editoriale dei preferiti come piccolo archivio personale, accessibile esclusivamente dal **cuore preesistente in alto a destra**. Nessuna nuova barra di navigazione in basso.
+- Apertura di una vista archivio con fondo **avorio**, miniature delle opere salvate, titolo e possibilità di rimuovere dai preferiti; l'accesso alla singola opera può riutilizzare il dettaglio con cornice approvato allo slot 3/10 e la scheda 4/10.
+- Il pulsante **X** chiude l'archivio e ripristina il canvas infinito **allo stesso pan/zoom**. Il cuore nei dettagli e nell'archivio deve riflettere lo stesso stato persistente quando implementato; il mock-up era solo dimostrativo.
+- **Vincolo AdMob approvato e recepito nel mock-up**: viewport a tutta altezza quando il banner non è visibile, termina al bordo superiore del banner quando presente; banner esterno all'area gestuale e dimensione effettiva (non fissa) in implementazione. Vedi `docs/ARTDRIFT_ADMOB_VIEWPORT_CONSTRAINT_2026-11-23.md`.
+- Stato vuoto editoriale quando l'utente non ha ancora preferiti; nessuna opera fittizia inserita nel catalogo o nei preferiti reali.
+- Reference Design-App: `MOCK-STYLE-003` Vintage ed Editorial UI **ADATTATI**; non importare asset senza licenza. 
+- **Implementazione differita**: decisione estetica ≠ merge, test, APK o integrazione.
+
 ## Stato implementativo
 
 **APPROVATO ≠ INTEGRATO.** Questo documento registra solo preferenze e decisioni; il codice Flutter attuale e le PR #33–#35 restano indipendenti. Il collaudo v0.3.8 e la relativa PR #35 non autorizzano la promozione estetica.
 
-La prossima decisione è sullo slot **5/10**. Non avanzare allo slot 6/10 prima di approvare, modificare o scartare esplicitamente il 5/10.
+La prossima decisione è sullo slot **6/10**. Non avanzare allo slot 7/10 prima di approvare, modificare o scartare esplicitamente il 6/10.
