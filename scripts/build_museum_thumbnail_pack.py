@@ -3,7 +3,7 @@
 import argparse, collections, concurrent.futures, hashlib, io, json, os, time
 from functools import lru_cache
 from pathlib import Path
-from urllib.parse import urlparse
+from urllib.parse import urlparse, parse_qs, urlencode
 import requests
 from PIL import Image, ImageOps, UnidentifiedImageError
 
@@ -126,9 +126,30 @@ def download(row):
      if count>3000000: return key(row),"source_too_large",source
      fragments.append(part)
    with Image.open(io.BytesIO(b"".join(fragments))) as image:
-    if min(image.size)<36 or getattr(image,"is_animated",False):
+    if getattr(image,"is_animated",False):
      return key(row),"unsupported_image",source
+    thin_scroll=False
+    if min(image.size)<36:
+     # Cleveland's original CC0 scroll previews may be extremely panoramic.
+     # Require enough real source pixels; 1x1/blank placeholders remain HOLD.
+     if not (source=="cleveland" and min(image.size)>=8 and
+             max(image.size)>=256 and
+             max(image.size)/min(image.size)>=12):
+      return key(row),"unsupported_image",source
+     thin_scroll=True
     image=ImageOps.exif_transpose(image)
+    if thin_scroll:
+     # A central segment of the SAME source artwork forms a usable mosaic
+     # preview. Full original stays accessible in the museum/detail screen.
+     width,height=image.size
+     if width>height:
+      length=min(width,max(1,5*height))
+      left=(width-length)//2
+      image=image.crop((left,0,left+length,height))
+     else:
+      length=min(height,max(1,5*width))
+      top=(height-length)//2
+      image=image.crop((0,top,width,top+length))
     image.thumbnail((256,256),Image.Resampling.LANCZOS)
     if image.mode=="RGBA":
      base=Image.new("RGB",image.size,(26,26,29))
@@ -145,23 +166,51 @@ def download(row):
    target.parent.mkdir(parents=True,exist_ok=True)
    tmp=target.with_suffix(".webp.tmp")
    tmp.write_bytes(data); os.replace(tmp,target)
-   return key(row),"downloaded",source
+   return key(row),"downloaded_scroll_segment" if thin_scroll else "downloaded",source
   except (requests.RequestException,OSError,ValueError,
           UnidentifiedImageError,Image.DecompressionBombError):
    return key(row),"network_or_decode_failure",source
 
 def download_with_retry(row):
- """Bounded second/third chance for transient network and image decode errors.
-
- Keep official-source checks, file integrity and per-host rate limits exactly
- as in download(). No changed artwork, host, or license is accepted on retry.
- """
+ """Keep original-art identity and rights provenance across bounded retries."""
  result=download(row)
- if result[1]!="network_or_decode_failure":return result
- for attempt in (2,3):
-  time.sleep(0.65*attempt)
-  result=download(row)
-  if result[1]!="network_or_decode_failure":break
+ if result[1]=="network_or_decode_failure":
+  for attempt in (2,3):
+   time.sleep(0.65*attempt)
+   result=download(row)
+   if result[1]!="network_or_decode_failure":break
+ if result[1] in {"downloaded","downloaded_scroll_segment","present"}:
+  return result
+ source=row["museum_source"]
+ # A different IIIF requested size is still the EXACT source object, backed
+ # by the 500-object live SMK Public Domain Mark + IIIF provenance ledger.
+ if source=="smk" and result[1]=="network_or_decode_failure":
+  proof=smk_verified_rights_by_object().get(key(row))
+  if not proof:return result
+  prefix=proof.get("verified_image_prefix","")
+  for size in (192,128):
+   alt=prefix+f"/full/{size},/0/default.jpg"
+   if not official(alt,source):continue
+   alternate=dict(row,remote_preview_url=alt)
+   candidate=download(alternate)
+   if candidate[1] in {"downloaded","present"}:
+    return key(row),"downloaded_verified_iiif_variant",source
+  return result
+ # Smithsonian: vary only the delivery size for the SAME exact media ID.
+ # Never substitute an ID or unrelated photograph when a source returns 404.
+ if source=="smithsonian" and result[1]=="http_404":
+  url=urlparse(row.get("remote_preview_url",""))
+  query=parse_qs(url.query,strict_parsing=False)
+  if not query.get("id") or set(query)!={"id","max"}:
+   return result
+  media_id=query["id"][0]
+  if not media_id or len(media_id)>150:return result
+  for size in (256,512):
+   alt=url._replace(query=urlencode({"id":media_id,"max":size})).geturl()
+   if not official(alt,source):continue
+   candidate=download(dict(row,remote_preview_url=alt))
+   if candidate[1] in {"downloaded","present"}:
+    return key(row),"downloaded_same_smithsonian_media_variant",source
  return result
 
 def main():
