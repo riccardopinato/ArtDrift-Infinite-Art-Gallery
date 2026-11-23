@@ -67,7 +67,8 @@ class ImportTests(unittest.TestCase):
             jsonl, sql = Path(tmp) / "records.jsonl", Path(tmp) / "records.sql"
             report = ing.export([r], jsonl, sql)
             self.assertEqual(report["published_by_import"], 0)
-            self.assertIn("BEGIN TRANSACTION", sql.read_text())
+            self.assertIn("INSERT INTO artdrift_museum_ingest", sql.read_text())
+            self.assertNotIn("BEGIN TRANSACTION", sql.read_text())
             self.assertIn('"fingerprint"', jsonl.read_text())
             with self.assertRaises(ValueError):
                 ing.export([r, r], jsonl, sql)
