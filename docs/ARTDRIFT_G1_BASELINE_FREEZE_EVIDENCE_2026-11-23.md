@@ -102,8 +102,12 @@ Nell'ambiente della conversazione è presente `ArtDrift_Mockup_Home_01.html` (ti
 - **Controllo visivo indipendente dei PNG recuperati**: screenshot BEFORE e AFTER sono **byte-identici**, SHA-256 `8b4541874937170be7f972048f17fa958fde41a0d8f86e19bc08b9f74cbeabc8`, risoluzione 1080×2400. Entrambi sono coperti da una finestra di sistema **«Quickstep isn't responding»**, mentre sotto risultano tile a placeholder. L'app Art Drift rimane in esecuzione secondo `pidof`, ma non si può affermare che i 48 gesti abbiano effettivamente mosso il canvas.
 - **Il primo successo della CI è un FALSO PASS funzionale**: controllava comandi ADB, processo e presenza di screenshot, non movimento reale o finestra ANR. Lo screenshot di BASE-A è **acquisito ma NON VALIDO come baseline visiva pulita**. PSS rilevato **107.007→106.223 KiB** ma contaminato da overlay dell'emulatore, non confrontabile direttamente con BASE-B.
 - Correzione attuata **solo in tre file QA sul ramo separato**, commit `62b6952f0a364c0e4b571d972f80dda70f9c0e1b`: tentativo di rimozione controllata del dialogo Android, snapshot intermedio dopo la **prima swipe**, confronto hash prima/intermedio e rilevamento testuale di ANR via accessibility dump. Nessun `.dart`, asset o Drift Core toccato.
-- Verifica di regressione del test: [run 45167148681](https://github.com/riccardopinato/ArtDrift-Infinite-Art-Gallery/actions/runs/45167148681) avviato sul commit `62b6952f...`; **esito da confermare**. Anche un successo del nuovo runner resta **emulatore**, non device fisico.
-- Correzione metodologica: `smoke_status=PASS` non significa `VISUAL_APPROVED`; G1.4 resta **BLOCKED_VALID_SCREENSHOT** finché non si ottiene un'immagine senza overlay verificata e un cambiamento dimostrabile dopo il primo swipe.
+- **Esecuzione corretta verificata:** [run 45167148681](https://github.com/riccardopinato/ArtDrift-Infinite-Art-Gallery/actions/runs/45167148681) sul commit `62b6952f...`, `completed/success`. Artifact scaricato e controllato: ID **14814149348**, ZIP **553.149 B**, SHA-256 `3a3ed863ebe0f1814029d6c7de8b4ce30f8eb85fc4dbcb018fbb701571f08296`. Include screenshot **prima, dopo il primo gesto e alla fine** e XML UI.
+- Le **tre PNG ora differiscono** e sono tutte **1080×2400 px**. SHA-256 rispettivamente: prima `bf4fff148099a09da533efeb37c75d2404c8cee17314db3e84ad2f00b1719b67`; intermedia `dab5bb777a68c0382c154f0b72ccee2fb2b9471f7415f68a78aabbf95d6a7d12`; finale `3d6f4a40c843c5dc769c0769ff8bf3fa3446a3e4ab0a7e754fe4dc4280e844b6`. XML UI: **nessuna finestra di errore Quickstep** presente; screenshot esaminati manualmente: canvas effettivamente inquadrato in regioni differenti; la maggior parte delle tile del catalogo globale nel primo avvio offline di BASE-A mostra **placeholder con titolo/museo**, non l'immagine. Alcune tile illustrate compaiono al bordo nel dopo; non concludere che tutte le opere siano assenti.
+- Check automatico: volo/offline flag confermato; `pidof` prima/dopo valido; **48 swipes inviati**, screenshot intermedio diverso dal precedente, nessun `FATAL EXCEPTION` nel log; report `smoke_status=PASS`, `canvas_changed_after_first_swipe=true`, `system_anr_dialog_visible=false`, `system_dialog_recovery_attempted=false`.
+- **PSS emulatore:** **103.877 KiB prima → 107.202 KiB dopo**; misure del processo a due istanti, non benchmark di 10 minuti né equivalenti alle misure BASE-B per catalogo/asset differenti.
+- `gfxinfo` ha contato **solo 2 frame** e riportato p50/p95=93ms: il parser etichetta `frame_metrics_status=AVAILABLE`, ma **2 campioni non sono statisticamente idonei** a certificare p95/p99, jank o FPS. Per questo rapporto: **`FRAME_TIMING_NOT_REPRESENTATIVE`**, gate G4/physical ancora aperto. La prossima implementazione del parser deve richiedere un numero adeguato di frame, non solo `>0`.
+- Correzione metodologica: `smoke_status=PASS` non significa `VISUAL_APPROVED` o `PHYSICAL_ACCEPTED`. **G1.4 = PASS_BASELINE_SCREENSHOT_EMULATOR_PRELIMINARY**, mentre baseline Android fisico e accettazione visiva dei 10 mock-up restano separate.
 
 ## D. Evidenze G1 mancanti / gate aperti
 
@@ -112,10 +116,10 @@ Nell'ambiente della conversazione è presente `ArtDrift_Mockup_Home_01.html` (ti
 | **G1.1 — Sorgenti e Core pin** | **PASS_SOURCE_SNAPSHOT** | SHA Art main, candidato, Gallery, PR e Core confrontati; ripetere se cambiano |
 | **G1.2 — CI exact-head** | **PASS_CI_EXISTING** | GitHub Actions main e PR35 success, nessun test specifico dei 10 mock-up |
 | **G1.3 — Screenshot baseline candidato** | **PARTIAL_VISUAL_REFERENCE** | Due PNG di emulatore ispezionati; archiviazione durevole e scenario esteso ancora aperti |
-| **G1.4 — Screenshot BASE-A/main** | **BLOCKED_VALID_SCREENSHOT** | Screenshot ottenuti ma coperti da errore ANR del launcher Quickstep, before/after identici. Runner correttivo 45167148681 da valutare; servono schermate pulite con canvas che cambia al primo swipe |
+| **G1.4 — Screenshot BASE-A/main** | **PASS_EMULATOR_PRELIMINARY** | Corretto il falso PASS: run 45167148681, 3 screenshot senza dialogo/ANR e visibilmente differenti dopo il primo swipe, 48 gesti, dati artefatto SHA verificati; niente validazione di display fisico |
 | **G1.5 — Metriche fisiche su stesso device** | **BLOCKED_PHYSICAL** | Dispositivo Android, release/profile, 60/90/120 Hz se supportato, PSS, frame timings p50/p95/p99, startup, 60s pan+Auto+zoom, termica/memoria |
 | **G1.6 — Persistenza / update installato** | **BLOCKED_SIGNER_MISMATCH_AND_DEVICE** | Certificati dei due APK CI verificati e **diversi**; sconosciuto signer dell'APK realmente installato. Servono `applicationId`, `versionCode`, fingerprint cert e controllo dati preferiti/camera; upgrade in-place solo con firma continuativa |
-| **G1.7 — Target implementativo unico** | **UNDECIDED** | Decisione PR base `main` o candidato #35 dopo gestione stack #33/#34; non merge implicito |
+| **G1.7 — Target implementativo unico** | **PROVISIONAL_BASE_B / HOLD_STACK** | Preferito BASE-B c2d1d3e per la futura revisione visiva, ma non usarlo per codice senza riconciliare PR #33→#34→#35, baseline fisica e diritti |
 | **G1.8 — Mock-up visual references** | **NOT_ARCHIVED** | Dieci screenshot/video delle varianti approvate + coppia scenario/criterio; niente nuova UI reale |
 | **G1.9 — Privacy/immagini commerciali** | **NOT_CLEARED_FOR_RELEASE** | Review diritti e policy separati da G1; nessuna pubblicazione o AdMob |
 
@@ -125,14 +129,14 @@ Nell'ambiente della conversazione è presente `ArtDrift_Mockup_Home_01.html` (ti
 2. Salvare privacy-safe il conteggio/ID di preferiti e camera persistita; no backup privati in GitHub. Testare successivo upgrade solo con **stessa firma** e versione più recente.
 3. Fotografare/acquisire schermate della versione realmente installata: 320/360/390/412dp, portrait/landscape, display con gesture bar. Separare BASE-A e BASE-B; evitare confronti pixel-identici fra cataloghi diversi.
 4. Su release/profile a condizioni ripetibili: 3 × 60s pan, 3 × 60s Auto, 20 pinch, 30 detail open/close, startup offline e con rete, lettura frame Flutter (build+raster), PSS e screen recording.
-5. Registrare tempi assoluti e regressioni solo dopo campioni grezzi; non derivare FPS da artifact emulator con 0 frame.
+5. Registrare tempi assoluti e regressioni solo dopo campioni grezzi sufficienti; non derivare FPS da un artifact emulator con 0–2 frame misurati.
 6. Misurare layout con **banner simulato** assente/50/90dp e cambio dinamico (non SDK): questa è evidenza del futuro contratto, non prova AdMob reale.
 7. Congelare SHA del target e approvare confronto prima di scrivere Dart; altrimenti mantenere `HOLD_FOR_BASELINE`.
 
 ## E. Decisione G1
 
-**PASS limitato alle evidenze documentali:** SHA, Core parity, CI artifact metadata, input APK fingerprints e screenshot emulatore di BASE-B.  
-**HOLD complessivo:** nessuna baseline fisica comparabile, mancano capture BASE-A e 10 reference asset durevoli, APK installato/firma ignoti, sorgente-target da decidere.  
+**PASS limitato alle evidenze G1 documentali e smoke emulatore:** SHA, Core parity, CI artifact metadata, firme degli APK di prova, screenshot reali di **BASE-A e BASE-B** esaminati (con prima esecuzione falsamente verde registrata e harness corretto).  
+**HOLD complessivo:** nessuna baseline fisica comparabile, 10 reference asset non ancora archiviate in forma durevole, APK installato/firma ignoti, stack sorgente #33→#35 non ancora integrato e target BASE-B solo provvisorio.  
 **GO implementazione:** **NO**, fino a chiusura dei prerequisiti pertinenti.  
 **Nessuna modifica eseguita:** `.dart`, `pubspec.yaml`, `packages/drift_core`, Gallery Drift, APK utenti, Ads SDK, permessi, file immagine nel repo, `main`.
 
