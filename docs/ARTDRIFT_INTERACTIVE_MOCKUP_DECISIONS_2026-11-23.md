@@ -29,7 +29,7 @@ Stato generale: **DESIGN REVIEW / NON IMPLEMENTATO**.
 | 7/10 | Controlli Auto del canvas | **Regia dello scorrimento** — controllo Auto/Pausa in alto a sinistra, selettore compatto a comparsa con ritmi Lento 25%, Regolare 50%, Veloce 75%, Molto veloce 100%; controlli compatibili con Quiet Canvas, pan/zoom e viewport AdMob | **APPROVATO** — conferma esplicita in chat 23/11/2026 | **NO** | Estetica/interazione approvata; il motore Auto e i suoi algoritmi non cambiano, durata/velocità reali da verificare in implementazione |
 | 8/10 | Impostazioni / ingranaggio | **Il gabinetto del curatore** — restyling editoriale con sei lingue (it/en/fr/es/de/pt), e schede Pro, privacy e licenze già esistenti, senza nuove impostazioni; viewport ridimensionabile sopra il banner AdMob se presente | **APPROVATO** — conferma esplicita in chat 23/11/2026 | **NO** | Pro resta non acquistabile; nessuna modifica di privacy, licenze o preferenze reali; vedi `lib/screens/settings_sheet.dart` |
 | 9/10 | Avvio app / errori del catalogo | **Il portale del museo** — schermate editoriali per caricamento, errore/Riprova e galleria pronta; testo di ingresso esatto: «Il museo sta aprendo» / «la visita sta per cominciare»; nessuna attesa artificiale né falsa disponibilità offline | **APPROVATO** — conferma esplicita in chat 23/11/2026 dopo revisione del copy | **NO** | Mantenere la logica catalogo e messaggio tecnico già presenti in `lib/main.dart`; viewport sopra AdMob se visibile |
-| 10/10 | Dettaglio delle opere / navigazione | **Passeggiata tra i quadri** — proposta interattiva: navigazione precedente/successivo tra opere già presente in `lib/screens/artwork_detail.dart`, in cornice noce stabile con transizione discreta fra dipinti, accesso contestuale ad azioni reali (preferiti, sfondo Android, scheda museo) | **IN ATTESA** | **NO** | Ultimo mock-up da valutare; nessuna nuova funzione prevista; ritorno al canvas con camera originale e viewport sopra AdMob |
+| 10/10 | Dettaglio delle opere / navigazione | **Passeggiata tra i quadri** — navigazione precedente/successivo già presente nel viewer, mantenendo la cornice di noce ferma e cambiando dipinto con transizione discreta; scheda di sala, preferiti, Imposta sfondo Android e Scheda museo già esistenti; ritorno al canvas alla stessa camera, viewport AdMob adattivo | **APPROVATO** — conferma esplicita in chat 23/11/2026 | **NO** | Solo studio estetico/UX: non sostituire il motore del viewer o modificare la logica Wallpaper/Museo, testare selezione e ritorno dopo il cambio di opera |
 
 ## Slot 1/10 — contratto di design approvato
 
@@ -127,8 +127,55 @@ Stato generale: **DESIGN REVIEW / NON IMPLEMENTATO**.
 - Riferimenti Design-App: `MOCK-STYLE-003` Vintage ed Editorial UI **ADATTATI** con estetica museo raffinata.
 - **Solo approvazione grafica e copy**: niente codice Flutter, modifiche catalogo/API, SDK AdMob, APK, merge o collaudo eseguiti.
 
+## Slot 10/10 — contratto di design approvato
+
+- Identità: **Passeggiata tra i quadri**, continuità di visita nel dettaglio con passaggi precedente/successivo già presenti in `lib/screens/artwork_detail.dart`.
+- **La cornice in noce decorato approvata nello slot 3/10 resta visivamente fissa** durante il cambio opera; l'immagine cambia con dissolvenza discreta o transizione equivalente, rispettando il formato originale senza ritagli. Non creare una cornice nuova per ogni tile del canvas.
+- Comandi **precedente / successivo** compatti e riconoscibili; piccolo indicatore di posizione nella sequenza. Non alterare ordinamento, identità, metadati o logica di navigazione del viewer esistente.
+- Cartellino di sala espandibile 4/10 e **Preferiti** 5/10 restano contestuali all'**opera correntemente visualizzata**, aggiornandone i dati reali; nessuna informazione dimostrativa nel catalogo.
+- Mantenere le azioni esistenti **Imposta come sfondo** (Android) e **Scheda originale del museo** (URL ufficiale); il prototipo non applicava realmente uno sfondo e non apriva URL. Implementazione futura = stessi handler e tutela dei vincoli di licenza.
+- La **X** in alto a destra esce dalla vista e ripristina la camera **pan/zoom** del canvas immutata, senza ricentratura. Il ritorno animato alla tessera di origine approvato per il 3/10 va gestito senza mostrare una tessera errata se nel frattempo si è passati ad un'opera differente.
+- **Banner AdMob futuro**: usare solo l'area utile realmente disponibile, terminando sopra il bordo superiore del banner se visibile; senza banner la vista occupa lo schermo utile, nel rispetto degli inset di sistema.
+- Riferimenti Design-App: Vintage `MOCK-STYLE-003` e Editorial UI **ADATTATI**. Conflitti possibili da collaudare: swipe del quadro vs pan/zoom dell'immagine, controllo precedente/successivo, touch target, reduced-motion.
+- **Approvazione di prototipo, non funzionalità integrata**. Nessuna modifica al codice, allo sfondo Android, ai preferiti, ai cataloghi, ai link, all'APK o al motore del canvas.
+
+## Esito finale ciclo 1–10 — 23/11/2026
+
+| Indicatore | Risultato |
+| --- | --- |
+| Mock-up presentati e valutati | **10/10** |
+| Mock-up esplicitamente approvati | **10/10** |
+| Mock-up respinti | **0/10** |
+| Mock-up implementati in Flutter in questo ciclo | **0/10** |
+| Banner AdMob reale introdotto | **NO** |
+| Tipo di PR | **Documentazione estetica soltanto · Draft** |
+| Merge verso `main` | **NON ESEGUITO** |
+| Riferimento del vincolo AdMob | `docs/ARTDRIFT_ADMOB_VIEWPORT_CONSTRAINT_2026-11-23.md` |
+
+### Sequenza funzionale complessiva approvata
+
+1. **Quiet Canvas** — mostra/nasconde controlli senza cambiare pan o zoom.
+2. **Targhetta museale** — pressione prolungata con i metadati effettivi.
+3. **Zoom contestuale con cornice** — tap breve dalla tessera reale a card centrale in noce.
+4. **Scheda di sala** — didascalia avorio compatta/espandibile sotto il quadro.
+5. **La mia collezione** — archivio visivo dei preferiti, richiamabile dal cuore.
+6. **Atrio della ricerca** — restyling di ricerca e risultati senza cambiare `GallerySearch`.
+7. **Regia dello scorrimento** — Auto/Pausa, quattro ritmi proposti, nessuna modifica al motore.
+8. **Gabinetto del curatore** — impostazioni editoriali con lingue e voci reali.
+9. **Portale del museo** — avvio ed errore con copy «Il museo sta aprendo» / «la visita sta per cominciare».
+10. **Passeggiata tra i quadri** — precedente/successivo nel dettaglio con cornice stabile e azioni reali.
+
+### Invarianti per eventuale fase implementativa futura
+
+- **Nessun cambiamento geometrico** al canvas, alle tessere, alle coordinate e alle associazioni del catalogo; non eliminare pan, pinch-to-zoom, zoom origin-based o ritorno allo stato precedente.
+- Barra superiore preesistente: **pennello ricerca esattamente 1/3 della larghezza al centro**, cuore e ingranaggio a destra, brand e Auto in alto a sinistra; ricentratura in basso a destra, **nessuna barra inferiore**.
+- **AdMob solo futuro**: senza banner visibile uso di tutta l'area disponibile, con banner visibile contenuto confinato sopra il suo bordo superiore, senza padding statico o occlusione.
+- **Conservare i comportamenti reali**: ricerca locale, preferiti persistenti, sei lingue, info Pro gratuito, privacy e licenze, precedente/successivo, wallpaper Android, scheda museo, caricamento/errore/Riprova. Non inventare AI visiva o dati museali.
+- Prima di ogni integrazione: confrontare il `main` aggiornato col registro, costruire una PR implementativa distinta, test visivi su più risoluzioni e dispositivi, funzionali, accessibilità (TalkBack e reduced-motion), metriche fluide/performance/memoria, banner simulato presente/assente, update APK senza perdita dei preferiti. Non considerare un mock-up approvato come validazione su dispositivo.
+- **Non avviare l'implementazione per effetto di questa approvazione**: attendere mandato esplicito separato.
+
 ## Stato implementativo
 
 **APPROVATO ≠ INTEGRATO.** Questo documento registra solo preferenze e decisioni; il codice Flutter attuale e le PR #33–#35 restano indipendenti. Il collaudo v0.3.8 e la relativa PR #35 non autorizzano la promozione estetica.
 
-La prossima decisione è sullo slot **10/10**. Non applicare nessuna modifica estetica al codice prima della decisione finale sul 10/10 e di un successivo mandato esplicito per l'implementazione.
+**CICLO CONCLUSO — 10/10 MOCK-UP APPROVATI IN CHAT IL 23/11/2026. ZERO INTEGRATI IN FLUTTER.** La PR documentale resta Draft e non va unita a `main` senza un mandato separato. Il prossimo eventuale passo sarà pianificare e implementare in una PR diversa, dopo richiesta esplicita dell'utente e verifica del baseline attuale.
