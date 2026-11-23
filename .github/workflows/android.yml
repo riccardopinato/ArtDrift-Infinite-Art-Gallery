@@ -75,8 +75,18 @@ jobs:
         run: flutter analyze --no-fatal-infos
       - name: Tests
         run: flutter test
-      - name: Build optimized Android ARM64 APK (internal test signing)
-        run: flutter build apk --release --target-platform android-arm64
+      - name: Build optimized Android ARM64 APK (internal test signing + Google OAuth preview)
+        # The publishable key is a PUBLIC frontend identifier protected by RLS,
+        # not a Google OAuth secret, sb_secret_ key, or service_role credential.
+        env:
+          ARTDRIFT_CLOUD_URL: https://waewxkexxykffsounhrj.supabase.co
+          ARTDRIFT_CLOUD_PUBLIC_KEY: sb_publishable_0XMaF3UljuHaCZlml0x0xw__6Bq7xBz
+        run: |
+          [[ "$ARTDRIFT_CLOUD_PUBLIC_KEY" == sb_publishable_* ]] || exit 1
+          flutter build apk --release --target-platform android-arm64 \
+            --dart-define=SUPABASE_URL="$ARTDRIFT_CLOUD_URL" \
+            --dart-define=SUPABASE_PUBLISHABLE_KEY="$ARTDRIFT_CLOUD_PUBLIC_KEY"
+
       - name: Record exact internal APK identity and signer
         shell: bash
         run: |
