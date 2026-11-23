@@ -114,6 +114,8 @@ class FavoriteSyncController extends ChangeNotifier
 
   String? _userId;
   Future<void> _scopeQueue = Future<void>.value();
+  Future<void>? _inFlight;
+  bool _observing = false;
   Map<String, FavoriteCloudRecord> _pending = {};
   Timer? _poll;
   bool switching = false;
@@ -135,9 +137,23 @@ class FavoriteSyncController extends ChangeNotifier
   String _importKey(String uid) => 'artdrift.sync.imported_guest.$uid.v1';
 
   Future<void> bindAccount(String? nextId) {
-    // Sequential account switches avoid an old async load overwriting a new
-    // identity. UI locks favorite changes for the brief switching window.
-    _scopeQueue = _scopeQueue.then((_) => _bindAccount(nextId));
+    // Serialize with local mutations, not merely with other account changes.
+    _scopeQueue = _scopeQueue
+        .catchError((Object _) {})
+        .then((_) => _bindAccount(nextId));
+    return _scopeQueue;
+  }
+
+  /// Persist local selection and its cloud intent as one serialized action.
+  /// A concurrent sign-out or account change waits for the durable queue.
+  Future<void> toggleFavorite(Artwork artwork) {
+    _scopeQueue = _scopeQueue
+        .catchError((Object _) {})
+        .then((_) async {
+          if (switching) return;
+          await favorites.toggle(artwork);
+          await recordToggle(artwork);
+        });
     return _scopeQueue;
   }
 
@@ -257,9 +273,21 @@ class FavoriteSyncController extends ChangeNotifier
     return added;
   }
 
-  Future<void> synchronize() async {
+  Future<void> synchronize() {
+    final alreadyRunning = _inFlight;
+    if (alreadyRunning != null) return alreadyRunning;
+    final run = _synchronizeOnce();
+    _inFlight = run;
+    run.whenComplete(() {
+      if (identical(_inFlight, run)) _inFlight = null;
+    });
+    return run;
+  }
+
+  Future<void> _synchronizeOnce() async {
     final uid = _userId;
-    if (uid == null || switching || syncing || lastError?.contains('non leggibile') == true) {
+    if (uid == null || switching ||
+        lastError?.contains('non leggibile') == true) {
       return;
     }
     final gateway = _gateway;
@@ -309,12 +337,19 @@ class FavoriteSyncController extends ChangeNotifier
     }
   }
 
-  void start() => WidgetsBinding.instance.addObserver(this);
+  void start() {
+    if (_observing) return;
+    WidgetsBinding.instance.addObserver(this);
+    _observing = true;
+  }
 
   @override
   void dispose() {
     _poll?.cancel();
-    WidgetsBinding.instance.removeObserver(this);
+    if (_observing) {
+      WidgetsBinding.instance.removeObserver(this);
+      _observing = false;
+    }
     super.dispose();
   }
 }

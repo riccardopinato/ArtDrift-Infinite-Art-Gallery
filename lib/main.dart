@@ -89,7 +89,9 @@ class _GalleryHomeState extends State<GalleryHome> {
     final next = ArtDriftAccount.instance.userId;
     if (next == _seenAccountId) return;
     _seenAccountId = next;
-    unawaited(_sync.bindAccount(next));
+    unawaited(_sync.bindAccount(next).catchError((Object _) {
+      // Keep the museum usable in guest/offline mode after a storage error.
+    }));
   }
 
   // Presentation-only idle fade. The canvas camera and tile registry
@@ -108,7 +110,11 @@ class _GalleryHomeState extends State<GalleryHome> {
     setState(() { _loading = true; _error = null; });
     try {
       await _favorites.load();
-      await _sync.bindAccount(ArtDriftAccount.instance.userId);
+      try {
+        await _sync.bindAccount(ArtDriftAccount.instance.userId);
+      } catch (_) {
+        // Auth/sync must not make the public art catalog unavailable.
+      }
       // Fetch a tiny same-origin index before mounting remote image widgets.
       await ArtOfflineThumbnailIndex.instance.initialize();
       final works = await _catalog.load(refresh: refresh);
@@ -148,10 +154,8 @@ class _GalleryHomeState extends State<GalleryHome> {
   }
 
   Future<void> _toggleFavorite(Artwork artwork) async {
-    if (_sync.switching) return;
-    await _favorites.toggle(artwork);
     try {
-      await _sync.recordToggle(artwork);
+      await _sync.toggleFavorite(artwork);
     } catch (_) {
       // Local selection remains saved; never claim cloud success.
       if (mounted) ScaffoldMessenger.maybeOf(context)?.showSnackBar(

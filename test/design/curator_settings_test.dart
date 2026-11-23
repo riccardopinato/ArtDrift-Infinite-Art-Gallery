@@ -30,6 +30,9 @@ void main() {
       expect(find.byKey(Key('artdrift-language-$code')), findsOneWidget);
     }
     final scroll = find.byKey(const Key('artdrift-curator-scroll'));
+    await tester.scrollUntilVisible(
+      find.byKey(const Key('artdrift-google-account-section')), 170,
+      scrollable: scroll);
     expect(find.byKey(const Key('artdrift-google-account-section')),
       findsOneWidget);
     await tester.scrollUntilVisible(find.text('Prestazioni Android'), 180,
