@@ -17,7 +17,9 @@ class ArtMobileCanvasSelection {
 
   static const preferenceKey = 'artdrift.canvas.offline.v1.keys';
 
-  static Future<List<Artwork>> select(List<Artwork> catalog) async {
+  static Future<List<Artwork>> select(List<Artwork> catalog, {
+      List<Artwork> initialColorPlaylist = const [],
+    }) async {
     if (kIsWeb) return catalog;
     final available = catalog.where((art) => art.hasBundledPreview ||
         ArtOfflineThumbnailIndex.instance.assetFor(art) != null)
@@ -27,9 +29,16 @@ class ArtMobileCanvasSelection {
     final prefs = await SharedPreferences.getInstance();
     final pinned = prefs.getStringList(preferenceKey);
     if (pinned == null || pinned.isEmpty) {
+      final byKey = {for (final art in available) art.catalogKey: art};
+      final curated = <Artwork>[];
+      for (final art in initialColorPlaylist) {
+        final backed = byKey[art.catalogKey];
+        if (backed != null) curated.add(backed);
+      }
+      final initial = curated.length >= 300 ? curated : available;
       await prefs.setStringList(preferenceKey,
-          available.map((art) => art.catalogKey).toList(growable: false));
-      return available;
+          initial.map((art) => art.catalogKey).toList(growable: false));
+      return List.unmodifiable(initial);
     }
 
     final byKey = {for (final art in available) art.catalogKey: art};

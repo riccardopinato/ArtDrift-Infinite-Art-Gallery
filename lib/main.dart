@@ -15,6 +15,7 @@ import 'services/catalog_service.dart';
 import 'services/favorites.dart';
 import 'services/art_offline_thumbnail_index.dart';
 import 'services/art_mobile_canvas_selection.dart';
+import 'services/art_visual_color_selection.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -52,6 +53,7 @@ class _GalleryHomeState extends State<GalleryHome> {
   final Favorites _favorites = Favorites();
   List<Artwork> _artworks = [];
   List<Artwork> _canvasArtworks = [];
+  List<Artwork> _colorArtworks = [];
   bool _loading = true;
   String? _error;
 
@@ -72,11 +74,18 @@ class _GalleryHomeState extends State<GalleryHome> {
       // Keep mobile tile-to-artwork assignment pinned across catalog updates.
       // Every image comes from the exact same artwork; all remote-only entries
       // remain searchable and may be viewed individually.
-      final visible = await ArtMobileCanvasSelection.select(works);
+      final color = await ArtVisualColorSelection.select(works);
+      // Preserve the existing canvas when a device already has pinned tiles.
+      // For a new Android install, seed a stable colorful playlist instead.
+      final visible = await ArtMobileCanvasSelection.select(works,
+        initialColorPlaylist: color);
       if (!mounted) return;
       setState(() {
         _artworks = works;
-        _canvasArtworks = visible.isEmpty ? works : visible;
+        _canvasArtworks = const bool.fromEnvironment(
+            'ARTDRIFT_VISUAL_HOME_DEFAULT', defaultValue: false) && color.isNotEmpty
+            ? color : (visible.isEmpty ? works : visible);
+        _colorArtworks = color;
         _loading = false;
       });
     } catch (error) {
@@ -88,7 +97,8 @@ class _GalleryHomeState extends State<GalleryHome> {
   Future<void> _openSearch() async {
     final selected = await showArtSearchSheet(context, _artworks,
       collectionCatalog: _canvasArtworks,
-      onOpenCollection: _openCollection);
+      onOpenCollection: _openCollection,
+      visualPaletteAvailable: _colorArtworks.isNotEmpty);
     if (!mounted || selected == null) return;
     _open(selected);
   }
@@ -109,7 +119,9 @@ class _GalleryHomeState extends State<GalleryHome> {
   void _open(Artwork artwork) => _openArtworkInGroup(artwork, _artworks);
 
   void _openCollection(ArtCollection collection) {
-    final selected = ArtCollections.members(collection, _canvasArtworks);
+    final selected = collection.id == ArtCollections.colorFirst.id
+        ? _colorArtworks
+        : ArtCollections.members(collection, _canvasArtworks);
     if (selected.isEmpty || !mounted) return;
     Navigator.of(context).push(MaterialPageRoute<void>(
       builder: (_) => ArtCollectionCanvasScreen(
@@ -177,7 +189,12 @@ class _GalleryHomeState extends State<GalleryHome> {
       )));
     }
     return Scaffold(body: Stack(fit: StackFit.expand, children: [
-      InfiniteGallery(artworks: _canvasArtworks, onOpen: _open),
+      InfiniteGallery(
+        artworks: _canvasArtworks,
+        cameraKey: const bool.fromEnvironment(
+            'ARTDRIFT_VISUAL_HOME_DEFAULT', defaultValue: false)
+            ? 'artdrift.preview.colorhome.camera' : 'artdrift.camera',
+        onOpen: _open),
       Positioned(top: 0, left: 0, right: 0,
         child: SafeArea(bottom: false, child: ArtDriftToolbar(
           onSearch: _openSearch,
