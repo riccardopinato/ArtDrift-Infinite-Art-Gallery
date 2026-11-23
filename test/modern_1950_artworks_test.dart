@@ -60,6 +60,15 @@ void main() {
         .displayable, isFalse);
   });
 
+  test('Commons technical source markers never appear as art titles', () {
+    final dirty = {
+      ...commons().toJson(),
+      'title': 'German: Allegorie des Herbstes label QS:Lde, 1983',
+    };
+    expect(Artwork.fromJson(dirty).title, 'Allegorie des Herbstes');
+    expect(commons().title, 'Self-authored Color Field');
+  });
+
   test('historic museums retain public domain gate', () {
     final historic = Artwork(id: 10000099, title:'Historic Work',
       artist:'Artist', date:'1880', imageId:'',
