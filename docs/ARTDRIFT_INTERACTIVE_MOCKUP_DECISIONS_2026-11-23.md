@@ -26,8 +26,9 @@ Stato generale: **DESIGN REVIEW / NON IMPLEMENTATO**.
 | 4/10 | Scheda dell'opera incorniciata | **Cartellino di sala espandibile** — scheda editoriale avorio sotto il quadro con titolo, autore e anno; comando «Leggi la scheda» per espandere i soli metadati e descrizioni esistenti; impaginazione dinamica sopra il banner AdMob se presente | **APPROVATO** — conferma «procedi, approvo» in chat del 23/11/2026 dopo precisazione sul futuro banner | **NO** | Rispettare il vincolo AdMob documentato: assente = piena area, presente = bordo superiore del banner; nessuna pubblicità implementata |
 | 5/10 | Home / Preferiti | **La mia collezione** — galleria editoriale personale accessibile dal cuore in alto a destra, fondo avorio e anteprime di opere salvate; apertura del quadro e ritorno al canvas senza perdere camera/zoom; area utile adattabile al banner AdMob reale | **APPROVATO** — conferma esplicita in chat 23/11/2026 | **NO** | La selezione/rimozione dei preferiti nel prototipo è simulata; quando il banner non c'è non va riservato spazio; quando appare il contenuto termina al suo bordo superiore |
 | 6/10 | Ricerca dal pennello centrale | **Atrio della ricerca** — overlay editoriale avorio attivato dal pennello centrale di larghezza 1/3, con ricerca locale esistente, suggerimenti e risultati illustrati, ritorno al canvas e viewport AdMob adattivo | **APPROVATO** — conferma esplicita in chat 23/11/2026 | **NO** | Il motore GallerySearch e l'indice locale rimangono invariati; risultati del mock-up solo dimostrativi, nessuna AI visiva aggiunta |
-| 7/10 | Controlli Auto del canvas | **Regia dello scorrimento** — proposta interattiva: controllo Auto già presente in alto a sinistra con stato Pausa/Riprendi e regolazione della velocità mediante pannello compatto a comparsa, senza aggiungere barre permanenti o interferire con i gesti del canvas | **IN ATTESA** | **NO** | Pura revisione estetica dei controlli esistenti; qualsiasi funzionalità aggiuntiva non presente nell'app richiede approvazione separata |
-| 8–10 | — | Da proporre uno alla volta | **NON PRESENTATI** | **NO** | Vietato anticipare le decisioni |
+| 7/10 | Controlli Auto del canvas | **Regia dello scorrimento** — controllo Auto/Pausa in alto a sinistra, selettore compatto a comparsa con ritmi Lento 25%, Regolare 50%, Veloce 75%, Molto veloce 100%; controlli compatibili con Quiet Canvas, pan/zoom e viewport AdMob | **APPROVATO** — conferma esplicita in chat 23/11/2026 | **NO** | Estetica/interazione approvata; il motore Auto e i suoi algoritmi non cambiano, durata/velocità reali da verificare in implementazione |
+| 8/10 | Impostazioni / ingranaggio | **Gabinetto del curatore** — proposta interattiva di restyling editoriale del pannello Impostazioni esistente: lingua, informazioni Pro (non ancora disponibile), privacy e licenze, senza inventare nuove impostazioni | **IN ATTESA** | **NO** | Prototipo da valutare; preservare le funzioni realmente presenti in `lib/screens/settings_sheet.dart` |
+| 9–10 | — | Da proporre uno alla volta | **NON PRESENTATI** | **NO** | Vietato anticipare le decisioni |
 
 ## Slot 1/10 — contratto di design approvato
 
@@ -93,8 +94,18 @@ Stato generale: **DESIGN REVIEW / NON IMPLEMENTATO**.
 - Reference Design-App: `MOCK-STYLE-003` Vintage ed Editorial UI **ADATTATI**; non copiare asset/licenze non consentite.
 - **Mock-up approvato, non implementato**. Nessun cambiamento a Flutter, catalogo, indicizzazione, PR di implementazione, APK o banner.
 
+## Slot 7/10 — contratto di design approvato
+
+- Identità: **Regia dello scorrimento**, revisione estetica e di interazione dei controlli Auto e velocità del canvas, senza toccare il motore di rendering e navigazione.
+- Mantenere i controlli nella **parte superiore sinistra**, senza nuove barre permanenti. **Auto** mostra chiaramente lo stato di esecuzione, **Pausa** lo arresta; lo scorrimento manuale non viene impedito.
+- Il pulsante percentuale apre un pannello contestuale compatto, visibile sopra il canvas, per scegliere quattro ritmi illustrativi: **Lento 25%**, **Regolare 50%**, **Veloce 75%**, **Molto veloce 100%**. Le percentuali del prototipo sono relative e non prescrivono un algoritmo di velocità o nuovi parametri interni già implementati.
+- La proposta conserva la ricerca centrale (un terzo della larghezza), preferiti/impostazioni a destra, recenter in basso a destra e l'aspetto/geometry già approvati.
+- Compatibile con la modalità Immersione slot 1/10, senza che il pannello di selezione rimanga aperto o intralci lo scorrimento; rispettare tap target e gesture handling.
+- Rispettare il vincolo viewport AdMob (nessun banner = piena area; banner effettivamente visibile = fine del canvas al suo bordo superiore) e il percorso reduced-motion. Banner demo non equivale a SDK AdMob reale.
+- Reference Design-App `MOCK-STYLE-003` Vintage / Editorial UI **ADATTATI**. **Decisione di design, non implementazione**: nessun Dart, motore Auto, APK, catalogo o annuncio modificato.
+
 ## Stato implementativo
 
 **APPROVATO ≠ INTEGRATO.** Questo documento registra solo preferenze e decisioni; il codice Flutter attuale e le PR #33–#35 restano indipendenti. Il collaudo v0.3.8 e la relativa PR #35 non autorizzano la promozione estetica.
 
-La prossima decisione è sullo slot **7/10**. Non avanzare allo slot 8/10 prima di approvare, modificare o scartare esplicitamente il 7/10.
+La prossima decisione è sullo slot **8/10**. Non avanzare allo slot 9/10 prima di approvare, modificare o scartare esplicitamente il 8/10.
