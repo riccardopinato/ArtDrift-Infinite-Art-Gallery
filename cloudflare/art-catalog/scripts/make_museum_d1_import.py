@@ -70,14 +70,18 @@ def normalize(item):
     source=field(item,"museum_source",32) or "aic"
     if source not in PREVIEW_HOSTS:return None
     license=field(item,"rights_license",40) or ("Public Domain" if source=="aic" else "")
-    if license not in LICENSES:return None
+    if license not in LICENSES and not (
+       license.startswith("Public Domain / ") or license.startswith("CC0 / ")):
+        return None
     is_pd=item.get("is_public_domain") is True
     if source=="commons":
         if is_pd!=(license=="CC0"):return None
         if not field(item,"artist_title",220) or not field(item,"credit_line",250):return None
         if not official(field(item,"rights_evidence_url",900),{"commons.wikimedia.org"}):return None
         if not official(field(item,"rights_license_url",500),{"creativecommons.org"}):return None
-    elif not is_pd or license not in ("CC0","Public Domain"):
+    elif not is_pd or not (license in ("CC0","Public Domain") or
+                           license.startswith("Public Domain / ") or
+                           license.startswith("CC0 / ")):
         return None
     title=field(item,"title",230)
     if not title:return None
@@ -99,6 +103,8 @@ def normalize(item):
         "www.clevelandart.org","clevelandart.org","www.metmuseum.org",
         "www.nga.gov","www.artic.edu","www.getty.edu",
         "www.rijksmuseum.nl","www.smk.dk","open.smk.dk",
+        "media.getty.edu","data.rijksmuseum.nl","iiif.micr.io",
+        "api.nga.gov","www.moma.org","www.artsmia.org",
         "collections.artsmia.org","www.thewalters.org",
         "art.thewalters.org"}):return None
     return {
@@ -136,7 +142,13 @@ def export(root=ROOT,out=None,expected=5084,chunk=200):
         for entry in data:
             row=normalize(entry)
             if row is None:
-                rejected.append((path,entry.get("id") if isinstance(entry,dict) else None))
+                rejected.append((
+                    path,
+                    entry.get("id") if isinstance(entry,dict) else None,
+                    entry.get("rights_license") if isinstance(entry,dict) else None,
+                    urlparse(str(entry.get("rights_evidence_url") or "")).hostname
+                    if isinstance(entry,dict) else None,
+                ))
                 continue
             if row["source_key"] in seen:
                 raise ValueError("Duplicate identity "+row["source_key"])
