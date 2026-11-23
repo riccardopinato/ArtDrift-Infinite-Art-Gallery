@@ -95,6 +95,14 @@ class _ArtworkDetailState extends State<ArtworkDetail> {
     if (mounted) setState(() {});
   }
 
+  Future<void> _openLicense() async {
+    final url = art.rightsLicenseUrl;
+    final uri = Uri.tryParse(url);
+    if (uri == null || uri.scheme != 'https' ||
+        uri.host != 'creativecommons.org') return;
+    await launchUrl(uri, mode: LaunchMode.externalApplication);
+  }
+
   Future<void> _openMuseum() async {
     final uri = Uri.parse(art.museumUrl);
     if (!await launchUrl(uri, mode: LaunchMode.externalApplication) && mounted) {
@@ -116,6 +124,7 @@ class _ArtworkDetailState extends State<ArtworkDetail> {
           onExpand: () => setState(
             () => _captionExpanded = !_captionExpanded),
           onMuseum: _openMuseum,
+          onLicense: _openLicense,
           onWallpaper: _busy || kIsWeb ? null : _setWallpaper,
         );
         final painting = GestureDetector(
@@ -239,10 +248,11 @@ class _ArtworkDetailState extends State<ArtworkDetail> {
 
 class _Caption extends StatelessWidget {
   const _Caption({required this.artwork, required this.expanded,
-    required this.onExpand, required this.onMuseum, required this.onWallpaper});
+    required this.onExpand, required this.onMuseum,
+    required this.onLicense, required this.onWallpaper});
   final Artwork artwork;
   final bool expanded;
-  final VoidCallback onExpand, onMuseum;
+  final VoidCallback onExpand, onMuseum, onLicense;
   final VoidCallback? onWallpaper;
 
   @override
@@ -329,6 +339,11 @@ class _Caption extends StatelessWidget {
                   style: TextStyle(fontSize: 11))),
             ]),
             const SizedBox(height: 7),
+            if (artwork.rightsLicenseUrl.isNotEmpty) TextButton.icon(
+              onPressed: onLicense,
+              icon: const Icon(Icons.gavel_outlined, size: 15),
+              label: Text('Licenza ${artwork.displayedLicense} · fonte e crediti',
+                style: const TextStyle(fontSize: 11))),
             Text(artwork.displayedMuseum + ' · ' + artwork.displayedLicense,
               style: const TextStyle(color: Color(0xFF867258),
                 fontSize: 10)),
