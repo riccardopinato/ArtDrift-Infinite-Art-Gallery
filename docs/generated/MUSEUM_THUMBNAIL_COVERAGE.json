@@ -5,22 +5,22 @@
     "nga": 739,
     "rijks": 160,
     "smithsonian": 924,
-    "smk": 423
+    "smk": 499
   },
-  "batch_requested": 411,
+  "batch_requested": 84,
   "catalog_total": 4043,
   "existing_legacy_pack_requires_image_rights_review": 0,
   "license_eligible": 4043,
   "new_download_policy_eligible": 4043,
   "new_download_policy_hold": 0,
-  "packed_bytes": 17780318,
+  "packed_bytes": 18101698,
   "schema_version": 1,
   "status_counts": {
-    "downloaded": 327,
+    "downloaded": 76,
     "http_404": 1,
-    "network_or_decode_failure": 77,
+    "network_or_decode_failure": 1,
     "unsupported_image": 6
   },
-  "web_thumbnails_available": 3959,
-  "web_thumbnails_missing": 84
+  "web_thumbnails_available": 4035,
+  "web_thumbnails_missing": 8
 }
