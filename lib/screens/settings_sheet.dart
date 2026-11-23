@@ -53,9 +53,10 @@ class _ArtDriftSettingsState extends State<_ArtDriftSettingsSheet> {
           Row(children: [
             const BrushMark(size: 22),
             const SizedBox(width: 10),
-            Expanded(child: Text('ARTDRIFT  ✧  ' + t('settings').toUpperCase(),
-              style: const TextStyle(color: ArtPaper.gold, fontSize: 10,
-                letterSpacing: 1.3))),
+            Expanded(child: Text(t('settings'),
+              style: const TextStyle(color: ArtPaper.ink,
+                fontFamily: 'serif', fontSize: 19,
+                fontWeight: FontWeight.w500))),
             IconButton(key: const Key('artdrift-curator-close'),
               tooltip: t('close'), onPressed: () => Navigator.pop(context),
               icon: const Icon(Icons.close, color: ArtPaper.ink)),
