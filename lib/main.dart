@@ -14,6 +14,8 @@ import 'ui/museum_portal.dart';
 import 'ui/tile_origin_flight.dart';
 import 'ui/art_ad_aware_viewport.dart';
 import 'models/artwork.dart';
+import 'models/art_creation_date.dart';
+import 'museums/museum_catalog.dart';
 import 'screens/artwork_detail.dart';
 import 'screens/collection_canvas.dart';
 import 'collections/art_collections.dart';
@@ -148,7 +150,7 @@ class _GalleryHomeState extends State<GalleryHome> {
 
   Future<void> _openSearch() async {
     final selected = await showArtSearchSheet(context, _artworks,
-      collectionCatalog: _canvasArtworks,
+      collectionCatalog: _collectionPool(),
       onOpenCollection: _openCollection,
       visualPaletteAvailable: _colorArtworks.isNotEmpty,
       initialQuery: _lastSearchQuery,
@@ -180,10 +182,18 @@ class _GalleryHomeState extends State<GalleryHome> {
 
   void _open(Artwork artwork) => _openArtworkInGroup(artwork, _artworks);
 
+  // Preserve the pinned Home canvas while giving 1950+ artworks an
+  // independently browseable collection. Existing world tile positions
+  // never change as an incidental effect of new remote-only content.
+  List<Artwork> _collectionPool() => MuseumCatalog.combine(
+    _canvasArtworks,
+    _artworks.where((art) =>
+      ArtCreationDate.explicitYearFrom1950(art.date) != null));
+
   void _openCollection(ArtCollection collection) {
     final selected = collection.id == ArtCollections.colorFirst.id
         ? _colorArtworks
-        : ArtCollections.members(collection, _canvasArtworks);
+        : ArtCollections.members(collection, _collectionPool());
     if (selected.isEmpty || !mounted) return;
     Navigator.of(context).push(MaterialPageRoute<void>(
       builder: (_) => ArtCollectionCanvasScreen(
