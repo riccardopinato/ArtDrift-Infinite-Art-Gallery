@@ -3,7 +3,7 @@ on:
   push:
     branches: ['ci/artdrift-emulator-current-*']
     paths:
-      - '.github/workflows/artdrift-emulator-perf.yml'
+      - '.github/workflows/artdrift-emulator-exacthead.yml'
       - 'scripts/collect_android_emulator_perf.py'
       - 'assets/museums/canvas_visual_color_v1.json'
   workflow_dispatch:
