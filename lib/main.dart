@@ -188,7 +188,10 @@ class _GalleryHomeState extends State<GalleryHome> {
   List<Artwork> _collectionPool() => MuseumCatalog.combine(
     _canvasArtworks,
     _artworks.where((art) =>
-      ArtCreationDate.explicitYearFrom1950(art.date) != null));
+      ArtCreationDate.explicitYearFrom1950(art.date) != null ||
+      (art.museumSource == 'smithsonian' &&
+        const <String>['chndm:', 'hmsg:', 'nmafa:', 'nmaahc:']
+          .any((unit) => art.museumNativeId.startsWith(unit)))));
 
   void _openCollection(ArtCollection collection) {
     final selected = collection.id == ArtCollections.colorFirst.id
