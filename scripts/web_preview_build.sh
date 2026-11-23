@@ -12,7 +12,13 @@ flutter config --enable-web
 flutter create --project-name artdrift --org com.riccardopinato --platforms=web .
 rm -f test/widget_test.dart
 flutter pub get
-flutter build web --release --base-href /
+# A private Vercel preview may opt into the new chromatic Home; regular
+# production/Android builds keep current persisted canvas behavior.
+if [[ "${ARTDRIFT_PREVIEW_COLOR_HOME:-0}" == "1" ]]; then
+  flutter build web --release --base-href / --dart-define=ARTDRIFT_VISUAL_HOME_DEFAULT=true
+else
+  flutter build web --release --base-href /
+fi
 # Android ships the validated WebP bundle as Flutter assets. On Web, these
 # same files are already served from /museum_thumbs/ and loaded as URLs.
 # Drop only the redundant Flutter asset copies in the generated output.
