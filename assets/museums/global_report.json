@@ -1,11 +1,13 @@
 {
-  "schema_version": 2,
-  "records_global": 4043,
-  "records_bundled_existing": 457,
-  "records_total": 4500,
-  "catalog_bytes": 3691868,
-  "remote_images_only": 4043,
-  "local_webp_bytes_added": 0,
+  "catalog_bytes": 3690811,
+  "excluded_metadata_only_smithsonian": {
+    "catalog_record_removed": true,
+    "id": 6452594389,
+    "museum_native_id": "npg:npg_NPG.2007.11",
+    "museum_source": "smithsonian",
+    "reason": "User-excluded unavailable preview; no alternate image substituted"
+  },
+  "image_qa": "sample of image HTTP 200 only; device and complete corpus QA open",
   "institutions": {
     "Cleveland Museum of Art": 1584,
     "National Gallery of Art, Washington": 739,
@@ -13,16 +15,21 @@
     "SMK – National Gallery of Denmark": 500,
     "Smithsonian American Art Museum": 350,
     "Smithsonian National Museum of Asian Art": 350,
-    "Smithsonian National Portrait Gallery": 225,
+    "Smithsonian National Portrait Gallery": 224,
     "The Metropolitan Museum of Art": 135
   },
-  "record_rights": "official item-specific CC0/PD flags only",
+  "local_webp_bytes_added": 0,
   "media_verification": "official image host + provider media rights; network delivery deferred to device",
-  "store_rights_review_required": true,
+  "original_aic_offline_preserved": 72,
+  "record_rights": "official item-specific CC0/PD flags only",
+  "records_bundled_existing": 457,
+  "records_global": 4042,
+  "records_total": 4499,
+  "remote_images_only": 4042,
+  "remote_preview_sample_gate": "AIC remote 7/7 HTTP403 excluded; 8 other institution groups 56/56 pass",
   "removed_unreachable_aic_remote": 629,
   "replacement_cma_cc0_added": 757,
   "replacement_cma_pages_checked": 3,
-  "remote_preview_sample_gate": "AIC remote 7/7 HTTP403 excluded; 8 other institution groups 56/56 pass",
-  "original_aic_offline_preserved": 72,
-  "image_qa": "sample of image HTTP 200 only; device and complete corpus QA open"
+  "schema_version": 2,
+  "store_rights_review_required": true
 }

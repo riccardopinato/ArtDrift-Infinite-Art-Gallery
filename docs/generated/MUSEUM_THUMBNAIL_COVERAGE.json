@@ -7,17 +7,15 @@
     "smithsonian": 924,
     "smk": 500
   },
-  "batch_requested": 1,
-  "catalog_total": 4043,
+  "batch_requested": 0,
+  "catalog_total": 4042,
   "existing_legacy_pack_requires_image_rights_review": 0,
-  "license_eligible": 4043,
-  "new_download_policy_eligible": 4043,
+  "license_eligible": 4042,
+  "new_download_policy_eligible": 4042,
   "new_download_policy_hold": 0,
   "packed_bytes": 18107502,
   "schema_version": 1,
-  "status_counts": {
-    "http_404": 1
-  },
+  "status_counts": {},
   "web_thumbnails_available": 4042,
-  "web_thumbnails_missing": 1
+  "web_thumbnails_missing": 0
 }

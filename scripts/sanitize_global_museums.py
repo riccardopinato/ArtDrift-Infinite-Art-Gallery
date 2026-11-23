@@ -85,7 +85,7 @@ def main():
     aic=json.loads(AIC_ORIGINAL.read_text(encoding="utf-8"))
     existing=len(pinned)+len(aic)
     # Remove ONLY unbundled AIC remote IIIF, not approved 72 offline images.
-    keep=[row for row in original if row.get("museum_source")!="aic"]
+    keep=[row for row in original if row.get("museum_source")!="aic" and not (row.get("museum_source")=="smithsonian" and str(row.get("id"))=="6452594389")]
     removed=len(original)-len(keep)
     assert removed==0 or removed>=500, f"Unexpected AIC count: {removed}"
     keys={(x.get("museum_source","aic"),str(x.get("museum_native_id",x.get("id"))))

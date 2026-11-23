@@ -61735,22 +61735,6 @@
     },
     {
       "asset": {
-        "state": "ABSENT"
-      },
-      "commercial_release_cleared": false,
-      "in_thumbnail_manifest": false,
-      "key": "smithsonian:6452594389",
-      "museum_native_id": "npg:npg_NPG.2007.11",
-      "official_image_url": "https://ids.si.edu/ids/deliveryService?id=NPG-NPG_2007_11Linn-000003&max=320",
-      "provider_policy_gate": true,
-      "review_verdict": "SOURCE_POLICY_ELIGIBLE_IMAGE_MISSING",
-      "rights_evidence_url": "https://www.si.edu/openaccess",
-      "rights_license_declared": "CC0",
-      "source": "smithsonian",
-      "title": "William Linn"
-    },
-    {
-      "asset": {
         "height": 156,
         "sha256": "21c0bf5f7c4c57a624e11a748e7294bbf5ce908fc4db50bbf49d14c333ca8d6b",
         "size_bytes": 1576,
@@ -80905,27 +80889,25 @@
         "SOURCE_POLICY_SCREENED_NOT_LEGALLY_CERTIFIED": 160
       },
       "smithsonian": {
-        "SOURCE_POLICY_ELIGIBLE_IMAGE_MISSING": 1,
         "SOURCE_POLICY_SCREENED_NOT_LEGALLY_CERTIFIED": 924
       },
       "smk": {
         "SOURCE_POLICY_SCREENED_NOT_LEGALLY_CERTIFIED": 500
       }
     },
-    "catalog_total": 4043,
+    "catalog_total": 4042,
     "invalid_packaged": 0,
     "legally_certified_images": 0,
     "manifest_global_sha256": "9635b58e2bde541e02bc4b74519cbdfbc344c244259288af1fb553a272ea25b0",
     "manifest_total": 4042,
     "method": "Local file integrity, exact museum ID, catalog licence metadata, and provider policy host gate. No live object-specific copyright adjudication.",
-    "missing_total": 1,
+    "missing_total": 0,
     "packaged_policy_hold": 0,
     "packaged_very_thin_visual_review": 33,
-    "policy_eligible_missing": 1,
+    "policy_eligible_missing": 0,
     "policy_hold_missing": 0,
     "schema_version": 1,
     "verdicts": {
-      "SOURCE_POLICY_ELIGIBLE_IMAGE_MISSING": 1,
       "SOURCE_POLICY_SCREENED_NOT_LEGALLY_CERTIFIED": 4042
     }
   }

@@ -69,7 +69,8 @@ void main() {
     final all=await c.load();
     expect(originals.length,72);
     expect(all.length, originals.length+more.length);
-    expect(all.length, 4500);
+    expect(all.length, 4499);
+    expect(all.where((a) => a.catalogKey == 'smithsonian:6452594389'), isEmpty);
     for (var i=0;i<72;i++) {
       expect(all[i].catalogKey,originals[i].catalogKey);
       expect(all[i].hasBundledPreview,isTrue);

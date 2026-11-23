@@ -472,6 +472,10 @@ def main():
                 if key not in pinned_keys and row.get("is_public_domain") is True and safe(row.get("remote_preview_url",""),row.get("museum_source","")):
                     data.setdefault(key,row)
         except Exception as e:print("PREVIOUS_GLOBAL_HELD",str(e)[:100],flush=True)
+    # User-excluded metadata-only item (Smithsonian NPG.2007.11): do not reimport.
+    data = {k: v for k, v in data.items() if not (
+        v.get('museum_source') == 'smithsonian' and
+        str(v.get('id')) == '6452594389')}
     # Entropy interleaving gives worldwide variety at first viewport.
     groups={}
     for r in data.values():

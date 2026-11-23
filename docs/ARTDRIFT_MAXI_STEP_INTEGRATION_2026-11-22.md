@@ -49,3 +49,7 @@ Base: PR #18. Package: 0.3.6+9, internal-test ARM64 signing until separately pro
 
 No material in this PR is blanket legal certification of third-party image or
 museum trademark rights.
+
+## Consolidation update — 23 Nov 2026
+
+Final catalog: **4,499 works** = 457 original with previews + 4,042 global museum works with **4,042 matching WebPs**. The last metadata-only Smithsonian NPG.2007.11 was explicitly removed. The previously published 4,500 and 1,142 numbers above are historical checkpoints, not the final state. The shared drift_core matches Art main (PR #30) and GalleryDrift #13. Commercial rights and physical-device acceptance are separate gates.

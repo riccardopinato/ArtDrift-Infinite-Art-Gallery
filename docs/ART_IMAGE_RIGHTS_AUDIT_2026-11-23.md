@@ -3,10 +3,10 @@
 **NOT a commercial legal certification.** Every artwork still has
 `commercial_release_cleared=false` pending image-specific rights review.
 
-- Global catalog records: **4043**
+- Global catalog records: **4042**
 - Actual manifest entries: **4042**
-- Missing real image assets: **1**
-- Missing from source-policy-eligible providers: **1**
+- Missing real image assets: **0**
+- Missing from source-policy-eligible providers: **0**
 - Missing behind source/image-rights HOLD: **0**
 - Already packaged requiring image-specific rights review: **0**
 - Manifest image bytes invalid: **0**

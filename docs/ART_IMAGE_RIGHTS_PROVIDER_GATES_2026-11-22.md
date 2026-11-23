@@ -55,22 +55,6 @@ record as commercially unverified until an actual rights/release review is
 completed. The downloader does not use redirects outside approved hosts,
 substitute images or treat a provider HTTP failure as a usable thumbnail.
 
-## Strictly limited NPG NPG.2007.11 exception (23 Nov 2026)
+## Explicit catalog exclusion: NPG.2007.11 (23 Nov 2026)
 
-An individual official Smithsonian National Portrait Gallery object
-`https://npg.si.edu/object/npg_NPG.2007.11` explicitly marks William Linn,
-Archibald Robertson, NPG.2007.11 as **CC0**. The original Smithsonian IDS
-media endpoint returns HTTP 404 for this item. A separately identified,
-faithful copy on Wikimedia Commons may be used as an **internal offline preview
-for only this exact accession** after the Commons API independently confirms
-the single file's public-domain/PD-Art license metadata, non-copyrighted
-flag, exact title and safe upload.wikimedia.org media URL. The code never
-opens general Wikimedia imports or substitutes similar portraits.
-
-Evidence must be committed in
-`docs/generated/NPG_2007_11_COMMONS_EXCEPTION_EVIDENCE.json`, including
-museum object CC0, Commons file license, original media SHA-256 and final WebP
-SHA-256. If any gate fails, **hold the image as metadata-only**; do not claim
-100% coverage. This explicit Commons exception remains **not commercial legal
-certification** (possible jurisdiction-specific rights; store release remains
-blocked until rights are reviewed).
+At the user's request, the metadata-only **William Linn** item (\`smithsonian:6452594389\`, NPG.2007.11) has been removed from \`catalog_global.json\`. The original Smithsonian IDS media was 404, and the exact Wikimedia alternative could not be transferred (HTTP 429). No substitute or Commons-sourced image was inserted. The earlier unavailable-media record is preserved in Git history/issue #31. All remaining 4,042 museum records match existing local WebP identities. This is a content decision, **not commercial rights certification**.
