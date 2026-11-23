@@ -60,6 +60,55 @@ indexes contain data before planning migrations. **Do not run an import or
 `wrangler deploy` based on the URL alone.** No account ID, API token or
 Cloudflare secret is stored in this repository.
 
+## Safe 5,084-record import from the owner's Windows PC
+
+The D1 console was checked by the owner: works=0, works_fts=0, and
+museum_works=0 after adding the non-destructive museum schema. The SQL
+shards have been updated for Cloudflare's Wrangler import syntax (no
+explicit BEGIN TRANSACTION or COMMIT). Direct CLI login happens only in
+the owner's browser, never in ChatGPT.
+
+Run in PowerShell from a checkout of this exact feature branch:
+
+    git checkout feat/artdrift-d1-unified-catalog-20261123
+    cd cloudflare/art-catalog
+    npm install
+    npx wrangler login
+    cd ../..
+    py cloudflare/art-catalog/scripts/import_museum_remote.py
+
+The default Python operation is **read-only on Cloudflare**. It validates
+all 5,084 local source records, rerenders 26 SQL files, checks the active
+Cloudflare account for D1 UUID `4e7cb3bf-bf3c-480d-9789-93072e70274c`
+and expected name `artdrift-moma-cc0`, then confirms both MoMA and
+museum counts/indexes remain zero. **If any check fails, do not import.**
+
+After reviewing the preflight result and D1 Free row-write quota, the
+owner can explicitly start the import on that exact database ID:
+
+    py cloudflare/art-catalog/scripts/import_museum_remote.py --apply --confirm-id 4e7cb3bf-bf3c-480d-9789-93072e70274c
+
+The script captures a D1 Time Travel bookmark in
+`build/d1-museums/preimport-time-travel.json` before writing, runs the 26
+SQL shards sequentially, and checks remote row count after each shard.
+Each failure stops immediately. It never imports MoMA and never writes
+to Supabase or R2. Save the bookmark; Time Travel's retention is limited.
+Do not share API tokens or OAuth credentials in chat.
+
+On success it should say: `D1_REMOTE_IMPORT_SUCCESS 5084 museum works,
+5084 FTS entries, MoMA unchanged.` Verify again in the D1 dashboard with:
+
+    SELECT (SELECT COUNT(*) FROM museum_works) AS museums,
+           (SELECT COUNT(*) FROM museum_works_fts) AS museum_fts,
+           (SELECT COUNT(*) FROM works) AS moma;
+
+Expected: museums=5084; museum_fts=5084; moma=0.
+
+A *successful D1 data import does not deploy the Worker or turn on the
+D1 cloud search button in Flutter*. Those are separate gated steps.
+Official Wrangler instructions:
+https://developers.cloudflare.com/d1/wrangler-commands/
+
 ## Controlled activation — explicit owner approval required
 
 Verify the real Cloudflare account, D1 database ID and prior migrations.
