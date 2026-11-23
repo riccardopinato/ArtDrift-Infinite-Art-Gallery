@@ -10,21 +10,25 @@ import '../ui/parchment.dart';
 
 Future<Artwork?> showArtSearchSheet(BuildContext context, List<Artwork> catalog,
     {void Function(ArtCollection)? onOpenCollection,
-     List<Artwork>? collectionCatalog}) =>
+     List<Artwork>? collectionCatalog,
+     bool visualPaletteAvailable = false}) =>
     showModalBottomSheet<Artwork>(
       context: context, isScrollControlled: true, useSafeArea: true,
       backgroundColor: Colors.transparent,
       builder: (_) => _SearchSheet(artworks: catalog,
           collectionCatalog: collectionCatalog ?? catalog,
-          onOpenCollection: onOpenCollection),
+          onOpenCollection: onOpenCollection,
+          visualPaletteAvailable: visualPaletteAvailable),
     );
 
 class _SearchSheet extends StatefulWidget {
   const _SearchSheet({required this.artworks,
-    required this.collectionCatalog, this.onOpenCollection});
+    required this.collectionCatalog, this.onOpenCollection,
+    required this.visualPaletteAvailable});
   final List<Artwork> artworks;
   final List<Artwork> collectionCatalog;
   final void Function(ArtCollection)? onOpenCollection;
+  final bool visualPaletteAvailable;
   @override
   State<_SearchSheet> createState() => _SearchSheetState();
 }
@@ -48,7 +52,10 @@ class _SearchSheetState extends State<_SearchSheet> {
   void initState() {
     super.initState();
     _search = GallerySearch(widget.artworks);
-    _collections = ArtCollections.available(widget.collectionCatalog);
+    _collections = [
+      if (widget.visualPaletteAvailable) ArtCollections.colorFirst,
+      ...ArtCollections.available(widget.collectionCatalog),
+    ];
     _text.addListener(_updateLocal);
   }
 

@@ -17,6 +17,18 @@ class ArtCollection {
 class ArtCollections {
   ArtCollections._();
 
+  /// Based on actual image pixels and available local artwork previews,
+  /// never on an inferred artistic movement from titles or author names.
+  static const colorFirst = ArtCollection('color-first',
+    {'it':'Colori e capolavori', 'en':'Color and masterpieces',
+     'fr':'Couleurs et chefs-d’œuvre', 'es':'Color y obras maestras',
+     'de':'Farben und Meisterwerke', 'pt':'Cores e obras-primas'},
+    {'it':'1200 dipinti selezionati per colore', 'en':'1200 color-selected paintings',
+     'fr':'1200 tableaux choisis par couleur',
+     'es':'1200 pinturas elegidas por color',
+     'de':'1200 farblich ausgewählte Gemälde',
+     'pt':'1200 pinturas selecionadas pela cor'});
+
   static const all = <ArtCollection>[
     ArtCollection('landscapes',
       {'it':'Paesaggi', 'en':'Landscapes', 'fr':'Paysages',
