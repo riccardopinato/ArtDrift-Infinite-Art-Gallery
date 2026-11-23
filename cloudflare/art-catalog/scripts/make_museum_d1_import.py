@@ -166,13 +166,14 @@ def export(root=ROOT,out=None,expected=5084,chunk=200):
     total_bytes=0
     for start in range(0,len(values),chunk):
         batch=values[start:start+chunk]
-        lines=["-- Art Drift museum metadata; no image bytes; source item rights checked.",
-               "BEGIN TRANSACTION;"]
+        # D1 Wrangler --remote --file executes under managed transactions:
+        # explicit BEGIN/COMMIT can raise "cannot start a transaction within a
+        # transaction" even when ordinary SQLite local tests succeed.
+        lines=["-- Art Drift museum metadata; no image bytes; source item rights checked."]
         for record in batch:
             args=",".join(quote(record[k]) for k in COLUMNS)
             lines.append("INSERT OR IGNORE INTO museum_works ("+
                          ",".join(COLUMNS)+") VALUES ("+args+");")
-        lines.append("COMMIT;")
         name=f"museum-{len(files)+1:04d}.sql"
         data=("\n".join(lines)+"\n").encode("utf-8")
         total_bytes+=len(data)
