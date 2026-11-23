@@ -23,7 +23,13 @@ on:
         type: choice
         options:
           - tate
+          - moma
           - wikidata
+      museum:
+        description: 'Optional museum Wikidata QID; empty = all configured museums'
+        default: ''
+        required: false
+        type: string
       max_records:
         description: 'Max records, 1..5000'
         required: true
@@ -96,6 +102,63 @@ jobs:
           if-no-files-found: error
           retention-days: 14
 
+  preview_moma:
+    if: github.event_name == 'push'
+    needs: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Acquire 500 MoMA modern painters metadata (no images)
+        run: |
+          python tools/artdrift_museum_ingest.py --source moma --max-records 500
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          lines=Path(".artdrift_ingest/modern_art.jsonl").read_text().splitlines()
+          records=[json.loads(x) for x in lines]
+          assert records and all(r["provider"] == "moma" and not r["image_url"] for r in records)
+          print("MOMA_METADATA_ONLY", len(records))
+          PY
+      - name: Publish MoMA staged records and SQL
+        uses: actions/upload-artifact@v4
+        with:
+          name: moma-modern-metadata-stage-${{ github.run_id }}
+          path: .artdrift_ingest/
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 14
+
+  preview_commons:
+    if: github.event_name == 'push'
+    needs: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        museum: ['Q808462', 'Q303139']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Discover Barnes or Belvedere artworks on Wikidata and verify Commons rights
+        run: |
+          python tools/artdrift_museum_ingest.py --source wikidata --museum "${{ matrix.museum }}" --max-records 50
+      - name: Save image-rights-gated candidates, never auto publish
+        uses: actions/upload-artifact@v4
+        with:
+          name: commons-modern-stage-${{ matrix.museum }}-${{ github.run_id }}
+          path: .artdrift_ingest/
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 14
+
   acquire:
     if: github.event_name == 'workflow_dispatch'
     needs: validate
@@ -104,6 +167,7 @@ jobs:
     env:
       PROVIDER: ${{ inputs.provider }}
       LIMIT: ${{ inputs.max_records }}
+      MUSEUM: ${{ inputs.museum }}
       DATABASE: ${{ vars.ARTDRIFT_D1_DATABASE }}
     steps:
       - uses: actions/checkout@v4
@@ -112,7 +176,11 @@ jobs:
           python-version: '3.12'
       - name: Acquire records from primary sources
         run: |
-          python tools/artdrift_museum_ingest.py --source "$PROVIDER" --max-records "$LIMIT"
+          if [ -n "$MUSEUM" ]; then
+            python tools/artdrift_museum_ingest.py --source "$PROVIDER" --museum "$MUSEUM" --max-records "$LIMIT"
+          else
+            python tools/artdrift_museum_ingest.py --source "$PROVIDER" --max-records "$LIMIT"
+          fi
       - name: Export inspectable staging JSONL and SQL
         uses: actions/upload-artifact@v4
         with:
