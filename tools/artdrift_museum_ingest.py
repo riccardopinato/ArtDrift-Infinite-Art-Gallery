@@ -28,11 +28,12 @@ WD_SPARQL = "https://query.wikidata.org/sparql"
 COMMONS_API = "https://commons.wikimedia.org/w/api.php"
 MUSEUMS = {
     "Q201469": "Solomon R. Guggenheim Museum, New York",
-    "Q1054284": "Peggy Guggenheim Collection, Venice",
+    "Q1049033": "Peggy Guggenheim Collection, Venice",
     "Q808462": "Barnes Foundation, Philadelphia",
     "Q303139": "Oesterreichische Galerie Belvedere, Vienna",
     "Q1568434": "Yale University Art Gallery, New Haven",
     "Q754507": "Ateneum, Finnish National Gallery, Helsinki",
+    "Q2983474": "Finnish National Gallery, Helsinki",
     "Q857276": "Musee d'Art Moderne de Paris",
     "Q1132918": "Nasjonalmuseet, Oslo",
 }
