@@ -66,6 +66,25 @@ The canvas's original tile-to-workworld mapping, catalogs, source rights, photo 
 
 A separate branch `feat/artdrift-g3-ui-capture-20261123` is based on exact G2 `10158a5...` and adds ONLY `scripts/capture_artdrift_g3_ui.sh` and `.github/workflows/artdrift-g3-ui-capture.yml`. [Run 45181446813](https://github.com/riccardopinato/ArtDrift-Infinite-Art-Gallery/actions/runs/45181446813) was in progress at report creation. It seeks nine **intent-labelled** real screenshots (home/search/favorites/settings/detail/next/plaque/speed/immersion) with UI XML and log. Do not call each scenario accepted without inspecting resulting screenshots. No synthetic customer data is uploaded.
 
+## 4b. G3 first nine screenshots — manual inspection, partial evidence
+
+[Run 45181446813](https://github.com/riccardopinato/ArtDrift-Infinite-Art-Gallery/actions/runs/45181446813) completed **SUCCESS** on QA branch `feat/artdrift-g3-ui-capture-20261123@eeafb2c633b25f8c24b7712ebf86dff3e3277118`, based on candidate `10158a5...` (plus two test-only files). Downloaded artifact **14821867451**, `ArtDrift-G3-UI-Capture`, 8,450,035 compressed bytes, nine 1080×2400 PNG files, accessibility XML and zero-byte runtime fatal log. All PNGs are distinct; **capture success does not mean full visual approval**.
+
+Manual image and UI-tree inspection:
+- `01_home.png` — valid canvas with artworks, top-center brush, heart/gear, compact Auto, speed and recenter; normal banner-free canvas.
+- `02_search_atrium.png` — valid ivory museum search overlay, local collection cards, keyboard visible on autofocus.
+- `03_favorites.png` — valid empty archive state, no favorites on fresh QA emulator.
+- `04_curator_settings.png` — valid ivory editorial screen with six languages and existing Pro/privacy/licenses in the scrollable section; performance diagnostics farther down (not demonstrated by this capture).
+- `05_artwork_detail.png` — artwork in walnut/gold frame, parchment caption, heart; independent visual approval still required for frame tightness/margins.
+- `06_next_artwork.png` — different actual artwork/title/metadata with fixed frame.
+- `07_long_press_plaque.png` — actual long-press opens factual museum plaque with close, details and favorite controls.
+- `08_auto_speed_menu.png` — **INVALID TEST CAPTURE**: opens artwork detail rather than the speed popover. The QA script tapped **x≈313, y=264** while the actual accessible speed button bounds were **[302,283]–[473,388]** on the 1080×2400 emulator; this is an **instrumentation-coordinate error, not evidence of a product bug**.
+- `09_immersion.png` — verified full canvas without top toolbar/Auto controls, with `Mostra comandi` still reachable.
+
+Corrective QA-only branch commit `2231d01854d6ed8564c98ada95e6b621750c8d66` changes the speed tap to **x≈389, y≈336** (inside the verified accessibility bounds); repeat [run 45182960994](https://github.com/riccardopinato/ArtDrift-Infinite-Art-Gallery/actions/runs/45182960994) started, final visual evidence pending.
+
+**Evidential status:** `G3_PRELIMINARY_8_OF_9_CAPTURE_INTENTS_CONFIRMED`, not `VISUAL_APPROVED`. No golden against approved 10 designs, screen-size matrix, Ad-size screenshots, startup portal visual, accessibility or physical performance completed yet.
+
 ## 5. ARM64 QA artifact and non-upgradeable test signing
 
 [CI 45180815783](https://github.com/riccardopinato/ArtDrift-Infinite-Art-Gallery/actions/runs/45180815783) artifact ID **14822215501**, archive `ArtDrift-Android-ARM64-internal-10158a5bf9cdce9010a32afc6eff8cd2962f326d`, internal APK:
