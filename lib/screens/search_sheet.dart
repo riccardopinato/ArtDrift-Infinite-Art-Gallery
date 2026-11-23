@@ -5,6 +5,10 @@ import '../ui/artwork_preview_image.dart';
 import '../collections/art_collections.dart';
 import '../search/gallery_search.dart';
 import '../search/museum_search.dart';
+import '../services/museum_cloud_catalog.dart';
+import '../services/moma_cloud_catalog.dart';
+import 'museum_cloud_catalog_page.dart';
+import 'moma_catalog_page.dart';
 import '../ui/localization.dart';
 import '../ui/parchment.dart';
 
@@ -43,6 +47,11 @@ class _SearchSheet extends StatefulWidget {
 class _SearchSheetState extends State<_SearchSheet> {
   final TextEditingController _text = TextEditingController();
   final MuseumSearchService _museums = MuseumSearchService();
+  final MuseumCloudCatalog _cloudMuseums = MuseumCloudCatalog();
+  final MomaCloudCatalog _moma = MomaCloudCatalog();
+  // MoMA cloud remains private until the 15,294-item P1 review is imported.
+  static const bool _allowMoMA = bool.fromEnvironment(
+      'ARTDRIFT_ENABLE_MOMA_P1', defaultValue: false);
   late final GallerySearch _search;
   ArtworkSearchScope _scope = ArtworkSearchScope.all;
   List<Artwork> _local = const [];
@@ -116,12 +125,34 @@ class _SearchSheetState extends State<_SearchSheet> {
     }
   }
 
+  Future<void> _openCloudMuseumSearch() async {
+    final query=_text.text.trim();
+    if(!_cloudMuseums.enabled || query.length<2)return;
+    final scope=_scope==ArtworkSearchScope.artist?'artist':
+      _scope==ArtworkSearchScope.title?'title':'all';
+    await Navigator.of(context).push<void>(MaterialPageRoute(
+      builder:(_)=>MuseumCloudCatalogPageScreen(
+        initialQuery:query, initialScope:scope)));
+  }
+
+  Future<void> _openMomaP1() async {
+    final query=_text.text.trim();
+    if(!_allowMoMA || !_moma.enabled || query.length<2)return;
+    final scope=_scope==ArtworkSearchScope.artist?'artist':
+      _scope==ArtworkSearchScope.title?'title':'all';
+    await Navigator.of(context).push<void>(MaterialPageRoute(
+      builder:(_)=>MomaCatalogPageScreen(
+        initialQuery:query, initialScope:scope)));
+  }
+
   @override
   void dispose() {
     _generation++;
     _text.removeListener(_updateLocal);
     _text.dispose();
     _museums.close();
+    _cloudMuseums.close();
+    _moma.close();
     super.dispose();
   }
 
@@ -234,6 +265,26 @@ class _SearchSheetState extends State<_SearchSheet> {
                 icon: const Icon(Icons.museum_outlined),
                 label: Text(_searching ? t('museumSearching') : t('museumSearch')),
               ),
+              if (_cloudMuseums.enabled)
+                Padding(padding: const EdgeInsets.only(top: 8),
+                  child: OutlinedButton.icon(
+                    key: const Key('artdrift-d1-museum-search'),
+                    onPressed: _openCloudMuseumSearch,
+                    icon: const Icon(Icons.cloud_outlined),
+                    label: Text(t('cloudMuseumSearch')),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: ArtPaper.ink,
+                      side: const BorderSide(color: ArtPaper.gold)))),
+              if (_allowMoMA && _moma.enabled)
+                Padding(padding: const EdgeInsets.only(top: 8),
+                  child: OutlinedButton.icon(
+                    key: const Key('artdrift-d1-moma-p1'),
+                    onPressed: _openMomaP1,
+                    icon: const Icon(Icons.auto_stories_outlined),
+                    label: Text(t('momaSearch')),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: ArtPaper.ink,
+                      side: const BorderSide(color: ArtPaper.gold)))),
               Padding(padding: const EdgeInsets.symmetric(vertical: 6),
                 child: Text(t('queryDisclosure'),
                   style: const TextStyle(color: Color(0xFF765D42),
