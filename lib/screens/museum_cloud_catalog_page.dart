@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'museum_cloud_artwork_detail.dart';
 
 import '../services/museum_cloud_catalog.dart';
 import '../ui/localization.dart';
@@ -8,14 +8,16 @@ import '../ui/localization.dart';
 class MuseumCloudCatalogPageScreen extends StatefulWidget {
   const MuseumCloudCatalogPageScreen({
     super.key,required this.initialQuery,this.initialScope='all',
+    this.catalog,
   });
   final String initialQuery,initialScope;
+  final MuseumCloudCatalog? catalog;
   @override State<MuseumCloudCatalogPageScreen> createState()=>_MuseumCloudCatalogPageScreenState();
 }
 
 class _MuseumCloudCatalogPageScreenState extends State<MuseumCloudCatalogPageScreen>{
   late final TextEditingController _input;
-  final MuseumCloudCatalog _catalog=MuseumCloudCatalog();
+  late final MuseumCloudCatalog _catalog=widget.catalog??MuseumCloudCatalog();
   final List<MuseumCloudWork> _works=[];
   String? _cursor,_error;
   String _activeQuery='';
@@ -68,13 +70,8 @@ class _MuseumCloudCatalogPageScreenState extends State<MuseumCloudCatalogPageScr
   }
 
   Future<void> _open(MuseumCloudWork work) async {
-    final uri=Uri.tryParse(work.sourceUrl ?? '');
-    if(uri==null || uri.scheme!='https' || uri.userInfo.isNotEmpty)return;
-    final ok=await launchUrl(uri,mode:LaunchMode.externalApplication);
-    if(!ok && mounted){
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content:Text(t('cloudMuseumOpenFailed'))));
-    }
+    await Navigator.of(context).push<void>(MaterialPageRoute(
+      builder: (_) => MuseumCloudArtworkDetailScreen(work: work)));
   }
 
   @override Widget build(BuildContext context){
@@ -144,10 +141,9 @@ class _MuseumCloudCatalogPageScreenState extends State<MuseumCloudCatalogPageScr
                       work.license,
                     ].join(' · '),maxLines:2,
                       overflow:TextOverflow.ellipsis),
-                    trailing:work.sourceUrl==null
-                      ? const Icon(Icons.info_outline,size:18)
-                      : const Icon(Icons.open_in_new,size:18),
-                    onTap:work.sourceUrl==null?null:()=>_open(work),
+                    key: ValueKey('artdrift-d1-work-${work.key}'),
+                    trailing:const Icon(Icons.chevron_right_rounded,size:21),
+                    onTap:()=>_open(work),
                   );
                 })),
       ])),
