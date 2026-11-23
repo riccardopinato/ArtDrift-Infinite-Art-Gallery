@@ -22,7 +22,7 @@ jobs:
         with:
           python-version: '3.12'
       - name: Image analysis dependency
-        run: python -m pip install --disable-pip-version-check Pillow==12.0.0
+        run: python -m pip install --disable-pip-version-check Pillow==12.0.0 opencv-python-headless==4.12.0.88
       - name: Pixel-based visual palette analysis of existing WebP images
         run: |
           python scripts/build_visual_first_collection.py --repo . --out build/visual-color --count 2400
@@ -36,6 +36,12 @@ jobs:
           assert len(set(m["selection"]))==2400
           assert m["image_downloads"]==0
           assert not m["commercial_rights_certified"]
+          p=m["portrait_policy"]
+          assert p["portrait_before"]>=100
+          assert p["portrait_after"]*10<=p["portrait_before"]*3
+          assert p["portraits_replaced"]==p["portrait_before"]-p["portrait_after"]
+          assert p["new_image_files_added"]==0
+          print("PORTRAITS_REDUCED_AT_LEAST_70_PERCENT",p)
           print("VISUAL_FIRST_2400_SELECTION_PASS")
           PY
       - name: Save source-aware per-work audit and 120-image preview mosaic

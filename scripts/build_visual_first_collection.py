@@ -14,6 +14,17 @@ from collections import Counter
 from pathlib import Path
 from urllib.parse import urlsplit
 from PIL import Image, ImageOps, ImageStat, ImageDraw
+import cv2
+import numpy as np
+cv2.setNumThreads(1)
+FACE_CASCADE=cv2.CascadeClassifier(cv2.data.haarcascades+"haarcascade_frontalface_default.xml")
+if FACE_CASCADE.empty():
+    raise RuntimeError("OpenCV frontal face classifier unavailable")
+
+PORTRAIT_TITLE=re.compile(r"(?iu)\b(portrait|portret|portræt|porträtt|portratt|portraet|portr[aä]t|ritratto|retrato|bildnis|selvportr[aæ]t|zelfportret|autoportrait|autorretrato|auto[- ]?retrato|self[- ]?portrait|head of|head study|bust of|likeness of|face of)\b")
+PERSON_TITLE=re.compile(r"(?iu)\b(lady|girl|woman|young man|young woman|young lady|boy|gentleman|mrs\.?|mr\.?|miss\b|mademoiselle|madame|queen|countess|duchess|princess|prince|herzog|frau|fr[äa]ulein|femme|jeune fille|junge frau|dame|hoved|kvinne|kvinde|dronning|pigen|pige|t[êe]te|head\b|bust\b|bishop\b|cardinal\b|duke\b|sitter|sitters|sitting man|seated man|seated woman|figure\b)\b")
+SCENE_TITLE=re.compile(r"(?iu)\b(landscape|still life|landskab|fountain|park|garden|flower|fish|bird|cat|dog|horse|tree|winter|summer|sea|beach|house|forest|mountain|river|field|flowers|kitchen|christ|virgin|madonna|angel|battle|annunciation|crucifixion)\b")
+NONPORTRAIT_SUBJECT=re.compile(r"(?iu)\b(landscape|landskab|paysage|paesaggio|landschaft|sea|mountain|sky|river|valley|forest|garden|flower|flowers|rose|still life|nature morte|stilleven|stilleben|abstract|composition|sunset|sunrise|waterlilies|water lilies|trees|bridge|bouquet|fruit)\b")
 
 FAVORITES=("van gogh","matisse","monet","kandinsky","delaunay",
     "gauguin","renoir","chagall","bonnard","cezanne","pissarro",
@@ -82,6 +93,84 @@ def metrics(path):
             "hue":hist.most_common(1)[0][0] if hist else -1}
     except (OSError,ValueError):return None
 
+
+def portrait_flag(title,image_path):
+    """Conservative heuristic: title context + facial share of the small image.
+
+    Measured category only; the Haar detector may miss side faces or see
+    unrelated people, and title patterns may match historical narrative art.
+    """
+    title=title or ""
+    if PORTRAIT_TITLE.search(title):return True
+    if PERSON_TITLE.search(title) and not SCENE_TITLE.search(title):return True
+    try:
+        with Image.open(image_path) as im:
+            im.thumbnail((120,120))
+            gray=np.asarray(im.convert("L"))
+        # Same parameters as the pre-merge 4,499-asset baseline audit.
+        faces=FACE_CASCADE.detectMultiScale(
+            gray,scaleFactor=1.25,minNeighbors=3,minSize=(17,17),
+            flags=cv2.CASCADE_SCALE_IMAGE)
+        height,width=gray.shape
+        return any((w/width)*(h/height)>=.025 for x,y,w,h in faces)
+    except (OSError,ValueError,cv2.error):
+        return False
+
+def reduce_portrait_share(chosen,all_results):
+    original=[r for r in chosen if r["is_portrait"]]
+    before=len(original)
+    keep=(before*30)//100  # >=70% reduction, including odd baseline counts
+    selected_keys={r["key"] for r in chosen}
+    retained=[]
+    seen_author=Counter()
+    for row in sorted(original,key=lambda r:-r["score"]):
+        if len(retained)>=keep:break
+        if seen_author[row["author"]]>=7:continue
+        retained.append(row["key"]);seen_author[row["author"]]+=1
+    if len(retained)<keep:
+        for row in sorted(original,key=lambda r:-r["score"]):
+            if len(retained)>=keep:break
+            if row["key"] not in retained:retained.append(row["key"])
+    retained=set(retained)
+    removed=[r for r in chosen if r["is_portrait"] and r["key"] not in retained]
+    if not removed:return chosen,{"portrait_before":before,"portrait_after":before,
+        "portraits_replaced":0,"reduction_pct":0.0}
+    authors=Counter(r["author"] for r in chosen if not r["is_portrait"] or r["key"] in retained)
+    titles={(r["author"],re.sub(r"\W+","",r["title"].lower())[:65])
+        for r in chosen if not r["is_portrait"] or r["key"] in retained}
+    pool=[r for r in all_results if r["key"] not in selected_keys and not r["is_portrait"]]
+    pool.sort(key=lambda r:-(r["score"]+
+        (.09 if r["role"]=="color" else 0)+
+        (.05 if NONPORTRAIT_SUBJECT.search(r["title"]) else 0)+
+        (.07 if r["priority_artist"] else 0)))
+    picked=[];picked_keys=set()
+    for cap in (18,26,99):
+        for row in pool:
+            if len(picked)>=len(removed):break
+            title_key=(row["author"],re.sub(r"\W+","",row["title"].lower())[:65])
+            if row["key"] in picked_keys or authors[row["author"]]>=cap or title_key in titles:
+                continue
+            picked.append(row);picked_keys.add(row["key"])
+            authors[row["author"]]+=1;titles.add(title_key)
+        if len(picked)>=len(removed):break
+    if len(picked)!=len(removed):
+        raise ValueError("Insufficient non-portrait licensed-source alternatives")
+    replacements=iter(picked)
+    final=[next(replacements) if r["is_portrait"] and r["key"] not in retained
+        else r for r in chosen]
+    after=sum(r["is_portrait"] for r in final)
+    assert len(final)==len(chosen) and len({r["key"] for r in final})==len(final)
+    assert after==keep and after*10<=before*3
+    return final,{
+        "portrait_before":before,"portrait_after":after,
+        "portraits_replaced":len(removed),
+        "reduction_pct":round((before-after)/before*100,2),
+        "classification":"Title pattern or frontal face occupying at least 2.5% of thumbnail",
+        "classification_limit":"Automatic heuristic; not full manual portrait certification",
+        "original_work_ids_preserved":len(selected_keys & {r["key"] for r in final}),
+        "new_image_files_added":0,
+    }
+
 def generate(root,out,count):
     files=["assets/gallery/catalog.json","assets/museums/catalog.json",
         "assets/museums/catalog_global.json"]
@@ -100,6 +189,7 @@ def generate(root,out,count):
         stat=metrics(file)
         if stat is None:
             excluded["thin_or_unreadable"]+=1;continue
+        flag=portrait_flag(row.get("title") or "",file)
         artist=(row.get("artist_title") or row.get("artist_display") or "").strip()
         al=artist.lower().split("(")[0].strip() or "unknown"
         priority=any(word in al for word in FAVORITES)
@@ -108,7 +198,7 @@ def generate(root,out,count):
             "title":row.get("title") or "Untitled","file":str(file.relative_to(root)),
             "source":row.get("museum_source") or "aic","role":role,
             "score":round(stat["score"]+(.16 if priority else 0),5),
-            "color":stat,"priority_artist":priority})
+            "color":stat,"priority_artist":priority,"is_portrait":flag})
     if len(results)<count:
         raise ValueError("Only "+str(len(results))+" assets found; expected at least "+str(count))
     results.sort(key=lambda x:(-x["score"],x["key"]))
@@ -144,11 +234,13 @@ def generate(root,out,count):
         chosen.append(picked);seen_titles.add(title)
         authors[picked["author"]]+=1
         role_counts[role]+=1
+    chosen,portrait_report=reduce_portrait_share(chosen,results)
     manifest={"schema_version":1,"selection":[x["key"] for x in chosen],
         "selected_count":len(chosen),"pool_count":len(results),
         "source_rights_policy_checked":True,"commercial_rights_certified":False,
         "actual_image_pixels_analyzed":True,"manual_visual_review_complete":False,
-        "image_downloads":0,"reuses_existing_image_files":True}
+        "image_downloads":0,"reuses_existing_image_files":True,
+        "portrait_policy":portrait_report}
     target=root/"assets/museums/canvas_visual_color_v1.json"
     target.write_text(json.dumps(manifest,indent=2,ensure_ascii=False)+"\n")
     out.mkdir(parents=True,exist_ok=True)
@@ -173,6 +265,7 @@ def generate(root,out,count):
         "van_gogh":sum("van gogh" in x["author"] for x in chosen),
         "matisse":sum("matisse" in x["author"] for x in chosen),
         "sample_first_10":[x["key"] for x in chosen[:10]],
+        "portrait_policy":portrait_report,
         "excluded":dict(excluded),"sources":dict(Counter(x["source"] for x in chosen)),
         "reuses_existing_images":True,"commercial_release_gate_open":True}
     (out/"summary.json").write_text(json.dumps(summary,indent=2))

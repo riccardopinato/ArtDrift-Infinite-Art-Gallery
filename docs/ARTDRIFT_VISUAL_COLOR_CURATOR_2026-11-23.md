@@ -46,3 +46,18 @@ No changes to the Gallery Drift repository or canonical shared Drift Core.
   the actual existing app certificate, never ad hoc new keystore.
 - Prior to Play release: review each image's commercial redistribution
   rights in its jurisdiction and the physical-device QA in issue #31.
+
+## Portrait-share revision (23 Nov 2026)
+- User-requested **70% reduction of portraits in the 2,400-work color canvas**.
+- Reproducible automated classification: explicit portrait titles, likely
+  sitter titles, and small-image frontal face detection (OpenCV Haar,
+  face rectangle at least 2.5% of the preview area).
+- The algorithm retains about 30% of flagged portraits, prioritizing vivid
+  high-quality examples and diverse artists, replacing the other entries
+  with actual existing image-backed, source-policy-approved works.
+- The total remains 2,400; the original full museum catalog, actual WebP
+  files, Cloudflare D1 and existing saved canvas placements are untouched.
+- This is **heuristic** screening, not full human certification. False positives
+  and negatives are possible, especially in historical narrative scenes.
+- Run the exact image generator and inspect its portrait_policy manifest and
+  contact sheet before describing the exact removal count.
