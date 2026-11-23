@@ -195,6 +195,8 @@ void main() {
     final changed = sync.bindAccount('account-B');
     await Future<void>.delayed(const Duration(milliseconds: 2));
     expect(sync.switching, true);
+    expect(store.contains(a), false,
+      reason: 'A favorites must disappear as soon as identity switches');
     cloud.gate!.complete();
     cloud.gate = null;
     await changed;
