@@ -28,8 +28,8 @@ Stato generale: **DESIGN REVIEW / NON IMPLEMENTATO**.
 | 6/10 | Ricerca dal pennello centrale | **Atrio della ricerca** — overlay editoriale avorio attivato dal pennello centrale di larghezza 1/3, con ricerca locale esistente, suggerimenti e risultati illustrati, ritorno al canvas e viewport AdMob adattivo | **APPROVATO** — conferma esplicita in chat 23/11/2026 | **NO** | Il motore GallerySearch e l'indice locale rimangono invariati; risultati del mock-up solo dimostrativi, nessuna AI visiva aggiunta |
 | 7/10 | Controlli Auto del canvas | **Regia dello scorrimento** — controllo Auto/Pausa in alto a sinistra, selettore compatto a comparsa con ritmi Lento 25%, Regolare 50%, Veloce 75%, Molto veloce 100%; controlli compatibili con Quiet Canvas, pan/zoom e viewport AdMob | **APPROVATO** — conferma esplicita in chat 23/11/2026 | **NO** | Estetica/interazione approvata; il motore Auto e i suoi algoritmi non cambiano, durata/velocità reali da verificare in implementazione |
 | 8/10 | Impostazioni / ingranaggio | **Il gabinetto del curatore** — restyling editoriale con sei lingue (it/en/fr/es/de/pt), e schede Pro, privacy e licenze già esistenti, senza nuove impostazioni; viewport ridimensionabile sopra il banner AdMob se presente | **APPROVATO** — conferma esplicita in chat 23/11/2026 | **NO** | Pro resta non acquistabile; nessuna modifica di privacy, licenze o preferenze reali; vedi `lib/screens/settings_sheet.dart` |
-| 9/10 | Avvio app / errori del catalogo | **Il portale del museo** — proposta interattiva di trattamento editoriale per stati reali di caricamento, galleria pronta ed errore/ritenta, senza modificare la logica catalogo o inventare successo offline | **IN ATTESA** | **NO** | Prototipo UX: schermate derivate da `lib/main.dart`, con area utile conforme al vincolo AdMob |
-| 10/10 | — | Da proporre dopo decisione sul 9/10 | **NON PRESENTATO** | **NO** | Non anticipare l'ultimo mock-up |
+| 9/10 | Avvio app / errori del catalogo | **Il portale del museo** — schermate editoriali per caricamento, errore/Riprova e galleria pronta; testo di ingresso esatto: «Il museo sta aprendo» / «la visita sta per cominciare»; nessuna attesa artificiale né falsa disponibilità offline | **APPROVATO** — conferma esplicita in chat 23/11/2026 dopo revisione del copy | **NO** | Mantenere la logica catalogo e messaggio tecnico già presenti in `lib/main.dart`; viewport sopra AdMob se visibile |
+| 10/10 | Dettaglio delle opere / navigazione | **Passeggiata tra i quadri** — proposta interattiva: navigazione precedente/successivo tra opere già presente in `lib/screens/artwork_detail.dart`, in cornice noce stabile con transizione discreta fra dipinti, accesso contestuale ad azioni reali (preferiti, sfondo Android, scheda museo) | **IN ATTESA** | **NO** | Ultimo mock-up da valutare; nessuna nuova funzione prevista; ritorno al canvas con camera originale e viewport sopra AdMob |
 
 ## Slot 1/10 — contratto di design approvato
 
@@ -116,8 +116,19 @@ Stato generale: **DESIGN REVIEW / NON IMPLEMENTATO**.
 - Riferimenti Design-App: Vintage `MOCK-STYLE-003` ed Editorial UI **ADATTATI**, nessuna importazione di componenti o asset senza licenza.
 - **APPROVATO ≠ IMPLEMENTATO**: il codice Flutter, i flussi privacy, gli acquisti, il catalogo e l'APK restano invariati.
 
+## Slot 9/10 — contratto di design approvato
+
+- Identità: **Il portale del museo**, stile editoriale di apertura, caricamento ed errore, coerente con il canvas Art Drift già approvato.
+- **Copy esatto approvato dell'headline su due righe**: «**Il museo sta aprendo**» e «**la visita sta per cominciare**». La prima frase ha maggiore enfasi; la seconda è in corsivo in tono dorato. Sostituisce la precedente frase «Il museo si apre.»
+- Conservare testo informativo «Carichiamo le opere del tuo museo…» e indicatore di attività discreto. L'animazione non prolunga artificialmente l'attesa: terminare quando il caricamento catalogo è realmente concluso.
+- In caso di errore, preservare la verità del flusso in `lib/main.dart`: errore catalogo, necessità di connessione per il **primo** caricamento e possibile successiva riapertura del catalogo salvato; pulsante **Riprova** collegato a retry reale, non a successo fittizio.
+- Stato pronto: mostrare il canvas approvato senza sostituire le associazioni tile/opera né introdurre tutorial o sovrapposizioni persistenti.
+- Rispetto del vincolo `docs/ARTDRIFT_ADMOB_VIEWPORT_CONSTRAINT_2026-11-23.md`: schermate fino in fondo se banner assente, sopra il bordo superiore se visibile; nessuno slot vuoto permanente.
+- Riferimenti Design-App: `MOCK-STYLE-003` Vintage ed Editorial UI **ADATTATI** con estetica museo raffinata.
+- **Solo approvazione grafica e copy**: niente codice Flutter, modifiche catalogo/API, SDK AdMob, APK, merge o collaudo eseguiti.
+
 ## Stato implementativo
 
 **APPROVATO ≠ INTEGRATO.** Questo documento registra solo preferenze e decisioni; il codice Flutter attuale e le PR #33–#35 restano indipendenti. Il collaudo v0.3.8 e la relativa PR #35 non autorizzano la promozione estetica.
 
-La prossima decisione è sullo slot **9/10**. Non avanzare allo slot 10/10 prima di approvare, modificare o scartare esplicitamente il 9/10.
+La prossima decisione è sullo slot **10/10**. Non applicare nessuna modifica estetica al codice prima della decisione finale sul 10/10 e di un successivo mandato esplicito per l'implementazione.
