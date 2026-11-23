@@ -1,0 +1,35 @@
+name: Art Drift G3 — portal loading and error golden capture
+on:
+  push:
+    branches: ['feat/artdrift-g3-portal-goldens-*']
+    paths:
+      - '.github/workflows/artdrift-g3-portal-goldens.yml'
+      - 'test/g3_visual_portal_test.dart'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: '3.50.1'
+          cache: true
+      - name: Dependencies
+        run: flutter pub get
+      - name: Capture baseline G3 goldens (not automatically approved)
+        run: flutter test --update-goldens test/g3_visual_portal_test.dart
+      - name: Upload generated portal images for manual comparison
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ArtDrift-G3-Portal-Goldens-IT
+          path: |
+            test/goldens/g3_portal_loading_it.png
+            test/goldens/g3_portal_unavailable_it.png
+          if-no-files-found: warn
+          retention-days: 30
