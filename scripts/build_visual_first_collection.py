@@ -158,12 +158,26 @@ def reduce_portrait_share(chosen,all_results):
     replacements=iter(picked)
     final=[next(replacements) if r["is_portrait"] and r["key"] not in retained
         else r for r in chosen]
+    # A global 70% reduction is not enough if remaining portraits
+    # cluster at the front of the mosaic: spread them evenly across it.
+    portraits=[r for r in final if r["is_portrait"]]
+    nonportraits=[r for r in final if not r["is_portrait"]]
+    positions={((2*i+1)*len(final))//(2*len(portraits))
+        for i in range(len(portraits))} if portraits else set()
+    assert len(positions)==len(portraits)
+    p_it=iter(portraits);n_it=iter(nonportraits)
+    final=[next(p_it) if i in positions else next(n_it)
+        for i in range(len(final))]
     after=sum(r["is_portrait"] for r in final)
+    first120=sum(r["is_portrait"] for r in final[:120])
     assert len(final)==len(chosen) and len({r["key"] for r in final})==len(final)
     assert after==keep and after*10<=before*3
+    assert first120<=max(9,(120*after)//len(final)+2)
     return final,{
         "portrait_before":before,"portrait_after":after,
         "portraits_replaced":len(removed),
+        "portraits_in_first_120":first120,
+        "portrait_distribution":"Evenly spaced through 2400 works",
         "reduction_pct":round((before-after)/before*100,2),
         "classification":"Title pattern or frontal face occupying at least 2.5% of thumbnail",
         "classification_limit":"Automatic heuristic; not full manual portrait certification",

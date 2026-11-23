@@ -41,6 +41,8 @@ jobs:
           assert p["portrait_after"]*10<=p["portrait_before"]*3
           assert p["portraits_replaced"]==p["portrait_before"]-p["portrait_after"]
           assert p["new_image_files_added"]==0
+          assert p["portraits_in_first_120"]<=9
+          assert p["portrait_distribution"]=="Evenly spaced through 2400 works"
           print("PORTRAITS_REDUCED_AT_LEAST_70_PERCENT",p)
           print("VISUAL_FIRST_2400_SELECTION_PASS")
           PY
