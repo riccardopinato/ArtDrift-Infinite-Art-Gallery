@@ -2,7 +2,7 @@
 
 Data: 23 novembre 2026  
 Stato: **REQUISITO CONFERMATO DALL'UTENTE — SOLO DOCUMENTAZIONE**  
-Ambito: tutti i mock-up di Art Drift e la futura implementazione, incluso lo slot estetico 4/10 «Scheda di sala» in revisione.
+Ambito: tutti i mock-up di Art Drift e la futura implementazione, incluso lo slot estetico 4/10 «Scheda di sala», approvato dopo la definizione di questo vincolo.
 
 ## Decisione richiesta dall'utente
 
@@ -29,12 +29,13 @@ Il bordo inferiore del contenuto è:
 
 **Non assumere che l'altezza del banner sia 50 px o 60 px**; leggere dimensione effettiva quando sarà implementato.
 
-## Stato decisioni estetiche — invariato
+## Stato decisioni estetiche — aggiornato dopo l'approvazione del 4/10
 
 - 1/10 Quiet Canvas: APPROVATO, non implementato.
 - 2/10 Targhetta museale: APPROVATO, non implementato.
 - 3/10 Zoom contestuale con cornice in noce: APPROVATO, non implementato.
-- 4/10 Scheda di sala espandibile: **IN REVISIONE / IN ATTESA**, non implementato.
-- 5–10: non presentati.
+- 4/10 Scheda di sala espandibile: **APPROVATO**, non implementato (con questo vincolo AdMob).
+- 5/10 La mia collezione — preferiti: **IN ATTESA**, non implementato.
+- 6–10: non presentati.
 
-Questo file è distinto dal registro delle approvazioni estetiche per rispettare la richiesta di **non alterare il registro** durante la revisione dello slot 4/10. Nessuna modifica al codice Flutter.
+Questo file documenta il vincolo funzionale sul viewport separatamente dalle decisioni estetiche; il registro di design conferma ora l'approvazione dello slot 4/10. Nessuna modifica al codice Flutter.
