@@ -62,3 +62,19 @@
 6. **Gallery Drift consumer regression:** il default di Core è invariato, ma il ramo QA di Gallery PR #15 ha pin temporaneo aggiornato al Core `279ec531...` (commit Gallery `820cfb7bea0cc6e9bd623e0ef90a8317758efbe6`). [Run 45189960820](https://github.com/riccardopinato/GalleryDrift/actions/runs/45189960820) e [45189949702](https://github.com/riccardopinato/GalleryDrift/actions/runs/45189949702) **in corso**. Gallery `main` non toccato.
 
 **G3 complessivo: HOLD**. Il confronto del mock-up approvato è testuale e non pixel-exact; manca still/video su HEAD definitivo per flight/quiet e visualizzazione con banner, fontScale e più formati. G4/G5 non certificati; `main` intatto.
+
+## G3 update — current build / consumer gates / motion evidence (23 November 2026)
+
+### Independently completed checks
+
+- **Art Drift #40 current candidate** `279ec531760a6f202a8867a23c7dd0d38a743383`: [CI #45189795612](https://github.com/riccardopinato/ArtDrift-Infinite-Art-Gallery/actions/runs/45189795612) **SUCCESS** (Flutter/Core analysis, tests, internal ARM64 APK), artifact **14825721422**. This is a code CI pass, **not a final visual/performance/signature release certification**.
+- **Gallery Drift consumer QA #15**, temporary Core dependency pin at the same Art SHA `279ec531...`: [runs #45189960820](https://github.com/riccardopinato/GalleryDrift/actions/runs/45189960820) and [#45189949702](https://github.com/riccardopinato/GalleryDrift/actions/runs/45189949702) both **SUCCESS** (including Gallery's own Android build). Gallery `main` remains untouched.
+- **G3 speed picker** rerun #45182960994 **SUCCESS**: all 4 museum Auto options visible in actual Android screenshot. 
+- **G3 portal goldens** #45188974485 **SUCCESS**, using real serif/sans fonts; note that the vector ornament replacement on #40 postdates the golden images.
+
+### Video capture caveat / alternative
+
+- [Original frame-video run #45187179195](https://github.com/riccardopinato/ArtDrift-Infinite-Art-Gallery/actions/runs/45187179195): **FAILED** — virtual Android device became unreachable; `error: closed`; only five screenshot files valid in partial artifact 14823564740.
+- [Single-launch video retry #45189143707](https://github.com/riccardopinato/ArtDrift-Infinite-Art-Gallery/actions/runs/45189143707): **FAILED**, logs show `adb: device offline` and `error: closed` before usable MP4; artifact 14824579862 holds only `01_before_open.png`, `display_size.txt`, `pid_before.txt` and an empty `screenrecord.log`. **Not evidence of an Art Drift runtime crash**. Do not count an MP4 as captured.
+- Alternative **deterministic Flutter animation-frame QA** branch `feat/artdrift-g3-flight-frames-20261123`, commit `d48843705554874ea75ffa82da26a4768ff0b737`, based on exact app HEAD `279ec531...`: [run #45194694125](https://github.com/riccardopinato/ArtDrift-Infinite-Art-Gallery/actions/runs/45194694125). Six output PNGs requested at flight phases 0/25/50/75/100% and different-artwork neutral-fade fallback, using genuine bundled `assets/gallery/thumbs/874.webp` rather than stock or a fabricated picture. **PENDING** until CI and human screenshot examination; these are component-level renderings, not a physical-device capture or an exact approved reference.
+- All G3 gates remain **HOLD** until supported visual evidence and user acceptance. No merge to Art Drift or Gallery Drift `main`; no APK update over an installation with unknown signer.
