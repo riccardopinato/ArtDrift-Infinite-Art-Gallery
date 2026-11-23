@@ -1,8 +1,35 @@
 # Art Drift — Google account and private cloud favorites
 
-**Status:** source candidate; **NOT connected to a live backend** until
-the App Factory owner selects a new Supabase project/organization and enables
-Google OAuth. No existing Anna Supabase resource is modified.
+**Status (2026-11-23):** DEDICATED SUPABASE BACKEND CREATED, schema and least-privilege grants applied and statically verified. **Google OAuth NOT ENABLED** and Android/Web cross-account end-to-end sync **NOT CERTIFIED**. No existing Anna Supabase resource was modified.
+
+## Verified hosted backend (2026-11-23)
+
+- Project: `artdrift`, ref `waewxkexxykffsounhrj`, region `eu-central-1`.
+- Organization: `riccardopinato's Org` (Free). Provider quoted **USD 0/month** for this project.
+- Dashboard: https://supabase.com/dashboard/project/waewxkexxykffsounhrj
+- Public API URL (NOT a secret): `https://waewxkexxykffsounhrj.supabase.co`
+- Google OAuth **authorized redirect URI** to configure in Google Cloud:
+  `https://waewxkexxykffsounhrj.supabase.co/auth/v1/callback`
+- Supabase redirect allowlist still needs an approved HTTPS Web origin and
+  `com.riccardopinato.artdrift://login-callback/`.
+- Migrations applied to Art Drift ONLY:
+  `20261123165019_artdrift_favorites_v1` and
+  `artdrift_favorites_least_privilege`.
+- Verified: `public.artdrift_favorites` exists, RLS enabled, 3 user-owned
+  SELECT/INSERT/UPDATE policies, zero initial rows, anon has no table privileges.
+  Authenticated users have **SELECT/INSERT/UPDATE only**: DELETE, TRUNCATE,
+  TRIGGER and REFERENCES are not granted. Supabase Security Advisor: no lints.
+- The original SQL template was corrected to **REVOKE ALL from authenticated
+  before GRANT SELECT, INSERT, UPDATE**. This matters because Supabase
+  default privileges may include TRUNCATE, which is NOT controlled by RLS.
+- Provider-based E2E verification remains blocked until Google Cloud credentials,
+  Supabase Auth provider settings, redirect allowlist, Web/Android builds and
+  two real Google identities/devices are configured and tested.
+- A valid publishable key exists in Supabase; obtain it from the Dashboard.
+  It is public-client configuration, **not** a Google client secret or
+  `service_role` key. Do not publish privileged credentials.
+
+
 
 ## Architecture
 
@@ -38,13 +65,12 @@ Google OAuth. No existing Anna Supabase resource is modified.
 
 ## Production setup checklist (required; not simulated)
 
-1. In the intended Supabase organization, create a NEW `artdrift` project,
-   preferably EU region, after approving any quoted project cost. Do not
-   reuse `agenda-per-anna` or `anna-calendar-staging`.
-2. Apply `backend/sql/artdrift_favorites_v1.sql` to that **Art Drift**
-   project. Inspect the table, enabled RLS and per-account access policies.
-   Test: user A cannot read/update user B; anon has no access; an account
-   can upsert its own tombstones, and soft deletions persist.
+1. **DONE (2026-11-23):** Create a dedicated `artdrift` project in the Free
+   organization, EU region; quoted cost USD 0/month. No Anna project reused.
+2. **SCHEMA DONE / LIVE ACCOUNT TEST PENDING:** Schema and least-privilege
+   remediation applied, RLS/policies/grants inspected, Security Advisor clean.
+   Still test with real user A/B: cross-account SELECT/UPDATE isolation,
+   guest denial, own upserts, tombstones and reload on another device.
 3. Enable Google provider in Supabase Auth. In Google Cloud configure
    consent screen, domain verification as applicable, and a Web OAuth Client.
    Put Google Client ID+SECRET only in **Supabase Auth provider settings**.
