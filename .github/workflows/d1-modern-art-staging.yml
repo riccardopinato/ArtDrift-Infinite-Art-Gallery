@@ -296,5 +296,9 @@ jobs:
           test -n "$DATABASE" && test -n "$CLOUDFLARE_API_TOKEN" && test -n "$CLOUDFLARE_ACCOUNT_ID" || {
             echo 'Missing preconfigured Cloudflare DB name, account or API token'; exit 1;
           }
-          npx --yes wrangler@4 d1 execute "$DATABASE" --remote --file=cloudflare/d1/migrations/0001_museum_ingest.sql
-          npx --yes wrangler@4 d1 execute "$DATABASE" --remote --file=.artdrift_ingest/modern_art.sql
+          # Read-only check: DB must already exist; NEVER auto-provision an instance.
+          npx --yes wrangler@4 d1 info "$DATABASE" --json >/dev/null
+          npx --yes wrangler@4 d1 execute "$DATABASE" --remote --yes --file=cloudflare/d1/migrations/0001_museum_ingest.sql
+          npx --yes wrangler@4 d1 execute "$DATABASE" --remote --yes --file=.artdrift_ingest/modern_art.sql
+          npx --yes wrangler@4 d1 execute "$DATABASE" --remote --yes --command="SELECT COUNT(*) AS staged FROM artdrift_museum_ingest;"
+          npx --yes wrangler@4 d1 execute "$DATABASE" --remote --yes --command="SELECT COUNT(*) AS published FROM artdrift_publishable_modern_art;"
