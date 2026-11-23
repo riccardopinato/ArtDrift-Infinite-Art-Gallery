@@ -8,6 +8,8 @@ on:
       - 'scripts/probe_modern_1950_api.py'
       - 'scripts/probe_smithsonian_modern.py'
       - 'scripts/probe_commons_modern.py'
+      - 'scripts/import_modern_commons.py'
+      - 'scripts/test_modern_commons.py'
       - '.github/workflows/modern-openaccess.yml'
   workflow_dispatch:
 permissions:
@@ -27,15 +29,17 @@ jobs:
         with:
           persist-credentials: true
       - name: Offline parsing, rights and idempotency tests
-        run: python3 -m unittest discover -s scripts -p test_modern_1950_openaccess.py -v
+        run: |
+          python3 -m unittest discover -s scripts -p test_modern_1950_openaccess.py -v
+          python3 -m unittest discover -s scripts -p test_modern_commons.py -v
       - name: Sample official API date/right filters (read-only)
         run: python3 scripts/probe_modern_1950_api.py
       - name: Sample Smithsonian 1950+ CC0 artwork eligibility (read-only)
         run: python3 scripts/probe_smithsonian_modern.py
       - name: Sample Wikimedia Commons modern image provenance (read-only)
         run: python3 scripts/probe_commons_modern.py
-      - name: Import item-licensed, illustrated modern artworks
-        run: python3 scripts/import_modern_1950_openaccess.py
+      - name: Import independently authored and commercially licensed modern paintings
+        run: python3 scripts/import_modern_commons.py
       - name: Audit source provenance, record count and size
         run: |
           python3 - <<'PY'
@@ -44,11 +48,15 @@ jobs:
           rows=json.loads(Path('assets/museums/catalog_modern_1950.json').read_text())
           report=json.loads(Path('assets/museums/modern_1950_report.json').read_text())
           assert rows and len(rows)==report['new_unique_records']
-          assert all(x['is_public_domain'] is True and x['rights_license']=='CC0' for x in rows)
-          assert all(x['creation_year_verified']>=1950 for x in rows)
-          assert all(x['remote_preview_url'].startswith('https://openaccess-cdn.clevelandart.org/') for x in rows)
+          allowed={'CC0','CC BY 3.0','CC BY 4.0','CC BY-SA 3.0','CC BY-SA 4.0'}
+          assert all(x['rights_license'] in allowed for x in rows)
+          assert all(x['is_public_domain']==(x['rights_license']=='CC0') for x in rows)
+          assert all(1950<=x['creation_year_verified']<=2026 for x in rows)
+          assert all(x['museum_source']=='commons' for x in rows)
+          assert all(x['remote_preview_url'].startswith('https://upload.wikimedia.org/') for x in rows)
+          assert all(x['rights_evidence_url'].startswith('https://commons.wikimedia.org/') for x in rows)
           assert len({(x['museum_source'],x['museum_native_id']) for x in rows})==len(rows)
-          assert report['network_image_delivery']=='UNVERIFIED'
+          assert report['production_release']=='NOT_AUTHORIZED'
           print('MODERN_CATALOG_DATA_GATE_PASS', len(rows))
           PY
       - name: Commit validated catalog to isolated feature branch
