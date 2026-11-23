@@ -132,7 +132,7 @@ class _ArtDriftAccountCardState extends State<ArtDriftAccountCard> {
       animation: Listenable.merge([account, if (sync != null) sync]),
       builder: (context, _) {
         final loggedIn = account.signedIn;
-        final status = !account.configured
+        final status = !ArtDriftAccount.configured
             ? t(3)
             : !loggedIn
                 ? t(2)
@@ -177,7 +177,7 @@ class _ArtDriftAccountCardState extends State<ArtDriftAccountCard> {
                 style: const TextStyle(color: Color(0xFF9A4D3D),
                   fontSize: 11)),
               const SizedBox(height: 10),
-              if (account.configured && !loggedIn)
+              if (ArtDriftAccount.configured && !loggedIn)
                 OutlinedButton.icon(
                   key: const Key('artdrift-google-signin'),
                   onPressed: busy || account.busy
