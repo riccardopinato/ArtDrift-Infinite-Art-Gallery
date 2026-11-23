@@ -3,7 +3,7 @@ on:
   push:
     branches: ['feat/artdrift-g3-flight-frames-*']
     paths:
-      - 'test/g3_flight_frames_test.dart'
+      - 'qa/g3_flight_frames_test.dart'
       - '.github/workflows/artdrift-g3-flight-frames.yml'
   workflow_dispatch:
 permissions:
@@ -31,12 +31,12 @@ jobs:
           export ARTDRIFT_G3_SANS_FONT="$SANS"
           export ARTDRIFT_G3_SERIF_FONT="$SERIF"
           export ARTDRIFT_G3_ICONS_FONT="$ICONS"
-          flutter test --update-goldens test/g3_flight_frames_test.dart
+          flutter test --update-goldens qa/g3_flight_frames_test.dart
       - name: Archive frames for human visual review (NOT auto-approved)
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: ArtDrift-G3-Flight-Frames
-          path: test/goldens/g3_tile_flight_*.png
+          path: qa/goldens/g3_tile_flight_*.png
           if-no-files-found: warn
           retention-days: 30
