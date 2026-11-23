@@ -377,7 +377,10 @@ class _DriftCanvasState<T> extends State<DriftCanvas<T>>
     );
   }
 
-  Widget _museumAutoControls() => Row(
+  Widget _museumAutoControls() => AnimatedOpacity(
+    duration: const Duration(milliseconds: 350),
+    opacity: _controlsDimmed ? .28 : 1.0,
+    child: Row(
     mainAxisSize: MainAxisSize.min, children: [
       SizedBox(height: 40, width: 89, child: TextButton.icon(
         key: const ValueKey('drift-auto-toggle'),
@@ -408,7 +411,8 @@ class _DriftCanvasState<T> extends State<DriftCanvas<T>>
         child: Text('$_autoSpeed% ▾',
           style: const TextStyle(fontSize: 11)),
       )),
-    ]);
+    ]),
+  );
 
   Widget _museumSpeedMenu() => Material(
     elevation: 8,

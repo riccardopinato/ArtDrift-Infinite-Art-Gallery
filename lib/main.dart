@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 
@@ -59,6 +60,8 @@ class _GalleryHomeState extends State<GalleryHome> {
   List<Artwork> _colorArtworks = [];
   String _lastSearchQuery = '';
   bool _immersive = false;
+  bool _toolbarQuiet = false;
+  Timer? _toolbarQuietTimer;
   bool _loading = true;
   String? _error;
 
@@ -66,6 +69,18 @@ class _GalleryHomeState extends State<GalleryHome> {
   void initState() {
     super.initState();
     _initialize();
+  }
+
+  // Presentation-only idle fade. The canvas camera and tile registry
+  // stay untouched; any pointer restores full toolbar readability.
+  void _onCanvasPointer() {
+    _toolbarQuietTimer?.cancel();
+    if (_toolbarQuiet) setState(() => _toolbarQuiet = false);
+    _toolbarQuietTimer = Timer(const Duration(seconds: 3), () {
+      if (mounted && !_immersive) {
+        setState(() => _toolbarQuiet = true);
+      }
+    });
   }
 
   Future<void> _initialize({bool refresh = false}) async {
@@ -173,6 +188,7 @@ class _GalleryHomeState extends State<GalleryHome> {
 
   @override
   void dispose() {
+    _toolbarQuietTimer?.cancel();
     _catalog.close();
     super.dispose();
   }
@@ -183,7 +199,10 @@ class _GalleryHomeState extends State<GalleryHome> {
     if (_error != null || _artworks.isEmpty) {
       return MuseumPortal.unavailable(onRetry: _initialize);
     }
-    return Scaffold(body: ArtAdAwareViewport(
+    return Scaffold(body: Listener(
+      behavior: HitTestBehavior.translucent,
+      onPointerDown: (_) => _onCanvasPointer(),
+      child: ArtAdAwareViewport(
       // QA-only: defaults to zero. No AdMob SDK or artificial ad gap.
       // Once a real banner exists its measured height will replace this value.
       bannerHeight: const int.fromEnvironment(
@@ -203,12 +222,15 @@ class _GalleryHomeState extends State<GalleryHome> {
           if (mounted) setState(() => _immersive = value);
         }),
       if (!_immersive) Positioned(top: 0, left: 0, right: 0,
-        child: SafeArea(bottom: false, child: ArtDriftToolbar(
-          onSearch: _openSearch,
-          onFavorites: _openFavorites,
-          onSettings: () => showArtDriftSettings(context),
-        ))),
+        child: AnimatedOpacity(
+          duration: const Duration(milliseconds: 350),
+          opacity: _toolbarQuiet ? .24 : 1.0,
+          child: SafeArea(bottom: false, child: ArtDriftToolbar(
+            onSearch: _openSearch,
+            onFavorites: _openFavorites,
+            onSettings: () => showArtDriftSettings(context),
+          )))),
     ]),
-    ));
+    )));
   }
 }

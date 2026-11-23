@@ -68,4 +68,26 @@ void main() {
     expect(current, isFalse);
     expect(find.byKey(const ValueKey('drift-auto-toggle')), findsOneWidget);
   });
+  testWidgets('museum controls subtly fade after inactivity and restore on tap',
+      (tester) async {
+    await tester.pumpWidget(MaterialApp(home: Scaffold(body: DriftCanvas<String>(
+      items: const ['art'], onOpen: (_) {},
+      tileBuilder: (context, item, zoom) =>
+          const ColoredBox(color: Colors.black),
+      cameraKey: 'test.museum.quiet-idle', compactBrand: 'A∞',
+      fullBrand: 'artdrift ∞', hintText: 'Canvas',
+      recenterTooltip: 'Center', museumControls: true,
+    ))));
+    await tester.pump(const Duration(seconds: 4));
+    await tester.pump(const Duration(milliseconds: 400));
+    final fade = find.ancestor(
+      of: find.byKey(const ValueKey('drift-auto-toggle')),
+      matching: find.byType(AnimatedOpacity),
+    ).first;
+    expect(tester.widget<AnimatedOpacity>(fade).opacity, lessThan(.5));
+    await tester.tap(find.byKey(const ValueKey('drift-auto-toggle')));
+    await tester.pump();
+    expect(tester.widget<AnimatedOpacity>(fade).opacity, 1.0);
+  });
+
 }
