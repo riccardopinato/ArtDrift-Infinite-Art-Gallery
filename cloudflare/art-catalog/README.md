@@ -1,60 +1,79 @@
-> Integrazione sperimentale: importazione MoMA sospesa fino a selezione P1 approvata. Non usare i vecchi SQL da 161.038 record.
+# Art Drift — Unified D1 museum catalog / MoMA P1 staging
 
-# Art Drift — MoMA on Cloudflare, metadata only
+Status: CODE + LOCAL SQL PREPARATION ONLY. No Cloudflare remote import,
+Worker production deployment or R2 image upload occurs automatically.
 
-Status: candidate code, not a live deployment.
+This integration is based on PR #42 (5,084 existing catalog records) and
+PR #28 (the initial Cloudflare MoMA Worker). The app canvas, Supabase
+favorites, local image pack and Google login remain unchanged.
 
-- **D1** stores 161,038 MoMA work records (source commit
-  6ca06d4cc92dd39b57cec63278a63059cfa6c1a6, CC0 metadata).
-- **Workers** exposes read-only indexed FTS5 search in pages of 24;
-  bounded user input and parameterized SQL, query cache 60s/edge 600s.
-- **R2 + custom CDN domain** is reserved for independently RIGHTS-CLEARED
-  WebP thumbnails; none of the MoMA source images is covered by metadata
-  CC0 and no images are imported by the pipeline.
-- **Flutter** adds optional MoMA search to the existing search sheet only
-  when the app is built with an explicit HTTPS Worker URL. Opening an
-  image-less result leads to its official MoMA page; it never creates
-  blank tiles in the infinite canvas.
-- Art Drift's current offline images, tile identity, prefetch and viewport
-  are unchanged. Gallery Drift and the shared Core are unchanged.
+## Architecture
 
-## Safe setup — explicit account action required
+- D1 museum_works + museum_works_fts: source-traceable, searchable copy of
+  5,084 gallery and museum records; source_key retains source:id identity.
+- D1 works + works_fts: MoMA metadata-only P1, currently NOT imported.
+  All 161,038 full-catalog SQL shards are EXCLUDED from the migration.
+- Worker: read-only, input-bounded and paginated API, 24 results per page.
+- R2: reserved for separately rights-cleared thumbnails; no MoMA image.
+- Supabase: optional Google sign-in and owner-specific favorite sync ONLY.
 
-1. Create or connect an account on the Cloudflare Free tier; check usage
-   dashboard and alerts. This PR does **not** create cloud resources.
-2. Install Node 22 or newer; cd cloudflare/art-catalog; npm install.
-3. Run npx wrangler login, then npx wrangler d1 create artdrift-moma-cc0.
-4. Paste the database UUID into wrangler.jsonc and keep credentials outside
-   GitHub. Run npx wrangler d1 execute artdrift-moma-cc0 --remote --file=./schema.sql.
-5. Download the latest successful workflow artifact
-   ArtDrift-MoMA-D1-SQL from GitHub Actions.
-6. Import SQL shards in numeric order using
-   npx wrangler d1 execute artdrift-moma-cc0 --remote --file=./import-0001.sql,
-   changing filename for each shard. Monitor D1 daily rows-written.
-   Free tier: 100,000 rows written/day, 5,000,000 rows read/day,
-   500 MB **per database** and 5 GB across the account. Index writes may
-   increase the chargeable row write count. Our export creates 322,076
-   source insert statements, so import across several days on the free
-   plan, not all at once. **No forced paid upgrade.**
-7. Check SQL SELECT COUNT(*) FROM works returns 161038 and a few sample
-   searches from Wrangler. Only then, and with account owner's approval,
-   run npx wrangler deploy to expose the Worker publicly.
-8. Build an *internal* Art Drift test with
-   flutter build apk --release --dart-define=ARTDRIFT_CATALOG_API_BASE=https://YOUR-WORKER.workers.dev
-   Before deployment, no endpoint exists; normal app search still works.
+## Read-only API
 
-## Fast, rights-cleared images
+- GET /health: Worker configuration, NOT evidence D1 is populated
+- GET /api/v1/museums: institution names and record counts
+- GET /api/v1/museum-search?q=...&scope=all&cursor=0: indexed museum search
+- GET /api/v1/search?q=...: MoMA P1 when approved and imported
+- GET /api/v1/works/:id: MoMA metadata detail
 
-An R2 bucket is optional initially: MoMA CC0 metadata does NOT authorize
-the 161k images. For images with independently verified permission, create
-an R2 bucket and attach a custom domain, then activate Cloudflare Cache.
-Use deterministic immutable WebP object names and metadata proof; target
-256–420 px, about 10–30KB per thumbnail. Use
-Cache-Control: public, max-age=31536000, immutable only on content-hashed
-immutable keys. Prefetch just near-future visible tiles. Validate device
-latency, cache hit rate, errors and battery before claiming speed.
+## Reproducible local preparation (no cloud writes)
 
-The development r2.dev URL is NOT intended for production traffic.
-Do not bulk scrape the MoMA website or proxy licensed images.
-Google Drive 15 GB is fine for private backup; it is not a scalable public
-CDN (per-file download throttling, no optimized edge cache).
+From repository root:
+
+    node --test cloudflare/art-catalog/test/*.test.mjs
+    python3 -m unittest discover -s cloudflare/art-catalog/scripts -p 'test_*.py' -v
+    python3 cloudflare/art-catalog/scripts/make_museum_d1_import.py --root . --out build/d1-museums --expected 5084 --chunk 200
+
+The GitHub Action prepares the same temporary SQL shards as an INTERNAL
+review artifact. It does not issue Cloudflare requests and never builds MoMA
+SQL from the full source.
+
+## Controlled activation — explicit owner approval required
+
+Verify the real Cloudflare account, D1 database ID and prior migrations.
+Apply schema.sql and museum_schema.sql to an ISOLATED TEST D1 only after
+review. Import museum-NNNN.sql shards in numeric order with Wrangler and
+inspect the final count, search latency, license data and daily quota.
+No production changes are authorized by preparation alone.
+
+Example command only, NOT executed by CI:
+
+    cd cloudflare/art-catalog
+    npx wrangler d1 execute artdrift-moma-cc0 --remote --file=./museum_schema.sql
+
+Avoid duplicate database creation; do not commit Wrangler credentials.
+Cloudflare Free D1 daily limits are enforced, and FTS/index writes increase
+row-write usage. Official docs:
+https://developers.cloudflare.com/d1/platform/pricing/
+
+## MoMA P1 hold
+
+The prior 161,038-row importer is now fail-closed. It requires a reviewed
+JSON array of exactly 15,294 P1 MoMA ObjectIDs:
+
+    python3 cloudflare/art-catalog/scripts/make_d1_import.py --input Artworks.csv --out build/moma-p1 --allowlist approved-p1-ids.json --approved-count 15294
+
+This allowlist is NOT committed yet. No MoMA D1 import is ready. The MoMA
+CSV SHA256 and source-commit check remain mandatory; source metadata CC0
+does NOT grant rights to the artwork images.
+
+## Flutter release gate
+
+Museum D1 browsing is opt-in via build-time HTTPS
+ARTDRIFT_CATALOG_API_BASE. The MoMA P1 button additionally requires
+ARTDRIFT_ENABLE_MOMA_P1=true after P1 deployment. Without either, the
+offline-first gallery and user favorites behave exactly as before.
+
+Pending: D1 live upload/test, Cloudflare Worker staging deployment,
+remote image delivery on devices, source-specific commercial rights QA,
+load and quota tests, and optional real account tests. No main merge,
+no production deploy and no R2 photo publication at this stage.
