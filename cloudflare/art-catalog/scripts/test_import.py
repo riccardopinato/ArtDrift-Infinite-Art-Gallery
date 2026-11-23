@@ -16,7 +16,10 @@ class TestMoMA(unittest.TestCase):
                     "Date":"1889","Medium":"Oil","ThumbnailURL":"https://fake/img.jpg"})
                 writer.writerow({"ObjectID":"13","Title":"Garden","Artist":"Other",
                     "Date":"1900","Medium":"Watercolor"})
-            m=convert(source,root/"shards",chunk=1,verify=False)
+            with self.assertRaisesRegex(ValueError,"APPROVED_P1_ALLOWLIST_REQUIRED"):
+                convert(source,root/"blocked",chunk=1,verify=False)
+            m=convert(source,root/"shards",chunk=1,verify=False,
+                allowlist={"12","13"},expected_count=2)
             self.assertEqual(m["artworks"],2)
             db=sqlite3.connect(":memory:")
             db.executescript((Path(__file__).resolve().parents[1]/"schema.sql").read_text())
@@ -28,3 +31,16 @@ class TestMoMA(unittest.TestCase):
             self.assertEqual(db.execute("SELECT title FROM works WHERE id=12").fetchone()[0],"O'Clock")
             self.assertEqual(db.execute("SELECT count(*) FROM works_fts WHERE works_fts MATCH 'artist:Van*'").fetchone()[0],1)
             self.assertEqual(db.execute("SELECT count(*) FROM works WHERE image_key IS NOT NULL").fetchone()[0],0)
+
+    def test_allowlist_missing_source_id_rejected(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root=Path(temp)
+            source=root/"Artworks.csv"
+            with source.open("w",encoding="utf-8",newline="") as output:
+                writer=csv.DictWriter(output,fieldnames=["ObjectID","Title","Artist","Date","Medium"])
+                writer.writeheader()
+                writer.writerow({"ObjectID":"12","Title":"Art","Artist":"A","Date":"1900","Medium":"Oil"})
+            with self.assertRaisesRegex(ValueError,"missing/unverified"):
+                convert(source,root/"blocked",chunk=1,verify=False,
+                        allowlist={"12","13"},expected_count=2)
+            self.assertEqual(list((root/"blocked").glob("import-*.sql")),[])
