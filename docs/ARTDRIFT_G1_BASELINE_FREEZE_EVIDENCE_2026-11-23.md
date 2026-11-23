@@ -21,7 +21,7 @@
 | PR #36 — documenti mock-up e piano G1 | `docs/artdrift-visual-decisions-20261123` | non-applicabile | Draft, base `main`; cambiamenti solo `docs/`, nessuna UI implementata |
 | PR #22 — diagnostica prestazioni | `929bf7526dda3e6c862ff23a7d914e980783e08f` | ramo precedente | Draft su `feat/artdrift-android-visual-first-20261122`, **non presente in main o BASE-B** per presunzione |
 
-**Baseline definitiva d'implementazione: `UNDECIDED`.** BASE-A e BASE-B sono **fotografie immutabili e separatamente identificabili**, non due insiemi di commit liberamente componibili. Consiglio tecnico: prendere **BASE-B come candidata di riferimento visuale e funzionale**, perché include l'asset mix 2.400 e QA, ma usarla per la PR di design **solo dopo** decisione e riconciliazione delle PR #33/#34/#35 e relativi gate. BASE-A resta il confronto canonico. Nessuna promozione eseguita.
+**Target tecnico provvisorio per il futuro restyling: `REFERENCE_TARGET_BASE_B@c2d1d3e...`** (versione con manifest visivo 2.400 e immagini locali), senza merge di #33/#34/#35. **Il target di implementazione resta `HOLD_UNTIL_STACK_RECONCILED_AND_DEVICE_QA`**: questa preferenza tecnica non costituisce approvazione commerciale, firma installata o G2. BASE-A e BASE-B sono **fotografie immutabili e separatamente identificabili**, non due insiemi di commit liberamente componibili. Consiglio tecnico: prendere **BASE-B come candidata di riferimento visuale e funzionale**, perché include l'asset mix 2.400 e QA, ma usarla per la PR di design **solo dopo** decisione e riconciliazione delle PR #33/#34/#35 e relativi gate. BASE-A resta il confronto canonico. Nessuna promozione eseguita.
 
 ### Differenze strutturali comprovate
 
@@ -55,7 +55,7 @@ Git tree: gli **stessi sei file** in `packages/drift_core/` hanno **blob SHA ide
 | BASE-B artifact ZIP | `90c3e62c2154c37d6a2376f7c751006e21be75dce7a0b610e92eeebc1135dd72` |
 | QA emulatore artifact ZIP | `083ef664943f0745b3f2eb5f4886b3254a8dc816a55c8e5217cdebf378a266b2` |
 
-**Dimensione APK:** BASE-B è **+19.051.897 byte (+91,883%)** rispetto a BASE-A nei due APK interni. Questa è una differenza **preesistente al redesign**, da tenere come budget/riscontro nella G4; non attribuire la crescita a cambi estetici mai implementati e non confondere ZIP compressi con APK interni.
+**Dimensione APK:** BASE-B è **+19.051.897 byte (+91,883%)** rispetto a BASE-A nei due APK interni. Ispezione contenuti con ZIP standard: BASE-A contiene **832 voci** totali, BASE-B **4.876 voci**; nella categoria `flutter_assets/web/museum_thumbs/` di BASE-B sono presenti **4.043 voci** con somma di **18.190.024 byte non compressi**, completamente assenti in BASE-A. La crescita è principalmente un **cambio di asset-pack, non un restyling Flutter**. Questa è una differenza **preesistente al redesign**, da tenere come budget/riscontro nella G4; non attribuire la crescita a cambi estetici mai implementati e non confondere ZIP compressi con APK interni.
 
 **Firma e identità — verifica diretta su entrambi gli APK:** il report `apk-integrity.txt` di BASE-B dichiara source SHA `c2d1d3e...`, package `com.riccardopinato.artdrift`, `SIGNING_CLASS=INTERNAL_TEST_ONLY`. L'ispezione crittografica dei certificati DER nel blocco APK Signature Scheme **v2**, direttamente dagli APK scaricati, ha rilevato:\n\n- **BASE-A**: certificate SHA-256 `724e3fdc6be0838257b8d32587e358aee856096ecc1318e1656103d252150815`, Subject `C=US, O=Android, CN=Android Debug`.\n- **BASE-B**: certificate SHA-256 `61e90e80d993e490fc87caa7bb2ebd0243ec814d1fe300a97fea363091722b0d`, Subject `C=US, O=Android, CN=Android Debug`. Coincide con `apk-signer-report.txt` pubblicato da CI.\n\n**BLOCKER CONFERMATO:** le due firme interne sono differenti. Gli APK non costituiscono una coppia installabile in-place BASE-A→BASE-B, a parità di applicationId. Per aggiornare l'APK effettivamente installato serve la **stessa chiave/certificato** e un `versionCode` valido; l'identità della firma installata sul telefono **resta sconosciuta**. Nessun tentativo di installazione/upgrade/disinstallazione è stato eseguito.
 
@@ -96,6 +96,15 @@ Branch temporaneo **solo strumenti QA** `feat/artdrift-integrated-preview-color-
 
 Nell'ambiente della conversazione è presente `ArtDrift_Mockup_Home_01.html` (titolo: «Art Drift · Mock-up 01/10 — Quiet Canvas») con SHA-256 `b84606623cbad8b2c233e5d0815b5b3d3d66908e271c213cf4aca01cad43c38d`, insieme a `ArtDrift_Mockup_Home_01_preview.png` (570×790 px), SHA-256 `7038c9befbbcc53fc46dcf0b19ee9b5b58834e9e5faf5fab63b95345e237ba86`. Sono una **referenza locale dei prototipi**, NON file versionati nel repo e NON equivalgono a 10 golden approvate/catturate. Per i restanti nove occorre archiviazione equivalente solo dopo confronto con le decisioni esatte del registro.
 
+## C2. Riscontro critico: prima acquisizione main contaminata da ANR del launcher
+
+- Test runner [45165880345](https://github.com/riccardopinato/ArtDrift-Infinite-Art-Gallery/actions/runs/45165880345), commit ramo QA `548119f46028cf17b189796c1540370c0f93b103`, **GitHub Action SUCCESS** e report parser `smoke_status=PASS`.
+- **Controllo visivo indipendente dei PNG recuperati**: screenshot BEFORE e AFTER sono **byte-identici**, SHA-256 `8b4541874937170be7f972048f17fa958fde41a0d8f86e19bc08b9f74cbeabc8`, risoluzione 1080×2400. Entrambi sono coperti da una finestra di sistema **«Quickstep isn't responding»**, mentre sotto risultano tile a placeholder. L'app Art Drift rimane in esecuzione secondo `pidof`, ma non si può affermare che i 48 gesti abbiano effettivamente mosso il canvas.
+- **Il primo successo della CI è un FALSO PASS funzionale**: controllava comandi ADB, processo e presenza di screenshot, non movimento reale o finestra ANR. Lo screenshot di BASE-A è **acquisito ma NON VALIDO come baseline visiva pulita**. PSS rilevato **107.007→106.223 KiB** ma contaminato da overlay dell'emulatore, non confrontabile direttamente con BASE-B.
+- Correzione attuata **solo in tre file QA sul ramo separato**, commit `62b6952f0a364c0e4b571d972f80dda70f9c0e1b`: tentativo di rimozione controllata del dialogo Android, snapshot intermedio dopo la **prima swipe**, confronto hash prima/intermedio e rilevamento testuale di ANR via accessibility dump. Nessun `.dart`, asset o Drift Core toccato.
+- Verifica di regressione del test: [run 45167148681](https://github.com/riccardopinato/ArtDrift-Infinite-Art-Gallery/actions/runs/45167148681) avviato sul commit `62b6952f...`; **esito da confermare**. Anche un successo del nuovo runner resta **emulatore**, non device fisico.
+- Correzione metodologica: `smoke_status=PASS` non significa `VISUAL_APPROVED`; G1.4 resta **BLOCKED_VALID_SCREENSHOT** finché non si ottiene un'immagine senza overlay verificata e un cambiamento dimostrabile dopo il primo swipe.
+
 ## D. Evidenze G1 mancanti / gate aperti
 
 | Gate | Stato oggi | Cosa serve per chiuderlo |
@@ -103,7 +112,7 @@ Nell'ambiente della conversazione è presente `ArtDrift_Mockup_Home_01.html` (ti
 | **G1.1 — Sorgenti e Core pin** | **PASS_SOURCE_SNAPSHOT** | SHA Art main, candidato, Gallery, PR e Core confrontati; ripetere se cambiano |
 | **G1.2 — CI exact-head** | **PASS_CI_EXISTING** | GitHub Actions main e PR35 success, nessun test specifico dei 10 mock-up |
 | **G1.3 — Screenshot baseline candidato** | **PARTIAL_VISUAL_REFERENCE** | Due PNG di emulatore ispezionati; archiviazione durevole e scenario esteso ancora aperti |
-| **G1.4 — Screenshot BASE-A/main** | **NOT_CAPTURED** | Compilazione/inquadratura comparabile stessa impostazione, orientamento, risoluzione, catalogo differente da annotare |
+| **G1.4 — Screenshot BASE-A/main** | **BLOCKED_VALID_SCREENSHOT** | Screenshot ottenuti ma coperti da errore ANR del launcher Quickstep, before/after identici. Runner correttivo 45167148681 da valutare; servono schermate pulite con canvas che cambia al primo swipe |
 | **G1.5 — Metriche fisiche su stesso device** | **BLOCKED_PHYSICAL** | Dispositivo Android, release/profile, 60/90/120 Hz se supportato, PSS, frame timings p50/p95/p99, startup, 60s pan+Auto+zoom, termica/memoria |
 | **G1.6 — Persistenza / update installato** | **BLOCKED_SIGNER_MISMATCH_AND_DEVICE** | Certificati dei due APK CI verificati e **diversi**; sconosciuto signer dell'APK realmente installato. Servono `applicationId`, `versionCode`, fingerprint cert e controllo dati preferiti/camera; upgrade in-place solo con firma continuativa |
 | **G1.7 — Target implementativo unico** | **UNDECIDED** | Decisione PR base `main` o candidato #35 dopo gestione stack #33/#34; non merge implicito |
