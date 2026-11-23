@@ -151,6 +151,7 @@ void main() {
           ),
         ])),
       ));
+      await tester.pumpAndSettle();
       await tester.pump(const Duration(milliseconds: 70));
       final rect = find.byKey(const Key('artdrift-origin-flight'));
       expect(rect, phase.$1 < 1 ? findsOneWidget : findsNothing);
