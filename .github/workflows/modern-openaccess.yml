@@ -5,6 +5,7 @@ on:
     paths:
       - 'scripts/import_modern_1950_openaccess.py'
       - 'scripts/test_modern_1950_openaccess.py'
+      - 'scripts/probe_modern_1950_api.py'
       - '.github/workflows/modern-openaccess.yml'
   workflow_dispatch:
 permissions:
@@ -25,6 +26,8 @@ jobs:
           persist-credentials: true
       - name: Offline parsing, rights and idempotency tests
         run: python3 -m unittest discover -s scripts -p test_modern_1950_openaccess.py -v
+      - name: Sample official API date/right filters (read-only)
+        run: python3 scripts/probe_modern_1950_api.py
       - name: Import item-licensed, illustrated modern artworks
         run: python3 scripts/import_modern_1950_openaccess.py
       - name: Audit source provenance, record count and size
