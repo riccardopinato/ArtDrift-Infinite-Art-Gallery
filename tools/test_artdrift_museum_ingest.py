@@ -75,6 +75,26 @@ class ImportTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 ing.sql_upsert({**r, "title": "tampered"})
 
+    def test_new_museum_wikidata_membership_and_fail_closed(self):
+        expected = {
+            "Q808462": "Barnes Foundation",
+            "Q303139": "Belvedere",
+            "Q1568434": "Yale University",
+            "Q754507": "Ateneum",
+            "Q857276": "Musee d'Art Moderne",
+            "Q1132918": "Nasjonalmuseet",
+        }
+        for qid, name in expected.items():
+            self.assertIn(name, ing.MUSEUMS[qid])
+            query = ing.wd_query(100, (qid,))
+            self.assertIn("wdt:P195 ?museum", query)
+            self.assertIn("wd:" + qid, query)
+            self.assertIn("wdt:P31 wd:Q3305213", query)
+        with self.assertRaises(ValueError):
+            ing.wd_query(100, ("Q999999999",))
+        self.assertTrue(ing.famous("Helene Schjerfbeck"))
+        self.assertTrue(ing.famous("Akseli Gallen-Kallela"))
+
     def test_https_policy(self):
         self.assertFalse(ing.safe_https("https://upload.wikimedia.org.evil.com/x", {"upload.wikimedia.org"}))
         self.assertFalse(ing.safe_https("https://user@upload.wikimedia.org/x", {"upload.wikimedia.org"}))
