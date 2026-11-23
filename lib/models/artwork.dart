@@ -219,13 +219,6 @@ class Artwork {
 
   static String _str(Object? value) => value is String ? value.trim() : '';
 
-  /// Commons' ObjectName occasionally includes Wikidata/QuickStatements
-  /// bookkeeping, which is not part of the painting's displayed title.
-  static String _catalogTitle(Map<String, dynamic> record) {
-    final raw = _str(record['title']);
-    if (record['museum_source'] != 'commons') return raw;
-    return raw
-        .replaceFirst(RegExp(r'\s+label QS:.*
   static int? _int(Object? value) => value is num ? value.toInt() : null;
 
   factory Artwork.fromJson(Map<String, dynamic> json) {
@@ -233,7 +226,7 @@ class Artwork {
     final image = thumb is Map ? thumb : const {};
     return Artwork(
       id: _int(json['id']) ?? 0,
-      title: _catalogTitle(json).isEmpty ? 'Senza titolo' : _catalogTitle(json),
+      title: _str(json['title']).isEmpty ? 'Senza titolo' : _str(json['title']),
       artist: _str(json['artist_title']).isNotEmpty
           ? _str(json['artist_title']) : _str(json['artist_display']),
       date: _str(json['date_display']),
