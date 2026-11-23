@@ -30,6 +30,11 @@ void main() {
     expect(initialSize.width / initialSize.height, closeTo(.5, .03));
     expect(find.text('The Hill'), findsOneWidget);
     expect(find.byKey(const Key('artdrift-detail-counter')), findsOneWidget);
+    // User-approved museum card: X at upper right; heart immediately left.
+    final close = find.byKey(const Key('artdrift-detail-close'));
+    final favorite = find.byKey(const Key('artdrift-detail-favorite'));
+    expect(tester.getTopLeft(close).dx,
+      greaterThan(tester.getTopLeft(favorite).dx));
     await tester.tap(find.byKey(const Key('artdrift-detail-next')));
     await tester.pump(const Duration(milliseconds: 200));
     expect(find.text('The Bay'), findsOneWidget);

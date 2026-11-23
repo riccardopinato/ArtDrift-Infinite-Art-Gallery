@@ -211,14 +211,14 @@ class _ArtworkDetailState extends State<ArtworkDetail> {
                   ])),
             if (wide && !_contemplation) tourCounter,
           ]),
-          if (!_contemplation) Positioned(left: 8, top: 3,
+          if (!_contemplation) Positioned(right: 8, top: 3,
             child: IconButton(
               key: const Key('artdrift-detail-close'),
               tooltip: 'Torna alla galleria',
               color: const Color(0xFFF1E1C9),
               icon: const Icon(Icons.close_rounded),
               onPressed: () => Navigator.of(context).pop())),
-          if (!_contemplation) Positioned(right: 9, top: 3,
+          if (!_contemplation) Positioned(right: 63, top: 3,
             child: IconButton(
               key: const Key('artdrift-detail-favorite'),
               tooltip: widget.isFavorite(current)
