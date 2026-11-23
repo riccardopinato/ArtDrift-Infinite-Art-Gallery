@@ -27,8 +27,9 @@ Stato generale: **DESIGN REVIEW / NON IMPLEMENTATO**.
 | 5/10 | Home / Preferiti | **La mia collezione** — galleria editoriale personale accessibile dal cuore in alto a destra, fondo avorio e anteprime di opere salvate; apertura del quadro e ritorno al canvas senza perdere camera/zoom; area utile adattabile al banner AdMob reale | **APPROVATO** — conferma esplicita in chat 23/11/2026 | **NO** | La selezione/rimozione dei preferiti nel prototipo è simulata; quando il banner non c'è non va riservato spazio; quando appare il contenuto termina al suo bordo superiore |
 | 6/10 | Ricerca dal pennello centrale | **Atrio della ricerca** — overlay editoriale avorio attivato dal pennello centrale di larghezza 1/3, con ricerca locale esistente, suggerimenti e risultati illustrati, ritorno al canvas e viewport AdMob adattivo | **APPROVATO** — conferma esplicita in chat 23/11/2026 | **NO** | Il motore GallerySearch e l'indice locale rimangono invariati; risultati del mock-up solo dimostrativi, nessuna AI visiva aggiunta |
 | 7/10 | Controlli Auto del canvas | **Regia dello scorrimento** — controllo Auto/Pausa in alto a sinistra, selettore compatto a comparsa con ritmi Lento 25%, Regolare 50%, Veloce 75%, Molto veloce 100%; controlli compatibili con Quiet Canvas, pan/zoom e viewport AdMob | **APPROVATO** — conferma esplicita in chat 23/11/2026 | **NO** | Estetica/interazione approvata; il motore Auto e i suoi algoritmi non cambiano, durata/velocità reali da verificare in implementazione |
-| 8/10 | Impostazioni / ingranaggio | **Gabinetto del curatore** — proposta interattiva di restyling editoriale del pannello Impostazioni esistente: lingua, informazioni Pro (non ancora disponibile), privacy e licenze, senza inventare nuove impostazioni | **IN ATTESA** | **NO** | Prototipo da valutare; preservare le funzioni realmente presenti in `lib/screens/settings_sheet.dart` |
-| 9–10 | — | Da proporre uno alla volta | **NON PRESENTATI** | **NO** | Vietato anticipare le decisioni |
+| 8/10 | Impostazioni / ingranaggio | **Il gabinetto del curatore** — restyling editoriale con sei lingue (it/en/fr/es/de/pt), e schede Pro, privacy e licenze già esistenti, senza nuove impostazioni; viewport ridimensionabile sopra il banner AdMob se presente | **APPROVATO** — conferma esplicita in chat 23/11/2026 | **NO** | Pro resta non acquistabile; nessuna modifica di privacy, licenze o preferenze reali; vedi `lib/screens/settings_sheet.dart` |
+| 9/10 | Avvio app / errori del catalogo | **Il portale del museo** — proposta interattiva di trattamento editoriale per stati reali di caricamento, galleria pronta ed errore/ritenta, senza modificare la logica catalogo o inventare successo offline | **IN ATTESA** | **NO** | Prototipo UX: schermate derivate da `lib/main.dart`, con area utile conforme al vincolo AdMob |
+| 10/10 | — | Da proporre dopo decisione sul 9/10 | **NON PRESENTATO** | **NO** | Non anticipare l'ultimo mock-up |
 
 ## Slot 1/10 — contratto di design approvato
 
@@ -104,8 +105,19 @@ Stato generale: **DESIGN REVIEW / NON IMPLEMENTATO**.
 - Rispettare il vincolo viewport AdMob (nessun banner = piena area; banner effettivamente visibile = fine del canvas al suo bordo superiore) e il percorso reduced-motion. Banner demo non equivale a SDK AdMob reale.
 - Reference Design-App `MOCK-STYLE-003` Vintage / Editorial UI **ADATTATI**. **Decisione di design, non implementazione**: nessun Dart, motore Auto, APK, catalogo o annuncio modificato.
 
+## Slot 8/10 — contratto di design approvato
+
+- Identità: **Il gabinetto del curatore**, revisione **esclusivamente estetica/editoriale** del pannello impostazioni raggiunto dall'ingranaggio già esistente **in alto a destra**.
+- La selezione della **lingua di interfaccia** presenta le sei opzioni già implementate in `lib/ui/localization.dart`: italiano, inglese, francese, spagnolo, tedesco e portoghese. I titoli delle opere rimangono nella lingua originale del museo fino a traduzioni verificate.
+- Le tre sezioni di `lib/screens/settings_sheet.dart` rimangono **ArtDrift Pro** (piano gratuito, Pro futuro e acquisti assenti), **Privacy e informazioni** e **Opere e licenze** (Open Access / Public Domain / CC0). Nessuna opzione o capacità nuova viene dedotta dai testi dimostrativi.
+- Presentazione: pagina catalogo avorio con intestazioni editoriali, selezione lingua leggibile, tre schede informative ordinate, azione X per ritornare al canvas. Non sostituire la navigazione approvata con tab aggiuntive.
+- Il prototipo 8/10 non ha salvato impostazioni reali: l'eventuale implementazione dovrà preservare gli stessi handler e persistenza di `ArtDriftLocale`.
+- Rispettare `docs/ARTDRIFT_ADMOB_VIEWPORT_CONSTRAINT_2026-11-23.md`: nessun padding ad fisso quando banner assente; pannello limitato sopra il banner quando presente. Accessibilità, scroll e small phones vanno verificati sul dispositivo.
+- Riferimenti Design-App: Vintage `MOCK-STYLE-003` ed Editorial UI **ADATTATI**, nessuna importazione di componenti o asset senza licenza.
+- **APPROVATO ≠ IMPLEMENTATO**: il codice Flutter, i flussi privacy, gli acquisti, il catalogo e l'APK restano invariati.
+
 ## Stato implementativo
 
 **APPROVATO ≠ INTEGRATO.** Questo documento registra solo preferenze e decisioni; il codice Flutter attuale e le PR #33–#35 restano indipendenti. Il collaudo v0.3.8 e la relativa PR #35 non autorizzano la promozione estetica.
 
-La prossima decisione è sullo slot **8/10**. Non avanzare allo slot 9/10 prima di approvare, modificare o scartare esplicitamente il 8/10.
+La prossima decisione è sullo slot **9/10**. Non avanzare allo slot 10/10 prima di approvare, modificare o scartare esplicitamente il 9/10.
