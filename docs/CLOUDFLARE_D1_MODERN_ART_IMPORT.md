@@ -95,8 +95,8 @@ Provenienza codice: **NEW_IMPLEMENTATION** (nessun codice proprietario di musei 
 Acquisizione reale GitHub Actions (non dato teorico):
 - Tate: **233** metadati pittorici, senza immagini.
 - MoMA: **253** metadati pittorici, senza immagini (CSV Git LFS ~73 MB).
-- Catalogo Open Access *già presente nell'app*: **65** URL accettati dalla prima policy tecnica. Una successiva **regola UE life+70** scarta anche le immagini senza una data di morte verificabile dal campo autore: il conteggio finale aggiornato va letto nel job `preview_verified`.
-- Combinazione inizialmente prevista: **551** record, soggetta alla riduzione per il nuovo gate UE. Il numero corretto e la deduplica sono quelli del job `merge_staged` sul commit corrente. Le opere riutilizzate non sono nuove per l'app.
+- Catalogo Open Access *già presente nell'app*: **49** URL immagini Cleveland dopo il filtro UE vita + 70 (erano 65 prima del gate; **16 esclusi**). Tutti in `HOLD` editoriale.
+- **535** record nel lotto consolidato: 233 Tate + 253 MoMA + 49 Cleveland, **zero duplicati**, import SQL SQLite ripetuto due volte con successo, view pubblicabile **zero record**. Il job `merge_staged` ha superato il controllo sul commit `e572b36a`, run 45289646496. Le 49 opere Cleveland sono già nell'app: non sono nuove acquisizioni multimediali.
 - Wikidata Query Service ha restituito **HTTP 429 durante incidente (1 req/min)**: il workflow non avvia automaticamente ricerche Wikidata parallele.
 
 Il job `merge_staged` scarica gli artefatti dei tre job di **uno stesso run**, ricontrolla fingerprint, provenienza e diritti con `tools/artdrift_merge_staging.py`, elimina duplicati identici e rifiuta conflitti. Applica il file SQL in SQLite in memoria **due volte** per controllare idempotenza e verifica che la view pubblicabile rimanga vuota.
@@ -119,3 +119,12 @@ Il repo non contiene un binding/configurazione D1 di produzione verificabile, e 
 La dichiarazione `CC0` della fotografia **non** è da sola una prova di scadenza del diritto d'autore del pittore. Dal 2026, nella corsia `verified` sono eleggibili immagini soltanto quando il campo `artist_title` dell'ente riporta date di nascita–morte e ogni autore identificato è morto **non oltre il 1955**. In assenza di data oppure per autori più recenti, il record non entra tra gli URL candidati; i metadati MoMA/Tate rimangono disponibili separatamente. Il controllo non sostituisce la revisione giuridica di opere e fotografie.
 
 Base normativa: Direttiva 2006/116/CE, durata `vita + 70 anni`: https://eur-lex.europa.eu/eli/dir/2006/116/oj/eng .
+
+### Evidenze CI dei lotti
+
+- Consolidato **535 / PASS**: https://github.com/riccardopinato/ArtDrift-Infinite-Art-Gallery/actions/runs/45289646496
+- `artdrift-d1-merged-modern-masters-45289646496` — JSONL + SQL unificati, artefatto GitHub ID `14873921204`.
+- `preflight_cloudflare`: i tre parametri di configurazione risultano tutti **NOT_CONFIGURED**, nessuna connessione D1 possibile dall'ambiente GitHub attuale.
+- La versione del codice può avanzare rispetto al run acquisizione; dopo modifiche controllare sempre il commit esatto del workflow di validazione.
+
+L'upload manuale quando autorizzato esegue prima un `wrangler d1 info` **di sola lettura**, e solo dopo usa `--remote --yes` per migrazione + stage e verifica i conteggi effettivi. Non crea né approva record pubblicabili.
