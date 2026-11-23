@@ -280,7 +280,7 @@ def confirmed_eu_public_domain_artist(label: str) -> bool:
     museum CC0 media flag alone cannot extinguish the painter's copyright.
     Handles multiple credited authors by requiring *all* to pass.
     """
-    spans = re.findall(r"(?<!\\d)(1[6789]\\d{2}|20\\d{2})\\s*[-–—]\\s*(1[789]\\d{2}|20\\d{2})(?!\\d)", label)
+    spans = re.findall(r"(?<!\d)(1[6789]\d{2}|20\d{2})\s*[-–—]\s*(1[789]\d{2}|20\d{2})(?!\d)", label)
     if not spans:
         return False
     return all(int(birth) <= int(death) <= 1955 for birth, death in spans)
