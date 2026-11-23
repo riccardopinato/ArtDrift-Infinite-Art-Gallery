@@ -92,6 +92,27 @@ void main() {
       greaterThanOrEqualTo(400));
   });
 
+  test('Smithsonian EDAN inline markup is not shown as an artwork title', () {
+    final sanitized = Artwork.fromJson({
+      'id': 6000000012,
+      'title': '<I>Black Males: an Endangered Species??</I>',
+      'artist_title': 'Creator',
+      'date_display': '1978',
+      'image_id': '',
+      'is_public_domain': true,
+      'artwork_type_title': 'Print',
+      'museum_source': 'smithsonian',
+      'museum_native_id': 'nmaahc:nmaahc_12',
+      'museum_name':
+        'Smithsonian National Museum of African American History and Culture',
+      'rights_license': 'CC0',
+      'rights_evidence_url': 'https://www.si.edu/openaccess',
+      'remote_preview_url': 'https://ids.si.edu/ids/deliveryService?id=X',
+    });
+    expect(sanitized.title, 'Black Males: an Endangered Species??');
+    expect(sanitized.displayable, isTrue);
+  });
+
   test('new museum non-painting gate cannot spoof an unrelated institution', () {
     Artwork item({String museumName = 'Hirshhorn Museum and Sculpture Garden',
                   String medium = 'Sculpture',
