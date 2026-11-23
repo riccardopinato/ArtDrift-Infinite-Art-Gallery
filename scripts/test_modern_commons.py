@@ -65,7 +65,7 @@ class CommonsModernTests(unittest.TestCase):
             report=commons.generate(fake_fetch,Path(temp))
             rows=json.loads((Path(temp)/"catalog_modern_1950.json").read_text())
             self.assertEqual(report["admitted_records"],1)
-            self.assertEqual(report["years"],77)
+            self.assertEqual(report["years"],len(commons.YEARS))
             self.assertEqual(rows[0]["id"],10_000_001_234)
             self.assertFalse(rows[0]["is_public_domain"])
             self.assertEqual(report["production_release"],"NOT_AUTHORIZED")
