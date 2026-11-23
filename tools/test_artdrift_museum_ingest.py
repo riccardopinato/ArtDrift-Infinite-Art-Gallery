@@ -156,7 +156,7 @@ class ImportTests(unittest.TestCase):
             "museum_native_id": "12345",
             "museum_name": "Cleveland Museum of Art",
             "title": "The painting",
-            "artist_title": "Vincent van Gogh",
+            "artist_title": "Vincent van Gogh (Dutch, 1853–1890)",
             "date_display": "1889",
             "artwork_type_title": "Painting",
             "is_public_domain": True,
@@ -171,6 +171,11 @@ class ImportTests(unittest.TestCase):
         self.assertIsNotNone(r)
         self.assertEqual(r["rights_status"], "IMAGE_RIGHTS_VERIFIED")
         self.assertIn("cleveland", r["source_key"])
+        self.assertTrue(ing.confirmed_eu_public_domain_artist(row["artist_title"]))
+        self.assertFalse(ing.confirmed_eu_public_domain_artist("Pablo Picasso (Spanish, 1881–1973)"))
+        self.assertFalse(ing.confirmed_eu_public_domain_artist("Vincent van Gogh"))
+        self.assertIsNone(ing.existing_catalog_row({**row, "artist_title": "Pablo Picasso (Spanish, 1881–1973)"}))
+        self.assertIsNone(ing.existing_catalog_row({**row, "artist_title": "Vincent van Gogh"}))
         self.assertIsNone(ing.existing_catalog_row({**row, "rights_license": "CC BY 4.0"}))
         self.assertIsNone(ing.existing_catalog_row({**row, "rights_license": "Public Domain"}))
         self.assertIsNone(ing.existing_catalog_row({**row, "artist_title": "Unknown"}))
