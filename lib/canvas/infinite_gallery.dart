@@ -114,12 +114,12 @@ class _InfiniteGalleryState extends State<InfiniteGallery> {
       final rect = _inspectedRect;
       final cardWidth = math.min(290.0, math.max(1.0, constraints.maxWidth - 24));
       final left = rect == null ? 12.0 : rect.left
-          .clamp(12.0, math.max(12.0, constraints.maxWidth - cardWidth - 12));
+          .clamp(12.0, math.max(12.0, constraints.maxWidth - cardWidth - 12)).toDouble();
       final top = rect == null ? 120.0 : (
         rect.bottom + 10 + 225 <= constraints.maxHeight
             ? rect.bottom + 10
             : math.max(16.0, rect.top - 235)
-      ).clamp(16.0, math.max(16.0, constraints.maxHeight - 225));
+      ).clamp(16.0, math.max(16.0, constraints.maxHeight - 225)).toDouble();
       return Stack(fit: StackFit.expand, children: [
         DriftCanvas<Artwork>(
           items: widget.artworks, onOpen: widget.onOpen,
