@@ -106,6 +106,49 @@ class ArtCollections {
        'es':'Rijksmuseum', 'de':'Rijksmuseum', 'pt':'Rijksmuseum'},
       {'it':'Amsterdam', 'en':'Amsterdam', 'fr':'Amsterdam',
        'es':'Ámsterdam', 'de':'Amsterdam', 'pt':'Amsterdã'}),
+    ArtCollection('museum-cooper-hewitt',
+      {'it':'Cooper Hewitt', 'en':'Cooper Hewitt', 'fr':'Cooper Hewitt',
+       'es':'Cooper Hewitt', 'de':'Cooper Hewitt', 'pt':'Cooper Hewitt'},
+      {'it':'Design, grafica e arti applicate',
+       'en':'Design, graphic and applied arts',
+       'fr':'Design, arts graphiques et appliqués',
+       'es':'Diseño, artes gráficas y aplicadas',
+       'de':'Design, Grafik und angewandte Kunst',
+       'pt':'Design, artes gráficas e aplicadas'}),
+    ArtCollection('museum-hirshhorn',
+      {'it':'Hirshhorn', 'en':'Hirshhorn', 'fr':'Hirshhorn',
+       'es':'Hirshhorn', 'de':'Hirshhorn', 'pt':'Hirshhorn'},
+      {'it':'Pittura, scultura e arti visive',
+       'en':'Painting, sculpture and visual art',
+       'fr':'Peinture, sculpture et arts visuels',
+       'es':'Pintura, escultura y artes visuales',
+       'de':'Malerei, Skulptur und bildende Kunst',
+       'pt':'Pintura, escultura e artes visuais'}),
+    ArtCollection('museum-african-art',
+      {'it':'Museo d’arte africana', 'en':'National Museum of African Art',
+       'fr':'Musée national d’art africain',
+       'es':'Museo Nacional de Arte Africano',
+       'de':'Nationalmuseum für afrikanische Kunst',
+       'pt':'Museu Nacional de Arte Africana'},
+      {'it':'Opere e materiali delle collezioni africane',
+       'en':'Works and materials from African collections',
+       'fr':'Œuvres et matériaux des collections africaines',
+       'es':'Obras y materiales de colecciones africanas',
+       'de':'Werke und Materialien afrikanischer Sammlungen',
+       'pt':'Obras e materiais de coleções africanas'}),
+    ArtCollection('museum-african-american-history',
+      {'it':'Storia e cultura afroamericana',
+       'en':'African American History and Culture',
+       'fr':'Histoire et culture afro-américaines',
+       'es':'Historia y cultura afroamericanas',
+       'de':'Afroamerikanische Geschichte und Kultur',
+       'pt':'História e cultura afro-americanas'},
+      {'it':'Fotografia, stampa e arte del museo Smithsonian',
+       'en':'Photography, prints and art from the Smithsonian museum',
+       'fr':'Photographie, gravures et art du musée Smithsonian',
+       'es':'Fotografía, grabados y arte del museo Smithsonian',
+       'de':'Fotografie, Drucke und Kunst des Smithsonian',
+       'pt':'Fotografia, gravuras e arte do museu Smithsonian'}),
     ArtCollection('museum-smithsonian',
       {'it':'Smithsonian', 'en':'Smithsonian', 'fr':'Smithsonian',
        'es':'Smithsonian', 'de':'Smithsonian', 'pt':'Smithsonian'},
@@ -162,6 +205,15 @@ class ArtCollections {
       case 'museum-cleveland': return art.museumSource == 'cleveland';
       case 'museum-nga': return art.museumSource == 'nga';
       case 'museum-rijks': return art.museumSource == 'rijks';
+      case 'museum-cooper-hewitt':
+        return art.museumName == 'Cooper Hewitt, Smithsonian Design Museum';
+      case 'museum-hirshhorn':
+        return art.museumName == 'Hirshhorn Museum and Sculpture Garden';
+      case 'museum-african-art':
+        return art.museumName == 'Smithsonian National Museum of African Art';
+      case 'museum-african-american-history':
+        return art.museumName ==
+          'Smithsonian National Museum of African American History and Culture';
       case 'museum-smithsonian': return art.museumSource == 'smithsonian';
       default: return false;
     }
