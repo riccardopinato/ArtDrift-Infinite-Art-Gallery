@@ -123,6 +123,9 @@ void main() {
     expect(sync.pendingCount, 1);
 
     cloud.offline = false;
+    // Wait for any previous offline attempt to settle before initiating
+    // the explicit new-online retry (as the UI disables Sync while busy).
+    await Future<void>.delayed(const Duration(milliseconds: 30));
     await sync.synchronize();
     expect(sync.pendingCount, 0);
     expect(cloud.data['account-A']?[a.catalogKey]?.selected, false);
