@@ -14,6 +14,7 @@ import io
 import json
 import re
 import sys
+import time
 import unicodedata
 from pathlib import Path
 from urllib.parse import urlencode, unquote, urlparse
@@ -222,7 +223,6 @@ def commons_image(file_url: str) -> tuple[str, str, str, str] | None:
         if not (safe_https(preview, {"upload.wikimedia.org"}) and
                 safe_https(original, {"upload.wikimedia.org"})):
             return None
-        evidence = "https://commons.wikimedia.org/wiki/" + urlencode({"file": title})[5:]
         # Canonical, directly inspectable Commons File page, not a museum claim.
         from urllib.parse import quote
         evidence = "https://commons.wikimedia.org/wiki/" + quote(title.replace(" ", "_"), safe=":_()")
@@ -269,6 +269,7 @@ def collect_wikidata(max_records: int) -> list[dict]:
         if not isinstance(item, dict):
             continue
         rec = wd_row(item)
+        time.sleep(0.2)  # Bounded requests; no parallel Commons scraping.
         if rec and rec["source_key"] not in seen:
             seen.add(rec["source_key"])
             result.append(rec)
@@ -319,9 +320,8 @@ def export(records: list[dict], jsonl_path: Path, sql_path: Path) -> dict:
     sql_path.parent.mkdir(parents=True, exist_ok=True)
     jsonl_path.write_text("".join(json.dumps(r, ensure_ascii=False, sort_keys=True) + "\n"
                                   for r in ordered), encoding="utf-8")
-    sql_path.write_text("BEGIN TRANSACTION;\n" +
-                        "\n".join(sql_upsert(r) for r in ordered) +
-                        "\nCOMMIT;\n", encoding="utf-8")
+    # Wrangler D1 automatically handles transactions; explicit BEGIN/COMMIT is rejected.
+    sql_path.write_text("\n".join(sql_upsert(r) for r in ordered) + "\n", encoding="utf-8")
     return {"total": len(ordered), "metadata_only": sum(r["rights_status"] == "METADATA_ONLY" for r in ordered),
             "image_rights_verified_pending_editorial_approval":
             sum(r["rights_status"] == "IMAGE_RIGHTS_VERIFIED" for r in ordered),
