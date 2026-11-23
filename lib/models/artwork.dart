@@ -137,7 +137,22 @@ class Artwork {
         rightsLicense.toUpperCase() == 'CC0' &&
         ArtCreationDate.explicitYearFrom1950(date) != null &&
         ArtCreationDate.eligibleModernMedium(artworkType);
-    return (type == 'painting' || modernNonPainting) &&
+    // Additional Smithsonian art museums retain exact unit+institution
+    // identity. Only known art media under this provider's per-file CC0
+    // policy are eligible; historic existing Smithsonian items are unchanged.
+    const newUnits = <String, String>{
+      'chndm': 'Cooper Hewitt, Smithsonian Design Museum',
+      'hmsg': 'Hirshhorn Museum and Sculpture Garden',
+      'nmafa': 'Smithsonian National Museum of African Art',
+      'nmaahc': 'Smithsonian National Museum of African American History and Culture',
+    };
+    final newSmithsonianArt = museumSource == 'smithsonian' &&
+        rightsLicense == 'CC0' &&
+        newUnits.entries.any((entry) =>
+          museumNativeId.startsWith('${entry.key}:') &&
+          museumName == entry.value) &&
+        ArtCreationDate.eligibleModernMedium(artworkType);
+    return (type == 'painting' || modernNonPainting || newSmithsonianArt) &&
         officialImageUrl(remotePreviewUrl, museumSource) &&
         (remoteFullUrl.isEmpty ||
          officialImageUrl(remoteFullUrl, museumSource));
