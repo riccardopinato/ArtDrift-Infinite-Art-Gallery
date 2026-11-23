@@ -22,7 +22,7 @@ from urllib.request import Request, urlopen
 
 TATE_CSV = "https://raw.githubusercontent.com/tategallery/collection/master/artwork_data.csv"
 TATE_GUIDELINES = "https://github.com/tategallery/collection"
-MOMA_CSV = "https://raw.githubusercontent.com/MuseumofModernArt/collection/main/Artworks.csv"
+MOMA_CSV = "https://media.githubusercontent.com/media/MuseumofModernArt/collection/main/Artworks.csv"
 MOMA_REPO = "https://github.com/MuseumofModernArt/collection"
 WD_SPARQL = "https://query.wikidata.org/sparql"
 COMMONS_API = "https://commons.wikimedia.org/w/api.php"
@@ -213,7 +213,9 @@ def moma_row(row: dict) -> dict | None:
 
 def collect_moma(max_records: int) -> list[dict]:
     """Read primary-source CC0 metadata, not MoMA licensed image thumbnails."""
-    raw = request_bytes(MOMA_CSV, accept="text/csv", max_bytes=48 * 1024 * 1024)
+    raw = request_bytes(MOMA_CSV, accept="text/csv", max_bytes=90 * 1024 * 1024)
+    if raw.startswith(b"version https://git-lfs.github.com/spec/v1"):
+        raise ValueError("MoMA Git LFS pointer received instead of CSV bytes")
     reader = csv.DictReader(io.StringIO(raw.decode("utf-8-sig")))
     if not {"ObjectID", "Title", "Artist", "Classification", "Medium"}.issubset(reader.fieldnames or []):
         raise ValueError("MoMA CSV schema changed")
