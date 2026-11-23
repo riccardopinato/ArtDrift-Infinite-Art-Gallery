@@ -21,6 +21,9 @@ create table if not exists public.artdrift_favorites (
 
 alter table public.artdrift_favorites enable row level security;
 revoke all on table public.artdrift_favorites from anon;
+-- Supabase projects may auto-grant TRUNCATE/TRIGGER/REFERENCES to authenticated.
+-- RLS does not protect TRUNCATE, so remove ALL default table privileges first.
+revoke all on table public.artdrift_favorites from authenticated;
 grant select, insert, update on table public.artdrift_favorites
   to authenticated;
 revoke delete on table public.artdrift_favorites from authenticated;
