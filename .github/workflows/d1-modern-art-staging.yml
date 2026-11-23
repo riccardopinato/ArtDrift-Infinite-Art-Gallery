@@ -5,12 +5,14 @@ on:
     branches: [feat/artdrift-d1-modern-art-ingestion-20261123]
     paths:
       - tools/artdrift_museum_ingest.py
+      - tools/artdrift_merge_staging.py
       - tools/test_artdrift_museum_ingest.py
       - cloudflare/d1/migrations/0001_museum_ingest.sql
       - .github/workflows/d1-modern-art-staging.yml
   pull_request:
     paths:
       - tools/artdrift_museum_ingest.py
+      - tools/artdrift_merge_staging.py
       - tools/test_artdrift_museum_ingest.py
       - cloudflare/d1/migrations/0001_museum_ingest.sql
       - .github/workflows/d1-modern-art-staging.yml
@@ -59,7 +61,7 @@ jobs:
           python-version: '3.12'
       - name: Compile and unit-test offline importer
         run: |
-          python -m py_compile tools/artdrift_museum_ingest.py
+          python -m py_compile tools/artdrift_museum_ingest.py tools/artdrift_merge_staging.py
           python -m unittest discover -s tools -p 'test_artdrift_museum_ingest.py' -v
       - name: D1 schema smoke on SQLite
         run: |
@@ -167,6 +169,64 @@ jobs:
           include-hidden-files: true
           if-no-files-found: error
           retention-days: 14
+
+  merge_staged:
+    if: github.event_name == 'push'
+    needs: [validate, preview_tate, preview_moma, preview_verified]
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Download complete Tate stage from this exact workflow run
+        uses: actions/download-artifact@v4
+        with:
+          name: tate-modern-metadata-stage-${{ github.run_id }}
+          path: .artdrift_inputs/tate/
+      - name: Download complete MoMA stage
+        uses: actions/download-artifact@v4
+        with:
+          name: moma-modern-metadata-stage-${{ github.run_id }}
+          path: .artdrift_inputs/moma/
+      - name: Download existing CC0 image candidates
+        uses: actions/download-artifact@v4
+        with:
+          name: artdrift-existing-modern-cc0-images-${{ github.run_id }}
+          path: .artdrift_inputs/verified/
+      - name: Merge and revalidate all sources; simulate full D1 batch
+        run: |
+          python tools/artdrift_merge_staging.py \
+            .artdrift_inputs/tate/modern_art.jsonl \
+            .artdrift_inputs/moma/modern_art.jsonl \
+            .artdrift_inputs/verified/modern_art.jsonl
+          python - <<'PY'
+          import json
+          import sqlite3
+          from pathlib import Path
+          rows = [json.loads(x) for x in Path(".artdrift_ingest/modern_art.jsonl").read_text().splitlines()]
+          assert rows
+          assert len({r["source_key"] for r in rows}) == len(rows)
+          assert {"tate", "moma"}.issubset({r["provider"] for r in rows})
+          conn = sqlite3.connect(":memory:")
+          conn.executescript(Path("cloudflare/d1/migrations/0001_museum_ingest.sql").read_text())
+          sql = Path(".artdrift_ingest/modern_art.sql").read_text()
+          conn.executescript(sql)
+          assert conn.execute("SELECT COUNT(*) FROM artdrift_museum_ingest").fetchone()[0] == len(rows)
+          assert conn.execute("SELECT COUNT(*) FROM artdrift_publishable_modern_art").fetchone()[0] == 0
+          conn.executescript(sql)
+          assert conn.execute("SELECT COUNT(*) FROM artdrift_museum_ingest").fetchone()[0] == len(rows)
+          print("STAGING_D1_MERGED_PASS", len(rows))
+          PY
+      - name: Artifact - one consolidated D1-ready JSONL and SQL stage
+        uses: actions/upload-artifact@v4
+        with:
+          name: artdrift-d1-merged-modern-masters-${{ github.run_id }}
+          path: .artdrift_ingest/
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 30
 
   acquire:
     if: github.event_name == 'workflow_dispatch'
