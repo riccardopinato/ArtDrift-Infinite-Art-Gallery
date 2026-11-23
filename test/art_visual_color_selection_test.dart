@@ -44,6 +44,7 @@ void main(){
     expect(after * 10,lessThanOrEqualTo(before * 3));
     expect(policy['portraits_replaced'],before-after);
     expect(policy['new_image_files_added'],0);
+    expect(policy['portraits_in_first_120'],lessThanOrEqualTo(9));
     expect(manifest['selected_count'],2400);
   });
 

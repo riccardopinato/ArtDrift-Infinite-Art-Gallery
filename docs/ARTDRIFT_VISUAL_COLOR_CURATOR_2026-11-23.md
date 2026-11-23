@@ -73,3 +73,13 @@ No changes to the Gallery Drift repository or canonical shared Drift Core.
 - The source analysis is validated in CI and the Flutter test checks the
   bundled portrait policy. Web preview / APK require a fresh build using
   the **new** compiled manifest SHA, not the previous 0.3.7 build artifact.
+
+## v0.3.8+11 candidate — portrait distribution
+- New manifest **525 → 157** heuristic portraits (−70.1%), **368**
+  nonportrait substitutions and **2,400 total unchanged**.
+- Portraits **evenly distributed** across the canvas: the first 120
+  artworks contain **8** flagged portraits, not a front-loaded cluster.
+- Original local catalog, image bytes, user-specific pinned artworks and
+  Cloudflare D1 are unchanged; commercial image rights still gated.
+- Exact-source CI rebuild required for this source/version (do not
+  distribute an earlier 0.3.7 artifact as if it contained this layout).

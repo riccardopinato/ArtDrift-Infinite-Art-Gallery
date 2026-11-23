@@ -274,8 +274,9 @@ def generate(root,out,count):
         drawer.text((xx+2,yy+119),x["artist"].split("(")[0][:19],fill=(240,240,240))
     sheet.save(out/"first_120_contact_sheet.jpg",quality=80)
     summary={"total_catalog":len(rows),"image_backed_candidates":len(results),
-        "selected":len(chosen),"mood_counts":dict(role_counts),
-        "unique_artists":len(authors),
+        "selected":len(chosen),
+        "mood_counts":dict(Counter(x["role"] for x in chosen)),
+        "unique_artists":len(set(x["author"] for x in chosen)),
         "van_gogh":sum("van gogh" in x["author"] for x in chosen),
         "matisse":sum("matisse" in x["author"] for x in chosen),
         "sample_first_10":[x["key"] for x in chosen[:10]],
