@@ -9,6 +9,7 @@ import 'ui/gallery_toolbar.dart';
 import 'ui/localization.dart';
 import 'ui/museum_portal.dart';
 import 'ui/tile_origin_flight.dart';
+import 'ui/art_ad_aware_viewport.dart';
 import 'models/artwork.dart';
 import 'screens/artwork_detail.dart';
 import 'screens/collection_canvas.dart';
@@ -181,7 +182,12 @@ class _GalleryHomeState extends State<GalleryHome> {
     if (_error != null || _artworks.isEmpty) {
       return MuseumPortal.unavailable(onRetry: _initialize);
     }
-    return Scaffold(body: Stack(fit: StackFit.expand, children: [
+    return Scaffold(body: ArtAdAwareViewport(
+      // QA-only: defaults to zero. No AdMob SDK or artificial ad gap.
+      // Once a real banner exists its measured height will replace this value.
+      bannerHeight: const double.fromEnvironment(
+          'ARTDRIFT_QA_AD_BANNER_HEIGHT', defaultValue: 0),
+      child: Stack(fit: StackFit.expand, children: [
       InfiniteGallery(
         artworks: _canvasArtworks,
         cameraKey: const bool.fromEnvironment(
@@ -201,6 +207,7 @@ class _GalleryHomeState extends State<GalleryHome> {
           onFavorites: _openFavorites,
           onSettings: () => showArtDriftSettings(context),
         ))),
-    ]));
+    ]),
+    ));
   }
 }
