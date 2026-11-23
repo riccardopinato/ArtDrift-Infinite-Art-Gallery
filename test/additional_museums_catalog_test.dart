@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:artdrift/models/artwork.dart';
@@ -22,8 +23,10 @@ void main() {
       () async {
     final raw = jsonDecode(await rootBundle.loadString(
         'assets/museums/catalog_new_museums.json')) as List<dynamic>;
-    final report = jsonDecode(await rootBundle.loadString(
-        'assets/museums/new_museums_report.json')) as Map<String,dynamic>;
+    // Import diagnostic report stays out of the customer APK asset bundle.
+    final report = jsonDecode(await File(
+        'assets/museums/new_museums_report.json').readAsString())
+        as Map<String,dynamic>;
     expect(raw.length, report['record_count']);
     expect(raw.length, greaterThanOrEqualTo(400));
     expect(raw.map((item) => (item as Map)['id']).toSet().length, raw.length);
