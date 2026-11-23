@@ -1,4 +1,5 @@
 import importlib.util
+import json
 import sqlite3
 import tempfile
 import unittest
@@ -8,6 +9,10 @@ MODULE_PATH = Path(__file__).with_name("artdrift_museum_ingest.py")
 spec = importlib.util.spec_from_file_location("artdrift_museum_ingest", MODULE_PATH)
 ing = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(ing)
+merge_spec = importlib.util.spec_from_file_location("artdrift_merge_staging",
+    Path(__file__).with_name("artdrift_merge_staging.py"))
+merge = importlib.util.module_from_spec(merge_spec)
+merge_spec.loader.exec_module(merge)
 
 
 class ImportTests(unittest.TestCase):
@@ -173,6 +178,42 @@ class ImportTests(unittest.TestCase):
         self.assertIsNone(ing.existing_catalog_row({**row, "rights_evidence_url": "https://evil.example/cc0"}))
         self.assertIsNone(ing.existing_catalog_row({**row, "artwork_type_title": "Sculpture"}))
         self.assertIsNone(ing.existing_catalog_row({**row, "is_public_domain": False}))
+
+    def test_bulk_stage_merger_rechecks_policy_dedup_and_conflicts(self):
+        first = ing.record(provider="tate", native_id="2026", museum="Tate",
+                           title="First painting", artist="Paul Cezanne", year="1907",
+                           medium="Oil", metadata_url=ing.TATE_GUIDELINES)
+        second = ing.record(provider="moma", native_id="900", museum="MoMA",
+                            title="Second painting", artist="Henri Matisse", year="1914",
+                            medium="Oil", metadata_url=ing.MOMA_REPO)
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            a, b = root / "first.jsonl", root / "second.jsonl"
+            a.write_text(json.dumps(first) + "\n", encoding="utf-8")
+            b.write_text(json.dumps(second) + "\n" + json.dumps(first) + "\n", encoding="utf-8")
+            records, meta = merge.combine([a, b])
+            self.assertEqual(len(records), 2)
+            self.assertEqual(meta["identical_duplicates_dropped"], 1)
+            self.assertEqual(meta["providers"], {"moma": 1, "tate": 1})
+            out = root / "all.sql"
+            summary = ing.export(records, root / "all.jsonl", out)
+            self.assertEqual(summary["total"], 2)
+            db = sqlite3.connect(":memory:")
+            migration = Path(__file__).resolve().parents[1] / "cloudflare/d1/migrations/0001_museum_ingest.sql"
+            db.executescript(migration.read_text())
+            db.executescript(out.read_text())
+            self.assertEqual(db.execute("SELECT count(*) FROM artdrift_museum_ingest").fetchone()[0], 2)
+            self.assertEqual(db.execute("SELECT count(*) FROM artdrift_publishable_modern_art").fetchone()[0], 0)
+            db.close()
+            b.write_text(json.dumps({**second, "rights_status": "IMAGE_RIGHTS_VERIFIED"}) + "\n", encoding="utf-8")
+            with self.assertRaises(ValueError):
+                merge.combine([a, b])
+            tampered = ing.record(provider="tate", native_id="2026", museum="Tate",
+                                  title="Changed painting", artist="Paul Cezanne",
+                                  year="1907", medium="Oil", metadata_url=ing.TATE_GUIDELINES)
+            b.write_text(json.dumps(tampered) + "\n", encoding="utf-8")
+            with self.assertRaises(ValueError):
+                merge.combine([a, b])
 
     def test_https_policy(self):
         self.assertFalse(ing.safe_https("https://upload.wikimedia.org.evil.com/x", {"upload.wikimedia.org"}))
