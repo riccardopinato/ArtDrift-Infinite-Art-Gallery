@@ -23,6 +23,8 @@ jobs:
         run: python3 -m py_compile scripts/build_museum_thumbnail_pack.py scripts/verify_smk_object_rights.py scripts/audit_museum_rights_and_coverage.py
       - name: Recheck all 500 SMK artwork rights against the official per-object API
         run: python3 scripts/verify_smk_object_rights.py --max-items 500 --workers 2
+      - name: Recover the single verified public-domain NPG object if its original IDS media is unavailable
+        run: python3 scripts/recover_npg_linn_exact_image.py
       - name: Download and compress source-policy-gated thumbnails
         run: python3 scripts/build_museum_thumbnail_pack.py --max-new 1200 --workers 8
       - name: Validate all packed files
@@ -45,7 +47,7 @@ jobs:
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add web/museum_thumbs/ docs/generated/MUSEUM_THUMBNAIL_COVERAGE.json docs/generated/ART_IMAGE_ITEM_RIGHTS_AUDIT.json docs/ART_IMAGE_RIGHTS_AUDIT_2026-11-23.md docs/generated/SMK_OBJECT_RIGHTS_RECHECK.json
+          git add web/museum_thumbs/ docs/generated/MUSEUM_THUMBNAIL_COVERAGE.json docs/generated/ART_IMAGE_ITEM_RIGHTS_AUDIT.json docs/ART_IMAGE_RIGHTS_AUDIT_2026-11-23.md docs/generated/SMK_OBJECT_RIGHTS_RECHECK.json docs/generated/NPG_2007_11_COMMONS_EXCEPTION_EVIDENCE.json
           if ! git diff --cached --quiet; then
             git commit -m "assets(web): CC0 WebP pack [thumbs generated]"
             git push origin "HEAD:${GITHUB_REF_NAME}"
