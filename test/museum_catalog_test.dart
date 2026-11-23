@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:artdrift/models/artwork.dart';
@@ -51,8 +52,17 @@ void main() {
       expect(a.title.trim(), isNotEmpty);
       expect(a.displayedMuseum.trim(),isNotEmpty);
       expect(a.museumNativeId.trim(),isNotEmpty);
-      expect(a.rightsLicense.toLowerCase().contains('cc0') ||
-         a.rightsLicense.toLowerCase().contains('public domain'),isTrue);
+      final permission = a.rightsLicense.toLowerCase();
+      expect(permission.contains('cc0') ||
+         permission.contains('public domain') ||
+         (a.museumSource == 'commons' &&
+          (permission.startsWith('cc by ') ||
+           permission.startsWith('cc by-sa '))), isTrue);
+      if (a.museumSource == 'commons') {
+        expect(a.rightsLicenseUrl,startsWith('https://creativecommons.org/'));
+        expect(a.rightsEvidenceUrl,startsWith('https://commons.wikimedia.org/'));
+        expect(a.publicDomain,a.rightsLicense=='CC0');
+      }
       expect(a.rightsEvidenceUrl, startsWith('https://'));
       final restored=Artwork.fromJson(a.toJson());
       expect(restored.catalogKey,a.catalogKey);
@@ -69,7 +79,12 @@ void main() {
     final all=await c.load();
     expect(originals.length,72);
     expect(all.length, originals.length+more.length);
-    expect(all.length, 4499);
+    final modernMetadata = jsonDecode(
+      await rootBundle.loadString('assets/museums/catalog_modern_1950.json')) as List;
+    expect(modernMetadata.length, greaterThan(0));
+    expect(all.length, 4499 + modernMetadata.length);
+    expect(all.where((a) => a.museumSource == 'commons').length,
+      modernMetadata.length);
     expect(all.where((a) => a.catalogKey == 'smithsonian:6452594389'), isEmpty);
     for (var i=0;i<72;i++) {
       expect(all[i].catalogKey,originals[i].catalogKey);
