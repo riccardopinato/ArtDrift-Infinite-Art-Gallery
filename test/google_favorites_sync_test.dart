@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -23,6 +24,21 @@ class MemoryGateway implements FavoriteCloudGateway {
     for (final change in changes) {
       owned[change.key] = change;
     }
+  }
+}
+
+class BlockedCloudFetch extends MemoryGateway {
+  Completer<void>? gate;
+  Completer<void> entered = Completer<void>();
+
+  @override
+  Future<List<FavoriteCloudRecord>> fetch(String uid) async {
+    final wait = gate;
+    if (wait != null) {
+      if (!entered.isCompleted) entered.complete();
+      await wait.future;
+    }
+    return super.fetch(uid);
   }
 }
 
@@ -161,4 +177,67 @@ void main() {
     expect(await sync.importGuestFavorites(), 0);
     sync.dispose();
   });
+  test('in-flight cloud sync cannot mutate the next account or its queue',
+      () async {
+    final cloud = BlockedCloudFetch();
+    final store = Favorites();
+    await store.load();
+    final sync = FavoriteSyncController(
+      favorites: store, account: ArtDriftAccount.instance, gateway: cloud);
+    await sync.bindAccount('account-A');
+    await sync.synchronize();
+    cloud.gate = Completer<void>();
+    await sync.toggleFavorite(a);
+    await cloud.entered.future;
+
+    // Simulate a Google account switch during an already-running remote
+    // fetch. The coordinator must wait until A's read is settled.
+    final changed = sync.bindAccount('account-B');
+    await Future<void>.delayed(const Duration(milliseconds: 2));
+    expect(sync.switching, true);
+    cloud.gate!.complete();
+    cloud.gate = null;
+    await changed;
+    await sync.synchronize();
+    expect(store.accountId, 'account-B');
+    expect(store.contains(a), false);
+    expect(sync.pendingCount, 0);
+
+    await sync.toggleFavorite(b);
+    await sync.synchronize();
+    expect(cloud.data['account-B']?[a.catalogKey], isNull);
+    expect(cloud.data['account-B']?[b.catalogKey]?.selected, true);
+    await sync.bindAccount('account-A');
+    await sync.synchronize();
+    expect(store.contains(a), true);
+    expect(store.contains(b), false);
+    sync.dispose();
+  });
+
+  test('guest import completes in original account before switching accounts',
+      () async {
+    final cloud = MemoryGateway();
+    final store = Favorites();
+    await store.load();
+    await store.toggle(a);
+    final sync = FavoriteSyncController(
+      favorites: store, account: ArtDriftAccount.instance, gateway: cloud);
+    await sync.bindAccount('account-A');
+    final import = sync.importGuestFavorites();
+    final next = sync.bindAccount('account-B');
+    expect(await import, 1);
+    await next;
+    await sync.synchronize();
+    expect(store.accountId, 'account-B');
+    expect(store.contains(a), false);
+    expect(cloud.data['account-B']?[a.catalogKey], isNull);
+
+    await sync.bindAccount('account-A');
+    await sync.synchronize();
+    expect(store.contains(a), true);
+    await sync.bindAccount(null);
+    expect(store.contains(a), true);
+    sync.dispose();
+  });
+
 }
