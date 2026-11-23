@@ -145,6 +145,35 @@ class ImportTests(unittest.TestCase):
             "SELECT count(*) FROM artdrift_museum_ingest").fetchone()[0], 1)
         conn.close()
 
+    def test_existing_catalog_rights_checked_images(self):
+        row = {
+            "museum_source": "cleveland",
+            "museum_native_id": "12345",
+            "museum_name": "Cleveland Museum of Art",
+            "title": "The painting",
+            "artist_title": "Vincent van Gogh",
+            "date_display": "1889",
+            "artwork_type_title": "Painting",
+            "is_public_domain": True,
+            "rights_license": "CC0",
+            "rights_evidence_url": "https://www.clevelandart.org/open-access",
+            "remote_preview_url": "https://openaccess-cdn.clevelandart.org/1889/preview.jpg",
+            "remote_full_url": "https://openaccess-cdn.clevelandart.org/1889/full.jpg",
+            "remote_museum_url": "https://clevelandart.org/art/12345",
+            "medium_display": "Oil on canvas",
+        }
+        r = ing.existing_catalog_row(row)
+        self.assertIsNotNone(r)
+        self.assertEqual(r["rights_status"], "IMAGE_RIGHTS_VERIFIED")
+        self.assertIn("cleveland", r["source_key"])
+        self.assertIsNone(ing.existing_catalog_row({**row, "rights_license": "CC BY 4.0"}))
+        self.assertIsNone(ing.existing_catalog_row({**row, "rights_license": "Public Domain"}))
+        self.assertIsNone(ing.existing_catalog_row({**row, "artist_title": "Unknown"}))
+        self.assertIsNone(ing.existing_catalog_row({**row, "remote_preview_url": "https://evil.example/p.jpg"}))
+        self.assertIsNone(ing.existing_catalog_row({**row, "rights_evidence_url": "https://evil.example/cc0"}))
+        self.assertIsNone(ing.existing_catalog_row({**row, "artwork_type_title": "Sculpture"}))
+        self.assertIsNone(ing.existing_catalog_row({**row, "is_public_domain": False}))
+
     def test_https_policy(self):
         self.assertFalse(ing.safe_https("https://upload.wikimedia.org.evil.com/x", {"upload.wikimedia.org"}))
         self.assertFalse(ing.safe_https("https://user@upload.wikimedia.org/x", {"upload.wikimedia.org"}))
