@@ -61,3 +61,15 @@ No changes to the Gallery Drift repository or canonical shared Drift Core.
   and negatives are possible, especially in historical narrative scenes.
 - Run the exact image generator and inspect its portrait_policy manifest and
   contact sheet before describing the exact removal count.
+
+## Outcome — exact 2,400-work generated manifest (commit 6566258)
+- 525 likely portrait entries before classification-based rebalance.
+- 157 likely portraits retained, **368 replaced**, equivalent to **70.10% reduction**.
+- 2,400 source-matched WebP image-backed works remain in palette (no download).
+- 2,032 original positions/works remain unaltered; no original catalog,
+  image bytes, D1 record or prior persistent Android canvas preference is deleted.
+- Source image permissions are not commercial certification. Heuristic
+  portrait-screening false negatives/positives are acknowledged.
+- The source analysis is validated in CI and the Flutter test checks the
+  bundled portrait policy. Web preview / APK require a fresh build using
+  the **new** compiled manifest SHA, not the previous 0.3.7 build artifact.

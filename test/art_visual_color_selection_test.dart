@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:artdrift/models/artwork.dart';
 import 'package:artdrift/services/art_visual_color_selection.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:artdrift/services/art_offline_thumbnail_index.dart';
 import 'package:artdrift/services/catalog_service.dart';
 
@@ -31,6 +32,21 @@ void main(){
     expect(ArtVisualColorSelection.selectFromManifest(
       works,manifest(keys),imageBacked:(_)=>false),isEmpty);
   });
+  test('portrait share reduced at least 70 percent in compiled asset',() async {
+    TestWidgetsFlutterBinding.ensureInitialized();
+    final raw=await rootBundle.loadString(
+      ArtVisualColorSelection.assetPath);
+    final manifest=jsonDecode(raw) as Map<String,dynamic>;
+    final policy=manifest['portrait_policy'] as Map<String,dynamic>;
+    final before=policy['portrait_before'] as int;
+    final after=policy['portrait_after'] as int;
+    expect(before,greaterThan(0));
+    expect(after * 10,lessThanOrEqualTo(before * 3));
+    expect(policy['portraits_replaced'],before-after);
+    expect(policy['new_image_files_added'],0);
+    expect(manifest['selected_count'],2400);
+  });
+
   test('actual pinned museum pack yields 1200 fully image-backed works',() async {
     TestWidgetsFlutterBinding.ensureInitialized();
     await ArtOfflineThumbnailIndex.instance.initialize();
