@@ -49,7 +49,10 @@ class MuseumD1Tests(unittest.TestCase):
             db=sqlite3.connect(":memory:")
             db.executescript((FILE.parent.parent/"museum_schema.sql").read_text())
             for shard in sorted((root/"out").glob("museum-*.sql")):
-                db.executescript(shard.read_text())
+                sql=shard.read_text()
+                self.assertNotIn("BEGIN TRANSACTION",sql)
+                self.assertNotIn("COMMIT;",sql)
+                db.executescript(sql)
                 db.executescript(shard.read_text())  # repeatable imports
             self.assertEqual(db.execute("SELECT COUNT(*) FROM museum_works").fetchone()[0],2)
             self.assertEqual(db.execute("SELECT COUNT(*) FROM museum_works_fts WHERE museum_works_fts MATCH 'Modern'").fetchone()[0],1)
