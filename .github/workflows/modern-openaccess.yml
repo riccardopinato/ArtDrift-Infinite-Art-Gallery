@@ -7,6 +7,7 @@ on:
       - 'scripts/test_modern_1950_openaccess.py'
       - 'scripts/probe_modern_1950_api.py'
       - 'scripts/probe_smithsonian_modern.py'
+      - 'scripts/probe_commons_modern.py'
       - '.github/workflows/modern-openaccess.yml'
   workflow_dispatch:
 permissions:
@@ -31,6 +32,8 @@ jobs:
         run: python3 scripts/probe_modern_1950_api.py
       - name: Sample Smithsonian 1950+ CC0 artwork eligibility (read-only)
         run: python3 scripts/probe_smithsonian_modern.py
+      - name: Sample Wikimedia Commons modern image provenance (read-only)
+        run: python3 scripts/probe_commons_modern.py
       - name: Import item-licensed, illustrated modern artworks
         run: python3 scripts/import_modern_1950_openaccess.py
       - name: Audit source provenance, record count and size
