@@ -1,0 +1,57 @@
+name: ArtDrift — import modern Open Access artworks (1950+)
+on:
+  push:
+    branches: ['feat/artdrift-modern-1950-openaccess-20261123']
+    paths:
+      - 'scripts/import_modern_1950_openaccess.py'
+      - 'scripts/test_modern_1950_openaccess.py'
+      - '.github/workflows/modern-openaccess.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: artdrift-modern-1950-data
+  cancel-in-progress: false
+jobs:
+  import:
+    # Metadata is allowed only on this explicit feature branch. This workflow
+    # NEVER modifies the main branch or user-owned favorites.
+    if: github.repository == 'riccardopinato/ArtDrift-Infinite-Art-Gallery' && github.ref == 'refs/heads/feat/artdrift-modern-1950-openaccess-20261123'
+    runs-on: ubuntu-latest
+    timeout-minutes: 22
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Offline parsing, rights and idempotency tests
+        run: python3 -m unittest discover -s scripts -p test_modern_1950_openaccess.py -v
+      - name: Import item-licensed, illustrated modern artworks
+        run: python3 scripts/import_modern_1950_openaccess.py
+      - name: Audit source provenance, record count and size
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          rows=json.loads(Path('assets/museums/catalog_modern_1950.json').read_text())
+          report=json.loads(Path('assets/museums/modern_1950_report.json').read_text())
+          assert rows and len(rows)==report['new_unique_records']
+          assert all(x['is_public_domain'] is True and x['rights_license']=='CC0' for x in rows)
+          assert all(x['creation_year_verified']>=1950 for x in rows)
+          assert all(x['remote_preview_url'].startswith('https://openaccess-cdn.clevelandart.org/') for x in rows)
+          assert len({(x['museum_source'],x['museum_native_id']) for x in rows})==len(rows)
+          assert report['network_image_delivery']=='UNVERIFIED'
+          print('MODERN_CATALOG_DATA_GATE_PASS', len(rows))
+          PY
+      - name: Commit validated catalog to isolated feature branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/museums/catalog_modern_1950.json assets/museums/modern_1950_report.json
+          if git diff --cached --quiet; then
+            echo "MODERN_CATALOG_UNCHANGED"
+          else
+            git commit -m "data(artdrift): add verified modern 1950+ CC0 museum catalog"
+            git push origin HEAD:feat/artdrift-modern-1950-openaccess-20261123
+          fi
