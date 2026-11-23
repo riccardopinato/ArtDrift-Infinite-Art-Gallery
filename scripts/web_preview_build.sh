@@ -19,7 +19,7 @@ flutter pub get
 # variable, keep the guest experience; with only one, FAIL the build.
 dart_defines=()
 if [[ -n "${SUPABASE_URL:-}" || -n "${SUPABASE_PUBLISHABLE_KEY:-}" ]]; then
-  if [[ ! "${SUPABASE_URL:-}" =~ ^https://[a-z0-9-]+\\.supabase\\.co/?$ ]]; then
+  if [[ ! "${SUPABASE_URL:-}" =~ ^https://[a-z0-9-]+[.]supabase[.]co/?$ ]]; then
     echo "::error::SUPABASE_URL is missing or is not an HTTPS Supabase project origin" >&2
     exit 1
   fi
