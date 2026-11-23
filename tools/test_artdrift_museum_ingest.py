@@ -1,4 +1,5 @@
 import importlib.util
+import sqlite3
 import tempfile
 import unittest
 from pathlib import Path
@@ -112,6 +113,37 @@ class ImportTests(unittest.TestCase):
         self.assertIsNone(ing.moma_row({**row, "Classification": "Sculpture"}))
         self.assertIsNone(ing.moma_row({**row, "Artist": "Not famous"}))
         self.assertIsNone(ing.moma_row({**row, "ObjectID": "AB123"}))
+
+    def test_d1_idempotence_and_approval_revocation(self):
+        conn = sqlite3.connect(":memory:")
+        migration = (Path(__file__).resolve().parents[1] /
+                     "cloudflare/d1/migrations/0001_museum_ingest.sql")
+        conn.executescript(migration.read_text(encoding="utf-8"))
+        base = dict(provider="wikidata", native_id="Q2026", museum="Barnes",
+                    title="Landscape", artist="Renoir", year="1901",
+                    medium="Oil", metadata_url="https://www.wikidata.org/wiki/Q2026",
+                    image_url="https://upload.wikimedia.org/p.jpg",
+                    full_image_url="https://upload.wikimedia.org/p.jpg",
+                    rights_license="CC0 1.0",
+                    rights_evidence_url="https://commons.wikimedia.org/wiki/File:P.jpg",
+                    rights_status="IMAGE_RIGHTS_VERIFIED")
+        first = ing.record(**base)
+        conn.executescript(ing.sql_upsert(first))
+        self.assertEqual(conn.execute(
+            "SELECT count(*) FROM artdrift_publishable_modern_art").fetchone()[0], 0)
+        conn.execute("UPDATE artdrift_museum_ingest SET publication_status = 'APPROVED'")
+        conn.executescript(ing.sql_upsert(first))
+        self.assertEqual(conn.execute(
+            "SELECT count(*) FROM artdrift_publishable_modern_art").fetchone()[0], 1)
+        updated = ing.record(**{**base, "title": "Updated landscape"})
+        conn.executescript(ing.sql_upsert(updated))
+        self.assertEqual(conn.execute(
+            "SELECT publication_status FROM artdrift_museum_ingest").fetchone()[0], "HOLD")
+        self.assertEqual(conn.execute(
+            "SELECT count(*) FROM artdrift_publishable_modern_art").fetchone()[0], 0)
+        self.assertEqual(conn.execute(
+            "SELECT count(*) FROM artdrift_museum_ingest").fetchone()[0], 1)
+        conn.close()
 
     def test_https_policy(self):
         self.assertFalse(ing.safe_https("https://upload.wikimedia.org.evil.com/x", {"upload.wikimedia.org"}))
