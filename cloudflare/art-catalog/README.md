@@ -37,6 +37,29 @@ The GitHub Action prepares the same temporary SQL shards as an INTERNAL
 review artifact. It does not issue Cloudflare requests and never builds MoMA
 SQL from the full source.
 
+## Cloudflare target registered (23 November 2026)
+
+The Cloudflare D1 console URL supplied by the owner contains the database UUID
+`4e7cb3bf-bf3c-480d-9789-93072e70274c`; this exact ID is now pinned
+in `wrangler.jsonc` with the pre-existing expected database name
+`artdrift-moma-cc0`. **The URL itself is not authenticated API access:**
+name, account ownership, schema, table contents and environment are not yet
+independently verified. Before touching remote D1, inspect the dashboard and
+confirm that the displayed database name matches the Wrangler configuration.
+
+Safe read-only D1 Console inspection:
+
+```sql
+SELECT type, name FROM sqlite_master
+WHERE type IN ('table','view')
+ORDER BY type, name;
+```
+
+If tables exist, review whether `works`, `museum_works` and their FTS
+indexes contain data before planning migrations. **Do not run an import or
+`wrangler deploy` based on the URL alone.** No account ID, API token or
+Cloudflare secret is stored in this repository.
+
 ## Controlled activation — explicit owner approval required
 
 Verify the real Cloudflare account, D1 database ID and prior migrations.
