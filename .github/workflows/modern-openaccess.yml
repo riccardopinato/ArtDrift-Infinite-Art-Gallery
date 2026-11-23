@@ -32,12 +32,6 @@ jobs:
         run: |
           python3 -m unittest discover -s scripts -p test_modern_1950_openaccess.py -v
           python3 -m unittest discover -s scripts -p test_modern_commons.py -v
-      - name: Sample official API date/right filters (read-only)
-        run: python3 scripts/probe_modern_1950_api.py
-      - name: Sample Smithsonian 1950+ CC0 artwork eligibility (read-only)
-        run: python3 scripts/probe_smithsonian_modern.py
-      - name: Sample Wikimedia Commons modern image provenance (read-only)
-        run: python3 scripts/probe_commons_modern.py
       - name: Import independently authored and commercially licensed modern paintings
         run: python3 scripts/import_modern_commons.py
       - name: Audit source provenance, record count and size
