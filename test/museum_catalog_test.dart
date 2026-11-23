@@ -82,7 +82,10 @@ void main() {
     final modernMetadata = jsonDecode(
       await rootBundle.loadString('assets/museums/catalog_modern_1950.json')) as List;
     expect(modernMetadata.length, greaterThan(0));
-    expect(all.length, 4499 + modernMetadata.length);
+    final newMuseumMetadata = jsonDecode(
+      await rootBundle.loadString('assets/museums/catalog_new_museums.json')) as List;
+    expect(newMuseumMetadata.length, greaterThan(0));
+    expect(all.length, 4499 + modernMetadata.length + newMuseumMetadata.length);
     expect(all.where((a) => a.museumSource == 'commons').length,
       modernMetadata.length);
     expect(all.where((a) => a.catalogKey == 'smithsonian:6452594389'), isEmpty);
