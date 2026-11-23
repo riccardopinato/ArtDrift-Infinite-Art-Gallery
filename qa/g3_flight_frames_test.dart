@@ -133,10 +133,29 @@ void main() {
       home: Scaffold(body: IllustrativeCanvas())));
     await tester.pumpAndSettle();
 
-    // Capture phase 0 last so initial WebP decode/warmup has finished.
-    // This changes the evidence harness, NOT the runtime animation order.
+    // Warm the actual flight subtree once without taking a golden. The first
+    // captured phase otherwise shows deferred WebP loading, regardless of
+    // which animation percentage is first.
+    await tester.pumpWidget(MaterialApp(
+      theme: ThemeData.dark().copyWith(
+        scaffoldBackgroundColor: const Color(0xFF111219)),
+      home: Scaffold(body: Stack(fit: StackFit.expand, children: [
+        const IllustrativeCanvas(),
+        TileOriginFlight(
+          animation: const AlwaysStoppedAnimation<double>(.33),
+          originRect: const Rect.fromLTWH(43, 220, 112, 132),
+          originArtwork: artwork,
+          originalArtworkKey: artwork.catalogKey,
+          currentArtworkKey: identity,
+          child: const MuseumBackground(),
+        ),
+      ])),
+    ));
+    await tester.pumpAndSettle();
+
+    // Captures are still labelled by animation progress, not by test order.
     for (final phase in const [
-      (.25, '25'), (.5, '50'), (.75, '75'), (1.0, '100'), (0.0, '00'),
+      (0.0, '00'), (.25, '25'), (.5, '50'), (.75, '75'), (1.0, '100'),
     ]) {
       await tester.pumpWidget(MaterialApp(
         theme: ThemeData.dark().copyWith(
