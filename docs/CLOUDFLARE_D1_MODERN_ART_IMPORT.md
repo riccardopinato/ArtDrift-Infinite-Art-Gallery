@@ -95,8 +95,8 @@ Provenienza codice: **NEW_IMPLEMENTATION** (nessun codice proprietario di musei 
 Acquisizione reale GitHub Actions (non dato teorico):
 - Tate: **233** metadati pittorici, senza immagini.
 - MoMA: **253** metadati pittorici, senza immagini (CSV Git LFS ~73 MB).
-- Catalogo Open Access *già presente nell'app*: **65** URL di immagini CC0 accettati da policy tecnica, ancora in `HOLD` editoriale.
-- Combinazione prevista: **551** record distinti per `source_key`; il merge effettivo va confermato sul workflow corrente. Le 65 opere non sono necessariamente nuove per l'app.
+- Catalogo Open Access *già presente nell'app*: **65** URL accettati dalla prima policy tecnica. Una successiva **regola UE life+70** scarta anche le immagini senza una data di morte verificabile dal campo autore: il conteggio finale aggiornato va letto nel job `preview_verified`.
+- Combinazione inizialmente prevista: **551** record, soggetta alla riduzione per il nuovo gate UE. Il numero corretto e la deduplica sono quelli del job `merge_staged` sul commit corrente. Le opere riutilizzate non sono nuove per l'app.
 - Wikidata Query Service ha restituito **HTTP 429 durante incidente (1 req/min)**: il workflow non avvia automaticamente ricerche Wikidata parallele.
 
 Il job `merge_staged` scarica gli artefatti dei tre job di **uno stesso run**, ricontrolla fingerprint, provenienza e diritti con `tools/artdrift_merge_staging.py`, elimina duplicati identici e rifiuta conflitti. Applica il file SQL in SQLite in memoria **due volte** per controllare idempotenza e verifica che la view pubblicabile rimanga vuota.
@@ -113,3 +113,9 @@ Esecuzione offline su artefatti scaricati:
 ### Configurazione Cloudflare non dimostrata
 
 Il repo non contiene un binding/configurazione D1 di produzione verificabile, e i secret GitHub non sono ispezionabili da questa pipeline. Nessuna esecuzione di staging locale garantisce l'esistenza del database remoto o il corretto binding di Wrangler. `upload_remote` resta **false** per default; prima di attivarlo vanno verificati ID del database, autorizzazioni API, migrazione e limiti D1. Non configurare approvazione `APPROVED` tramite import generico.
+
+### Regola aggiuntiva per copyright dell'opera (EU/Italia, novembre 2026)
+
+La dichiarazione `CC0` della fotografia **non** è da sola una prova di scadenza del diritto d'autore del pittore. Dal 2026, nella corsia `verified` sono eleggibili immagini soltanto quando il campo `artist_title` dell'ente riporta date di nascita–morte e ogni autore identificato è morto **non oltre il 1955**. In assenza di data oppure per autori più recenti, il record non entra tra gli URL candidati; i metadati MoMA/Tate rimangono disponibili separatamente. Il controllo non sostituisce la revisione giuridica di opere e fotografie.
+
+Base normativa: Direttiva 2006/116/CE, durata `vita + 70 anni`: https://eur-lex.europa.eu/eli/dir/2006/116/oj/eng .
