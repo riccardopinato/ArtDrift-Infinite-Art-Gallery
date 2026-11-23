@@ -13,11 +13,12 @@ import '../ui/museum_wood_frame.dart';
 class ArtworkDetail extends StatefulWidget {
   const ArtworkDetail({super.key, required this.artworks,
     required this.initialIndex, required this.isFavorite,
-    required this.onToggleFavorite});
+    required this.onToggleFavorite, this.onArtworkChanged});
   final List<Artwork> artworks;
   final int initialIndex;
   final bool Function(Artwork) isFavorite;
   final Future<void> Function(Artwork) onToggleFavorite;
+  final ValueChanged<Artwork>? onArtworkChanged;
 
   @override
   State<ArtworkDetail> createState() => _ArtworkDetailState();
@@ -36,10 +37,14 @@ class _ArtworkDetailState extends State<ArtworkDetail> {
   }
 
   Artwork get art => widget.artworks[_index];
-  void _next(int direction) => setState(() {
-    _index = (_index + direction + widget.artworks.length) % widget.artworks.length;
-    _captionExpanded = false;
-  });
+  void _next(int direction) {
+    setState(() {
+      _index = (_index + direction + widget.artworks.length) %
+          widget.artworks.length;
+      _captionExpanded = false;
+    });
+    widget.onArtworkChanged?.call(art);
+  }
 
   Future<void> _setWallpaper() async {
     final selection = await showModalBottomSheet<String>(

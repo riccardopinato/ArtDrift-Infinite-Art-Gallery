@@ -8,6 +8,7 @@ import 'screens/favorites_sheet.dart';
 import 'ui/gallery_toolbar.dart';
 import 'ui/localization.dart';
 import 'ui/museum_portal.dart';
+import 'ui/tile_origin_flight.dart';
 import 'models/artwork.dart';
 import 'screens/artwork_detail.dart';
 import 'screens/collection_canvas.dart';
@@ -137,21 +138,35 @@ class _GalleryHomeState extends State<GalleryHome> {
     ));
   }
 
-  void _openArtworkInGroup(Artwork artwork, List<Artwork> artworks) {
+  void _openArtworkInGroup(Artwork artwork, List<Artwork> artworks, {Rect? tileRect}) {
     final index = artworks.indexWhere((a) => a.catalogKey == artwork.catalogKey);
     final group = index < 0 ? <Artwork>[artwork] : artworks;
     final start = index < 0 ? 0 : index;
-    Navigator.of(context).push(PageRouteBuilder<void>(
+    final displayIdentity = ValueNotifier<String>(artwork.catalogKey);
+    final route = PageRouteBuilder<void>(
       pageBuilder: (context, animation, secondaryAnimation) => ArtworkDetail(
         artworks: group,
         initialIndex: start,
         isFavorite: _favorites.contains,
         onToggleFavorite: _toggleFavorite,
+        onArtworkChanged: (next) => displayIdentity.value = next.catalogKey,
       ),
       transitionsBuilder: (context, animation, secondaryAnimation, child) =>
-        FadeTransition(opacity: animation, child: child),
-      transitionDuration: const Duration(milliseconds: 200),
-    ));
+        tileRect == null
+          ? FadeTransition(opacity: animation, child: child)
+          : TileOriginFlight(
+              animation: animation,
+              originRect: tileRect,
+              originalArtworkKey: artwork.catalogKey,
+              currentArtworkKey: displayIdentity,
+              child: child),
+      transitionDuration: MediaQuery.disableAnimationsOf(context)
+          ? Duration.zero : const Duration(milliseconds: 330),
+      reverseTransitionDuration: MediaQuery.disableAnimationsOf(context)
+          ? Duration.zero : const Duration(milliseconds: 300),
+    );
+    Navigator.of(context).push(route);
+    route.completed.then((_) => displayIdentity.dispose());
   }
 
   @override
@@ -173,6 +188,8 @@ class _GalleryHomeState extends State<GalleryHome> {
             'ARTDRIFT_VISUAL_HOME_DEFAULT', defaultValue: false)
             ? 'artdrift.preview.colorhome.camera' : 'artdrift.camera',
         onOpen: _open,
+        onOpenAtRect: (art, rect) =>
+            _openArtworkInGroup(art, _artworks, tileRect: rect),
         onToggleFavorite: _toggleFavorite,
         isFavorite: _favorites.contains,
         onImmersiveChanged: (value) {
