@@ -92,6 +92,8 @@ jobs:
         with:
           name: tate-modern-metadata-stage-${{ github.run_id }}
           path: .artdrift_ingest/
+          include-hidden-files: true
+          if-no-files-found: error
           retention-days: 14
 
   acquire:
@@ -116,6 +118,8 @@ jobs:
         with:
           name: artdrift-d1-staging-${{ github.run_id }}
           path: .artdrift_ingest/
+          include-hidden-files: true
+          if-no-files-found: error
           retention-days: 14
       - name: Setup Node for authorized remote upload
         if: inputs.upload_remote == true
