@@ -24,6 +24,7 @@ on:
         options:
           - tate
           - moma
+          - verified
           - wikidata
       museum:
         description: 'Optional museum Wikidata QID; empty = all configured museums'
@@ -135,6 +136,37 @@ jobs:
   # Wikidata Query Service imposes emergency 1 req/min throttling:
   # museum queries are deliberately manual through workflow_dispatch.
   # Do not run competing automated museum jobs during service incidents.
+
+  preview_verified:
+    if: github.event_name == 'push'
+    needs: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Stage only famous painters with CC0 images from existing approved museum catalog
+        run: |
+          python tools/artdrift_museum_ingest.py --source verified --max-records 5000
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          lines=Path(".artdrift_ingest/modern_art.jsonl").read_text().splitlines()
+          rows=[json.loads(x) for x in lines]
+          assert rows and all(row["rights_status"] == "IMAGE_RIGHTS_VERIFIED" for row in rows)
+          assert all(row["image_url"].startswith("https://") for row in rows)
+          print("MODERN_CC0_IMAGE_CANDIDATES", len(rows))
+          PY
+      - name: Publish verified image URL candidates for rights re-review
+        uses: actions/upload-artifact@v4
+        with:
+          name: artdrift-existing-modern-cc0-images-${{ github.run_id }}
+          path: .artdrift_ingest/
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 14
 
   acquire:
     if: github.event_name == 'workflow_dispatch'
