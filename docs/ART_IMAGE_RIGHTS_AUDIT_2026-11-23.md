@@ -4,13 +4,13 @@
 `commercial_release_cleared=false` pending image-specific rights review.
 
 - Global catalog records: **4043**
-- Actual manifest entries: **4035**
-- Missing real image assets: **8**
-- Missing from source-policy-eligible providers: **8**
+- Actual manifest entries: **4042**
+- Missing real image assets: **1**
+- Missing from source-policy-eligible providers: **1**
 - Missing behind source/image-rights HOLD: **0**
 - Already packaged requiring image-specific rights review: **0**
 - Manifest image bytes invalid: **0**
-- Valid but very thin previews needing visual review: **27**
+- Valid but very thin previews needing visual review: **33**
 
 ## Per-object evidence
 

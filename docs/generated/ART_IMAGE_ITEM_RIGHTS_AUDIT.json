@@ -6564,15 +6564,20 @@
     },
     {
       "asset": {
-        "state": "ABSENT"
+        "height": 27,
+        "sha256": "41dc77f12d2e0b40ee70da7567360681224bbcdcbfffbdfc0a80265af2eea818",
+        "size_bytes": 648,
+        "state": "VERIFIED_BYTES",
+        "visual_review": "VERY_THIN_ASPECT_OR_SMALL_PREVIEW",
+        "width": 135
       },
       "commercial_release_cleared": false,
-      "in_thumbnail_manifest": false,
+      "in_thumbnail_manifest": true,
       "key": "cleveland:20131672",
       "museum_native_id": "131672",
       "official_image_url": "https://openaccess-cdn.clevelandart.org/1954.262/1954.262_web.jpg",
       "provider_policy_gate": true,
-      "review_verdict": "SOURCE_POLICY_ELIGIBLE_IMAGE_MISSING",
+      "review_verdict": "SOURCE_POLICY_SCREENED_NOT_LEGALLY_CERTIFIED",
       "rights_evidence_url": "https://www.clevelandart.org/open-access",
       "rights_license_declared": "CC0",
       "source": "cleveland",
@@ -6681,15 +6686,20 @@
     },
     {
       "asset": {
-        "state": "ABSENT"
+        "height": 29,
+        "sha256": "aaeda421d8e6233cf651ba7c47fd4e1ba77d3237dfb89446852810b175f639c8",
+        "size_bytes": 694,
+        "state": "VERIFIED_BYTES",
+        "visual_review": "VERY_THIN_ASPECT_OR_SMALL_PREVIEW",
+        "width": 145
       },
       "commercial_release_cleared": false,
-      "in_thumbnail_manifest": false,
+      "in_thumbnail_manifest": true,
       "key": "cleveland:20132308",
       "museum_native_id": "132308",
       "official_image_url": "https://openaccess-cdn.clevelandart.org/1954.791/1954.791_web.jpg",
       "provider_policy_gate": true,
-      "review_verdict": "SOURCE_POLICY_ELIGIBLE_IMAGE_MISSING",
+      "review_verdict": "SOURCE_POLICY_SCREENED_NOT_LEGALLY_CERTIFIED",
       "rights_evidence_url": "https://www.clevelandart.org/open-access",
       "rights_license_declared": "CC0",
       "source": "cleveland",
@@ -7081,15 +7091,20 @@
     },
     {
       "asset": {
-        "state": "ABSENT"
+        "height": 21,
+        "sha256": "7a323060ca8a7406077dab34d8150f1e3afb78d2463531d99252d3a787b34747",
+        "size_bytes": 376,
+        "state": "VERIFIED_BYTES",
+        "visual_review": "VERY_THIN_ASPECT_OR_SMALL_PREVIEW",
+        "width": 105
       },
       "commercial_release_cleared": false,
-      "in_thumbnail_manifest": false,
+      "in_thumbnail_manifest": true,
       "key": "cleveland:20134430",
       "museum_native_id": "134430",
       "official_image_url": "https://openaccess-cdn.clevelandart.org/1956.87/1956.87_web.jpg",
       "provider_policy_gate": true,
-      "review_verdict": "SOURCE_POLICY_ELIGIBLE_IMAGE_MISSING",
+      "review_verdict": "SOURCE_POLICY_SCREENED_NOT_LEGALLY_CERTIFIED",
       "rights_evidence_url": "https://www.clevelandart.org/open-access",
       "rights_license_declared": "CC0",
       "source": "cleveland",
@@ -14327,15 +14342,20 @@
     },
     {
       "asset": {
-        "state": "ABSENT"
+        "height": 24,
+        "sha256": "30b8a9e378c24f51c386c565b5109181957a174c0bfb39ff882d32a79591a51a",
+        "size_bytes": 522,
+        "state": "VERIFIED_BYTES",
+        "visual_review": "VERY_THIN_ASPECT_OR_SMALL_PREVIEW",
+        "width": 120
       },
       "commercial_release_cleared": false,
-      "in_thumbnail_manifest": false,
+      "in_thumbnail_manifest": true,
       "key": "cleveland:20145409",
       "museum_native_id": "145409",
       "official_image_url": "https://openaccess-cdn.clevelandart.org/1970.64/1970.64_web.jpg",
       "provider_policy_gate": true,
-      "review_verdict": "SOURCE_POLICY_ELIGIBLE_IMAGE_MISSING",
+      "review_verdict": "SOURCE_POLICY_SCREENED_NOT_LEGALLY_CERTIFIED",
       "rights_evidence_url": "https://www.clevelandart.org/open-access",
       "rights_license_declared": "CC0",
       "source": "cleveland",
@@ -17367,15 +17387,20 @@
     },
     {
       "asset": {
-        "state": "ABSENT"
+        "height": 21,
+        "sha256": "c0f7a8d6cb9d76102fa2246697d2d1066884c2dea07e1c22d3ea20ee13f68e87",
+        "size_bytes": 266,
+        "state": "VERIFIED_BYTES",
+        "visual_review": "VERY_THIN_ASPECT_OR_SMALL_PREVIEW",
+        "width": 105
       },
       "commercial_release_cleared": false,
-      "in_thumbnail_manifest": false,
+      "in_thumbnail_manifest": true,
       "key": "cleveland:20149414",
       "museum_native_id": "149414",
       "official_image_url": "https://openaccess-cdn.clevelandart.org/1978.67/1978.67_web.jpg",
       "provider_policy_gate": true,
-      "review_verdict": "SOURCE_POLICY_ELIGIBLE_IMAGE_MISSING",
+      "review_verdict": "SOURCE_POLICY_SCREENED_NOT_LEGALLY_CERTIFIED",
       "rights_evidence_url": "https://www.clevelandart.org/open-access",
       "rights_license_declared": "CC0",
       "source": "cleveland",
@@ -23167,15 +23192,20 @@
     },
     {
       "asset": {
-        "state": "ABSENT"
+        "height": 27,
+        "sha256": "ccb33e27f3d8d46b0c74977fd489a8ecbdf08f0389877a2f0d2ad9ce93a2644f",
+        "size_bytes": 414,
+        "state": "VERIFIED_BYTES",
+        "visual_review": "VERY_THIN_ASPECT_OR_SMALL_PREVIEW",
+        "width": 135
       },
       "commercial_release_cleared": false,
-      "in_thumbnail_manifest": false,
+      "in_thumbnail_manifest": true,
       "key": "cleveland:20156976",
       "museum_native_id": "156976",
       "official_image_url": "https://openaccess-cdn.clevelandart.org/1993.132/1993.132_web.jpg",
       "provider_policy_gate": true,
-      "review_verdict": "SOURCE_POLICY_ELIGIBLE_IMAGE_MISSING",
+      "review_verdict": "SOURCE_POLICY_SCREENED_NOT_LEGALLY_CERTIFIED",
       "rights_evidence_url": "https://www.clevelandart.org/open-access",
       "rights_license_declared": "CC0",
       "source": "cleveland",
@@ -79961,15 +79991,19 @@
     },
     {
       "asset": {
-        "state": "ABSENT"
+        "height": 176,
+        "sha256": "1dc623c4678a19983325159197c962ab7a3646f10ac9d1fcb9a0712ce051e9f2",
+        "size_bytes": 2884,
+        "state": "VERIFIED_BYTES",
+        "width": 256
       },
       "commercial_release_cleared": false,
-      "in_thumbnail_manifest": false,
+      "in_thumbnail_manifest": true,
       "key": "smk:7777279704",
       "museum_native_id": "KMS1350",
       "official_image_url": "https://iip.smk.dk/iiif/jp2/j098zf05g_kms1350.tif.reconstructed.tif.jp2/full/300,/0/default.jpg",
       "provider_policy_gate": true,
-      "review_verdict": "SOURCE_POLICY_ELIGIBLE_IMAGE_MISSING",
+      "review_verdict": "SOURCE_POLICY_SCREENED_NOT_LEGALLY_CERTIFIED",
       "rights_evidence_url": "https://creativecommons.org/publicdomain/mark/1.0/",
       "rights_license_declared": "Public Domain Mark",
       "source": "smk",
@@ -80859,8 +80893,7 @@
   "summary": {
     "by_source": {
       "cleveland": {
-        "SOURCE_POLICY_ELIGIBLE_IMAGE_MISSING": 6,
-        "SOURCE_POLICY_SCREENED_NOT_LEGALLY_CERTIFIED": 1578
+        "SOURCE_POLICY_SCREENED_NOT_LEGALLY_CERTIFIED": 1584
       },
       "met": {
         "SOURCE_POLICY_SCREENED_NOT_LEGALLY_CERTIFIED": 135
@@ -80876,25 +80909,24 @@
         "SOURCE_POLICY_SCREENED_NOT_LEGALLY_CERTIFIED": 924
       },
       "smk": {
-        "SOURCE_POLICY_ELIGIBLE_IMAGE_MISSING": 1,
-        "SOURCE_POLICY_SCREENED_NOT_LEGALLY_CERTIFIED": 499
+        "SOURCE_POLICY_SCREENED_NOT_LEGALLY_CERTIFIED": 500
       }
     },
     "catalog_total": 4043,
     "invalid_packaged": 0,
     "legally_certified_images": 0,
-    "manifest_global_sha256": "4bb3dd2bf483b1065e43e4b6c3c8e5cadd68dde945d8c96a89647dfa9b557a41",
-    "manifest_total": 4035,
+    "manifest_global_sha256": "9635b58e2bde541e02bc4b74519cbdfbc344c244259288af1fb553a272ea25b0",
+    "manifest_total": 4042,
     "method": "Local file integrity, exact museum ID, catalog licence metadata, and provider policy host gate. No live object-specific copyright adjudication.",
-    "missing_total": 8,
+    "missing_total": 1,
     "packaged_policy_hold": 0,
-    "packaged_very_thin_visual_review": 27,
-    "policy_eligible_missing": 8,
+    "packaged_very_thin_visual_review": 33,
+    "policy_eligible_missing": 1,
     "policy_hold_missing": 0,
     "schema_version": 1,
     "verdicts": {
-      "SOURCE_POLICY_ELIGIBLE_IMAGE_MISSING": 8,
-      "SOURCE_POLICY_SCREENED_NOT_LEGALLY_CERTIFIED": 4035
+      "SOURCE_POLICY_ELIGIBLE_IMAGE_MISSING": 1,
+      "SOURCE_POLICY_SCREENED_NOT_LEGALLY_CERTIFIED": 4042
     }
   }
 }
