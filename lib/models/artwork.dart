@@ -218,6 +218,84 @@ class Artwork {
   }
 
   static String _str(Object? value) => value is String ? value.trim() : '';
+
+  /// Commons' ObjectName occasionally includes Wikidata/QuickStatements
+  /// bookkeeping, which is not part of the painting's displayed title.
+  static String _catalogTitle(Map<String, dynamic> record) {
+    final raw = _str(record['title']);
+    if (record['museum_source'] != 'commons') return raw;
+    return raw
+        .replaceFirst(RegExp(r'\s+label QS:.*
+  static int? _int(Object? value) => value is num ? value.toInt() : null;
+
+  factory Artwork.fromJson(Map<String, dynamic> json) {
+    final thumb = json['thumbnail'];
+    final image = thumb is Map ? thumb : const {};
+    return Artwork(
+      id: _int(json['id']) ?? 0,
+      title: _catalogTitle(json).isEmpty ? 'Senza titolo' : _catalogTitle(json),
+      artist: _str(json['artist_title']).isNotEmpty
+          ? _str(json['artist_title']) : _str(json['artist_display']),
+      date: _str(json['date_display']),
+      imageId: _str(json['image_id']),
+      publicDomain: json['is_public_domain'] == true,
+      medium: _str(json['medium_display']),
+      origin: _str(json['place_of_origin']),
+      creditLine: _str(json['credit_line']),
+      artworkType: _str(json['artwork_type_title']),
+      imageWidth: _int(image['width']),
+      imageHeight: _int(image['height']),
+      bootstrapAsset: _str(json['bootstrap_asset']),
+      museumSource: _str(json['museum_source']).isEmpty ? 'aic' : _str(json['museum_source']),
+      remotePreviewUrl: _str(json['remote_preview_url']),
+      remoteFullUrl: _str(json['remote_full_url']),
+      museumName: _str(json['museum_name']),
+      museumNativeId: _str(json['museum_native_id']),
+      rightsLicense: _str(json['rights_license']),
+      rightsEvidenceUrl: _str(json['rights_evidence_url']),
+      rightsLicenseUrl: _str(json['rights_license_url']),
+      dimensions: _str(json['dimensions_display']),
+      technique: _str(json['technique_display']),
+      remoteMuseumUrl: _str(json['remote_museum_url']),
+      subjectTerms: (json['subject_terms'] is List)
+          ? (json['subject_terms'] as List).whereType<String>().take(32).toList(growable: false)
+          : const [],
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'title': title,
+        'artist_title': artist,
+        'date_display': date,
+        'image_id': imageId,
+        'is_public_domain': publicDomain,
+        'medium_display': medium,
+        'place_of_origin': origin,
+        'credit_line': creditLine,
+        'artwork_type_title': artworkType,
+        'thumbnail': {'width': imageWidth, 'height': imageHeight},
+        if (hasBundledPreview) 'bootstrap_asset': bootstrapAsset,
+        if (museumSource != 'aic') 'museum_source': museumSource,
+        if (remotePreviewUrl.isNotEmpty) 'remote_preview_url': remotePreviewUrl,
+        if (remoteMuseumUrl.isNotEmpty) 'remote_museum_url': remoteMuseumUrl,
+        if (subjectTerms.isNotEmpty) 'subject_terms': subjectTerms,
+        if (remoteFullUrl.isNotEmpty) 'remote_full_url': remoteFullUrl,
+        if (museumName.isNotEmpty) 'museum_name': museumName,
+        if (museumNativeId.isNotEmpty) 'museum_native_id': museumNativeId,
+        if (rightsLicense.isNotEmpty) 'rights_license': rightsLicense,
+        if (rightsEvidenceUrl.isNotEmpty) 'rights_evidence_url': rightsEvidenceUrl,
+        if (rightsLicenseUrl.isNotEmpty) 'rights_license_url': rightsLicenseUrl,
+        if (dimensions.isNotEmpty) 'dimensions_display': dimensions,
+        if (technique.isNotEmpty) 'technique_display': technique,
+      };
+}
+, caseSensitive: false), '')
+        .replaceFirst(RegExp(
+          r'^(?:English|German|French|Spanish|Italian):\s*',
+          caseSensitive: false), '')
+        .trim();
+  }
   static int? _int(Object? value) => value is num ? value.toInt() : null;
 
   factory Artwork.fromJson(Map<String, dynamic> json) {
