@@ -150,6 +150,20 @@ def download(row):
           UnidentifiedImageError,Image.DecompressionBombError):
    return key(row),"network_or_decode_failure",source
 
+def download_with_retry(row):
+ """Bounded second/third chance for transient network and image decode errors.
+
+ Keep official-source checks, file integrity and per-host rate limits exactly
+ as in download(). No changed artwork, host, or license is accepted on retry.
+ """
+ result=download(row)
+ if result[1]!="network_or_decode_failure":return result
+ for attempt in (2,3):
+  time.sleep(0.65*attempt)
+  result=download(row)
+  if result[1]!="network_or_decode_failure":break
+ return result
+
 def main():
  ap=argparse.ArgumentParser()
  ap.add_argument("--max-new",type=int,default=1200)
@@ -166,7 +180,7 @@ def main():
  selected=[x for x in missing if eligible_new_download(x)][:args.max_new]
  ROOT.mkdir(parents=True,exist_ok=True)
  with concurrent.futures.ThreadPoolExecutor(max_workers=args.workers) as pool:
-  results=list(pool.map(download,selected))
+  results=list(pool.map(download_with_retry,selected))
  packed=sorted(k for k,x in candidates.items() if location(x).is_file()
                and 250<=location(x).stat().st_size<=24000)
  manifest={"schema_version":1,"keys":packed}
