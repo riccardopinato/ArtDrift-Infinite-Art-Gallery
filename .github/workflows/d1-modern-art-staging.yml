@@ -65,6 +65,35 @@ jobs:
           print("SCHEMA_OK")
           PY
 
+  preview_tate:
+    if: github.event_name == 'push'
+    needs: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Acquire 200 Tate metadata-only modern paintings (NO Cloudflare writes)
+        run: |
+          python tools/artdrift_museum_ingest.py --source tate --max-records 200
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path(".artdrift_ingest/modern_art.jsonl")
+          records=[json.loads(line) for line in p.read_text().splitlines()]
+          assert records and all(r["rights_status"] == "METADATA_ONLY" for r in records)
+          assert all(not r["image_url"] and not r["full_image_url"] for r in records)
+          print("TATE_SOURCE_STAGE_OK", len(records))
+          PY
+      - name: Publish traceable stage files (not image bytes)
+        uses: actions/upload-artifact@v4
+        with:
+          name: tate-modern-metadata-stage-${{ github.run_id }}
+          path: .artdrift_ingest/
+          retention-days: 14
+
   acquire:
     if: github.event_name == 'workflow_dispatch'
     needs: validate
