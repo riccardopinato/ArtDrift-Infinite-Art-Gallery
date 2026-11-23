@@ -166,6 +166,10 @@ class FavoriteSyncController extends ChangeNotifier
     if (nextId == _userId && !switching) return;
     switching = true;
     _poll?.cancel();
+    // Hide the previous account immediately, even if its network request
+    // hangs. Identity UI must never display another user's cached favorites.
+    favorites.keys.clear();
+    _announce();
     // A previous network round must settle before we replace the account
     // queue/cache. Otherwise it can write the NEW user's queue under the
     // OLD user's storage key (and leak pending favorites across accounts).
