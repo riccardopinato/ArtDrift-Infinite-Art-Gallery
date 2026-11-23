@@ -16,6 +16,7 @@ class MuseumCatalog {
       'assets/museums/catalog.json',
       'assets/museums/catalog_global.json',
       'assets/museums/catalog_modern_1950.json',
+      'assets/museums/catalog_new_museums.json',
     ]) {
       final isPreviewPack = file.endsWith('/catalog.json');
       try {
