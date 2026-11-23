@@ -124,6 +124,11 @@ class FavoriteSyncController extends ChangeNotifier
   bool guestImportAvailable = false;
   bool guestImported = false;
   String? lastError;
+  bool _disposed = false;
+
+  void _announce() {
+    if (!_disposed) notifyListeners();
+  }
 
   String? get userId => _userId;
   int get pendingCount => _pending.length;
@@ -161,9 +166,20 @@ class FavoriteSyncController extends ChangeNotifier
     if (nextId == _userId && !switching) return;
     switching = true;
     _poll?.cancel();
+    // A previous network round must settle before we replace the account
+    // queue/cache. Otherwise it can write the NEW user's queue under the
+    // OLD user's storage key (and leak pending favorites across accounts).
+    final oldRound = _inFlight;
+    if (oldRound != null) {
+      try {
+        await oldRound;
+      } catch (_) {
+        // An offline round may fail; retain its durable per-user queue.
+      }
+    }
     // Do not reveal the previous account's works during the transition.
     favorites.keys.clear();
-    notifyListeners();
+    _announce();
     try {
       _userId = nextId;
       hasSynced = false;
@@ -204,7 +220,7 @@ class FavoriteSyncController extends ChangeNotifier
       }
     } finally {
       switching = false;
-      notifyListeners();
+      _announce();
     }
     if (nextId != null && lastError == null) {
       unawaited(synchronize());
@@ -221,7 +237,7 @@ class FavoriteSyncController extends ChangeNotifier
     // Durability before attempting network writes. Never clear a pending
     // operation merely because a request timed out or an account changed.
     await _savePending(uid);
-    notifyListeners();
+    _announce();
     unawaited(synchronize());
   }
 
@@ -235,7 +251,23 @@ class FavoriteSyncController extends ChangeNotifier
     }
   }
 
-  Future<int> importGuestFavorites() async {
+  /// Import is serialized with account changes and toggles. A confirmation
+  /// dialog alone is not a lock: users can sign out while it is visible.
+  Future<int> importGuestFavorites() {
+    final result = Completer<int>();
+    _scopeQueue = _scopeQueue
+        .catchError((Object _) {})
+        .then((_) async {
+          try {
+            result.complete(await _importGuestFavoritesLocked());
+          } catch (error, stack) {
+            result.completeError(error, stack);
+          }
+        });
+    return result.future;
+  }
+
+  Future<int> _importGuestFavoritesLocked() async {
     final uid = _userId;
     if (uid == null || switching || guestImported) return 0;
     final guest = Favorites();
@@ -268,7 +300,7 @@ class FavoriteSyncController extends ChangeNotifier
     }
     guestImported = true;
     guestImportAvailable = false;
-    notifyListeners();
+    _announce();
     unawaited(synchronize());
     return added;
   }
@@ -278,9 +310,16 @@ class FavoriteSyncController extends ChangeNotifier
     if (alreadyRunning != null) return alreadyRunning;
     final run = _synchronizeOnce();
     _inFlight = run;
-    run.whenComplete(() {
-      if (identical(_inFlight, run)) _inFlight = null;
-    });
+    // A completion listener with an error handler must not emit an extra
+    // unhandled Future error when the caller observes the primary result.
+    run.then(
+      (_) {
+        if (identical(_inFlight, run)) _inFlight = null;
+      },
+      onError: (Object _) {
+        if (identical(_inFlight, run)) _inFlight = null;
+      },
+    );
     return run;
   }
 
@@ -294,7 +333,7 @@ class FavoriteSyncController extends ChangeNotifier
     if (gateway == null) return;
     syncing = true;
     lastError = null;
-    notifyListeners();
+    _announce();
     try {
       final uploadCopy = Map<String, FavoriteCloudRecord>.from(_pending);
       await gateway.upload(uid, uploadCopy.values.toList());
@@ -326,7 +365,7 @@ class FavoriteSyncController extends ChangeNotifier
       lastError = 'Preferiti salvati sul dispositivo. Cloud da aggiornare.';
     } finally {
       syncing = false;
-      notifyListeners();
+      _announce();
     }
   }
 
@@ -345,6 +384,7 @@ class FavoriteSyncController extends ChangeNotifier
 
   @override
   void dispose() {
+    _disposed = true;
     _poll?.cancel();
     if (_observing) {
       WidgetsBinding.instance.removeObserver(this);
