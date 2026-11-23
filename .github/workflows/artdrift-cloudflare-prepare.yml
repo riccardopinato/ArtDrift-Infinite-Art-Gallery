@@ -49,6 +49,28 @@ jobs:
           assert not Path('build/moma-d1').exists()
           print('ARTDRIFT_D1_PREPARE_PASS',m['records'],len(m['shards']))
           PY
+      - name: Run all 5,084 records through an isolated SQLite FTS5 database
+        run: |
+          python3 - <<'PY'
+          import sqlite3
+          from pathlib import Path
+          db=sqlite3.connect(':memory:')
+          db.executescript(Path('cloudflare/art-catalog/museum_schema.sql').read_text())
+          shards=sorted(Path('build/d1-museums').glob('museum-*.sql'))
+          assert len(shards)==26
+          for shard in shards:
+              db.executescript(shard.read_text(encoding='utf8'))
+          rows=db.execute('SELECT COUNT(*) FROM museum_works').fetchone()[0]
+          fts=db.execute('SELECT COUNT(*) FROM museum_works_fts').fetchone()[0]
+          keys=db.execute('SELECT COUNT(DISTINCT source_key) FROM museum_works').fetchone()[0]
+          assert rows==fts==keys==5084,(rows,fts,keys)
+          terms=db.execute("SELECT COUNT(*) FROM museum_works_fts WHERE museum_works_fts MATCH 'painting'").fetchone()[0]
+          assert terms>0
+          for shard in shards:
+              db.executescript(shard.read_text(encoding='utf8'))
+          assert db.execute('SELECT COUNT(*) FROM museum_works').fetchone()[0]==5084
+          print('D1_SQLITE_E2E_FTS_PASS',rows,'matching paintings',terms)
+          PY
       - name: Upload D1 museum SQL as internal review artifact, NOT deployment
         uses: actions/upload-artifact@v4
         with:
