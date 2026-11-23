@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -26,6 +27,7 @@ class ArtworkDetail extends StatefulWidget {
 
 class _ArtworkDetailState extends State<ArtworkDetail> {
   late int _index;
+  late final double _stableFrameAspect;
   bool _busy = false;
   bool _contemplation = false;
   bool _captionExpanded = false;
@@ -34,6 +36,14 @@ class _ArtworkDetailState extends State<ArtworkDetail> {
   void initState() {
     super.initState();
     _index = widget.initialIndex;
+    final first = widget.artworks[_index];
+    final ratioKnown = first.imageWidth != null &&
+        first.imageHeight != null && first.imageWidth! > 0 &&
+        first.imageHeight! > 0;
+    // Lock the initial museum-frame proportions for this viewing session.
+    // Another painting may letterbox within the same frame; never crop it.
+    _stableFrameAspect = ratioKnown
+        ? first.naturalAspectRatio : .76;
   }
 
   Artwork get art => widget.artworks[_index];
@@ -123,21 +133,33 @@ class _ArtworkDetailState extends State<ArtworkDetail> {
             )),
           ),
         );
-        final imageWithFrame = MuseumWoodFrame(
-          child: AnimatedSwitcher(
-            key: const Key('artdrift-detail-switcher'),
-            duration: MediaQuery.disableAnimationsOf(context)
-                ? Duration.zero : const Duration(milliseconds: 180),
-            switchInCurve: Curves.easeIn,
-            switchOutCurve: Curves.easeOut,
-            transitionBuilder: (child, animation) =>
-                FadeTransition(opacity: animation, child: child),
-            child: SizedBox.expand(
-              key: ValueKey(current.catalogKey),
-              child: painting,
+        // Frame surrounds the artwork itself; it is NOT a full-height
+        // empty panel. Lock aspect for previous/next so wood remains fixed.
+        final imageWithFrame = LayoutBuilder(builder: (context, bounds) {
+          final availableWidth = math.max(1.0, bounds.maxWidth - 8);
+          final availableHeight = math.max(1.0, bounds.maxHeight - 8);
+          final width = math.min(
+              availableWidth, availableHeight * _stableFrameAspect);
+          return Center(child: SizedBox(
+            width: width,
+            height: width / _stableFrameAspect,
+            child: MuseumWoodFrame(
+              child: AnimatedSwitcher(
+                key: const Key('artdrift-detail-switcher'),
+                duration: MediaQuery.disableAnimationsOf(context)
+                    ? Duration.zero : const Duration(milliseconds: 180),
+                switchInCurve: Curves.easeIn,
+                switchOutCurve: Curves.easeOut,
+                transitionBuilder: (child, animation) =>
+                    FadeTransition(opacity: animation, child: child),
+                child: SizedBox.expand(
+                  key: ValueKey(current.catalogKey),
+                  child: painting,
+                ),
+              ),
             ),
-          ),
-        );
+          ));
+        });
         final tour = Row(children: [
           SizedBox(width: 43, child: IconButton(
             key: const Key('artdrift-detail-prev'),
