@@ -95,6 +95,24 @@ class ImportTests(unittest.TestCase):
         self.assertTrue(ing.famous("Helene Schjerfbeck"))
         self.assertTrue(ing.famous("Akseli Gallen-Kallela"))
 
+    def test_moma_modern_master_metadata_only(self):
+        row = {
+            "ObjectID": "1234", "Title": "Composizione moderna",
+            "Artist": "Henri Matisse", "Medium": "Oil on canvas",
+            "Classification": "Painting", "Date": "1912",
+            "URL": "https://www.moma.org/collection/works/1234",
+            "ThumbnailURL": "https://www.moma.org/forbidden-image.jpg",
+        }
+        r = ing.moma_row(row)
+        self.assertEqual(r["source_key"], "moma:1234")
+        self.assertEqual(r["rights_status"], "METADATA_ONLY")
+        self.assertEqual(r["image_url"], "")
+        self.assertEqual(r["rights_license"], "")
+        self.assertEqual(r["metadata_url"], row["URL"])
+        self.assertIsNone(ing.moma_row({**row, "Classification": "Sculpture"}))
+        self.assertIsNone(ing.moma_row({**row, "Artist": "Not famous"}))
+        self.assertIsNone(ing.moma_row({**row, "ObjectID": "AB123"}))
+
     def test_https_policy(self):
         self.assertFalse(ing.safe_https("https://upload.wikimedia.org.evil.com/x", {"upload.wikimedia.org"}))
         self.assertFalse(ing.safe_https("https://user@upload.wikimedia.org/x", {"upload.wikimedia.org"}))
