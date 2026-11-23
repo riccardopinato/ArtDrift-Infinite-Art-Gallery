@@ -54,6 +54,7 @@ class _GalleryHomeState extends State<GalleryHome> {
   List<Artwork> _artworks = [];
   List<Artwork> _canvasArtworks = [];
   List<Artwork> _colorArtworks = [];
+  bool _immersive = false;
   bool _loading = true;
   String? _error;
 
@@ -194,8 +195,13 @@ class _GalleryHomeState extends State<GalleryHome> {
         cameraKey: const bool.fromEnvironment(
             'ARTDRIFT_VISUAL_HOME_DEFAULT', defaultValue: false)
             ? 'artdrift.preview.colorhome.camera' : 'artdrift.camera',
-        onOpen: _open),
-      Positioned(top: 0, left: 0, right: 0,
+        onOpen: _open,
+        onToggleFavorite: _toggleFavorite,
+        isFavorite: _favorites.contains,
+        onImmersiveChanged: (value) {
+          if (mounted) setState(() => _immersive = value);
+        }),
+      if (!_immersive) Positioned(top: 0, left: 0, right: 0,
         child: SafeArea(bottom: false, child: ArtDriftToolbar(
           onSearch: _openSearch,
           onFavorites: _openFavorites,
