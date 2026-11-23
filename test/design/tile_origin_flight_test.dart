@@ -27,6 +27,10 @@ void main() {
     current.value = 'met:2';
     await tester.pump();
     expect(find.byKey(const Key('artdrift-origin-flight')), findsNothing);
-    expect(find.byType(FadeTransition), findsOneWidget);
+    // Count only this route's transition, not MaterialApp transitions.
+    expect(find.descendant(
+      of: find.byType(TileOriginFlight),
+      matching: find.byType(FadeTransition),
+    ), findsOneWidget);
   });
 }
