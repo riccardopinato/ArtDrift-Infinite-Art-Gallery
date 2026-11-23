@@ -1,0 +1,60 @@
+name: ArtDrift — discover additional Open Access museums
+on:
+  push:
+    branches: ['feat/artdrift-modern-1950-openaccess-20261123']
+    paths:
+      - 'scripts/import_additional_museums.py'
+      - 'scripts/test_additional_museums.py'
+      - '.github/workflows/additional-museums.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: artdrift-additional-museums-data
+  cancel-in-progress: false
+jobs:
+  import-museums:
+    if: github.repository == 'riccardopinato/ArtDrift-Infinite-Art-Gallery' && github.ref == 'refs/heads/feat/artdrift-modern-1950-openaccess-20261123'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Verify source and rights rules without network
+        run: python3 -m unittest discover -s scripts -p test_additional_museums.py -v
+      - name: Import museum-owned Open Access artwork records
+        env:
+          ARTDRIFT_MUSEUM_SHARDS: '48'
+        run: python3 scripts/import_additional_museums.py
+      - name: Validate deduplicated museum and media references
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          path=Path('assets/museums/catalog_new_museums.json')
+          rows=json.loads(path.read_text(encoding='utf8'))
+          report=json.loads(Path('assets/museums/new_museums_report.json').read_text(encoding='utf8'))
+          assert report['record_count']==len(rows)
+          assert report['museums_added']>=2, 'Fewer than two genuinely new institutions with license-qualified works'
+          assert len({(r['museum_source'],r['id']) for r in rows})==len(rows)
+          assert all(r['museum_source']=='smithsonian' and r['is_public_domain'] and r['rights_license']=='CC0' for r in rows)
+          assert all(r['remote_preview_url'].startswith('https://ids.si.edu/') for r in rows)
+          assert all(r['rights_evidence_url']=='https://www.si.edu/openaccess' for r in rows)
+          assert set(r['source_unit_code'] for r in rows).issubset({'chndm','hmsg','nmafa','nmaahc'})
+          assert report['device_image_delivery']=='NOT_VERIFIED'
+          print('NEW_MUSEUM_IMPORT_DATA_GATE_PASS',report['record_count'],report['museums_added'])
+          PY
+      - name: Commit immutable source-gated catalog to feature branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/museums/catalog_new_museums.json assets/museums/new_museums_report.json
+          if git diff --cached --quiet; then
+            echo "NEW_MUSEUMS_NO_CHANGE"
+          else
+            git commit -m "data(artdrift): record new museum institutions and rights-gated artwork"
+            git push origin HEAD:feat/artdrift-modern-1950-openaccess-20261123
+          fi
