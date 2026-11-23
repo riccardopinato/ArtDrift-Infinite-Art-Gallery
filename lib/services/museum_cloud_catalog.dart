@@ -44,8 +44,10 @@ class MuseumCloudWork {
     final license=get('rights_license');
     if(!RegExp(r'^[a-z]{2,16}:[0-9]{1,15}$').hasMatch(key) ||
        title.isEmpty || museum.isEmpty ||
-       !const <String>{'CC0','Public Domain','CC BY 3.0','CC BY 4.0',
-         'CC BY-SA 3.0','CC BY-SA 4.0'}.contains(license))return null;
+       !(const <String>{'CC0','Public Domain','Public Domain Mark',
+         'CC BY 3.0','CC BY 4.0','CC BY-SA 3.0',
+         'CC BY-SA 4.0'}.contains(license) ||
+         license.startsWith('Public Domain / ')))return null;
     final proof=get('rights_evidence_url');
     final link=proof.isEmpty?null:Uri.tryParse(proof);
     if(link==null || link.scheme!='https' || link.userInfo.isNotEmpty)return null;
