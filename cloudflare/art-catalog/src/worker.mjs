@@ -58,7 +58,8 @@ const CC_MEDIA=new Set(["CC0","Public Domain","CC BY 3.0","CC BY 4.0",
 export function publicMuseumRow(row) {
   const rights=String(row?.rights_license||"");
   let thumbnail=null;
-  if(CC_MEDIA.has(rights) && row?.rights_evidence_url) {
+  if((CC_MEDIA.has(rights) || rights==="Public Domain Mark" ||
+       rights.startsWith("Public Domain / ")) && row?.rights_evidence_url) {
     try {
       const image=new URL(row.image_url), proof=new URL(row.rights_evidence_url);
       if(image.protocol==="https:" && MUSEUM_IMAGE_HOSTS.has(image.hostname) &&
