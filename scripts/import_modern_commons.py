@@ -31,7 +31,8 @@ LICENSES = {
 }
 OWN = ("own work", "own artwork", "my work", "self-made", "eigenes werk",
        "eigene arbeit", "obra propia", "travail personnel", "trabalho próprio")
-MAX_RECORDS = 520
+MAX_RECORDS = 320
+YEARS = (1950, 1960, 1970, 1980, 1990, 2000, 2010, 2020, 2023, 2024, 2025, 2026)
 
 
 def clean(x):
@@ -113,12 +114,12 @@ def fetch_year(year):
     continuation=None
     accepted=[]
     inspected=0
-    for page in range(3):
+    for page in range(1):
         params={"action":"query","format":"json","formatversion":"2",
             "generator":"categorymembers","gcmtitle":f"Category:{year} paintings",
             "gcmtype":"file","gcmlimit":"80","prop":"imageinfo",
             "iiprop":"url|extmetadata|mime|size|user",
-            "iiurlwidth":"700","maxlag":"5"}
+            "iiurlwidth":"700"}
         if continuation:
             params["gcmcontinue"]=continuation
         request=Request(API+"?"+urlencode(params),headers={
@@ -154,8 +155,8 @@ def generate(fetch=fetch_year, output=OUT):
     inspected=0
     years_completed=0
     failures=[]
-    with ThreadPoolExecutor(max_workers=3) as pool:
-        pending={pool.submit(fetch,year):year for year in range(1950,2027)}
+    with ThreadPoolExecutor(max_workers=1) as pool:
+        pending={pool.submit(fetch,year):year for year in YEARS}
         for future in as_completed(pending):
             try:
                 year,found,count=future.result()
@@ -191,7 +192,7 @@ def generate(fetch=fetch_year, output=OUT):
         "schema_version":1,
         "status":"RIGHTS_AND_IMAGE_DELIVERY_REVIEW_PENDING",
         "provider":"Wikimedia Commons MediaWiki API",
-        "years":years_completed,"files_inspected":inspected,
+        "years":years_completed,"years_sampled":list(YEARS),"files_inspected":inspected,
         "admitted_records":len(result),
         "license_distribution":dict(sorted(Counter(r["rights_license"]
           for r in result).items())),
