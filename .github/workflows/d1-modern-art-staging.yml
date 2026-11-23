@@ -2,7 +2,7 @@ name: Art Drift - D1 modern-art staging
 
 on:
   push:
-    branches: [feat/artdrift-d1-modern-art-ingestion-20261123]
+    branches: [main, feat/artdrift-d1-modern-art-ingestion-20261123]
     paths:
       - tools/artdrift_museum_ingest.py
       - tools/artdrift_merge_staging.py
@@ -27,6 +27,7 @@ on:
           - tate
           - moma
           - verified
+          - bulk
           - wikidata
       museum:
         description: 'Optional museum Wikidata QID; empty = all configured museums'
@@ -51,6 +52,29 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  preflight_cloudflare:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    env:
+      HAS_CLOUDFLARE_ACCOUNT: ${{ secrets.CLOUDFLARE_ACCOUNT_ID != '' }}
+      HAS_CLOUDFLARE_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN != '' }}
+      HAS_D1_NAME: ${{ vars.ARTDRIFT_D1_DATABASE != '' }}
+    steps:
+      - name: Check existing Cloudflare configuration (never print values)
+        run: |
+          python - <<'PY'
+          import os
+          flags = {
+              "cloudflare_account_secret": os.environ["HAS_CLOUDFLARE_ACCOUNT"] == "true",
+              "cloudflare_api_token_secret": os.environ["HAS_CLOUDFLARE_TOKEN"] == "true",
+              "artdrift_d1_database_variable": os.environ["HAS_D1_NAME"] == "true",
+          }
+          print("CLOUDFLARE_D1_CONFIGURED", all(flags.values()))
+          for key, present in flags.items():
+              print(key, "PRESENT" if present else "NOT_CONFIGURED")
+          PY
+
   validate:
     runs-on: ubuntu-latest
     timeout-minutes: 8
