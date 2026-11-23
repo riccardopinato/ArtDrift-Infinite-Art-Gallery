@@ -133,8 +133,10 @@ void main() {
       home: Scaffold(body: IllustrativeCanvas())));
     await tester.pumpAndSettle();
 
+    // Capture phase 0 last so initial WebP decode/warmup has finished.
+    // This changes the evidence harness, NOT the runtime animation order.
     for (final phase in const [
-      (0.0, '00'), (.25, '25'), (.5, '50'), (.75, '75'), (1.0, '100'),
+      (.25, '25'), (.5, '50'), (.75, '75'), (1.0, '100'), (0.0, '00'),
     ]) {
       await tester.pumpWidget(MaterialApp(
         theme: ThemeData.dark().copyWith(
