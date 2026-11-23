@@ -32,6 +32,19 @@ void main() {
     expect(engine.find('barca',scope: ArtworkSearchScope.subject), isEmpty);
   });
 
+  test('search scope index is reused across repeated queries', () {
+    final engine = GallerySearch([sample]);
+    expect(engine.cachedScopeCount, 0);
+    expect(engine.find('Monet'), [sample]);
+    expect(engine.cachedScopeCount, 1);
+    expect(engine.find('Park'), [sample]);
+    expect(engine.cachedScopeCount, 1);
+    expect(engine.find('garden', scope: ArtworkSearchScope.subject), [sample]);
+    expect(engine.cachedScopeCount, 2);
+    expect(engine.find('barca', scope: ArtworkSearchScope.subject), isEmpty);
+    expect(engine.cachedScopeCount, 2);
+  });
+
   testWidgets('framed search occupies exactly one third of 390px screen',
       (tester) async {
     tester.view.physicalSize = const Size(390, 844);

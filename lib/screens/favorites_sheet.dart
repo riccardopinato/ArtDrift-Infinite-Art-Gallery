@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../models/artwork.dart';
+import '../ui/artwork_preview_image.dart';
 import '../services/favorites.dart';
 import '../ui/localization.dart';
 import '../ui/parchment.dart';
@@ -88,19 +89,8 @@ class _FavoritesSheetState extends State<_FavoritesSheet> {
                       contentPadding: const EdgeInsets.fromLTRB(9, 5, 5, 5),
                       leading: ClipRRect(borderRadius: BorderRadius.circular(3),
                         child: SizedBox(width: 55, height: 70,
-                          child: art.hasBundledPreview
-                            ? Image.asset(art.bootstrapAsset,
-                                fit: BoxFit.cover, cacheWidth: 120,
-                                errorBuilder: (_, __, ___) =>
-                                  const ColoredBox(color: ArtPaper.faded,
-                                    child: Icon(Icons.image_outlined,
-                                      color: ArtPaper.ink)))
-                            : Image.network(art.imageUrl(width: 200),
-                                fit: BoxFit.cover, cacheWidth: 120,
-                                errorBuilder: (_, __, ___) =>
-                                  const ColoredBox(color: ArtPaper.faded,
-                                    child: Icon(Icons.image_outlined,
-                                      color: ArtPaper.ink))))),
+                          child: ArtworkPreviewImage(
+                              artwork: art, cacheWidth: 120))),
                       title: Text(art.title, maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(color: ArtPaper.ink,

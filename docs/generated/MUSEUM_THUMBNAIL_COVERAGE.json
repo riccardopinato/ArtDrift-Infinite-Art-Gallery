@@ -1,22 +1,23 @@
 {
   "available_by_source": {
-    "cleveland": 462,
-    "met": 34,
-    "nga": 227,
-    "rijks": 41,
-    "smithsonian": 282,
-    "smk": 96
+    "cleveland": 1584,
+    "met": 135,
+    "nga": 739,
+    "rijks": 160,
+    "smithsonian": 924,
+    "smk": 500
   },
-  "batch_requested": 1200,
+  "batch_requested": 1,
   "catalog_total": 4043,
+  "existing_legacy_pack_requires_image_rights_review": 0,
   "license_eligible": 4043,
-  "packed_bytes": 5046258,
+  "new_download_policy_eligible": 4043,
+  "new_download_policy_hold": 0,
+  "packed_bytes": 18107502,
   "schema_version": 1,
   "status_counts": {
-    "downloaded": 1142,
-    "network_or_decode_failure": 57,
-    "unsupported_image": 1
+    "http_404": 1
   },
-  "web_thumbnails_available": 1142,
-  "web_thumbnails_missing": 2901
+  "web_thumbnails_available": 4042,
+  "web_thumbnails_missing": 1
 }

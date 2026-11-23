@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import '../models/artwork.dart';
 
@@ -33,7 +34,19 @@ class ArtOfflineThumbnailIndex {
   Future<void> initialize() => _loading ??= _load();
 
   Future<void> _load() async {
-    if (!kIsWeb) return;
+    if (!kIsWeb) {
+      // AssetBundle-backed on Android: 1,142 verified small WebPs are usable
+      // immediately without any mobile network request or mutable disk cache.
+      try {
+        loadFromManifest(await rootBundle.loadString(
+            'web/museum_thumbs/manifest.json'));
+      } catch (error) {
+        // The original bundled museum previews remain usable independently.
+        // Keep a debug-only diagnostic so pack/asset mistakes are observable.
+        if (kDebugMode) debugPrint('Mobile thumbnail manifest: $error');
+      }
+      return;
+    }
     try {
       final response = await http.get(Uri.base.resolve(
           'museum_thumbs/manifest.json')).timeout(const Duration(seconds: 4));
@@ -43,11 +56,18 @@ class ArtOfflineThumbnailIndex {
     }
   }
 
-  bool has(Artwork artwork) => kIsWeb &&
+  bool has(Artwork artwork) => artwork.displayable &&
       !artwork.hasBundledPreview && _keys.contains(artwork.catalogKey);
 
+  /// Flutter asset namespace used on Android. These are the exact artwork
+  /// thumbnails declared in the validated, packaged manifest.
+  String? assetFor(Artwork artwork) {
+    if (kIsWeb || !has(artwork)) return null;
+    return 'web/museum_thumbs/${artwork.museumSource}_${artwork.id}.webp';
+  }
+
   String? urlFor(Artwork artwork) {
-    if (!has(artwork)) return null;
+    if (!kIsWeb || !has(artwork)) return null;
     return Uri.base.resolve('museum_thumbs/' +
         artwork.museumSource + '_' + artwork.id.toString() + '.webp')
         .toString();

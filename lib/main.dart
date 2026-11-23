@@ -9,9 +9,12 @@ import 'ui/gallery_toolbar.dart';
 import 'ui/localization.dart';
 import 'models/artwork.dart';
 import 'screens/artwork_detail.dart';
+import 'screens/collection_canvas.dart';
+import 'collections/art_collections.dart';
 import 'services/catalog_service.dart';
 import 'services/favorites.dart';
 import 'services/art_offline_thumbnail_index.dart';
+import 'services/art_mobile_canvas_selection.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -48,6 +51,7 @@ class _GalleryHomeState extends State<GalleryHome> {
   final CatalogService _catalog = CatalogService();
   final Favorites _favorites = Favorites();
   List<Artwork> _artworks = [];
+  List<Artwork> _canvasArtworks = [];
   bool _loading = true;
   String? _error;
 
@@ -65,7 +69,16 @@ class _GalleryHomeState extends State<GalleryHome> {
       await ArtOfflineThumbnailIndex.instance.initialize();
       final works = await _catalog.load(refresh: refresh);
       if (!mounted) return;
-      setState(() { _artworks = works; _loading = false; });
+      // Keep mobile tile-to-artwork assignment pinned across catalog updates.
+      // Every image comes from the exact same artwork; all remote-only entries
+      // remain searchable and may be viewed individually.
+      final visible = await ArtMobileCanvasSelection.select(works);
+      if (!mounted) return;
+      setState(() {
+        _artworks = works;
+        _canvasArtworks = visible.isEmpty ? works : visible;
+        _loading = false;
+      });
     } catch (error) {
       if (!mounted) return;
       setState(() { _loading = false; _error = '$error'; });
@@ -73,7 +86,9 @@ class _GalleryHomeState extends State<GalleryHome> {
   }
 
   Future<void> _openSearch() async {
-    final selected = await showArtSearchSheet(context, _artworks);
+    final selected = await showArtSearchSheet(context, _artworks,
+      collectionCatalog: _canvasArtworks,
+      onOpenCollection: _openCollection);
     if (!mounted || selected == null) return;
     _open(selected);
   }
@@ -91,10 +106,23 @@ class _GalleryHomeState extends State<GalleryHome> {
     _open(selected);
   }
 
-  void _open(Artwork artwork) {
-    final index = _artworks.indexWhere((a) => a.catalogKey == artwork.catalogKey);
-    // Remote discoveries open in detail without perturbing the pinned canvas.
-    final group = index < 0 ? <Artwork>[artwork] : _artworks;
+  void _open(Artwork artwork) => _openArtworkInGroup(artwork, _artworks);
+
+  void _openCollection(ArtCollection collection) {
+    final selected = ArtCollections.members(collection, _canvasArtworks);
+    if (selected.isEmpty || !mounted) return;
+    Navigator.of(context).push(MaterialPageRoute<void>(
+      builder: (_) => ArtCollectionCanvasScreen(
+        collection: collection,
+        artworks: selected,
+        onOpen: _openArtworkInGroup,
+      ),
+    ));
+  }
+
+  void _openArtworkInGroup(Artwork artwork, List<Artwork> artworks) {
+    final index = artworks.indexWhere((a) => a.catalogKey == artwork.catalogKey);
+    final group = index < 0 ? <Artwork>[artwork] : artworks;
     final start = index < 0 ? 0 : index;
     Navigator.of(context).push(PageRouteBuilder<void>(
       pageBuilder: (context, animation, secondaryAnimation) => ArtworkDetail(
@@ -149,7 +177,7 @@ class _GalleryHomeState extends State<GalleryHome> {
       )));
     }
     return Scaffold(body: Stack(fit: StackFit.expand, children: [
-      InfiniteGallery(artworks: _artworks, onOpen: _open),
+      InfiniteGallery(artworks: _canvasArtworks, onOpen: _open),
       Positioned(top: 0, left: 0, right: 0,
         child: SafeArea(bottom: false, child: ArtDriftToolbar(
           onSearch: _openSearch,

@@ -1,0 +1,76 @@
+# Art Drift — image-redistribution policy gates (2026-11-22)
+
+Status: **source-policy reconnaissance, NOT commercial-release certification**.
+Automated selection never replaces the artwork's own record/image license.
+A general CC0 metadata license is not necessarily an image license.
+Brand names/trademarks and third-party privacy/personality rights remain separate.
+
+## Official source references
+| Source | Verified policy reference | New automated WebP wave |
+| --- | --- | --- |
+| The Met | https://www.metmuseum.org/hubs/open-access and https://www.metmuseum.org/policies/frequently-asked-questions-image-and-data-resources | ELIGIBLE only for records marked CC0/Open Access |
+| Cleveland | https://www.clevelandart.org/open-access-api and https://www.clevelandart.org/open-access | ELIGIBLE only for CC0 image records |
+| NGA | https://www.nga.gov/artworks/free-images-and-open-access | ELIGIBLE for provider-reported public domain/Open Access, with disclaimer |
+| Rijksmuseum | https://data.rijksmuseum.nl/policy/ | ELIGIBLE for Public Domain Mark/CC0 object data/image provenance |
+| Smithsonian | https://www.si.edu/termsofuse and https://www.si.edu/openaccess | ELIGIBLE only for CC0-designated media |
+| Getty | https://www.getty.edu/projects/open-content-program/faqs/ and https://data.getty.edu/museum/collection/docs/ | HOLD until **individual image** is demonstrably in Getty Open Content/CC0; not every Getty media URL qualifies |
+| SMK | https://blog.smk.dk/how-to-do-things-with-data-creative-re-use-of-smks-digitized-collection and https://api.smk.dk/api/v1/docs/ | CONDITIONAL: exact current official object `public_domain`, Public Domain Mark/CC0 rights URL and IIIF image must reconcile with catalog; no verified proof = HOLD |
+| Mia | https://new.artsmia.org/copyright-and-image-access | HOLD for new wave until image-specific terms; general site images have use restrictions |
+| Walters | https://thewalters.org/about/policies/rights-reproductions/ | HOLD for new wave pending verified object-level exception checks |
+| Art Institute Chicago | https://api.artic.edu/docs/ | Separate bundled seed workflow; confirm image availability and individual public-domain eligibility |
+
+## Operational separation
+1. **Existing pack**: keep all 1,142 manifest entries and files intact, including
+   sources not approved for *new* fetching. Do not silently drop artwork from
+   the current gallery. Their eventual commercial distribution must be audited.
+2. **New downloads**: allow only five checked providers, exact known official
+   image URL host, public-domain/CC0 image metadata, expected evidence host and
+   a bounded file size with actual WebP re-encode. Other providers remain HOLD.
+3. **Network**: provider-friendly bounded worker pool, explicit redirects and
+   transport validation. HTTP 403/404 and decode failures remain errors, not
+   an excuse to substitute another artwork or a generic stock image.
+4. **Release gate**: verify identity, license, official image URL, rights proof,
+   source/provenance, attribution disclosures where applicable, derivative
+   integrity and current terms before Play Store distribution.
+5. **No guaranteed complete pack**: a failed or restricted host may leave a
+   catalog painting as metadata/remote-only. Preserve correct counts.
+
+This document describes a policy-screening heuristic and source references,
+not legal advice or a per-object rights clearance.
+
+## Live SMK per-object evidence gate (23 Nov 2026)
+
+SMK imported records were originally filtered on `public_domain=true`,
+object-level rights URI (CC0 or Public Domain Mark), and the image's IIIF ID.
+A **new live check** against `https://api.smk.dk/api/v1/art/?object_number=...`
+reconciles **each of the 500** source identities with the original license URI
+and *exact* IIIF image. The results and a SHA-256 of the canonical record are
+stored at `docs/generated/SMK_OBJECT_RIGHTS_RECHECK.json`. **Only exact
+live matches** may have their missing preview downloaded into the staging
+pack, using the existing host/MIME/size/decode guards. This is automated
+rights evidence, not blanket commercial rights or trademark certification.
+
+The audit ledger separately tracks confirmed image bytes and flags every
+record as commercially unverified until an actual rights/release review is
+completed. The downloader does not use redirects outside approved hosts,
+substitute images or treat a provider HTTP failure as a usable thumbnail.
+
+## Strictly limited NPG NPG.2007.11 exception (23 Nov 2026)
+
+An individual official Smithsonian National Portrait Gallery object
+`https://npg.si.edu/object/npg_NPG.2007.11` explicitly marks William Linn,
+Archibald Robertson, NPG.2007.11 as **CC0**. The original Smithsonian IDS
+media endpoint returns HTTP 404 for this item. A separately identified,
+faithful copy on Wikimedia Commons may be used as an **internal offline preview
+for only this exact accession** after the Commons API independently confirms
+the single file's public-domain/PD-Art license metadata, non-copyrighted
+flag, exact title and safe upload.wikimedia.org media URL. The code never
+opens general Wikimedia imports or substitutes similar portraits.
+
+Evidence must be committed in
+`docs/generated/NPG_2007_11_COMMONS_EXCEPTION_EVIDENCE.json`, including
+museum object CC0, Commons file license, original media SHA-256 and final WebP
+SHA-256. If any gate fails, **hold the image as metadata-only**; do not claim
+100% coverage. This explicit Commons exception remains **not commercial legal
+certification** (possible jurisdiction-specific rights; store release remains
+blocked until rights are reviewed).
