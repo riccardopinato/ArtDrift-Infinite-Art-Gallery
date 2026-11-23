@@ -34,6 +34,20 @@ else
   echo "ARTDRIFT_CLOUD_BUILD_CONFIG=DISABLED (offline guest mode)"
 fi
 
+# Cloudflare D1 exposes only PUBLIC museum metadata via a read-only Worker.
+# The only accepted endpoint in this PR is the explicitly tested staging API.
+# Existing Web/Android production builds remain offline-first unless opted in.
+if [[ -n "${ARTDRIFT_CATALOG_API_BASE:-}" ]]; then
+  if [[ "${ARTDRIFT_CATALOG_API_BASE}" != "https://artdrift-catalog-staging.riccardopinato.workers.dev" ]]; then
+    echo "::error::ARTDRIFT_CATALOG_API_BASE is not the approved staging Worker" >&2
+    exit 1
+  fi
+  dart_defines+=("--dart-define=ARTDRIFT_CATALOG_API_BASE=${ARTDRIFT_CATALOG_API_BASE}")
+  echo "ARTDRIFT_D1_PREVIEW=ENABLED (public read-only museum discovery)"
+else
+  echo "ARTDRIFT_D1_PREVIEW=DISABLED (offline-first catalog remains available)"
+fi
+
 # A private Vercel preview may opt into the new chromatic Home; regular
 # production/Android builds keep current persisted canvas behavior.
 if [[ "${ARTDRIFT_PREVIEW_COLOR_HOME:-0}" == "1" ]]; then
