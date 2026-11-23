@@ -1,0 +1,59 @@
+name: Art Drift — D1 unified catalog preparation (no cloud writes)
+on:
+  push:
+    branches: ['feat/artdrift-d1-unified-catalog-*']
+    paths:
+      - 'cloudflare/art-catalog/**'
+      - '.github/workflows/artdrift-cloudflare-prepare.yml'
+      - 'assets/museums/**'
+      - 'assets/gallery/catalog.json'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  prepare:
+    if: github.repository == 'riccardopinato/ArtDrift-Infinite-Art-Gallery'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate D1 worker routing, SQL injection guards and media rights
+        run: |
+          cd cloudflare/art-catalog
+          npm test
+      - name: Validate both D1 importers offline
+        run: |
+          python3 -m unittest discover -s cloudflare/art-catalog/scripts -p 'test_*.py' -v
+      - name: Prepare local 5,084-work museum SQL shards, never remote D1
+        run: |
+          python3 cloudflare/art-catalog/scripts/make_museum_d1_import.py \
+            --root . --out build/d1-museums --expected 5084 --chunk 200
+      - name: Check manifest, rights status and P1 fail-closed policy
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          m=json.loads(Path('build/d1-museums/manifest.json').read_text())
+          assert m['records']==5084
+          assert m['d1_remote_import']=='REQUIRES_EXPLICIT_APPROVAL'
+          assert m['images_bundled']==0 and m['personal_data'] is False
+          assert m['app_canvas_source']=='UNCHANGED_LOCAL'
+          assert m['unique_sources']>=10
+          assert sum(i['records'] for i in m['shards'])==5084
+          assert not Path('build/moma-d1').exists()
+          print('ARTDRIFT_D1_PREPARE_PASS',m['records'],len(m['shards']))
+          PY
+      - name: Upload D1 museum SQL as internal review artifact, NOT deployment
+        uses: actions/upload-artifact@v4
+        with:
+          name: ArtDrift-D1-Museums-QA
+          path: build/d1-museums/
+          retention-days: 14
+          compression-level: 6
+          if-no-files-found: error
