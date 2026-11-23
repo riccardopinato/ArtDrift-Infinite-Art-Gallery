@@ -54,7 +54,9 @@ void main(){
     final catalog=CatalogService();
     addTearDown(catalog.close);
     final all=await catalog.load();
-    expect(all.length,4499);
+    // The original 2,400-tile visual selection must remain pinned, even as
+    // the optional modern metadata catalog grows.
+    expect(all.length,greaterThanOrEqualTo(4499));
     final chosen=await ArtVisualColorSelection.select(all);
     expect(chosen.length,2400);
     expect(chosen.every((a)=>a.hasBundledPreview ||
