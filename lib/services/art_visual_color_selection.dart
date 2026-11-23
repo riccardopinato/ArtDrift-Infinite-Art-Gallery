@@ -22,7 +22,7 @@ class ArtVisualColorSelection {
       throw const FormatException('Invalid color-first manifest');
     }
     final keys=parsed['selection'] as List;
-    if(keys.length<300 || keys.length>1500 ||
+    if(keys.length<300 || keys.length>4000 ||
        parsed['selected_count']!=keys.length){
       throw const FormatException('Color-first manifest count mismatch');
     }
