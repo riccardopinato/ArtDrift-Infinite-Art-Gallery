@@ -25,6 +25,7 @@ class Artwork {
     this.museumNativeId = '',
     this.rightsLicense = '',
     this.rightsEvidenceUrl = '',
+    this.rightsLicenseUrl = '',
     this.dimensions = '',
     this.technique = '',
     this.remoteFullUrl = '',
@@ -53,6 +54,7 @@ class Artwork {
   final String museumNativeId;
   final String rightsLicense;
   final String rightsEvidenceUrl;
+  final String rightsLicenseUrl;
   final String dimensions;
   final String technique;
   final String remoteFullUrl;
@@ -66,6 +68,7 @@ class Artwork {
       museumSource == 'smk' ? 'SMK – National Gallery of Denmark' :
       museumSource == 'mia' ? 'Minneapolis Institute of Art' :
       museumSource == 'walters' ? 'The Walters Art Museum' :
+      museumSource == 'commons' ? 'Wikimedia Commons · Artisti indipendenti' :
       'Art Institute of Chicago';
   String get displayedLicense => rightsLicense.isNotEmpty ? rightsLicense :
       museumSource == 'aic' ? 'Public Domain' : 'CC0';
@@ -87,6 +90,7 @@ class Artwork {
       'smk': {'iip.smk.dk', 'iip-thumb.smk.dk'},
       'mia': {'api.artsmia.org'},
       'walters': {'images.thewalters.org', 'art.thewalters.org'},
+      'commons': {'upload.wikimedia.org'},
     };
     return hosts[museum]?.contains(uri.host.toLowerCase()) ?? false;
   }
@@ -96,7 +100,28 @@ class Artwork {
 
   static final RegExp _imageIdPattern = RegExp(r'^[0-9a-fA-F-]{16,64}$');
   bool get displayable {
-    if (id <= 0 || !publicDomain) return false;
+    if (id <= 0) return false;
+    // CC BY and CC BY-SA images are licensed, not public domain. Admit
+    // only author-credited modern Commons records with source evidence.
+    if (museumSource == 'commons') {
+      const recognized = <String>{
+        'CC0', 'CC BY 3.0', 'CC BY 4.0',
+        'CC BY-SA 3.0', 'CC BY-SA 4.0',
+      };
+      final evidence = Uri.tryParse(rightsEvidenceUrl);
+      final license = Uri.tryParse(rightsLicenseUrl);
+      return recognized.contains(rightsLicense) &&
+          (publicDomain == (rightsLicense == 'CC0')) &&
+          artist.trim().isNotEmpty && creditLine.trim().isNotEmpty &&
+          license?.scheme == 'https' &&
+          license?.host == 'creativecommons.org' &&
+          evidence?.scheme == 'https' &&
+          evidence?.host == 'commons.wikimedia.org' &&
+          ArtCreationDate.explicitYearFrom1950(date) != null &&
+          artworkType.toLowerCase() == 'painting' &&
+          officialImageUrl(remotePreviewUrl, 'commons');
+    }
+    if (!publicDomain) return false;
     if (museumSource == 'aic') {
       return _imageIdPattern.hasMatch(imageId) &&
           (artworkType.isEmpty || artworkType.toLowerCase() == 'painting') &&
@@ -156,6 +181,7 @@ class Artwork {
       'smk': {'open.smk.dk', 'www.open.smk.dk', 'www.smk.dk', 'smk.dk'},
       'mia': {'collections.artsmia.org'},
       'walters': {'art.thewalters.org', 'www.thewalters.org'},
+      'commons': {'commons.wikimedia.org'},
     };
     if (uri != null && uri.scheme == 'https' && uri.userInfo.isEmpty &&
         (hosts[museumSource]?.contains(uri.host) ?? false)) {
@@ -171,6 +197,7 @@ class Artwork {
       'smk':'https://open.smk.dk/',
       'mia':'https://collections.artsmia.org/',
       'walters':'https://art.thewalters.org/',
+      'commons':'https://commons.wikimedia.org/',
     };
     return home[museumSource] ?? 'https://www.artic.edu/';
   }
@@ -185,6 +212,7 @@ class Artwork {
     final scale = dimensions.isEmpty ? '' : ' Dimensioni: $dimensions.';
     final where = origin.isEmpty ? '' : ' Origine: $origin.';
     final museum = museumSource == 'aic' ? '' :
+        museumSource == 'commons' ? ' Condivisa dall’autore su Wikimedia Commons.' :
         ' Conservata presso $displayedMuseum.';
     return '«$title» è un’opera attribuita a $creator$when.$how$scale$where$museum';
   }
@@ -217,6 +245,7 @@ class Artwork {
       museumNativeId: _str(json['museum_native_id']),
       rightsLicense: _str(json['rights_license']),
       rightsEvidenceUrl: _str(json['rights_evidence_url']),
+      rightsLicenseUrl: _str(json['rights_license_url']),
       dimensions: _str(json['dimensions_display']),
       technique: _str(json['technique_display']),
       remoteMuseumUrl: _str(json['remote_museum_url']),
@@ -248,6 +277,7 @@ class Artwork {
         if (museumNativeId.isNotEmpty) 'museum_native_id': museumNativeId,
         if (rightsLicense.isNotEmpty) 'rights_license': rightsLicense,
         if (rightsEvidenceUrl.isNotEmpty) 'rights_evidence_url': rightsEvidenceUrl,
+        if (rightsLicenseUrl.isNotEmpty) 'rights_license_url': rightsLicenseUrl,
         if (dimensions.isNotEmpty) 'dimensions_display': dimensions,
         if (technique.isNotEmpty) 'technique_display': technique,
       };
