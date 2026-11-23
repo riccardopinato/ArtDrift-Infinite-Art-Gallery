@@ -495,7 +495,7 @@ def export(records: list[dict], jsonl_path: Path, sql_path: Path) -> dict:
 
 def main() -> None:
     p = argparse.ArgumentParser(description=__doc__)
-    p.add_argument("--source", choices=("tate", "moma", "verified", "wikidata", "all"), default="tate")
+    p.add_argument("--source", choices=("tate", "moma", "verified", "bulk", "wikidata", "all"), default="tate")
     p.add_argument("--max-records", type=int, default=200)
     p.add_argument("--museum", choices=sorted(MUSEUMS), default=None,
                    help="Limit Wikidata acquisition to one verified institution")
@@ -504,14 +504,14 @@ def main() -> None:
     args = p.parse_args()
     if not 1 <= args.max_records <= 5000:
         p.error("--max-records must be 1..5000")
-    if args.museum and args.source in ("tate", "moma", "verified"):
+    if args.museum and args.source in ("tate", "moma", "verified", "bulk"):
         p.error("--museum applies only to wikidata source")
     works: list[dict] = []
-    if args.source in ("tate", "all"):
+    if args.source in ("tate", "bulk", "all"):
         works.extend(collect_tate(args.max_records))
-    if args.source in ("moma", "all"):
+    if args.source in ("moma", "bulk", "all"):
         works.extend(collect_moma(args.max_records))
-    if args.source in ("verified", "all"):
+    if args.source in ("verified", "bulk", "all"):
         works.extend(collect_verified_catalog(args.max_records))
     if args.source in ("wikidata", "all"):
         works.extend(collect_wikidata(args.max_records, args.museum))
