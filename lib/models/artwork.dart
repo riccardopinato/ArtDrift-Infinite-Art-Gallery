@@ -219,6 +219,22 @@ class Artwork {
 
   static String _str(Object? value) => value is String ? value.trim() : '';
 
+  static String _cleanArtTitle(Map<String, dynamic> record) {
+    final raw = _str(record['title']);
+    if (record['museum_source'] != 'commons') return raw;
+    const marker = ' label QS:';
+    final at = raw.indexOf(marker);
+    final clean = (at < 0 ? raw : raw.substring(0, at)).trim();
+    for (final prefix in const <String>[
+      'German: ', 'English: ', 'French: ', 'Spanish: ', 'Italian: ',
+    ]) {
+      if (clean.startsWith(prefix)) {
+        return clean.substring(prefix.length).trim();
+      }
+    }
+    return clean;
+  }
+
   static int? _int(Object? value) => value is num ? value.toInt() : null;
 
   factory Artwork.fromJson(Map<String, dynamic> json) {
@@ -226,7 +242,7 @@ class Artwork {
     final image = thumb is Map ? thumb : const {};
     return Artwork(
       id: _int(json['id']) ?? 0,
-      title: _str(json['title']).isEmpty ? 'Senza titolo' : _str(json['title']),
+      title: _cleanArtTitle(json).isEmpty ? 'Senza titolo' : _cleanArtTitle(json),
       artist: _str(json['artist_title']).isNotEmpty
           ? _str(json['artist_title']) : _str(json['artist_display']),
       date: _str(json['date_display']),
