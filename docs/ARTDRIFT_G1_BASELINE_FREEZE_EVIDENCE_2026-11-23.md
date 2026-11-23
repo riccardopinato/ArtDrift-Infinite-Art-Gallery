@@ -57,7 +57,7 @@ Git tree: gli **stessi sei file** in `packages/drift_core/` hanno **blob SHA ide
 
 **Dimensione APK:** BASE-B è **+19.051.897 byte (+91,883%)** rispetto a BASE-A nei due APK interni. Questa è una differenza **preesistente al redesign**, da tenere come budget/riscontro nella G4; non attribuire la crescita a cambi estetici mai implementati e non confondere ZIP compressi con APK interni.
 
-**Firma e identità:** il report `apk-integrity.txt` di BASE-B dichiara source SHA `c2d1d3e...`, package `com.riccardopinato.artdrift`, `SIGNING_CLASS=INTERNAL_TEST_ONLY`. `apk-signer-report.txt` dichiara signer **Android Debug**, v2 certificate SHA-256 `61e90e80d993e490fc87caa7bb2ebd0243ec814d1fe300a97fea363091722b0d`. **Questo NON prova la compatibilità della firma dell'APK installato sul telefono.** Nessun installer o upgrade è stato eseguito. La firma BASE-A non è stata certificata con un signer-report omologo in questo G1.
+**Firma e identità — verifica diretta su entrambi gli APK:** il report `apk-integrity.txt` di BASE-B dichiara source SHA `c2d1d3e...`, package `com.riccardopinato.artdrift`, `SIGNING_CLASS=INTERNAL_TEST_ONLY`. L'ispezione crittografica dei certificati DER nel blocco APK Signature Scheme **v2**, direttamente dagli APK scaricati, ha rilevato:\n\n- **BASE-A**: certificate SHA-256 `724e3fdc6be0838257b8d32587e358aee856096ecc1318e1656103d252150815`, Subject `C=US, O=Android, CN=Android Debug`.\n- **BASE-B**: certificate SHA-256 `61e90e80d993e490fc87caa7bb2ebd0243ec814d1fe300a97fea363091722b0d`, Subject `C=US, O=Android, CN=Android Debug`. Coincide con `apk-signer-report.txt` pubblicato da CI.\n\n**BLOCKER CONFERMATO:** le due firme interne sono differenti. Gli APK non costituiscono una coppia installabile in-place BASE-A→BASE-B, a parità di applicationId. Per aggiornare l'APK effettivamente installato serve la **stessa chiave/certificato** e un `versionCode` valido; l'identità della firma installata sul telefono **resta sconosciuta**. Nessun tentativo di installazione/upgrade/disinstallazione è stato eseguito.
 
 ## C. Evidenza emulatore G1 effettiva — JSON e immagini esaminate
 
@@ -83,6 +83,19 @@ Provenienza: run [45139436849](https://github.com/riccardopinato/ArtDrift-Infini
 
 **Persistenza immagini:** nel flusso G1 corrente i PNG e ZIP sono stati recuperati localmente per analisi, ma **non committati nel repository** (strumenti GitHub testuali e no modifica di assets). L'artifact GitHub conserva gli originali fino alla scadenza della retention. **Prima della futura integrazione** archiviarli stabilmente con SHA e snapshot di riferimento degli **stessi 10 mock-up approvati**, poiché gli AppBlock interattivi nella chat non costituiscono Golden pixel-exact versionate nel codice.
 
+
+### QA G1 dedicata a BASE-A avviata senza codice Flutter
+
+Branch temporaneo **solo strumenti QA** `feat/artdrift-integrated-preview-color-g1-main-baseline-20261123`, creato esattamente da BASE-A `main@2dac51a6...`. Tre file aggiunti a quel ramo **fuori da `main`**: `scripts/run_emulator_pan_probe.sh`, `scripts/collect_android_emulator_perf.py` e `.github/workflows/artdrift-emulator-perf.yml` (derivati dal runner di BASE-B, senza modificare widgets/Dart). SHA ramo QA `548119f46028cf17b189796c1540370c0f93b103`.
+
+- Workflow dedicato: [G1 main emulator run 45165880345](https://github.com/riccardopinato/ArtDrift-Infinite-Art-Gallery/actions/runs/45165880345).
+- **Al momento della creazione di questa annotazione: IN ESECUZIONE.** Il suo stato, screenshots e PSS devono essere recuperati prima di usare questa esecuzione come prova.
+- La PR #36 resta solo documentale; l'eventuale branch QA separato non è un nuovo branch di implementazione estetica e **non va fuso in main**.
+
+### Prima referenza visuale locale identificata
+
+Nell'ambiente della conversazione è presente `ArtDrift_Mockup_Home_01.html` (titolo: «Art Drift · Mock-up 01/10 — Quiet Canvas») con SHA-256 `b84606623cbad8b2c233e5d0815b5b3d3d66908e271c213cf4aca01cad43c38d`, insieme a `ArtDrift_Mockup_Home_01_preview.png` (570×790 px), SHA-256 `7038c9befbbcc53fc46dcf0b19ee9b5b58834e9e5faf5fab63b95345e237ba86`. Sono una **referenza locale dei prototipi**, NON file versionati nel repo e NON equivalgono a 10 golden approvate/catturate. Per i restanti nove occorre archiviazione equivalente solo dopo confronto con le decisioni esatte del registro.
+
 ## D. Evidenze G1 mancanti / gate aperti
 
 | Gate | Stato oggi | Cosa serve per chiuderlo |
@@ -92,7 +105,7 @@ Provenienza: run [45139436849](https://github.com/riccardopinato/ArtDrift-Infini
 | **G1.3 — Screenshot baseline candidato** | **PARTIAL_VISUAL_REFERENCE** | Due PNG di emulatore ispezionati; archiviazione durevole e scenario esteso ancora aperti |
 | **G1.4 — Screenshot BASE-A/main** | **NOT_CAPTURED** | Compilazione/inquadratura comparabile stessa impostazione, orientamento, risoluzione, catalogo differente da annotare |
 | **G1.5 — Metriche fisiche su stesso device** | **BLOCKED_PHYSICAL** | Dispositivo Android, release/profile, 60/90/120 Hz se supportato, PSS, frame timings p50/p95/p99, startup, 60s pan+Auto+zoom, termica/memoria |
-| **G1.6 — Persistenza / update installato** | **BLOCKED_DEVICE_SIGNER** | APK realmente installato: `applicationId`, `versionCode`, fingerprint cert, copia/pre-backup preferiti e camera; test upgrade in-place senza disinstallare né cambiare firma |
+| **G1.6 — Persistenza / update installato** | **BLOCKED_SIGNER_MISMATCH_AND_DEVICE** | Certificati dei due APK CI verificati e **diversi**; sconosciuto signer dell'APK realmente installato. Servono `applicationId`, `versionCode`, fingerprint cert e controllo dati preferiti/camera; upgrade in-place solo con firma continuativa |
 | **G1.7 — Target implementativo unico** | **UNDECIDED** | Decisione PR base `main` o candidato #35 dopo gestione stack #33/#34; non merge implicito |
 | **G1.8 — Mock-up visual references** | **NOT_ARCHIVED** | Dieci screenshot/video delle varianti approvate + coppia scenario/criterio; niente nuova UI reale |
 | **G1.9 — Privacy/immagini commerciali** | **NOT_CLEARED_FOR_RELEASE** | Review diritti e policy separati da G1; nessuna pubblicazione o AdMob |
