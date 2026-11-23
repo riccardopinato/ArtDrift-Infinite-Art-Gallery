@@ -236,6 +236,12 @@ class Artwork {
 
   static String _cleanArtTitle(Map<String, dynamic> record) {
     final raw = _str(record['title']);
+    if (record['museum_source'] == 'smithsonian') {
+      // Museum EDAN occasionally embeds basic HTML markup in titles.
+      // Present the real title, not literal <I> or <B> metadata tags.
+      return raw.replaceAll(RegExp(r'<[^>]*>'), '')
+          .replaceAll('&amp;', '&').trim();
+    }
     if (record['museum_source'] != 'commons') return raw;
     const marker = ' label QS:';
     final at = raw.indexOf(marker);
