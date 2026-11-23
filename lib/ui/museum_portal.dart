@@ -83,7 +83,7 @@ class MuseumPortal extends StatelessWidget {
                     const Row(mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         _OrnamentRule(), SizedBox(width: 12),
-                        Text('❦', style: TextStyle(color: _gold, fontSize: 20)),
+                        Icon(Icons.auto_awesome_rounded, color: _gold, size: 20),
                         SizedBox(width: 12), _OrnamentRule(),
                       ]),
                     const SizedBox(height: 16),
@@ -126,7 +126,7 @@ class MuseumPortal extends StatelessWidget {
                 Text('UN MUSEO SENZA FINE', style: TextStyle(
                   color: _gold, fontSize: 9, letterSpacing: 1.4)),
                 Spacer(),
-                Text('✦', style: TextStyle(color: _gold, fontSize: 16)),
+                Icon(Icons.star_rounded, color: _gold, size: 16),
               ])),
           ]),
         );
@@ -172,8 +172,8 @@ class _MuseumEmblem extends StatelessWidget {
             size: 48, color: Color(0xFFC5A574))
         : const Column(mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text('✧', style: TextStyle(
-                fontSize: 23, color: Color(0xFFC5A574))),
+              Icon(Icons.auto_awesome_outlined,
+                size: 23, color: Color(0xFFC5A574)),
               SizedBox(height: 8),
               Text('AD', style: TextStyle(
                 fontFamily: 'serif', fontSize: 43,
