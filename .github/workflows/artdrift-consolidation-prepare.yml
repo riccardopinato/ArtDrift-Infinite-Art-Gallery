@@ -1,0 +1,69 @@
+name: Art Drift — consolidate 4499 real artworks (one-time)
+on:
+  push:
+    branches: ['feat/artdrift-clean-4499-20261123']
+    paths: ['.github/workflows/artdrift-consolidation-prepare.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: artdrift-4499-clean-branch
+  cancel-in-progress: false
+jobs:
+  reconcile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Check out exact candidate tree
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Install audit dependencies
+        run: python3 -m pip install --disable-pip-version-check "Pillow==11.3.0" "requests==2.32.5"
+      - name: Safely remove only NPG.2007.11 and reconcile authoritative ledgers
+        run: |
+          python3 -m py_compile scripts/exclude_unavailable_smithsonian.py
+          python3 scripts/exclude_unavailable_smithsonian.py
+      - name: Verify all museum per-object assets and rights gates
+        run: |
+          python3 scripts/audit_museum_rights_and_coverage.py
+          python3 scripts/verify_mobile_thumbnail_pack.py
+      - name: Assert catalog exactness and absence of fake license certification
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import json
+          rows=json.loads(Path('assets/museums/catalog_global.json').read_text())
+          manifest=json.loads(Path('web/museum_thumbs/manifest.json').read_text())
+          report=json.loads(Path('assets/museums/global_report.json').read_text())
+          coverage=json.loads(Path('docs/generated/MUSEUM_THUMBNAIL_COVERAGE.json').read_text())
+          audit=json.loads(Path('docs/generated/ART_IMAGE_ITEM_RIGHTS_AUDIT.json').read_text())
+          keys=[f"{r['museum_source']}:{int(r['id'])}" for r in rows]
+          assert len(rows)==len(keys)==len(set(keys))==4042
+          assert set(keys)==set(manifest['keys'])
+          assert not any('6452594389' in k for k in keys)
+          assert report['records_global']==coverage['catalog_total']==4042
+          assert report['records_total']==4499
+          assert coverage['web_thumbnails_available']==4042
+          assert coverage['web_thumbnails_missing']==0
+          assert audit['summary']['manifest_total']==4042
+          assert audit['summary']['missing_total']==0
+          assert audit['summary']['invalid_packaged']==0
+          assert audit['summary']['legally_certified_images']==0
+          assert len(audit['artworks'])==4042
+          assert all(row['commercial_release_cleared'] is False for row in audit['artworks'])
+          print('CONSOLIDATED_ART_GALLERY_4499_ALL_LOCAL_PREVIEWS_NO_COMMERCIAL_CERT', flush=True)
+          PY
+      - name: Commit only deterministic audited changes
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A -- assets/museums/catalog_global.json assets/museums/global_report.json
+          git add -A -- docs/ART_IMAGE_RIGHTS_AUDIT_2026-11-23.md docs/ART_IMAGE_RIGHTS_PROVIDER_GATES_2026-11-22.md docs/ARTDRIFT_MAXI_STEP_INTEGRATION_2026-11-22.md
+          git add -A -- docs/generated/ART_IMAGE_ITEM_RIGHTS_AUDIT.json docs/generated/MUSEUM_THUMBNAIL_COVERAGE.json docs/generated/NPG_2007_11_COMMONS_EXCEPTION_EVIDENCE.json
+          git add -A -- scripts/import_global_museum_catalog.py scripts/sanitize_global_museums.py scripts/recover_npg_linn_exact_image.py
+          git add -A -- test/museum_catalog_test.dart .github/workflows/web-thumbnail-pack.yml
+          if ! git diff --cached --quiet; then
+            git commit -m 'feat(catalog): remove unavailable Smithsonian artwork; reconcile 4499 complete previews'
+            git push origin "HEAD:$GITHUB_REF_NAME"
+          fi
