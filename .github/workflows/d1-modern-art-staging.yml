@@ -1,0 +1,106 @@
+name: Art Drift - D1 modern-art staging
+
+on:
+  push:
+    branches: [feat/artdrift-d1-modern-art-ingestion-20261123]
+    paths:
+      - tools/artdrift_museum_ingest.py
+      - tools/test_artdrift_museum_ingest.py
+      - cloudflare/d1/migrations/0001_museum_ingest.sql
+      - .github/workflows/d1-modern-art-staging.yml
+  pull_request:
+    paths:
+      - tools/artdrift_museum_ingest.py
+      - tools/test_artdrift_museum_ingest.py
+      - cloudflare/d1/migrations/0001_museum_ingest.sql
+      - .github/workflows/d1-modern-art-staging.yml
+  workflow_dispatch:
+    inputs:
+      provider:
+        description: 'Provider'
+        required: true
+        default: tate
+        type: choice
+        options:
+          - tate
+          - wikidata
+      max_records:
+        description: 'Max records, 1..5000'
+        required: true
+        default: '200'
+        type: string
+      upload_remote:
+        description: 'Explicit opt-in: write to existing Cloudflare D1 staging'
+        required: true
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+concurrency:
+  group: artdrift-d1-ingestion-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Compile and unit-test offline importer
+        run: |
+          python -m py_compile tools/artdrift_museum_ingest.py
+          python -m unittest discover -s tools -p 'test_artdrift_museum_ingest.py' -v
+      - name: D1 schema smoke on SQLite
+        run: |
+          python - <<'PY'
+          import sqlite3
+          from pathlib import Path
+          con=sqlite3.connect(":memory:")
+          con.executescript(Path("cloudflare/d1/migrations/0001_museum_ingest.sql").read_text())
+          assert con.execute("SELECT count(*) FROM artdrift_publishable_modern_art").fetchone()[0] == 0
+          print("SCHEMA_OK")
+          PY
+
+  acquire:
+    if: github.event_name == 'workflow_dispatch'
+    needs: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      PROVIDER: ${{ inputs.provider }}
+      LIMIT: ${{ inputs.max_records }}
+      DATABASE: ${{ vars.ARTDRIFT_D1_DATABASE }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Acquire records from primary sources
+        run: |
+          python tools/artdrift_museum_ingest.py --source "$PROVIDER" --max-records "$LIMIT"
+      - name: Export inspectable staging JSONL and SQL
+        uses: actions/upload-artifact@v4
+        with:
+          name: artdrift-d1-staging-${{ github.run_id }}
+          path: .artdrift_ingest/
+          retention-days: 14
+      - name: Setup Node for authorized remote upload
+        if: inputs.upload_remote == true
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Upload to existing D1 (disabled by default)
+        if: inputs.upload_remote == true
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          test -n "$DATABASE" && test -n "$CLOUDFLARE_API_TOKEN" && test -n "$CLOUDFLARE_ACCOUNT_ID" || {
+            echo 'Missing preconfigured Cloudflare DB name, account or API token'; exit 1;
+          }
+          npx --yes wrangler@4 d1 execute "$DATABASE" --remote --file=cloudflare/d1/migrations/0001_museum_ingest.sql
+          npx --yes wrangler@4 d1 execute "$DATABASE" --remote --file=.artdrift_ingest/modern_art.sql
