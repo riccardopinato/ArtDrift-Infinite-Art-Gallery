@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'package:artdrift/models/artwork.dart';
 import 'package:artdrift/services/art_visual_color_selection.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:artdrift/services/art_offline_thumbnail_index.dart';
+import 'package:artdrift/services/catalog_service.dart';
 
 void main(){
   List<Artwork> catalog(int n)=>List.generate(n,(i)=>Artwork(
@@ -29,6 +31,22 @@ void main(){
     expect(ArtVisualColorSelection.selectFromManifest(
       works,manifest(keys),imageBacked:(_)=>false),isEmpty);
   });
+  test('actual pinned museum pack yields 1200 fully image-backed works',() async {
+    TestWidgetsFlutterBinding.ensureInitialized();
+    await ArtOfflineThumbnailIndex.instance.initialize();
+    final catalog=CatalogService();
+    addTearDown(catalog.close);
+    final all=await catalog.load();
+    expect(all.length,4500);
+    final chosen=await ArtVisualColorSelection.select(all);
+    expect(chosen.length,1200);
+    expect(chosen.every((a)=>a.hasBundledPreview ||
+      ArtOfflineThumbnailIndex.instance.has(a)),isTrue);
+    expect(chosen.map((a)=>a.catalogKey).toSet().length,1200);
+    expect(chosen.any((a)=>a.artist.toLowerCase().contains('van gogh')),isTrue);
+    expect(chosen.any((a)=>a.artist.toLowerCase().contains('matisse')),isTrue);
+  });
+
   test('malformed and duplicate keys are rejected',(){
     final works=catalog(400);
     final keys=[for(var i=1;i<=400;i++) 'aic:'+i.toString()];
