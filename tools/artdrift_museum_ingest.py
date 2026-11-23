@@ -273,6 +273,19 @@ OFFICIAL_EVIDENCE_HOSTS = {
 }
 
 
+def confirmed_eu_public_domain_artist(label: str) -> bool:
+    """Conservative EU/Italy life+70 gate for the 2026 public art service.
+
+    Explicit birth/death dates must be present in source artist label; a
+    museum CC0 media flag alone cannot extinguish the painter's copyright.
+    Handles multiple credited authors by requiring *all* to pass.
+    """
+    spans = re.findall(r"(?<!\\d)(1[6789]\\d{2}|20\\d{2})\\s*[-–—]\\s*(1[789]\\d{2}|20\\d{2})(?!\\d)", label)
+    if not spans:
+        return False
+    return all(int(birth) <= int(death) <= 1955 for birth, death in spans)
+
+
 def existing_catalog_row(row: dict) -> dict | None:
     """Admit ONLY pre-imported CC0 modernist paintings with official media hosts.
 
@@ -284,6 +297,8 @@ def existing_catalog_row(row: dict) -> dict | None:
     source = clean(row.get("museum_source"), 30)
     artist = clean(row.get("artist_title") or row.get("artist_display"), 220)
     if source not in OFFICIAL_IMAGE_HOSTS or not famous(artist):
+        return None
+    if not confirmed_eu_public_domain_artist(artist):
         return None
     if row.get("is_public_domain") is not True:
         return None
