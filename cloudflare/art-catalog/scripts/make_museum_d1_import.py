@@ -20,7 +20,7 @@ SOURCES=(
     "assets/museums/catalog_modern_1950.json",
     "assets/museums/catalog_new_museums.json",
 )
-LICENSES={"CC0","Public Domain","CC BY 3.0","CC BY 4.0",
+LICENSES={"CC0","Public Domain","Public Domain Mark","CC BY 3.0","CC BY 4.0",
           "CC BY-SA 3.0","CC BY-SA 4.0"}
 PREVIEW_HOSTS={
     "aic":{"www.artic.edu"},"met":{"images.metmuseum.org"},
@@ -79,7 +79,7 @@ def normalize(item):
         if not field(item,"artist_title",220) or not field(item,"credit_line",250):return None
         if not official(field(item,"rights_evidence_url",900),{"commons.wikimedia.org"}):return None
         if not official(field(item,"rights_license_url",500),{"creativecommons.org"}):return None
-    elif not is_pd or not (license in ("CC0","Public Domain") or
+    elif not is_pd or not (license in ("CC0","Public Domain","Public Domain Mark") or
                            license.startswith("Public Domain / ") or
                            license.startswith("CC0 / ")):
         return None
