@@ -28,7 +28,7 @@ class D1ReconcileTests(unittest.TestCase):
             reconcile(local,remote,stage)
     def test_reject_bad_remote_identity(self):
         local,remote,stage=self.data()
-        remote[0]=dict(remote[0],museum_native_id="malicious"
+        remote[0]=dict(remote[0],museum_native_id="malicious")
         with self.assertRaisesRegex(ValueError,"Unexpected remote"):
             reconcile(local,remote,stage)
     def test_wrangler_json_contract(self):
