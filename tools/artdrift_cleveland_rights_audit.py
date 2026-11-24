@@ -29,6 +29,20 @@ def normalize(s: str) -> str:
     return re.sub(r"[^a-z0-9]", "", "".join(c for c in s if not unicodedata.combining(c)))
 
 
+def curatorial_flags(staged: dict) -> list[str]:
+    """Separate topical selection from copyright; no public approval implied."""
+    name = normalize(staged.get("artist", ""))
+    title = normalize(staged.get("title", ""))
+    flags = []
+    # Broad surname search previously admitted Pierre, Philippe and Theodore
+    # Rousseau when the target in the approved masters shortlist was Henri.
+    if "rousseau" in name and "henrirousseau" not in name:
+        flags.append("surname_collision_not_henri_rousseau")
+    if "doubleleafdoors" in title or "overdoorpainting" in title:
+        flags.append("decorative_architecture_review")
+    return flags
+
+
 def assess(staged: dict, payload: dict) -> tuple[str, list[str]]:
     """Every positive assessment requires current, item-level primary source data."""
     notes = []
@@ -97,6 +111,7 @@ def audit(max_records: int = 5000, delay: float = 0.45) -> dict:
             "rights_evidence": record["rights_evidence_url"],
             "fingerprint": record["fingerprint"],
             "publication_status": "HOLD",
+            "curatorial_flags": curatorial_flags(record),
         }
         try:
             payload = request_json(url, max_bytes=3_000_000)
@@ -119,6 +134,7 @@ def audit(max_records: int = 5000, delay: float = 0.45) -> dict:
         time.sleep(delay)
     counts = Counter(x["source_check"] for x in out)
     reasons = Counter(code for x in out for code in x["review_flags"])
+    curated = Counter(code for x in out for code in x["curatorial_flags"])
     return {
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "source": "Cleveland Museum of Art Open Access API (live per artwork)",
@@ -127,6 +143,7 @@ def audit(max_records: int = 5000, delay: float = 0.45) -> dict:
         "total": len(out),
         "source_checks": dict(sorted(counts.items())),
         "reason_counts": dict(sorted(reasons.items())),
+        "curatorial_counts": dict(sorted(curated.items())),
         "works": out,
         "editorial_approved": 0,
         "published": 0,
@@ -144,7 +161,7 @@ def main() -> None:
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(json.dumps({k: result[k] for k in
-        ("total","source_checks","reason_counts","editorial_approved","published")}, sort_keys=True))
+        ("total","source_checks","reason_counts","curatorial_counts","editorial_approved","published")}, sort_keys=True))
 
 
 if __name__ == "__main__":
