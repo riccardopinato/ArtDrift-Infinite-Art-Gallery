@@ -75,6 +75,43 @@ jobs:
               print(key, "PRESENT" if present else "NOT_CONFIGURED")
           PY
 
+  verify_cloudflare_d1_connection:
+    # Safe connectivity test. No migrations, writes, or media transfers.
+    # Secrets are only given to this push job, never to PR validation.
+    if: github.event_name == 'push'
+    needs: preflight_cloudflare
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    env:
+      DATABASE: ${{ vars.ARTDRIFT_D1_DATABASE }}
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify Cloudflare D1 credentials and database identity (read-only)
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -z "$DATABASE" ] || [ -z "$CLOUDFLARE_ACCOUNT_ID" ] || [ -z "$CLOUDFLARE_API_TOKEN" ]; then
+            echo "D1_CONNECTION_MISSING_CONFIG"
+            exit 1
+          fi
+          npx --yes wrangler@4 d1 info "$DATABASE" --json > "$RUNNER_TEMP/artdrift-d1-readonly.json"
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          path = Path(os.environ["RUNNER_TEMP"]) / "artdrift-d1-readonly.json"
+          info = json.loads(path.read_text(encoding="utf-8"))
+          if not isinstance(info, dict):
+              raise ValueError("Unexpected Cloudflare D1 info response")
+          if info.get("name") != os.environ["DATABASE"]:
+              raise ValueError("Cloudflare D1 database name mismatch")
+          print("D1_REMOTE_READONLY_OK")
+          PY
+
   validate:
     runs-on: ubuntu-latest
     timeout-minutes: 8
