@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 
@@ -8,10 +9,12 @@ import 'screens/favorites_sheet.dart';
 import 'ui/gallery_toolbar.dart';
 import 'ui/localization.dart';
 import 'ui/museum_portal.dart';
-import 'screens/collection_canvas.dart';
-import 'collections/art_collections.dart';
+import 'ui/tile_origin_flight.dart';
+import 'ui/art_ad_aware_viewport.dart';
 import 'models/artwork.dart';
 import 'screens/artwork_detail.dart';
+import 'screens/collection_canvas.dart';
+import 'collections/art_collections.dart';
 import 'services/catalog_service.dart';
 import 'services/favorites.dart';
 import 'services/art_offline_thumbnail_index.dart';
@@ -56,6 +59,9 @@ class _GalleryHomeState extends State<GalleryHome> {
   List<Artwork> _canvasArtworks = [];
   List<Artwork> _colorArtworks = [];
   String _lastSearchQuery = '';
+  bool _immersive = false;
+  bool _toolbarQuiet = false;
+  Timer? _toolbarQuietTimer;
   bool _loading = true;
   String? _error;
 
@@ -63,6 +69,18 @@ class _GalleryHomeState extends State<GalleryHome> {
   void initState() {
     super.initState();
     _initialize();
+  }
+
+  // Presentation-only idle fade. The canvas camera and tile registry
+  // stay untouched; any pointer restores full toolbar readability.
+  void _onCanvasPointer() {
+    _toolbarQuietTimer?.cancel();
+    if (_toolbarQuiet) setState(() => _toolbarQuiet = false);
+    _toolbarQuietTimer = Timer(const Duration(seconds: 3), () {
+      if (mounted && !_immersive) {
+        setState(() => _toolbarQuiet = true);
+      }
+    });
   }
 
   Future<void> _initialize({bool refresh = false}) async {
@@ -73,14 +91,21 @@ class _GalleryHomeState extends State<GalleryHome> {
       await ArtOfflineThumbnailIndex.instance.initialize();
       final works = await _catalog.load(refresh: refresh);
       if (!mounted) return;
-      final curated = await ArtVisualColorSelection.select(works);
+      // Keep mobile tile-to-artwork assignment pinned across catalog updates.
+      // Every image comes from the exact same artwork; all remote-only entries
+      // remain searchable and may be viewed individually.
+      final color = await ArtVisualColorSelection.select(works);
+      // Preserve the existing canvas when a device already has pinned tiles.
+      // For a new Android install, seed a stable colorful playlist instead.
       final visible = await ArtMobileCanvasSelection.select(works,
-          initialColorPlaylist: curated);
+        initialColorPlaylist: color);
       if (!mounted) return;
       setState(() {
         _artworks = works;
-        _canvasArtworks = visible.isNotEmpty ? visible : works;
-        _colorArtworks = curated;
+        // Preserve the exact source-ID canvas playlist of existing installs.
+        // Only a fresh install receives the curated 2400-image selection.
+        _canvasArtworks = visible.isEmpty ? works : visible;
+        _colorArtworks = color;
         _loading = false;
       });
     } catch (error) {
@@ -129,28 +154,41 @@ class _GalleryHomeState extends State<GalleryHome> {
     ));
   }
 
-  void _openArtworkInGroup(Artwork artwork, List<Artwork> artworks) {
+  void _openArtworkInGroup(Artwork artwork, List<Artwork> artworks, {Rect? tileRect}) {
     final index = artworks.indexWhere((a) => a.catalogKey == artwork.catalogKey);
-    // Search results outside the currently visible mosaic retain their
-    // own true source identity; they never change pinned tile assignments.
     final group = index < 0 ? <Artwork>[artwork] : artworks;
     final start = index < 0 ? 0 : index;
-    Navigator.of(context).push(PageRouteBuilder<void>(
+    final displayIdentity = ValueNotifier<String>(artwork.catalogKey);
+    final route = PageRouteBuilder<void>(
       pageBuilder: (context, animation, secondaryAnimation) => ArtworkDetail(
         artworks: group,
         initialIndex: start,
         isFavorite: _favorites.contains,
         onToggleFavorite: _toggleFavorite,
+        onArtworkChanged: (next) => displayIdentity.value = next.catalogKey,
       ),
       transitionsBuilder: (context, animation, secondaryAnimation, child) =>
-        FadeTransition(opacity: animation, child: child),
+        tileRect == null
+          ? FadeTransition(opacity: animation, child: child)
+          : TileOriginFlight(
+              animation: animation,
+              originRect: tileRect,
+              originArtwork: artwork,
+              originalArtworkKey: artwork.catalogKey,
+              currentArtworkKey: displayIdentity,
+              child: child),
       transitionDuration: MediaQuery.disableAnimationsOf(context)
-          ? Duration.zero : const Duration(milliseconds: 200),
-    ));
+          ? Duration.zero : const Duration(milliseconds: 330),
+      reverseTransitionDuration: MediaQuery.disableAnimationsOf(context)
+          ? Duration.zero : const Duration(milliseconds: 300),
+    );
+    Navigator.of(context).push(route);
+    route.completed.then((_) => displayIdentity.dispose());
   }
 
   @override
   void dispose() {
+    _toolbarQuietTimer?.cancel();
     _catalog.close();
     super.dispose();
   }
@@ -161,14 +199,36 @@ class _GalleryHomeState extends State<GalleryHome> {
     if (_error != null || _artworks.isEmpty) {
       return MuseumPortal.unavailable(onRetry: _initialize);
     }
-    return Scaffold(body: Stack(fit: StackFit.expand, children: [
-      InfiniteGallery(artworks: _canvasArtworks, onOpen: _open),
-      Positioned(top: 0, left: 0, right: 0,
-        child: SafeArea(bottom: false, child: ArtDriftToolbar(
-          onSearch: _openSearch,
-          onFavorites: _openFavorites,
-          onSettings: () => showArtDriftSettings(context),
-        ))),
-    ]));
+    return Scaffold(body: Listener(
+      behavior: HitTestBehavior.translucent,
+      onPointerDown: (_) => _onCanvasPointer(),
+      child: ArtAdAwareViewport(
+      // QA-only: defaults to zero. No AdMob SDK or artificial ad gap.
+      // Once a real banner exists its measured height will replace this value.
+      bannerHeight: const int.fromEnvironment(
+          'ARTDRIFT_QA_AD_BANNER_HEIGHT', defaultValue: 0).toDouble(),
+      child: Stack(fit: StackFit.expand, children: [
+      InfiniteGallery(
+        artworks: _canvasArtworks,
+        cameraKey: 'artdrift.camera',
+        onOpen: _open,
+        onOpenAtRect: (art, rect) =>
+            _openArtworkInGroup(art, _artworks, tileRect: rect),
+        onToggleFavorite: _toggleFavorite,
+        isFavorite: _favorites.contains,
+        onImmersiveChanged: (value) {
+          if (mounted) setState(() => _immersive = value);
+        }),
+      if (!_immersive) Positioned(top: 0, left: 0, right: 0,
+        child: AnimatedOpacity(
+          duration: const Duration(milliseconds: 350),
+          opacity: _toolbarQuiet ? .24 : 1.0,
+          child: SafeArea(bottom: false, child: ArtDriftToolbar(
+            onSearch: _openSearch,
+            onFavorites: _openFavorites,
+            onSettings: () => showArtDriftSettings(context),
+          )))),
+    ]),
+    )));
   }
 }

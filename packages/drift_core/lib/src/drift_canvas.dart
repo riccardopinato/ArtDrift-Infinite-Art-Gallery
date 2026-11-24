@@ -24,6 +24,11 @@ class DriftCanvas<T> extends StatefulWidget {
     required this.hintText,
     required this.recenterTooltip,
     this.prefetchItem,
+    this.onOpenAtRect,
+    this.onTileLongPress,
+    this.onCanvasGestureStart,
+    this.onImmersiveChanged,
+    this.museumControls = false,
   });
 
   final List<T> items;
@@ -31,6 +36,15 @@ class DriftCanvas<T> extends StatefulWidget {
   final Widget Function(BuildContext, T, double) tileBuilder;
   final String cameraKey, compactBrand, fullBrand, hintText, recenterTooltip;
   final DriftPrefetchItem<T>? prefetchItem;
+
+  /// Optional source-app presentation hooks. Rect is in viewport-local
+  /// coordinates; all previous callers remain source-agnostic.
+  final void Function(T item, Rect viewportRect)? onOpenAtRect;
+  final void Function(T item, Rect viewportRect)? onTileLongPress;
+  final VoidCallback? onCanvasGestureStart;
+  final ValueChanged<bool>? onImmersiveChanged;
+  /// The default is false to preserve Gallery Drift's existing controls.
+  final bool museumControls;
 
   @override
   State<DriftCanvas<T>> createState() => _DriftCanvasState<T>();
@@ -59,6 +73,8 @@ class _DriftCanvasState<T> extends State<DriftCanvas<T>>
   bool _cameraInitialized = false;
   bool _autoRunning = false;
   bool _controlsDimmed = false;
+  bool _museumImmersive = false;
+  bool _museumSpeedMenuOpen = false;
   int _autoSpeed = 25;
   Size _viewport = Size.zero;
 
@@ -142,11 +158,26 @@ class _DriftCanvasState<T> extends State<DriftCanvas<T>>
     });
   }
 
-  Future<void> _changeSpeed() async {
+  Future<void> _chooseSpeed(int speed) async {
+    if (!const [25, 50, 75, 100].contains(speed)) return;
     _activateControls();
-    setState(() => _autoSpeed = nextSpeed(_autoSpeed));
+    setState(() {
+      _autoSpeed = speed;
+      _museumSpeedMenuOpen = false;
+    });
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt('${widget.cameraKey}.autoSpeed', _autoSpeed);
+    await prefs.setInt('${widget.cameraKey}.autoSpeed', speed);
+  }
+
+  Future<void> _changeSpeed() => _chooseSpeed(nextSpeed(_autoSpeed));
+
+  void _toggleMuseumImmersive() {
+    if (!widget.museumControls) return;
+    setState(() {
+      _museumImmersive = !_museumImmersive;
+      _museumSpeedMenuOpen = false;
+    });
+    widget.onImmersiveChanged?.call(_museumImmersive);
   }
 
   Future<void> _restoreCamera() async {
@@ -186,6 +217,8 @@ class _DriftCanvasState<T> extends State<DriftCanvas<T>>
   }
 
   void _start(ScaleStartDetails details) {
+    if (_museumSpeedMenuOpen) setState(() => _museumSpeedMenuOpen = false);
+    widget.onCanvasGestureStart?.call();
     _pauseAuto(); // A manual gesture always has priority.
     _momentum.stop();
     _zoomAtGestureStart = _zoom;
@@ -294,6 +327,7 @@ class _DriftCanvasState<T> extends State<DriftCanvas<T>>
   }
 
   Widget _autoControls() {
+    if (widget.museumControls) return _museumAutoControls();
     final label = _autoRunning ? 'Pausa' : 'Auto';
     final labelIcon = _autoRunning ? Icons.pause_rounded : Icons.play_arrow_rounded;
     return AnimatedOpacity(
@@ -343,6 +377,71 @@ class _DriftCanvasState<T> extends State<DriftCanvas<T>>
     );
   }
 
+  Widget _museumAutoControls() => AnimatedOpacity(
+    duration: const Duration(milliseconds: 350),
+    opacity: _controlsDimmed ? .28 : 1.0,
+    child: Row(
+    mainAxisSize: MainAxisSize.min, children: [
+      SizedBox(height: 40, width: 89, child: TextButton.icon(
+        key: const ValueKey('drift-auto-toggle'),
+        onPressed: _toggleAuto,
+        style: TextButton.styleFrom(
+          backgroundColor: const Color(0xE51B1B22),
+          foregroundColor: const Color(0xFFF1E3CE),
+          side: BorderSide(color: _autoRunning
+              ? const Color(0xFFE5C8A5) : Colors.white30),
+          padding: const EdgeInsets.symmetric(horizontal: 4)),
+        icon: Icon(_autoRunning ? Icons.pause_rounded
+            : Icons.play_arrow_rounded, size: 17),
+        label: Text(_autoRunning ? 'Pausa' : 'Auto',
+          style: const TextStyle(fontSize: 12)),
+      )),
+      const SizedBox(width: 7),
+      SizedBox(height: 40, width: 65, child: OutlinedButton(
+        key: const ValueKey('drift-auto-speed'),
+        onPressed: () {
+          _activateControls();
+          setState(() => _museumSpeedMenuOpen = !_museumSpeedMenuOpen);
+        },
+        style: OutlinedButton.styleFrom(
+          backgroundColor: const Color(0xD91B1B22),
+          foregroundColor: const Color(0xFFF1E3CE),
+          padding: EdgeInsets.zero,
+          side: const BorderSide(color: Colors.white30)),
+        child: Text('$_autoSpeed% ▾',
+          style: const TextStyle(fontSize: 11)),
+      )),
+    ]),
+  );
+
+  Widget _museumSpeedMenu() => Material(
+    elevation: 8,
+    color: const Color(0xFFF1E5D0),
+    child: ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: 202),
+      child: Column(mainAxisSize: MainAxisSize.min, children: [
+        const Padding(
+          padding: EdgeInsets.fromLTRB(12, 9, 12, 5),
+          child: Text('IL RITMO DELLA VISITA',
+            style: TextStyle(fontSize: 9,
+              letterSpacing: 1.4, color: Color(0xFF907149)))),
+        for (final speed in const [25, 50, 75, 100])
+          SizedBox(height: 42, width: 202, child: TextButton(
+            key: ValueKey('drift-museum-speed-$speed'),
+            onPressed: () => _chooseSpeed(speed),
+            style: TextButton.styleFrom(
+              alignment: Alignment.centerLeft,
+              foregroundColor: const Color(0xFF58432E)),
+            child: Text(
+              '${speed == 25 ? 'Lento' : speed == 50 ? 'Regolare' : speed == 75 ? 'Veloce' : 'Molto veloce'} · $speed%',
+              style: TextStyle(fontSize: 12,
+                fontWeight: _autoSpeed == speed
+                    ? FontWeight.bold : FontWeight.normal)),
+          )),
+      ]),
+    ),
+  );
+
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (context, constraints) {
@@ -384,8 +483,28 @@ class _DriftCanvasState<T> extends State<DriftCanvas<T>>
                   child: GestureDetector(
                     onTap: () {
                       _pauseAuto();
-                      widget.onOpen(widget.items[tile.artworkIndex]);
+                      final item = widget.items[tile.artworkIndex];
+                      final onOpenAtRect = widget.onOpenAtRect;
+                      if (onOpenAtRect != null) {
+                        onOpenAtRect(item, Rect.fromLTWH(
+                          tile.rect.left * _zoom + _offset.dx,
+                          tile.rect.top * _zoom + _offset.dy,
+                          tile.rect.width * _zoom,
+                          tile.rect.height * _zoom));
+                      } else {
+                        widget.onOpen(item);
+                      }
                     },
+                    onLongPress: widget.onTileLongPress == null
+                      ? null : () {
+                          _pauseAuto();
+                          widget.onTileLongPress!(
+                            widget.items[tile.artworkIndex], Rect.fromLTWH(
+                              tile.rect.left * _zoom + _offset.dx,
+                              tile.rect.top * _zoom + _offset.dy,
+                              tile.rect.width * _zoom,
+                              tile.rect.height * _zoom));
+                        },
                     child: ColoredBox(
                       color: const Color(0xFF24232A),
                       child: widget.tileBuilder(context,
@@ -396,7 +515,7 @@ class _DriftCanvasState<T> extends State<DriftCanvas<T>>
             ]),
           ),
         ),
-        Positioned(
+        if (!_museumImmersive) Positioned(
           left: 19, top: 14,
           child: SafeArea(
             child: Column(
@@ -423,7 +542,23 @@ class _DriftCanvasState<T> extends State<DriftCanvas<T>>
             ),
           ),
         ),
-        Positioned(
+        if (widget.museumControls && _museumSpeedMenuOpen && !_museumImmersive)
+          Positioned(left: 19, top: 133,
+            child: _museumSpeedMenu()),
+        if (widget.museumControls)
+          Positioned(left: 16, bottom: 73,
+            child: SafeArea(top: false, child: TextButton(
+              key: const ValueKey('drift-museum-immersive'),
+              onPressed: _toggleMuseumImmersive,
+              style: TextButton.styleFrom(
+                foregroundColor: const Color(0xFFF1E3CE),
+                backgroundColor: const Color(0xE31B1B22),
+                side: const BorderSide(color: Color(0xFF9F805B))),
+              child: Text(_museumImmersive
+                  ? '◎ Mostra comandi' : '◌ Immersione',
+                style: const TextStyle(fontSize: 11)),
+            ))),
+        if (!_museumImmersive) Positioned(
           right: 16, bottom: 73,
           child: SafeArea(top: false,
             child: Tooltip(
@@ -438,7 +573,7 @@ class _DriftCanvasState<T> extends State<DriftCanvas<T>>
             ),
           ),
         ),
-        Positioned(
+        if (!_museumImmersive) Positioned(
           bottom: 16, left: 16, right: 16,
           child: SafeArea(
             top: false,
