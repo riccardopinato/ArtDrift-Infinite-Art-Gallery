@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:flutter/painting.dart';
 
 import 'canvas/infinite_gallery.dart';
@@ -17,13 +19,18 @@ import 'screens/collection_canvas.dart';
 import 'collections/art_collections.dart';
 import 'services/catalog_service.dart';
 import 'services/favorites.dart';
+import 'services/artdrift_account.dart';
+import 'services/favorite_cloud_sync.dart';
 import 'services/art_offline_thumbnail_index.dart';
 import 'services/art_mobile_canvas_selection.dart';
 import 'services/art_visual_color_selection.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // Web OAuth callback must reach the app's URL rather than a hash route.
+  if (kIsWeb) usePathUrlStrategy();
   await ArtDriftLocale.initialize();
+  await ArtDriftAccount.instance.initialize();
   PaintingBinding.instance.imageCache.maximumSize = 110;
   PaintingBinding.instance.imageCache.maximumSizeBytes = 48 * 1024 * 1024;
   runApp(const ArtDriftApp());
@@ -55,6 +62,9 @@ class GalleryHome extends StatefulWidget {
 class _GalleryHomeState extends State<GalleryHome> {
   final CatalogService _catalog = CatalogService();
   final Favorites _favorites = Favorites();
+  late final FavoriteSyncController _sync = FavoriteSyncController(
+    favorites: _favorites, account: ArtDriftAccount.instance);
+  String? _seenAccountId;
   List<Artwork> _artworks = [];
   List<Artwork> _canvasArtworks = [];
   List<Artwork> _colorArtworks = [];
@@ -68,7 +78,24 @@ class _GalleryHomeState extends State<GalleryHome> {
   @override
   void initState() {
     super.initState();
+    _seenAccountId = ArtDriftAccount.instance.userId;
+    ArtDriftAccount.instance.addListener(_accountChanged);
+    _sync.addListener(_syncChanged);
+    _sync.start();
     _initialize();
+  }
+
+  void _syncChanged() {
+    if (mounted) setState(() {});
+  }
+
+  void _accountChanged() {
+    final next = ArtDriftAccount.instance.userId;
+    if (next == _seenAccountId) return;
+    _seenAccountId = next;
+    unawaited(_sync.bindAccount(next).catchError((Object _) {
+      // Keep the museum usable in guest/offline mode after a storage error.
+    }));
   }
 
   // Presentation-only idle fade. The canvas camera and tile registry
@@ -87,6 +114,11 @@ class _GalleryHomeState extends State<GalleryHome> {
     setState(() { _loading = true; _error = null; });
     try {
       await _favorites.load();
+      try {
+        await _sync.bindAccount(ArtDriftAccount.instance.userId);
+      } catch (_) {
+        // Auth/sync must not make the public art catalog unavailable.
+      }
       // Fetch a tiny same-origin index before mounting remote image widgets.
       await ArtOfflineThumbnailIndex.instance.initialize();
       final works = await _catalog.load(refresh: refresh);
@@ -102,8 +134,8 @@ class _GalleryHomeState extends State<GalleryHome> {
       if (!mounted) return;
       setState(() {
         _artworks = works;
-        // Preserve the exact source-ID canvas playlist of existing installs.
-        // Only a fresh install receives the curated 2400-image selection.
+        // Retain existing saved camera-to-artwork mapping across upgrades.
+        // A 2,400-work color seed is used only on a fresh Android install.
         _canvasArtworks = visible.isEmpty ? works : visible;
         _colorArtworks = color;
         _loading = false;
@@ -126,14 +158,22 @@ class _GalleryHomeState extends State<GalleryHome> {
   }
 
   Future<void> _toggleFavorite(Artwork artwork) async {
-    await _favorites.toggle(artwork);
+    try {
+      await _sync.toggleFavorite(artwork);
+    } catch (_) {
+      // Local selection remains saved; never claim cloud success.
+      if (mounted) ScaffoldMessenger.maybeOf(context)?.showSnackBar(
+        const SnackBar(content: Text(
+          'Preferito locale salvato, sincronizzazione da riprovare.')));
+    }
     if (mounted) setState(() {});
   }
 
   Future<void> _openFavorites() async {
     final selected = await showArtFavoritesSheet(context,
       favorites: _favorites, catalog: _artworks,
-      onToggleFavorite: _toggleFavorite);
+      onToggleFavorite: _toggleFavorite,
+      changes: _sync);
     if (!mounted || selected == null) return;
     _open(selected);
   }
@@ -189,6 +229,9 @@ class _GalleryHomeState extends State<GalleryHome> {
   @override
   void dispose() {
     _toolbarQuietTimer?.cancel();
+    ArtDriftAccount.instance.removeListener(_accountChanged);
+    _sync.removeListener(_syncChanged);
+    _sync.dispose();
     _catalog.close();
     super.dispose();
   }
@@ -226,7 +269,7 @@ class _GalleryHomeState extends State<GalleryHome> {
           child: SafeArea(bottom: false, child: ArtDriftToolbar(
             onSearch: _openSearch,
             onFavorites: _openFavorites,
-            onSettings: () => showArtDriftSettings(context),
+            onSettings: () => showArtDriftSettings(context, sync: _sync),
           )))),
     ]),
     )));

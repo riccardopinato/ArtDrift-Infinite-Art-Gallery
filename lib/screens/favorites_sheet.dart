@@ -1,4 +1,5 @@
 import 'dart:math' as math;
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../models/artwork.dart';
 import '../ui/artwork_preview_image.dart';
@@ -12,18 +13,21 @@ Future<Artwork?> showArtFavoritesSheet(
   required Favorites favorites,
   required List<Artwork> catalog,
   required Future<void> Function(Artwork) onToggleFavorite,
+  Listenable? changes,
 }) => showModalBottomSheet<Artwork>(
   context: context,
   backgroundColor: Colors.transparent,
   isScrollControlled: true,
   useSafeArea: true,
   builder: (_) => _FavoritesSheet(
-    favorites: favorites, catalog: catalog, onToggleFavorite: onToggleFavorite),
+    favorites: favorites, catalog: catalog,
+    onToggleFavorite: onToggleFavorite, changes: changes),
 );
 
 class _FavoritesSheet extends StatefulWidget {
   const _FavoritesSheet({required this.favorites,
-    required this.catalog, required this.onToggleFavorite});
+    required this.catalog, required this.onToggleFavorite, this.changes});
+  final Listenable? changes;
   final Favorites favorites;
   final List<Artwork> catalog;
   final Future<void> Function(Artwork) onToggleFavorite;
@@ -34,6 +38,22 @@ class _FavoritesSheet extends StatefulWidget {
 
 class _FavoritesSheetState extends State<_FavoritesSheet> {
   bool _busy = false;
+
+  void _refresh() {
+    if (mounted) setState(() {});
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    widget.changes?.addListener(_refresh);
+  }
+
+  @override
+  void dispose() {
+    widget.changes?.removeListener(_refresh);
+    super.dispose();
+  }
 
   Future<void> _remove(Artwork artwork) async {
     if (_busy) return;

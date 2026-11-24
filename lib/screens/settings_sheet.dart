@@ -5,16 +5,21 @@ import '../services/art_frame_performance.dart';
 import '../services/art_image_delivery_metrics.dart';
 import '../ui/localization.dart';
 import '../ui/parchment.dart';
+import '../services/favorite_cloud_sync.dart';
+import 'account_card.dart';
 
-Future<void> showArtDriftSettings(BuildContext context) =>
+Future<void> showArtDriftSettings(BuildContext context, {
+  FavoriteSyncController? sync,
+}) =>
     showModalBottomSheet<void>(
       context: context, backgroundColor: Colors.transparent,
       isScrollControlled: true, useSafeArea: true,
-      builder: (context) => const _ArtDriftSettingsSheet(),
+      builder: (context) => _ArtDriftSettingsSheet(sync: sync),
     );
 
 class _ArtDriftSettingsSheet extends StatefulWidget {
-  const _ArtDriftSettingsSheet();
+  const _ArtDriftSettingsSheet({this.sync});
+  final FavoriteSyncController? sync;
   @override
   State<_ArtDriftSettingsSheet> createState() => _ArtDriftSettingsState();
 }
@@ -99,7 +104,12 @@ class _ArtDriftSettingsState extends State<_ArtDriftSettingsSheet> {
               Text(t('languageNote'), style: const TextStyle(
                 color: Color(0xFF725B40), fontSize: 12, height: 1.5)),
               const SizedBox(height: 24),
-              _SectionHeading(number: '02', text: t('about')),
+              _SectionHeading(number: '02',
+                text: ArtDriftLocale.current.value == 'it' ? 'Account' : 'Account'),
+              const SizedBox(height: 10),
+              ArtDriftAccountCard(sync: widget.sync),
+              const SizedBox(height: 23),
+              _SectionHeading(number: '03', text: t('about')),
               const SizedBox(height: 8),
               _ActionTile(
                 icon: Icons.auto_awesome_outlined, title: t('pro'),
@@ -117,7 +127,7 @@ class _ArtDriftSettingsState extends State<_ArtDriftSettingsSheet> {
                 onTap: () => _showDocument(context,t('license'),t('licenseBody')),
               ),
               const SizedBox(height: 23),
-              _SectionHeading(number: '03', text: _performanceTitle()),
+              _SectionHeading(number: '04', text: _performanceTitle()),
               const SizedBox(height: 8),
               _ActionTile(
                 icon: Icons.speed_rounded,

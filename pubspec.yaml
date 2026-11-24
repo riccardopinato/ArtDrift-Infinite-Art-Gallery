@@ -1,7 +1,7 @@
 name: artdrift
 description: An infinite canvas for discovering public-domain paintings.
 publish_to: none
-version: 0.3.6+9
+version: 0.3.8+11
 
 environment:
   sdk: '>=3.5.0 <4.0.0'
@@ -14,6 +14,9 @@ dependencies:
   http: ^1.6.0
   path_provider: ^2.1.6
   shared_preferences: ^2.5.3
+  supabase_flutter: 2.17.1
+  flutter_web_plugins:
+    sdk: flutter
   url_launcher: ^6.3.2
 
 dev_dependencies:
