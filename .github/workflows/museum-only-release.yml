@@ -27,6 +27,8 @@ jobs:
           python-version: '3.12'
       - name: Verify Worker approved-only API and native identity deduplication
         run: node --test cloudflare/art-catalog/test/*.test.mjs
+      - name: Install exact visual QA decoder for added Python tests
+        run: python -m pip install 'Pillow==11.3.0'
       - name: Test D1 exporters and museum ingestion, offline
         run: |
           python -m unittest discover -s cloudflare/art-catalog/scripts -p 'test_*.py' -v
