@@ -19,7 +19,7 @@ void main() {
   test('source metadata and photo attribution are complete', () async {
     final pairs = await DailyDoppelgangerCatalog.load();
     expect(pairs.length, 5);
-    expect(pairs.map((e) => e.id).toSet().length, 2);
+    expect(pairs.map((e) => e.id).toSet().length, 5);
     for (final pair in pairs) {
       expect(pair.portrait.previewUrl.startsWith('https://commons.wikimedia.org/'), true);
       expect(pair.celebrity.previewUrl.startsWith('https://commons.wikimedia.org/'), true);

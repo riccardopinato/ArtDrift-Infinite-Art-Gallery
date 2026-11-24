@@ -18,3 +18,13 @@ No celebrity or museum images copied into Git; Flutter only links source-bound C
 - **Known mismatch**: art press composite portrait-vs-celebrity photo may use an altogether different celebrity photo than today's Commons CC file. No claims of personally validated visual resemblance for the selected replacement images.
 - **Schiele** *Self-Portrait with Striped Shirt* is a drawing; V2 marks `DRAWING_CONFIRMED_EXCLUDE_FROM_PAINTING_ONLY`; the user may later choose an “artworks” (rather than painting) scope.
 - No modifications to `main`, shared Drift Core, GalleryDrift, museum 5085 catalog, Supabase or Cloudflare, and no public deployment/AdMob integration. Keep stacked Draft PR until original product rights and physical acceptance gates pass.
+
+## Supplemental object-level museum reconciliation
+- **John Singer Sargent** `Man Reading (Nicola d'Inverno)`: [Reading Public Museum official 1948.35.1 publication](https://www.readingpublicmuseum.org/downloads/web_museum_road_summer_2018.pdf) and specific Commons photo. Another similar Sargent painting is held at Harvard/Fogg: verify which is depicted in the original celebrity comparison.
+- **Ford Madox Brown**, `The Irish Girl`: [Yale Center for British Art museum publication](https://britishart.yale.edu/sites/default/files/2025-06/large%20print_fourth%20floor_03.pdf), 1860 oil on canvas laid on board, plus Commons file. Still no source-bound celebrity photograph.
+- **Leon Kroll**, `The Conversation`: [Google Arts & Culture museum-partner presentation](https://artsandculture.google.com/asset/the-conversation-abraham-leon-kroll/UAHA8Dgh15BelA?hl=en). Smithsonian archives note a repainted version; exact image still ambiguous.
+- **Francis Vandeveer Kughler**, `Pvt. Dorothy Spaulding`: [Google Arts & Culture entry](https://artsandculture.google.com/asset/pvt-dorothy-spaulding-francis-vandeveer-kughler/_gHJlYwzA5E5Lg), no free source celebrity photo found.
+- **Paul R. Meltsner**, `Martha Graham`: [Smithsonian NPG NPG.73.41](https://www.si.edu/object/martha-graham:npg_NPG.73.41); Delaware Art Museum also has a separately catalogued work of the same subject; no automatic version selection.
+- **John Singleton Copley**, `Portrait of Mr. and Mrs. Thomas Mifflin (Sarah Morris)`: [Philadelphia Museum of Art 103026](https://www.philamuseum.org/objects/103026), 1773. Subject region Sarah Morris must be located; museum site photography permission is not assumed.
+
+The research catalog now contains **26** rows with museum/object or artwork-file references, **22** celebrity Commons source pages and **16** pairs with both original File pages located. All of these remain source-level only; **0** of the new 37 source pairs commercially cleared.
