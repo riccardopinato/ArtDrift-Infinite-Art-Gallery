@@ -1,0 +1,28 @@
+name: ArtDrift per-object catalog rights triage 585/635 (metadata-only, no APK)
+on:
+  push:
+    branches: ['research/artdrift-rights-triage-*']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  rights-triage:
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Fail-closed rights triage tests including real 585 dataset
+        run: python3 -m unittest discover -s tools -p test_artdrift_candidate_rights_triage.py -v
+      - name: Build independent 5085/585 source inventory in memory
+        run: python3 tools/artdrift_inventory_wave.py --expected 5085 --out build/artdrift-inventory
+      - name: Flag every artwork, split painting vs archival items, preserve 6 waves
+        run: python3 tools/artdrift_candidate_rights_triage.py --review build/artdrift-inventory/review.json --out build/rights-triage --expected 585
+      - name: Upload inspectable source-only per-item rights evidence matrix
+        uses: actions/upload-artifact@v4
+        with:
+          name: artdrift-per-item-585-rights-HOLD
+          path: build/rights-triage/
+          if-no-files-found: error
