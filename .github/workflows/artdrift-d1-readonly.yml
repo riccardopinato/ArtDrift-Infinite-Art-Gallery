@@ -1,0 +1,50 @@
+name: Art Drift D1 remote identity audit READ ONLY (no APK)
+on:
+  push:
+    branches: ['research/artdrift-d1-*']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  d1_reconcile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    env:
+      DATABASE: ${{ vars.ARTDRIFT_D1_DATABASE }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate safe native-ID diff logic locally
+        run: python -m unittest discover -s tools -p 'test_artdrift_d1_reconcile.py' -v
+      - name: Confirm preconfigured D1 only; no provisioning
+        run: |
+          test "$DATABASE" = 'artdrift-moma-cc0'
+          test -n "$CLOUDFLARE_API_TOKEN" && test -n "$CLOUDFLARE_ACCOUNT_ID"
+          (cd cloudflare/art-catalog && npx --yes wrangler@4 d1 info "$DATABASE" --json) > "$RUNNER_TEMP/d1info.json"
+          python - <<'PY'
+          import json,os
+          info=json.load(open(os.environ["RUNNER_TEMP"]+"/d1info.json"))
+          assert info.get("name")==os.environ["DATABASE"]
+          print("D1_REMOTE_ID_VERIFIED_READONLY")
+          PY
+      - name: Read two existing D1 namespaces by SELECT only
+        run: |
+          cd cloudflare/art-catalog
+          npx --yes wrangler@4 d1 execute "$DATABASE" --remote --yes --json --command="SELECT source_key,museum_source,museum_native_id FROM museum_works ORDER BY source_key" > "$RUNNER_TEMP/museums.json"
+          npx --yes wrangler@4 d1 execute "$DATABASE" --remote --yes --json --command="SELECT provider,native_id,publication_status,rights_status FROM artdrift_museum_ingest ORDER BY provider,native_id" > "$RUNNER_TEMP/stage.json"
+      - name: Prepare source-native diff and SQL for review only
+        run: |
+          python tools/artdrift_d1_reconcile.py --museum-json "$RUNNER_TEMP/museums.json" --stage-json "$RUNNER_TEMP/stage.json" --out build/d1-reconciliation
+      - name: Upload D1 reconciliation proof, no SQL execution
+        uses: actions/upload-artifact@v4
+        with:
+          name: artdrift-d1-readonly
+          path: build/d1-reconciliation/
+          if-no-files-found: error
