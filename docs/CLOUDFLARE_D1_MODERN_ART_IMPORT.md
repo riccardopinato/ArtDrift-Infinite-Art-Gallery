@@ -128,3 +128,34 @@ Base normativa: Direttiva 2006/116/CE, durata `vita + 70 anni`: https://eur-lex.
 - La versione del codice può avanzare rispetto al run acquisizione; dopo modifiche controllare sempre il commit esatto del workflow di validazione.
 
 L'upload manuale quando autorizzato esegue prima un `wrangler d1 info` **di sola lettura**, e solo dopo usa `--remote --yes` per migrazione + stage e verifica i conteggi effettivi. Non crea né approva record pubblicabili.
+
+
+## Import effettivo Cloudflare D1 — 24 novembre 2026
+
+**STAGING REMOTO COMPLETATO E VERIFICATO.** Questo stato prevale sulle note storiche del documento che indicano credenziali mancanti o assenza di scritture. Non implica pubblicazione nel canvas.
+
+- Database D1 esistente: `artdrift-moma-cc0`. Nessun database nuovo creato.
+- Tabella indipendente: `artdrift_museum_ingest`, view filtrata `artdrift_publishable_modern_art`.
+- Workflow: `Art Drift - D1 modern-art staging`, run **45297815828**, job `one_shot_remote_stage_535` **138122818107**.
+- Commit di esecuzione: `1c1a0c5bb27842fd8d603a6415b56b058af2c56b`.
+- Esecuzione remota: https://github.com/riccardopinato/ArtDrift-Infinite-Art-Gallery/actions/runs/45297815828
+- Controllo input: `STAGE_535_EXACT_INPUT_PASS`.
+- Preflight prima di qualunque scrittura: `D1_REMOTE_NAMESPACE_EMPTY_PASS` (tabella precedentemente assente).
+- Migrazione idempotente: applicata, **4 statement** eseguiti da Wrangler.
+- SQL batch: **535 statement di upsert** eseguiti da Wrangler.
+- Postflight: `D1_STAGE_535_WRITTEN_PASS`; `D1_PUBLISHABLE_ROWS 0`.
+
+| Provider | Righe remote | Stato |
+|---|---:|---|
+| Tate | 233 | Solo metadati |
+| MoMA | 253 | Solo metadati |
+| Cleveland | 49 | URL candidati CC0, riuso di opere già catalogate |
+| **Totale** | **535** | **535 publication_status=HOLD** |
+
+La verifica remota ha convalidato **535 righe**, ripartizione **233/253/49**, **486 METADATA_ONLY**, **49 IMAGE_RIGHTS_VERIFIED** (soltanto esito della policy automatica), **535 HOLD**, **0 visibili nella view pubblicabile**. Nessun file binario immagine, asset Flutter o preferito utente è stato scritto. Nessuna azione di approvazione editoriale `APPROVED` è stata eseguita.
+
+### Prevenzione di reimportazioni involontarie
+
+La scrittura è stata attivata soltanto dal commit con marker esatto `[artdrift-one-shot-stage-535-20261124]`, su questo branch. Gli altri normali push, gli eventi PR e l'avvio manuale ordinario con `upload_remote=false` non attivano il job. Un retry dello stesso commit, se richiesto per errore, è bloccato dal controllo preliminare della tabella già esistente.
+
+**Passaggio distinto e non eseguito:** revisione editoriale/giuridica delle 49 immagini e collegamento futuro del canvas alla view D1. Questa PR resta Draft e non è stata unita a `main`.
