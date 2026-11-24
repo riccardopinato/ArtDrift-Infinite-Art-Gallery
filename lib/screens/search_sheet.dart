@@ -2,6 +2,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../models/artwork.dart';
 import '../ui/artwork_preview_image.dart';
+import '../collections/art_collections.dart';
 import '../search/gallery_search.dart';
 import '../search/museum_search.dart';
 import '../services/museum_cloud_catalog.dart';
@@ -9,16 +10,34 @@ import 'museum_cloud_catalog_page.dart';
 import '../ui/localization.dart';
 import '../ui/parchment.dart';
 
-Future<Artwork?> showArtSearchSheet(BuildContext context, List<Artwork> catalog) =>
+Future<Artwork?> showArtSearchSheet(BuildContext context, List<Artwork> catalog,
+    {void Function(ArtCollection)? onOpenCollection,
+     List<Artwork>? collectionCatalog,
+     bool visualPaletteAvailable = false,
+     String initialQuery = '',
+     ValueChanged<String>? onQueryChanged}) =>
     showModalBottomSheet<Artwork>(
       context: context, isScrollControlled: true, useSafeArea: true,
       backgroundColor: Colors.transparent,
-      builder: (_) => _SearchSheet(artworks: catalog),
+      builder: (_) => _SearchSheet(artworks: catalog,
+          collectionCatalog: collectionCatalog ?? catalog,
+          onOpenCollection: onOpenCollection,
+          visualPaletteAvailable: visualPaletteAvailable,
+          initialQuery: initialQuery,
+          onQueryChanged: onQueryChanged),
     );
 
 class _SearchSheet extends StatefulWidget {
-  const _SearchSheet({required this.artworks});
+  const _SearchSheet({required this.artworks,
+    required this.collectionCatalog, this.onOpenCollection,
+    required this.visualPaletteAvailable, required this.initialQuery,
+    this.onQueryChanged});
   final List<Artwork> artworks;
+  final List<Artwork> collectionCatalog;
+  final void Function(ArtCollection)? onOpenCollection;
+  final bool visualPaletteAvailable;
+  final String initialQuery;
+  final ValueChanged<String>? onQueryChanged;
   @override
   State<_SearchSheet> createState() => _SearchSheetState();
 }
@@ -27,12 +46,13 @@ class _SearchSheetState extends State<_SearchSheet> {
   final TextEditingController _text = TextEditingController();
   final MuseumSearchService _museums = MuseumSearchService();
   final MuseumCloudCatalog _cloud = MuseumCloudCatalog();
-  static const bool _d1OptIn = bool.fromEnvironment('ARTDRIFT_ENABLE_D1_DISCOVERY',defaultValue:false);
+  static const bool _d1OptIn = bool.fromEnvironment('ARTDRIFT_ENABLE_D1_DISCOVERY', defaultValue: false);
   late final GallerySearch _search;
   ArtworkSearchScope _scope = ArtworkSearchScope.all;
   List<Artwork> _local = const [];
   List<Artwork> _international = const [];
   List<String> _suggestions = const [];
+  List<ArtCollection> _collections = const [];
   bool _searching = false;
   bool _remoteAttempted = false;
   int _generation = 0;
@@ -43,11 +63,21 @@ class _SearchSheetState extends State<_SearchSheet> {
   void initState() {
     super.initState();
     _search = GallerySearch(widget.artworks);
+    _collections = [
+      if (widget.visualPaletteAvailable) ArtCollections.colorFirst,
+      ...ArtCollections.available(widget.collectionCatalog),
+    ];
+    _text.text = widget.initialQuery;
+    final initial = _text.text.trim();
+    _suggestions = _search.suggest(initial, scope: _scope);
+    _local = initial.length > 1
+        ? _search.find(initial, scope: _scope) : const [];
     _text.addListener(_updateLocal);
   }
 
   void _updateLocal() {
     final query = _text.text.trim();
+    widget.onQueryChanged?.call(_text.text);
     _generation++;
     setState(() {
       _international = const [];
@@ -112,21 +142,31 @@ class _SearchSheetState extends State<_SearchSheet> {
       child: SizedBox(height: height, child: ParchmentPanel(
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Row(children: [
-            const BrushMark(size: 28),
-            const SizedBox(width: 11),
-            Expanded(child: Text(t('searchTitle'),
-              style: const TextStyle(fontFamily: 'serif', fontSize: 26,
-                fontWeight: FontWeight.w600, color: ArtPaper.ink))),
+            const BrushMark(size: 23),
+            const SizedBox(width: 10),
+            const Expanded(child: Text('ARTDRIFT ✧',
+              style: TextStyle(fontSize: 10, letterSpacing: 1.3,
+                color: ArtPaper.gold))),
             IconButton(onPressed: () => Navigator.pop(context),
+              key: const Key('artdrift-atrium-close'),
               tooltip: t('close'),
               icon: const Icon(Icons.close, color: ArtPaper.ink)),
           ]),
           const Divider(color: ArtPaper.gold, thickness: .75),
+          const SizedBox(height: 9),
+          Text(t('searchTitle'), style: const TextStyle(
+            fontFamily: 'serif', fontSize: 29,
+            fontWeight: FontWeight.w500, color: ArtPaper.ink)),
           const SizedBox(height: 7),
+          const Text('✦  ARTDRIFT  ·  INFINITE ART GALLERY',
+            style: TextStyle(color: ArtPaper.gold, letterSpacing: 1.1,
+              fontSize: 9)),
+          const SizedBox(height: 15),
           OrnateFrame(shadow: false, padding: const EdgeInsets.fromLTRB(10, 1, 8, 1),
             child: Row(children: [
               const BrushMark(size: 20), const SizedBox(width: 9),
               Expanded(child: TextField(
+                key: const Key('artdrift-atrium-field'),
                 controller: _text, autofocus: true, maxLength: 90,
                 textInputAction: TextInputAction.search,
                 onSubmitted: (_) => _searchInternational(),
@@ -153,10 +193,16 @@ class _SearchSheetState extends State<_SearchSheet> {
           ),
           const SizedBox(height: 8),
           Expanded(child: ListView(children: [
-            if (_text.text.trim().isEmpty)
-              Padding(padding: const EdgeInsets.symmetric(vertical: 24),
-                child: Center(child: Text(t('emptyQuery'),
-                  style: const TextStyle(color: ArtPaper.ink, fontFamily:'serif')))),
+            if (_text.text.trim().isEmpty) ...[
+              if (_collections.isNotEmpty) ...[
+                _section(_collectionHeader()),
+                for (final collection in _collections)
+                  _collectionRow(collection),
+              ] else
+                Padding(padding: const EdgeInsets.symmetric(vertical: 24),
+                  child: Center(child: Text(t('emptyQuery'),
+                    style: const TextStyle(color: ArtPaper.ink, fontFamily:'serif')))),
+            ],
             if (_suggestions.isNotEmpty) ...[
               _section(t('suggestions')),
               for (final name in _suggestions)
@@ -234,6 +280,40 @@ class _SearchSheetState extends State<_SearchSheet> {
     );
   }
 
+  String _collectionHeader() {
+    const titles = {'it':'Esplora le collezioni',
+      'en':'Explore collections','fr':'Explorer les collections',
+      'es':'Explorar colecciones','de':'Sammlungen entdecken',
+      'pt':'Explorar coleções'};
+    return titles[ArtDriftLocale.current.value] ?? titles['en']!;
+  }
+
+  Widget _collectionRow(ArtCollection collection) {
+    final language = ArtDriftLocale.current.value;
+    final count = widget.collectionCatalog.where(collection.contains).length;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: OrnateFrame(shadow: false, padding: EdgeInsets.zero,
+        child: ListTile(
+          key: ValueKey('collection-${collection.id}'),
+          leading: const Icon(Icons.collections_bookmark_outlined,
+              color: ArtPaper.gold),
+          title: Text(collection.title(language),
+              style: const TextStyle(color: ArtPaper.ink,
+                  fontFamily: 'serif', fontSize: 15)),
+          subtitle: Text(collection.subtitle(language),
+              style: const TextStyle(color: Color(0xFF785C3C), fontSize: 11)),
+          trailing: Text('$count',
+              style: const TextStyle(color: ArtPaper.gold, fontSize: 12)),
+          onTap: () {
+            Navigator.of(context).pop();
+            widget.onOpenCollection?.call(collection);
+          },
+        ),
+      ),
+    );
+  }
+
   Widget _scopeChip(ArtworkSearchScope scope, String key) => Padding(
     padding: const EdgeInsets.only(right: 7),
     child: ChoiceChip(
@@ -249,9 +329,14 @@ class _SearchSheetState extends State<_SearchSheet> {
 
   Widget _section(String name) => Padding(
     padding: const EdgeInsets.fromLTRB(4, 12, 4, 7),
-    child: Text(name.toUpperCase(),style: const TextStyle(
-      color: Color(0xFF896536), letterSpacing: 1.2,
-      fontSize: 10, fontWeight: FontWeight.bold)),
+    child: DecoratedBox(
+      decoration: const BoxDecoration(border: Border(
+        top: BorderSide(color: Color(0xFFBDA987)))),
+      child: Padding(
+        padding: const EdgeInsets.only(top: 10),
+        child: Text(name.toUpperCase(),style: const TextStyle(
+          color: Color(0xFF896536), letterSpacing: 1.2,
+          fontFamily: 'serif', fontSize: 10, fontWeight: FontWeight.bold)))),
   );
 
   Widget _artworkRow(Artwork art) => Padding(
@@ -264,10 +349,7 @@ class _SearchSheetState extends State<_SearchSheet> {
             ClipRRect(borderRadius: BorderRadius.circular(3),
               child: SizedBox(width: 49, height: 67,
                 child: ArtworkPreviewImage(
-                  artwork: art,
-                  fit: BoxFit.cover,
-                  cacheWidth: 100,
-                ),
+                    artwork: art, cacheWidth: 100),
               )),
             const SizedBox(width: 13),
             Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start,

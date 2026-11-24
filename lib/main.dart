@@ -7,6 +7,9 @@ import 'screens/settings_sheet.dart';
 import 'screens/favorites_sheet.dart';
 import 'ui/gallery_toolbar.dart';
 import 'ui/localization.dart';
+import 'ui/museum_portal.dart';
+import 'screens/collection_canvas.dart';
+import 'collections/art_collections.dart';
 import 'models/artwork.dart';
 import 'screens/artwork_detail.dart';
 import 'services/catalog_service.dart';
@@ -51,6 +54,8 @@ class _GalleryHomeState extends State<GalleryHome> {
   final Favorites _favorites = Favorites();
   List<Artwork> _artworks = [];
   List<Artwork> _canvasArtworks = [];
+  List<Artwork> _colorArtworks = [];
+  String _lastSearchQuery = '';
   bool _loading = true;
   String? _error;
 
@@ -75,6 +80,7 @@ class _GalleryHomeState extends State<GalleryHome> {
       setState(() {
         _artworks = works;
         _canvasArtworks = visible.isNotEmpty ? visible : works;
+        _colorArtworks = curated;
         _loading = false;
       });
     } catch (error) {
@@ -84,7 +90,12 @@ class _GalleryHomeState extends State<GalleryHome> {
   }
 
   Future<void> _openSearch() async {
-    final selected = await showArtSearchSheet(context, _artworks);
+    final selected = await showArtSearchSheet(context, _artworks,
+      collectionCatalog: _canvasArtworks,
+      onOpenCollection: _openCollection,
+      visualPaletteAvailable: _colorArtworks.isNotEmpty,
+      initialQuery: _lastSearchQuery,
+      onQueryChanged: (value) => _lastSearchQuery = value);
     if (!mounted || selected == null) return;
     _open(selected);
   }
@@ -102,10 +113,27 @@ class _GalleryHomeState extends State<GalleryHome> {
     _open(selected);
   }
 
-  void _open(Artwork artwork) {
-    final index = _artworks.indexWhere((a) => a.catalogKey == artwork.catalogKey);
-    // Remote discoveries open in detail without perturbing the pinned canvas.
-    final group = index < 0 ? <Artwork>[artwork] : _artworks;
+  void _open(Artwork artwork) => _openArtworkInGroup(artwork, _artworks);
+
+  void _openCollection(ArtCollection collection) {
+    final selected = collection.id == ArtCollections.colorFirst.id
+        ? _colorArtworks
+        : ArtCollections.members(collection, _canvasArtworks);
+    if (selected.isEmpty || !mounted) return;
+    Navigator.of(context).push(MaterialPageRoute<void>(
+      builder: (_) => ArtCollectionCanvasScreen(
+        collection: collection,
+        artworks: selected,
+        onOpen: _openArtworkInGroup,
+      ),
+    ));
+  }
+
+  void _openArtworkInGroup(Artwork artwork, List<Artwork> artworks) {
+    final index = artworks.indexWhere((a) => a.catalogKey == artwork.catalogKey);
+    // Search results outside the currently visible mosaic retain their
+    // own true source identity; they never change pinned tile assignments.
+    final group = index < 0 ? <Artwork>[artwork] : artworks;
     final start = index < 0 ? 0 : index;
     Navigator.of(context).push(PageRouteBuilder<void>(
       pageBuilder: (context, animation, secondaryAnimation) => ArtworkDetail(
@@ -116,7 +144,8 @@ class _GalleryHomeState extends State<GalleryHome> {
       ),
       transitionsBuilder: (context, animation, secondaryAnimation, child) =>
         FadeTransition(opacity: animation, child: child),
-      transitionDuration: const Duration(milliseconds: 200),
+      transitionDuration: MediaQuery.disableAnimationsOf(context)
+          ? Duration.zero : const Duration(milliseconds: 200),
     ));
   }
 
@@ -128,36 +157,9 @@ class _GalleryHomeState extends State<GalleryHome> {
 
   @override
   Widget build(BuildContext context) {
-    if (_loading) return const Scaffold(body: Center(child: Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text('artdrift ∞', style: TextStyle(
-          fontSize: 31, color: Colors.white, fontWeight: FontWeight.w600)),
-        SizedBox(height: 24),
-        CircularProgressIndicator(color: Color(0xFFD2BB9C)),
-        SizedBox(height: 20),
-        Text('Carichiamo le opere del tuo museo…',
-          style: TextStyle(color: Colors.white54)),
-      ],
-    )));
+    if (_loading) return const MuseumPortal.loading();
     if (_error != null || _artworks.isEmpty) {
-      return Scaffold(body: Center(child: Padding(
-        padding: const EdgeInsets.all(32),
-        child: Column(mainAxisSize: MainAxisSize.min, children: [
-          const Icon(Icons.wifi_off_rounded, size: 44, color: Colors.white54),
-          const SizedBox(height: 20),
-          const Text('La galleria non è disponibile',
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 20, color: Colors.white)),
-          const SizedBox(height: 10),
-          const Text('Serve una connessione per scaricare la prima selezione. '
-            'Dopo il primo caricamento potrai riaprire il catalogo salvato.',
-            textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.white60, height: 1.4)),
-          const SizedBox(height: 20),
-          FilledButton(onPressed: _initialize, child: const Text('Riprova')),
-        ]),
-      )));
+      return MuseumPortal.unavailable(onRetry: _initialize);
     }
     return Scaffold(body: Stack(fit: StackFit.expand, children: [
       InfiniteGallery(artworks: _canvasArtworks, onOpen: _open),
