@@ -6,6 +6,8 @@ on:
     paths:
       - tools/artdrift_museum_ingest.py
       - tools/artdrift_merge_staging.py
+      - tools/artdrift_cleveland_rights_audit.py
+      - tools/test_artdrift_cleveland_rights_audit.py
       - tools/test_artdrift_museum_ingest.py
       - cloudflare/d1/migrations/0001_museum_ingest.sql
       - .github/workflows/d1-modern-art-staging.yml
@@ -13,6 +15,8 @@ on:
     paths:
       - tools/artdrift_museum_ingest.py
       - tools/artdrift_merge_staging.py
+      - tools/artdrift_cleveland_rights_audit.py
+      - tools/test_artdrift_cleveland_rights_audit.py
       - tools/test_artdrift_museum_ingest.py
       - cloudflare/d1/migrations/0001_museum_ingest.sql
       - .github/workflows/d1-modern-art-staging.yml
@@ -122,8 +126,8 @@ jobs:
           python-version: '3.12'
       - name: Compile and unit-test offline importer
         run: |
-          python -m py_compile tools/artdrift_museum_ingest.py tools/artdrift_merge_staging.py
-          python -m unittest discover -s tools -p 'test_artdrift_museum_ingest.py' -v
+          python -m py_compile tools/artdrift_museum_ingest.py tools/artdrift_merge_staging.py tools/artdrift_cleveland_rights_audit.py
+          python -m unittest discover -s tools -p 'test_artdrift*.py' -v
       - name: D1 schema smoke on SQLite
         run: |
           python - <<'PY'
@@ -230,6 +234,40 @@ jobs:
           include-hidden-files: true
           if-no-files-found: error
           retention-days: 14
+
+  audit_cleveland_live_rights:
+    # Per-work public-source rights and image URL evidence, NEVER write to D1.
+    if: github.event_name == 'push'
+    needs: [validate, preview_verified]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Read current 49 Cleveland records from official public API
+        run: |
+          python tools/artdrift_cleveland_rights_audit.py \
+            --out .artdrift_ingest/cleveland-rights-audit.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          x = json.loads(Path('.artdrift_ingest/cleveland-rights-audit.json').read_text())
+          assert x['total'] == 49
+          assert x['all_publication_status'] == 'HOLD'
+          assert x['editorial_approved'] == x['published'] == 0
+          assert all(r['publication_status'] == 'HOLD' for r in x['works'])
+          print('CLEVELAND_RIGHTS_AUDIT_CAPTURED', x['source_checks'])
+          PY
+      - name: Publish per-item rights evidence and pending review ledger
+        uses: actions/upload-artifact@v4
+        with:
+          name: artdrift-cleveland-rights-review-${{ github.run_id }}
+          path: .artdrift_ingest/cleveland-rights-audit.json
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 30
 
   merge_staged:
     if: github.event_name == 'push'
