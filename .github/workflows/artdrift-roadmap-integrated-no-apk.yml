@@ -1,0 +1,96 @@
+name: Art Drift 10-step roadmap integrated QA (NO APK)
+on:
+  push:
+    branches: ['research/artdrift-roadmap-review-*']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  corpus_d1_rights:
+    runs-on: ubuntu-latest
+    timeout-minutes: 24
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install pinned image QA decoder
+        run: python -m pip install 'Pillow==11.3.0'
+      - name: Worker D1 API and fail-closed rights regression
+        run: node --test cloudflare/art-catalog/test/*.test.mjs
+      - name: Full 5085 local D1 schema, import and provenance tests
+        run: |
+          python -m unittest discover -s cloudflare/art-catalog/scripts -p 'test_*.py' -v
+          python -m unittest discover -s tools -p 'test_artdrift_*.py' -v
+      - name: Build deterministic 5085 museum SQLite source snapshot
+        run: |
+          python cloudflare/art-catalog/scripts/make_museum_d1_import.py --root . --out build/d1-museums --expected 5085 --chunk 200
+          python tools/artdrift_inventory_wave.py --expected 5085 --out build/artdrift-inventory
+          python - <<'PY'
+          import json,sqlite3
+          from pathlib import Path
+          c=sqlite3.connect(':memory:')
+          c.executescript(Path('cloudflare/art-catalog/museum_schema.sql').read_text())
+          for shard in sorted(Path('build/d1-museums').glob('museum-*.sql')):
+              c.executescript(shard.read_text(encoding='utf8'))
+          c.executescript(Path('cloudflare/d1/migrations/0001_museum_ingest.sql').read_text())
+          works=c.execute('SELECT COUNT(*) FROM museum_works').fetchone()[0]
+          fts=c.execute('SELECT COUNT(*) FROM museum_works_fts').fetchone()[0]
+          assert works==fts==5085
+          assert c.execute('SELECT COUNT(*) FROM artdrift_publishable_modern_art').fetchone()[0]==0
+          q=json.loads(Path('build/artdrift-inventory/summary.json').read_text())
+          assert q['catalog_records']==5085 and q['candidate_records']==585 and q['candidate_waves']==6
+          assert q['auto_approved']==q['canvas_enabled']==0
+          print('ARTDRIFT_ROADMAP_CORPUS_INTEGRATION_PASS 5085 585 6_WAVES 0_APPROVED')
+          PY
+      - name: Decode and compare actual packaged source artwork previews
+        run: python tools/artdrift_visual_review.py --board-size 100 --remote-sample 0 --out build/artdrift-visual
+      - uses: actions/upload-artifact@v4
+        with:
+          name: artdrift-roadmap-catalog-rights-and-visual-evidence
+          path: |
+            build/artdrift-inventory/
+            build/artdrift-visual/
+            build/d1-museums/manifest.json
+          if-no-files-found: error
+  flutter_web:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: '3.50.1'
+          cache: true
+      - name: Prepare Flutter Web without Android build
+        run: |
+          flutter create --project-name artdrift --org com.riccardopinato --platforms=web .
+          rm -f test/widget_test.dart
+          flutter pub get
+      - name: Analyze and test shared Core and Art Drift as separate consumers
+        run: |
+          (cd packages/drift_core && flutter pub get && flutter analyze --no-fatal-infos && flutter test)
+          flutter analyze --no-fatal-infos
+          flutter test
+      - name: Verify disabled-by-default source configuration and compile Web
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          src=Path('lib/services/museum_cloud_catalog.dart').read_text()
+          assert 'allowImage=false' in src and 'ARTDRIFT_ENABLE_APPROVED_MODERN' in src
+          assert "defaultValue: false" in src
+          screen=Path('lib/screens/search_sheet.dart').read_text()
+          assert 'ARTDRIFT_ENABLE_D1_DISCOVERY' in screen
+          assert 'MuseumCloudCatalogPageScreen' in screen
+          print('ARTDRIFT_D1_METADATA_CLOUD_DEFAULT_OFF_PASS')
+          PY
+          flutter build web --release
+      - uses: actions/upload-artifact@v4
+        with:
+          name: artdrift-roadmap-integrated-flutter-web
+          path: build/web/
+          if-no-files-found: error
