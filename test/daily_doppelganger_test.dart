@@ -100,12 +100,27 @@ void main() {
       tester.view.resetPhysicalSize();
       tester.view.resetDevicePixelRatio();
     });
-    // Layout is a pure source-backed fixture: data/clock persistence is
-    // tested separately above and cannot deadlock fake widget frame time.
-    final fixtures = await DailyDoppelgangerCatalog.load();
+    // WidgetTester uses FakeAsync: do NOT await rootBundle inside testWidgets.
+    // The real catalog and rotation are already covered in non-widget tests.
+    const fixture = DailyDoppelgangerPair(
+      id: 'fixture-pair',
+      artist: 'Fixture painter',
+      year: '1875',
+      editorialEvidence: 'https://example.org/fixture',
+      portrait: DailyDoppelgangerMedia(
+        name: 'Portrait fixture', fileName: 'portrait.jpg',
+        filePage: 'https://commons.wikimedia.org/wiki/File:portrait.jpg',
+        credit: 'Fixture painter', license: 'Public domain',
+        licenseUrl: 'https://creativecommons.org/publicdomain/mark/1.0/'),
+      celebrity: DailyDoppelgangerMedia(
+        name: 'Celebrity fixture', fileName: 'celebrity.jpg',
+        filePage: 'https://commons.wikimedia.org/wiki/File:celebrity.jpg',
+        credit: 'Fixture photographer', license: 'CC BY 2.0',
+        licenseUrl: 'https://creativecommons.org/licenses/by/2.0/'),
+    );
     await tester.pumpWidget(MaterialApp(home: DailyDoppelgangerPage(
       clock: () => DateTime(2026, 11, 24, 11),
-      previewPair: fixtures.first,
+      previewPair: fixture,
       imageBuilder: (_, media) => ColoredBox(
         key: Key('fake-image-' + media.name),
         color: const Color(0xFF43382D)),
