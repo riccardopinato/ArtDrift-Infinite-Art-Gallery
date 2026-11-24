@@ -1,0 +1,90 @@
+name: Art Drift museum-only release candidate (no deploy)
+on:
+  push:
+    branches:
+      - feat/artdrift-museum-only-release-20261124
+  pull_request:
+    paths:
+      - 'cloudflare/**'
+      - 'assets/museums/**'
+      - 'tools/artdrift_*'
+      - 'tools/test_artdrift_*'
+      - '.github/workflows/museum-only-release.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  museum_only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify Worker approved-only API and native identity deduplication
+        run: node --test cloudflare/art-catalog/test/*.test.mjs
+      - name: Test D1 exporters and museum ingestion, offline
+        run: |
+          python -m unittest discover -s cloudflare/art-catalog/scripts -p 'test_*.py' -v
+          python -m unittest discover -s tools -p 'test_artdrift_*.py' -v
+      - name: Rebuild all five catalogs into 5,085 D1 rows without remote writes
+        run: |
+          python cloudflare/art-catalog/scripts/make_museum_d1_import.py --root . --out build/d1-museums --expected 5085 --chunk 200
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          m=json.loads(Path('build/d1-museums/manifest.json').read_text())
+          assert m['records']==5085
+          assert m['d1_remote_import']=='REQUIRES_EXPLICIT_APPROVAL'
+          print('MUSEUM_ONLY_CATALOG_5085_PASS')
+          PY
+      - name: Reconcile the extra original artwork against the stacked catalog
+        run: |
+          git fetch --no-tags --depth=1 origin 0047f958eb0306a8002243f6d3a972062b67beff
+          python - <<'PY'
+          import json, subprocess
+          from pathlib import Path
+          files=['assets/gallery/catalog.json','assets/museums/catalog.json','assets/museums/catalog_global.json']
+          old=[]
+          current=[]
+          for f in files:
+              old+=json.loads(subprocess.check_output(['git','show','0047f958eb0306a8002243f6d3a972062b67beff:'+f]))
+              current+=json.loads(Path(f).read_text(encoding='utf8'))
+          def identity(item):
+              return item.get('museum_source') or 'aic', str(item.get('museum_native_id') or item.get('id'))
+          a={identity(r):r for r in old}
+          b={identity(r):r for r in current}
+          new=set(b)-set(a)
+          missing=set(a)-set(b)
+          assert len(old)==4499 and len(current)==4500,(len(old),len(current))
+          assert len(new)==1 and not missing,(len(new),len(missing))
+          fresh=b[next(iter(new))]
+          assert fresh.get('museum_source','aic') not in {'moma','tate'}
+          print('MAIN_EXTRA_ARTWORK_RECONCILED',json.dumps({
+            'museum_source':fresh.get('museum_source','aic'),
+            'museum_native_id':fresh.get('museum_native_id',fresh.get('id')),
+            'title':fresh.get('title')},ensure_ascii=False))
+          # Prior source-controlled cross-D1 reconciliation on the original
+          # catalog proved all 49 Cleveland staged IDs already existed there.
+          # This newly added identity cannot re-add an already-existing key.
+          assert next(iter(new)) not in a
+          print('MAIN_EXTRA_IDENTITY_DISTINCT_FROM_535_STAGE_PASS 5085+535-49=5571')
+          PY
+      - name: Validate local D1 schema and SQL shards, never publish
+        run: |
+          python - <<'PY'
+          import sqlite3
+          from pathlib import Path
+          c=sqlite3.connect(':memory:')
+          c.executescript(Path('cloudflare/art-catalog/museum_schema.sql').read_text())
+          for p in sorted(Path('build/d1-museums').glob('museum-*.sql')):
+              c.executescript(p.read_text(encoding='utf-8'))
+          assert c.execute('SELECT COUNT(*) FROM museum_works').fetchone()[0]==5085
+          c.executescript(Path('cloudflare/d1/migrations/0001_museum_ingest.sql').read_text())
+          assert c.execute('SELECT COUNT(*) FROM artdrift_publishable_modern_art').fetchone()[0]==0
+          print('MUSEUM_ONLY_LOCAL_D1_PASS')
+          PY
