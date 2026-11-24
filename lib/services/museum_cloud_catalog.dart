@@ -48,7 +48,7 @@ class MuseumCloudWork {
        title.isEmpty || museum.isEmpty ||
        !(const <String>{'CC0','Public Domain','Public Domain Mark',
          'CC BY 3.0','CC BY 4.0','CC BY-SA 3.0',
-         'CC BY-SA 4.0'}.contains(license) ||
+         'CC BY-SA 4.0','CC0 1.0','Public Domain Mark 1.0'}.contains(license) ||
          license.startsWith('Public Domain / ')))return null;
     final proof=get('rights_evidence_url');
     final link=proof.isEmpty?null:Uri.tryParse(proof);
@@ -83,6 +83,123 @@ class MuseumCloudCatalog {
     return uri!=null && uri.scheme=='https' && uri.host.isNotEmpty &&
       uri.userInfo.isEmpty && (!uri.hasPort || uri.port==443) &&
       uri.query.isEmpty && !uri.hasFragment;
+  }
+
+  // Explicit release gate. An existing D1 stage and Worker deployment do
+  // not automatically make these works visible in the mobile app.
+  bool get approvedModernEnabled =>
+      enabled && const bool.fromEnvironment(
+          'ARTDRIFT_ENABLE_APPROVED_MODERN',defaultValue:false);
+
+  Future<MuseumCloudPage> approvedModern({String? cursor}) async {
+    if(!approvedModernEnabled)throw StateError('Modern catalog not enabled');
+    if(cursor!=null && !RegExp(r'^\d{1,4}
+    String scope='all',String? cursor,
+  }) async {
+    if(!enabled)throw StateError('D1 museum API not configured');
+    if(query.trim().length<2 || query.length>90)throw ArgumentError('Query length');
+    if(!const <String>['all','artist','title'].contains(scope)) {
+      throw ArgumentError('Scope');
+    }
+    if(cursor!=null && !RegExp(r'^\d{1,4}$').hasMatch(cursor)) {
+      throw ArgumentError('Cursor');
+    }
+    final base=Uri.parse(_base);
+    final prefix=base.path.endsWith('/') ?
+      base.path.substring(0,base.path.length-1):base.path;
+    final uri=base.replace(path:'$prefix/api/v1/museum-search',
+      queryParameters:{'q':query.trim(),'scope':scope,
+        if(cursor!=null)'cursor':cursor});
+    final response=await _client.get(uri,headers:{
+      'Accept':'application/json',
+    }).timeout(const Duration(seconds:12));
+    if(response.statusCode!=200) {
+      throw StateError('Museum cloud HTTP '+response.statusCode.toString());
+    }
+    final doc=jsonDecode(utf8.decode(response.bodyBytes));
+    if(doc is! Map || doc['source']!='ArtDrift-Museums' ||
+       doc['works'] is! List)throw const FormatException('Invalid museum D1 response');
+    final works=<MuseumCloudWork>[];
+    for(final item in doc['works'] as List){
+      if(item is Map<String,dynamic>){
+        final work=MuseumCloudWork.parse(item);
+        if(work!=null)works.add(work);
+      }
+      if(works.length>=24)break;
+    }
+    final next=doc['next_cursor'];
+    return MuseumCloudPage(works,
+      next is String && RegExp(r'^\d{1,4}$').hasMatch(next)?next:null);
+  }
+  void close()=>_client.close();
+}
+).hasMatch(cursor)){
+      throw ArgumentError('Cursor');
+    }
+    final base=Uri.parse(_base);
+    final prefix=base.path.endsWith('/') ?
+      base.path.substring(0,base.path.length-1):base.path;
+    final uri=base.replace(path:'$prefix/api/v1/modern-approved',
+      queryParameters:{if(cursor!=null)'cursor':cursor});
+    final response=await _client.get(uri,headers:{'Accept':'application/json'})
+        .timeout(const Duration(seconds:12));
+    if(response.statusCode!=200){
+      throw StateError('Approved-modern HTTP '+response.statusCode.toString());
+    }
+    final doc=jsonDecode(utf8.decode(response.bodyBytes));
+    if(doc is! Map || doc['source']!='ArtDrift-Modern-Approved' ||
+       doc['works'] is! List)throw const FormatException('Invalid approved-modern response');
+    final works=<MuseumCloudWork>[];
+    for(final item in doc['works'] as List){
+      if(item is Map<String,dynamic>){
+        final work=MuseumCloudWork.parse(item);
+        if(work!=null)works.add(work);
+      }
+      if(works.length>=24)break;
+    }
+    final next=doc['next_cursor'];
+    return MuseumCloudPage(works,
+      next is String && RegExp(r'^\d{1,4}
+    String scope='all',String? cursor,
+  }) async {
+    if(!enabled)throw StateError('D1 museum API not configured');
+    if(query.trim().length<2 || query.length>90)throw ArgumentError('Query length');
+    if(!const <String>['all','artist','title'].contains(scope)) {
+      throw ArgumentError('Scope');
+    }
+    if(cursor!=null && !RegExp(r'^\d{1,4}$').hasMatch(cursor)) {
+      throw ArgumentError('Cursor');
+    }
+    final base=Uri.parse(_base);
+    final prefix=base.path.endsWith('/') ?
+      base.path.substring(0,base.path.length-1):base.path;
+    final uri=base.replace(path:'$prefix/api/v1/museum-search',
+      queryParameters:{'q':query.trim(),'scope':scope,
+        if(cursor!=null)'cursor':cursor});
+    final response=await _client.get(uri,headers:{
+      'Accept':'application/json',
+    }).timeout(const Duration(seconds:12));
+    if(response.statusCode!=200) {
+      throw StateError('Museum cloud HTTP '+response.statusCode.toString());
+    }
+    final doc=jsonDecode(utf8.decode(response.bodyBytes));
+    if(doc is! Map || doc['source']!='ArtDrift-Museums' ||
+       doc['works'] is! List)throw const FormatException('Invalid museum D1 response');
+    final works=<MuseumCloudWork>[];
+    for(final item in doc['works'] as List){
+      if(item is Map<String,dynamic>){
+        final work=MuseumCloudWork.parse(item);
+        if(work!=null)works.add(work);
+      }
+      if(works.length>=24)break;
+    }
+    final next=doc['next_cursor'];
+    return MuseumCloudPage(works,
+      next is String && RegExp(r'^\d{1,4}$').hasMatch(next)?next:null);
+  }
+  void close()=>_client.close();
+}
+).hasMatch(next)?next:null);
   }
 
   Future<MuseumCloudPage> search(String query,{
