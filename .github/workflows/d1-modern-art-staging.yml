@@ -7,6 +7,8 @@ on:
       - tools/artdrift_museum_ingest.py
       - tools/artdrift_merge_staging.py
       - tools/artdrift_cleveland_rights_audit.py
+      - tools/artdrift_cleveland_print_repair.py
+      - tools/test_artdrift_cleveland_print_repair.py
       - tools/test_artdrift_cleveland_rights_audit.py
       - tools/test_artdrift_museum_ingest.py
       - cloudflare/d1/migrations/0001_museum_ingest.sql
@@ -16,6 +18,8 @@ on:
       - tools/artdrift_museum_ingest.py
       - tools/artdrift_merge_staging.py
       - tools/artdrift_cleveland_rights_audit.py
+      - tools/artdrift_cleveland_print_repair.py
+      - tools/test_artdrift_cleveland_print_repair.py
       - tools/test_artdrift_cleveland_rights_audit.py
       - tools/test_artdrift_museum_ingest.py
       - cloudflare/d1/migrations/0001_museum_ingest.sql
@@ -126,7 +130,7 @@ jobs:
           python-version: '3.12'
       - name: Compile and unit-test offline importer
         run: |
-          python -m py_compile tools/artdrift_museum_ingest.py tools/artdrift_merge_staging.py tools/artdrift_cleveland_rights_audit.py
+          python -m py_compile tools/artdrift_museum_ingest.py tools/artdrift_merge_staging.py tools/artdrift_cleveland_rights_audit.py tools/artdrift_cleveland_print_repair.py
           python -m unittest discover -s tools -p 'test_artdrift*.py' -v
       - name: D1 schema smoke on SQLite
         run: |
@@ -323,6 +327,58 @@ jobs:
         with:
           name: artdrift-d1-merged-modern-masters-${{ github.run_id }}
           path: .artdrift_ingest/
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 30
+
+  review_cleveland_print_repair:
+    # Only generate candidate SQL: no Cloudflare writes or editorial approvals.
+    if: github.event_name == 'push'
+    needs: [validate, merge_staged, audit_cleveland_live_rights]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Fetch same-run validated stage and live museum review
+        uses: actions/download-artifact@v4
+        with:
+          pattern: artdrift-*-${{ github.run_id }}
+          path: .artdrift_artifacts/
+          merge-multiple: false
+      - name: Prepare 28 HOLD-only print upgrades and simulate migration
+        run: |
+          python tools/artdrift_cleveland_print_repair.py \
+            --audit .artdrift_artifacts/artdrift-cleveland-rights-review-${{ github.run_id }}/cleveland-rights-audit.json \
+            --stage .artdrift_artifacts/artdrift-d1-merged-modern-masters-${{ github.run_id }}/modern_art.jsonl \
+            --out .artdrift_repairs/cleveland_print_repair.sql
+          python - <<'PY'
+          import sqlite3
+          from pathlib import Path
+          migration=Path('cloudflare/d1/migrations/0001_museum_ingest.sql').read_text()
+          stage=Path('.artdrift_artifacts/artdrift-d1-merged-modern-masters-${{ github.run_id }}/modern_art.sql').read_text()
+          repair=Path('.artdrift_repairs/cleveland_print_repair.sql').read_text()
+          conn=sqlite3.connect(':memory:')
+          conn.executescript(migration)
+          conn.executescript(stage)
+          assert conn.execute('SELECT COUNT(*) FROM artdrift_museum_ingest').fetchone()[0]==535
+          before=conn.total_changes
+          conn.executescript(repair)
+          assert conn.total_changes-before==28
+          assert conn.execute("SELECT COUNT(*) FROM artdrift_museum_ingest WHERE publication_status='HOLD'").fetchone()[0]==535
+          assert conn.execute('SELECT COUNT(*) FROM artdrift_publishable_modern_art').fetchone()[0]==0
+          second=conn.total_changes
+          conn.executescript(repair)
+          assert conn.total_changes==second
+          print('D1_PRINT_REPAIR_PREVIEW_28_PASS_AND_HOLD')
+          PY
+      - name: Export inspectable repair proposal, never execute it remotely
+        uses: actions/upload-artifact@v4
+        with:
+          name: artdrift-cleveland-print-repair-proposal-${{ github.run_id }}
+          path: .artdrift_repairs/
           include-hidden-files: true
           if-no-files-found: error
           retention-days: 30
