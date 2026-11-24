@@ -35,7 +35,7 @@ def reconcile(local,remote,staging):
     for key in set(a)&set(b):
         if a[key]["source_key"]!=b[key]["source_key"]:
             raise ValueError("Remote internal identity collision "+str(key))
-    if len(staging)!=535:raise ValueError("Unexpected D1 stage count")
+    if len(staging) not in (535,635):raise ValueError("Unexpected D1 stage count")
     stage_ids=set()
     for row in staging:
         identity=(row["provider"],row["native_id"])
@@ -43,8 +43,12 @@ def reconcile(local,remote,staging):
         stage_ids.add(identity)
         if row["publication_status"]!="HOLD":raise ValueError("Unexpected published stage record")
     overlap=len(stage_ids & set(a))
+    if len(staging)==635:
+        new=[r for r in staging if r['provider']=='cleveland' and (r['provider'],r['native_id']) not in a]
+        if len(new)!=100 or any(r.get('rights_status')!='METADATA_ONLY' for r in new):
+            raise ValueError('Expected exactly 100 new Cleveland metadata-only HOLD rows')
     if overlap!=49:raise ValueError("Expected 49 Cleveland native overlaps, got "+str(overlap))
-    if sum((r["provider"]=="cleveland") for r in staging)!=49:raise ValueError("Cleveland count mismatch")
+    if sum((r["provider"]=="cleveland") for r in staging)!=(49+(len(staging)-535)):raise ValueError("Cleveland count mismatch")
     return {
         "local_catalog":len(local),
         "remote_museum_rows_before":len(remote),
