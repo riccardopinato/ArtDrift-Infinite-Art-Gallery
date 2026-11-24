@@ -100,13 +100,20 @@ void main() {
       tester.view.resetPhysicalSize();
       tester.view.resetDevicePixelRatio();
     });
+    // Resolve the real versioned source catalog before mounting: widget
+    // fake-async frames must not deadlock on bundle channel I/O.
+    final fixtures = await DailyDoppelgangerCatalog.load();
+    await DailyDoppelgangerRotation.open(
+        pairs: fixtures, now: DateTime(2026, 11, 24, 11));
     await tester.pumpWidget(MaterialApp(home: DailyDoppelgangerPage(
       clock: () => DateTime(2026, 11, 24, 11),
+      catalogLoader: () async => fixtures,
       imageBuilder: (_, media) => ColoredBox(
         key: Key('fake-image-' + media.name),
         color: const Color(0xFF43382D)),
     )));
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(milliseconds: 200));
+    await tester.pump();
     final row = tester.widget<Row>(
         find.byKey(const Key('daily-doppelganger-pair')));
     expect(row.children.length, 3);
