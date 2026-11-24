@@ -94,3 +94,41 @@ jobs:
           name: artdrift-roadmap-integrated-flutter-web
           path: build/web/
           if-no-files-found: error
+  d1_postwave_readonly:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      DATABASE: ${{ vars.ARTDRIFT_D1_DATABASE }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify only existing configured Cloudflare database
+        run: |
+          test "$DATABASE" = 'artdrift-moma-cc0'
+          test -n "$CLOUDFLARE_ACCOUNT_ID" && test -n "$CLOUDFLARE_API_TOKEN"
+          (cd cloudflare/art-catalog && npx --yes wrangler@4 d1 info "$DATABASE" --json) > "$RUNNER_TEMP/d1info.json"
+          python - <<'PY'
+          import json,os
+          data=json.load(open(os.environ['RUNNER_TEMP']+'/d1info.json'))
+          assert data.get('name')=='artdrift-moma-cc0'
+          print('ARTDRIFT_ROADMAP_EXISTING_D1_OK')
+          PY
+      - name: Read current museum, FTS and HOLD publication counts
+        run: |
+          cd cloudflare/art-catalog
+          npx --yes wrangler@4 d1 execute "$DATABASE" --remote --yes --json --command="SELECT (SELECT COUNT(*) FROM museum_works) AS museum,(SELECT COUNT(*) FROM museum_works_fts) AS fts,(SELECT COUNT(*) FROM artdrift_museum_ingest) AS staged,(SELECT COUNT(*) FROM artdrift_museum_ingest WHERE publication_status='HOLD') AS hold,(SELECT COUNT(*) FROM artdrift_publishable_modern_art) AS published,(SELECT COUNT(*) FROM artdrift_museum_ingest WHERE provider='cleveland' AND rights_status='METADATA_ONLY' AND image_url='' AND full_image_url='') AS new_cleveland_metadata" > "$RUNNER_TEMP/d1counts.json"
+      - name: Assert 5085+635, 100 metadata-only, no publication; NEVER write
+        run: |
+          python - <<'PY'
+          import json,os
+          data=json.load(open(os.environ['RUNNER_TEMP']+'/d1counts.json'))
+          if isinstance(data,dict):data=data.get('result',data)
+          assert isinstance(data,list) and len(data)==1
+          r=data[0]['results'][0]
+          assert (r['museum'],r['fts'],r['staged'],r['hold'],r['published'],r['new_cleveland_metadata'])==(5085,5085,635,635,0,100),r
+          print('ARTDRIFT_ROADMAP_D1_635_HOLD_INTEGRATED_REMOTE_PASS')
+          PY
