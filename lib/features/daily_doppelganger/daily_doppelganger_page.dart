@@ -13,11 +13,15 @@ import 'daily_doppelganger_copy.dart';
 class DailyDoppelgangerPage extends StatefulWidget {
   const DailyDoppelgangerPage({
     super.key, this.clock, this.catalogLoader, this.imageBuilder,
+    this.previewPair,
   });
 
   final DateTime Function()? clock;
   final Future<List<DailyDoppelgangerPair>> Function()? catalogLoader;
   final Widget Function(BuildContext, DailyDoppelgangerMedia)? imageBuilder;
+  /// Synchronous fixture for layout-only widget tests (not used in product).
+  @visibleForTesting
+  final DailyDoppelgangerPair? previewPair;
 
   @override
   State<DailyDoppelgangerPage> createState() => _DailyDoppelgangerPageState();
@@ -91,7 +95,9 @@ class _DailyDoppelgangerPageState extends State<DailyDoppelgangerPage>
           title: Text('ARTDRIFT  ·  ✦', style: const TextStyle(
             fontSize: 11, letterSpacing: 2, color: ArtPaper.faded)),
         ),
-        body: FutureBuilder<DailyDoppelgangerPair?>(
+        body: widget.previewPair != null
+            ? _reveal(context, language, widget.previewPair!)
+            : FutureBuilder<DailyDoppelgangerPair?>(
           future: _today,
           builder: (context, snapshot) {
             if (snapshot.connectionState != ConnectionState.done) {
