@@ -91,6 +91,45 @@ export function publicMuseumRow(row) {
   };
 }
 
+
+const MODERN_RIGHTS = new Set(["CC0 1.0", "Public Domain Mark 1.0"]);
+const MODERN_EVIDENCE_HOSTS = new Set(["www.clevelandart.org", "clevelandart.org", "commons.wikimedia.org"]);
+function checkedHttps(value, hosts) {
+  try {
+    const u = new URL(value);
+    if (u.protocol !== "https:" || !hosts.has(u.hostname) ||
+        u.username || u.password || (u.port && u.port !== "443")) return null;
+    return u.toString();
+  } catch {return null;}
+}
+// Strictly for records selected FROM artdrift_publishable_modern_art.
+// Does not convert any HOLD, metadata-only, or unreviewed record to public.
+export function publicModernApprovedRow(row) {
+  if (!row || !MODERN_RIGHTS.has(row.rights_license)) return null;
+  const proof = checkedHttps(row.rights_evidence_url, MODERN_EVIDENCE_HOSTS);
+  const image = checkedHttps(row.image_url, MUSEUM_IMAGE_HOSTS);
+  const full = checkedHttps(row.full_image_url, MUSEUM_IMAGE_HOSTS);
+  if (!proof || !image || !full) return null;
+  const detail = checkedHttps(row.metadata_url,
+    new Set(["www.clevelandart.org", "clevelandart.org", "www.wikidata.org",
+             "www.tate.org.uk", "www.moma.org"]));
+  if (!detail) return null;
+  return {
+    source_key: String(row.source_key || ""),
+    museum_source: String(row.provider || ""),
+    museum_name: String(row.museum || ""),
+    title: String(row.title || ""),
+    artist: String(row.artist || ""),
+    date: String(row.year_text || ""),
+    medium: String(row.medium || ""),
+    source_url: detail,
+    thumbnail_url: image,
+    rights_license: row.rights_license,
+    rights_evidence_url: proof,
+    credit_line: "",
+  };
+}
+
 export default {
   async fetch(request,env) {
     if(request.method==="OPTIONS")return new Response(null,{status:204,headers:HEADERS});
@@ -98,6 +137,30 @@ export default {
     const url=new URL(request.url);
     if(url.pathname==="/health"){
       return response({status:"configured",datasets:["ArtDrift-Museums","MoMA-selective-metadata"],source_sha:env.CATALOG_SOURCE_SHA});
+    }
+    // Separate D1 staging view contains approved images only, not HOLD records.
+    // Until reviewed and approved by a distinct editorial process this returns [].
+    if(url.pathname==="/api/v1/modern-approved"){
+      const raw=url.searchParams.get("cursor")||"0";
+      if(!/^(0|[1-9]\d{0,4})$/.test(raw))return response({error:"bad_cursor"},400,false);
+      const offset=Number(raw);
+      if(offset>MAX_OFFSET)return response({error:"page_limit"},400,false);
+      const sql=[
+        "SELECT source_key,provider,museum,title,artist,year_text,medium,",
+        "metadata_url,image_url,full_image_url,rights_license,rights_evidence_url",
+        "FROM artdrift_publishable_modern_art",
+        "ORDER BY source_key LIMIT ? OFFSET ?"
+      ].join(" ");
+      try {
+        const rs=await env.CATALOG_DB.prepare(sql).bind(PAGE+1,offset).all();
+        const rows=rs.results||[];
+        const vetted=rows.slice(0,PAGE).map(publicModernApprovedRow).filter(Boolean);
+        return response({
+          source:"ArtDrift-Modern-Approved",count:vetted.length,
+          next_cursor:rows.length>PAGE && offset+PAGE<=MAX_OFFSET?
+            String(offset+PAGE):null,works:vetted
+        },200,false);
+      } catch {return response({error:"modern_catalog_not_ready"},503,false);}
     }
     if(url.pathname==="/api/v1/museums"){
       try {
