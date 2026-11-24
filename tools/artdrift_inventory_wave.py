@@ -11,7 +11,7 @@ sys.path.insert(0,str(ROOT/"cloudflare/art-catalog/scripts"))
 from make_museum_d1_import import SOURCES, normalize
 CANDIDATES={"assets/museums/catalog_modern_1950.json","assets/museums/catalog_new_museums.json"}
 
-def inspect(root,expected=5085):
+def inspect(root,expected=5085,check_assets=True):
     seen_keys=set()
     seen_native=set()
     by_file=Counter()
@@ -40,7 +40,7 @@ def inspect(root,expected=5085):
             if row["image_url"]:urls+=1
             asset=item.get("bootstrap_asset")
             if isinstance(asset,str) and asset:
-                if not (root/asset).is_file():raise ValueError("Missing bundled preview: "+asset)
+                if check_assets and not (root/asset).is_file():raise ValueError("Missing bundled preview: "+asset)
                 packaged+=1
             if source_file not in CANDIDATES:continue
             flags=["RIGHTS_OF_OBJECT_AND_MEDIA_NOT_REVIEWED","IMAGE_DELIVERY_NOT_VERIFIED"]
