@@ -1,0 +1,71 @@
+name: Art Drift genuine Flutter Web screenshot evidence (no APK)
+on:
+  push:
+    branches: ['research/artdrift-visual-*', 'research/artdrift-roadmap-review-*']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  screenshots:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: '3.50.1'
+          cache: true
+      - name: Build actual Flutter Web view (unchanged default-off cloud flags)
+        run: |
+          flutter create --project-name artdrift --org com.riccardopinato --platforms=web .
+          rm -f test/widget_test.dart
+          flutter pub get
+          flutter analyze --no-fatal-infos
+          flutter test
+          flutter build web --release
+      - name: Capture 390 and 820 px real viewport screenshots, Chrome headless
+        run: |
+          set -euo pipefail
+          CHROME="$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)"
+          test -n "$CHROME" || { echo "CHROME_NOT_AVAILABLE"; exit 1; }
+          mkdir -p build/ui-snapshots
+          python3 -m http.server 8765 --bind 127.0.0.1 --directory build/web > "$RUNNER_TEMP/http.txt" 2>&1 &
+          SERVER=$!
+          trap 'kill "$SERVER" 2>/dev/null || true' EXIT
+          sleep 3
+          curl --fail --silent http://127.0.0.1:8765/ >/dev/null
+          for viewport in '390,844' '820,1180'; do
+            tag="$(echo "$viewport" | tr ',' 'x')"
+            "$CHROME" --headless --no-sandbox --disable-dev-shm-usage \
+              --disable-extensions --hide-scrollbars --window-size="$viewport" \
+              --virtual-time-budget=24000 --screenshot="$PWD/build/ui-snapshots/artdrift-$tag.png" \
+              http://127.0.0.1:8765/ > "$RUNNER_TEMP/chrome-$tag.log" 2>&1
+          done
+      - name: Validate PNG pixels are real, not blank, and retain visual HOLD
+        run: |
+          python -m pip install 'Pillow==11.3.0'
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          from PIL import Image,ImageStat
+          rows=[]
+          for p in sorted(Path('build/ui-snapshots').glob('*.png')):
+              with Image.open(p) as image:
+                  image.load()
+                  stats=ImageStat.Stat(image.convert('RGB').resize((80,80)))
+                  variance=sum(stats.var)/3
+                  row={'file':p.name,'width':image.width,'height':image.height,
+                       'pixel_variance':round(variance,2),'visual_approval':'PENDING_REVIEW'}
+              assert row['width']>=300 and row['height']>=400
+              assert row['pixel_variance']>25,'Blank render'
+              rows.append(row)
+          assert len(rows)==2
+          Path('build/ui-snapshots/screenshot-evidence.json').write_text(json.dumps(rows,indent=2))
+          print('ARTDRIFT_FLUTTER_WEB_SCREENSHOT_EVIDENCE_PASS',len(rows))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: artdrift-genuine-flutter-ui
+          path: build/ui-snapshots/
+          if-no-files-found: error
