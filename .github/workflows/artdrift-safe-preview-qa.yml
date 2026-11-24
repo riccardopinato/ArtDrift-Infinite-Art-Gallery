@@ -43,7 +43,7 @@ jobs:
           if not gradle.exists():
               raise SystemExit('PREVIEW_BLOCKED: Kotlin DSL applicationId required')
           text=gradle.read_text()
-          text,count=re.subn(r'applicationId\s*=\s*"com\.riccardopinato\.artdrift"', 'applicationId = "com.riccardopinato.artdrift.preview"', text)
+          text,count=re.subn(r'applicationId\s*=\s*"com\.riccardopinato\.artdrift"', 'applicationId = "com.riccardopinato.artdrift.doppleganger.qa"', text)
           if count!=1:
               raise SystemExit(f'PREVIEW_BLOCKED: unexpected appId occurrences {count}')
           gradle.write_text(text)
@@ -51,8 +51,8 @@ jobs:
           xml=manifest.read_text()
           if 'android:scheme="com.riccardopinato.artdrift"' not in xml:
               raise SystemExit('PREVIEW_BLOCKED: missing OAuth intent scheme')
-          xml=xml.replace('android:scheme="com.riccardopinato.artdrift"', 'android:scheme="com.riccardopinato.artdrift.preview"')
-          xml=xml.replace('android:label="artdrift"', 'android:label="ArtDrift QA"')
+          xml=xml.replace('android:scheme="com.riccardopinato.artdrift"', 'android:scheme="com.riccardopinato.artdrift.doppleganger.qa"')
+          xml=xml.replace('android:label="artdrift"', 'android:label="ArtDrift Doppel QA"')
           manifest.write_text(xml)
           print('ARTDRIFT_PREVIEW_ISOLATED_ID_OK')
           PY
@@ -80,7 +80,7 @@ jobs:
           AAPT="$(ls "$ANDROID_HOME"/build-tools/*/aapt | sort -V | tail -1)"
           test -x "$AAPT"
           "$AAPT" dump badging "$APK" > build/artdrift-safe-preview-badging.txt
-          grep -q "package: name='com.riccardopinato.artdrift.preview'" build/artdrift-safe-preview-badging.txt
+          grep -q "package: name='com.riccardopinato.artdrift.doppleganger.qa'" build/artdrift-safe-preview-badging.txt
           ! grep -q "package: name='com.riccardopinato.artdrift'" build/artdrift-safe-preview-badging.txt
           APKSIGNER="$(ls "$ANDROID_HOME"/build-tools/*/apksigner | sort -V | tail -1)"
           "$APKSIGNER" verify --verbose "$APK"
