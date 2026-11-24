@@ -5,6 +5,8 @@ on:
     branches: [main, feat/artdrift-consolidate-museums-d1-20261124]
     paths:
       - tools/artdrift_museum_ingest.py
+      - tools/artdrift_consolidate_catalogs.py
+      - tools/test_artdrift_consolidate_catalogs.py
       - tools/artdrift_merge_staging.py
       - tools/artdrift_cleveland_rights_audit.py
       - tools/artdrift_cleveland_print_repair.py
@@ -16,6 +18,8 @@ on:
   pull_request:
     paths:
       - tools/artdrift_museum_ingest.py
+      - tools/artdrift_consolidate_catalogs.py
+      - tools/test_artdrift_consolidate_catalogs.py
       - tools/artdrift_merge_staging.py
       - tools/artdrift_cleveland_rights_audit.py
       - tools/artdrift_cleveland_print_repair.py
@@ -125,7 +129,7 @@ jobs:
           python-version: '3.12'
       - name: Compile and unit-test offline importer
         run: |
-          python -m py_compile tools/artdrift_museum_ingest.py tools/artdrift_merge_staging.py tools/artdrift_cleveland_rights_audit.py tools/artdrift_cleveland_print_repair.py
+          python -m py_compile tools/artdrift_museum_ingest.py tools/artdrift_merge_staging.py tools/artdrift_cleveland_rights_audit.py tools/artdrift_cleveland_print_repair.py tools/artdrift_consolidate_catalogs.py
           python -m unittest discover -s tools -p 'test_artdrift*.py' -v
       - name: D1 schema smoke on SQLite
         run: |
@@ -136,6 +140,32 @@ jobs:
           con.executescript(Path("cloudflare/d1/migrations/0001_museum_ingest.sql").read_text())
           assert con.execute("SELECT count(*) FROM artdrift_publishable_modern_art").fetchone()[0] == 0
           print("SCHEMA_OK")
+          PY
+
+  validate_worker_and_museums:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Test Worker search, approved-only visibility and deduplication SQL
+        run: node --test cloudflare/art-catalog/test/*.test.mjs
+      - name: Test base 5,084 museum SQL exporter and rights checks, no remote writes
+        run: |
+          python -m unittest discover -s cloudflare/art-catalog/scripts -p 'test_*.py' -v
+          python cloudflare/art-catalog/scripts/make_museum_d1_import.py --root . --out build/d1-museums --expected 5084 --chunk 200
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          m=json.loads(Path('build/d1-museums/manifest.json').read_text())
+          assert m['records']==5084
+          assert m['d1_remote_import']=='REQUIRES_EXPLICIT_APPROVAL'
+          print('UNIFIED_BASE_MUSEUM_CATALOG_PASS', m['records'])
           PY
 
   preview_tate:
@@ -270,7 +300,7 @@ jobs:
 
   merge_staged:
     if: github.event_name == 'push'
-    needs: [validate, preview_tate, preview_moma, preview_verified]
+    needs: [validate, validate_worker_and_museums, preview_tate, preview_moma, preview_verified]
     runs-on: ubuntu-latest
     timeout-minutes: 12
     steps:
@@ -316,6 +346,23 @@ jobs:
           conn.executescript(sql)
           assert conn.execute("SELECT COUNT(*) FROM artdrift_museum_ingest").fetchone()[0] == len(rows)
           print("STAGING_D1_MERGED_PASS", len(rows))
+          PY
+      - name: Cross-catalog reconciliation - 5084 + 535, 49 Cleveland duplicates
+        run: |
+          python tools/artdrift_consolidate_catalogs.py \
+            --stage .artdrift_ingest/modern_art.jsonl \
+            --out .artdrift_ingest/consolidation_report.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          r=json.loads(Path('.artdrift_ingest/consolidation_report.json').read_text())
+          assert r['museum_catalog_records']==5084
+          assert r['already_present']==49
+          assert r['new_stage_distinct_records']==486
+          assert r['hypothetical_distinct_records']==5570
+          assert r['automatic_approvals']==r['remote_D1_writes']==0
+          assert len(r['overlap'])==49
+          print('D1_NATIVE_IDENTITY_DEDUP_PASS 5084+535-49=5570')
           PY
       - name: Artifact - one consolidated D1-ready JSONL and SQL stage
         uses: actions/upload-artifact@v4
