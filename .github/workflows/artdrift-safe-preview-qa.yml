@@ -1,0 +1,96 @@
+name: ArtDrift — SAFE-INSTALL daily Doppelganger QA (one pair/day)
+on:
+  push:
+    branches: ['qa/artdrift-safe-preview-*']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  safe-qa-apk:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: '3.50.1'
+          cache: true
+      - name: Configure Flutter plugin repositories
+        run: |
+          python3 - <<'PY'
+          import os
+          from pathlib import Path
+          p=Path(os.environ['FLUTTER_ROOT'])/'packages/flutter_tools/gradle/settings.gradle.kts'
+          s=p.read_text()
+          if 'pluginManagement {' not in s:
+              p.write_text('pluginManagement {\n    repositories {\n        google()\n        mavenCentral()\n        gradlePluginPortal()\n    }\n}\n\n'+s)
+          PY
+      - name: Create isolated Android Flutter shell
+        run: |
+          flutter create --project-name artdrift --org com.riccardopinato --platforms=android .
+          rm -f test/widget_test.dart
+          python3 scripts/patch_android.py
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          base=Path('android/app')
+          gradle=base/'build.gradle.kts'
+          if not gradle.exists():
+              raise SystemExit('PREVIEW_BLOCKED: Kotlin DSL applicationId required')
+          text=gradle.read_text()
+          text,count=re.subn(r'applicationId\s*=\s*"com\.riccardopinato\.artdrift"', 'applicationId = "com.riccardopinato.artdrift.preview"', text)
+          if count!=1:
+              raise SystemExit(f'PREVIEW_BLOCKED: unexpected appId occurrences {count}')
+          gradle.write_text(text)
+          manifest=base/'src/main/AndroidManifest.xml'
+          xml=manifest.read_text()
+          if 'android:scheme="com.riccardopinato.artdrift"' not in xml:
+              raise SystemExit('PREVIEW_BLOCKED: missing OAuth intent scheme')
+          xml=xml.replace('android:scheme="com.riccardopinato.artdrift"', 'android:scheme="com.riccardopinato.artdrift.preview"')
+          xml=xml.replace('android:label="artdrift"', 'android:label="ArtDrift QA"')
+          manifest.write_text(xml)
+          print('ARTDRIFT_PREVIEW_ISOLATED_ID_OK')
+          PY
+      - name: Render original product launcher icon
+        run: |
+          python3 -m pip install --disable-pip-version-check 'CairoSVG==2.7.1'
+          python3 scripts/install_brand_icon.py
+      - name: Resolve dependencies, analyze and execute all tests
+        run: |
+          flutter pub get
+          (cd packages/drift_core && flutter pub get && flutter analyze --no-fatal-infos && flutter test)
+          flutter analyze --no-fatal-infos
+          flutter test
+      - name: Build isolated ARM64 preview (internal signing, Google disabled)
+        run: |
+          flutter build apk --release --target-platform android-arm64 \
+            --dart-define=ARTDRIFT_ENABLE_D1_DISCOVERY=false \
+            --dart-define=ARTDRIFT_ENABLE_DAILY_DOPPELGANGER=true
+      - name: Verify actual APK package ID and signer locally
+        shell: bash
+        run: |
+          set -euo pipefail
+          APK=build/app/outputs/flutter-apk/app-release.apk
+          test -s "$APK"
+          AAPT="$(ls "$ANDROID_HOME"/build-tools/*/aapt | sort -V | tail -1)"
+          test -x "$AAPT"
+          "$AAPT" dump badging "$APK" > build/artdrift-safe-preview-badging.txt
+          grep -q "package: name='com.riccardopinato.artdrift.preview'" build/artdrift-safe-preview-badging.txt
+          ! grep -q "package: name='com.riccardopinato.artdrift'" build/artdrift-safe-preview-badging.txt
+          APKSIGNER="$(ls "$ANDROID_HOME"/build-tools/*/apksigner | sort -V | tail -1)"
+          "$APKSIGNER" verify --verbose "$APK"
+          sha256sum "$APK" > build/artdrift-safe-preview-sha256.txt
+          echo 'SAFE_PREVIEW_INTERNAL_ONLY_NOT_STORE_READY'
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ArtDrift-Doppleganger-safe-install-ARM64-${{ github.sha }}
+          path: |
+            build/app/outputs/flutter-apk/app-release.apk
+            build/artdrift-safe-preview-badging.txt
+            build/artdrift-safe-preview-sha256.txt
+          if-no-files-found: error
