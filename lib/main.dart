@@ -24,6 +24,7 @@ import 'services/favorite_cloud_sync.dart';
 import 'services/art_offline_thumbnail_index.dart';
 import 'services/art_mobile_canvas_selection.dart';
 import 'services/art_visual_color_selection.dart';
+import 'features/daily_doppelganger/daily_doppelganger_page.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -60,6 +61,8 @@ class GalleryHome extends StatefulWidget {
 }
 
 class _GalleryHomeState extends State<GalleryHome> {
+  static const bool _dailyFeatureEnabled = bool.fromEnvironment(
+    'ARTDRIFT_ENABLE_DAILY_DOPPELGANGER', defaultValue: false);
   final CatalogService _catalog = CatalogService();
   final Favorites _favorites = Favorites();
   late final FavoriteSyncController _sync = FavoriteSyncController(
@@ -152,9 +155,16 @@ class _GalleryHomeState extends State<GalleryHome> {
       onOpenCollection: _openCollection,
       visualPaletteAvailable: _colorArtworks.isNotEmpty,
       initialQuery: _lastSearchQuery,
-      onQueryChanged: (value) => _lastSearchQuery = value);
+      onQueryChanged: (value) => _lastSearchQuery = value,
+      onOpenDoppelganger: _dailyFeatureEnabled ? _openDailyDoppelganger : null);
     if (!mounted || selected == null) return;
     _open(selected);
+  }
+
+  void _openDailyDoppelganger() {
+    Navigator.of(context).push(MaterialPageRoute<void>(
+      builder: (_) => const DailyDoppelgangerPage(),
+    ));
   }
 
   Future<void> _toggleFavorite(Artwork artwork) async {

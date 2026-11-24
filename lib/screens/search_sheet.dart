@@ -9,13 +9,15 @@ import '../services/museum_cloud_catalog.dart';
 import 'museum_cloud_catalog_page.dart';
 import '../ui/localization.dart';
 import '../ui/parchment.dart';
+import '../features/daily_doppelganger/daily_doppelganger_copy.dart';
 
 Future<Artwork?> showArtSearchSheet(BuildContext context, List<Artwork> catalog,
     {void Function(ArtCollection)? onOpenCollection,
      List<Artwork>? collectionCatalog,
      bool visualPaletteAvailable = false,
      String initialQuery = '',
-     ValueChanged<String>? onQueryChanged}) =>
+     ValueChanged<String>? onQueryChanged,
+     VoidCallback? onOpenDoppelganger}) =>
     showModalBottomSheet<Artwork>(
       context: context, isScrollControlled: true, useSafeArea: true,
       backgroundColor: Colors.transparent,
@@ -24,20 +26,22 @@ Future<Artwork?> showArtSearchSheet(BuildContext context, List<Artwork> catalog,
           onOpenCollection: onOpenCollection,
           visualPaletteAvailable: visualPaletteAvailable,
           initialQuery: initialQuery,
-          onQueryChanged: onQueryChanged),
+          onQueryChanged: onQueryChanged,
+          onOpenDoppelganger: onOpenDoppelganger),
     );
 
 class _SearchSheet extends StatefulWidget {
   const _SearchSheet({required this.artworks,
     required this.collectionCatalog, this.onOpenCollection,
     required this.visualPaletteAvailable, required this.initialQuery,
-    this.onQueryChanged});
+    this.onQueryChanged, this.onOpenDoppelganger});
   final List<Artwork> artworks;
   final List<Artwork> collectionCatalog;
   final void Function(ArtCollection)? onOpenCollection;
   final bool visualPaletteAvailable;
   final String initialQuery;
   final ValueChanged<String>? onQueryChanged;
+  final VoidCallback? onOpenDoppelganger;
   @override
   State<_SearchSheet> createState() => _SearchSheetState();
 }
@@ -194,6 +198,8 @@ class _SearchSheetState extends State<_SearchSheet> {
           const SizedBox(height: 8),
           Expanded(child: ListView(children: [
             if (_text.text.trim().isEmpty) ...[
+              if (widget.onOpenDoppelganger != null)
+                _dailyDoppelgangerRow(),
               if (_collections.isNotEmpty) ...[
                 _section(_collectionHeader()),
                 for (final collection in _collections)
@@ -276,6 +282,30 @@ class _SearchSheetState extends State<_SearchSheet> {
           Center(child: Text(t('offline'),
             style: const TextStyle(color: Color(0xFF80684B),fontSize:10))),
         ])),
+      ),
+    );
+  }
+
+  Widget _dailyDoppelgangerRow() {
+    final locale = ArtDriftLocale.current.value;
+    String tr(String key) => DailyDoppelgangerCopy.t(locale, key);
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: OrnateFrame(shadow: false, padding: EdgeInsets.zero,
+        child: ListTile(
+          key: const Key('artdrift-daily-doppelganger-entry'),
+          leading: const Icon(Icons.theater_comedy_outlined,
+            color: ArtPaper.gold, size: 26),
+          title: Text(tr('title'), style: const TextStyle(
+            color: ArtPaper.ink, fontFamily: 'serif', fontSize: 16)),
+          subtitle: Text(tr('teaser'), style: const TextStyle(
+            color: Color(0xFF785C3C), fontSize: 11)),
+          trailing: const Icon(Icons.chevron_right, color: ArtPaper.gold),
+          onTap: () {
+            Navigator.of(context).pop();
+            widget.onOpenDoppelganger?.call();
+          },
+        ),
       ),
     );
   }

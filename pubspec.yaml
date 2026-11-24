@@ -27,6 +27,7 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
+    - assets/daily_doppelgangers.json
     - assets/gallery/catalog.json
     - assets/gallery/thumbs/
     - assets/museums/catalog.json

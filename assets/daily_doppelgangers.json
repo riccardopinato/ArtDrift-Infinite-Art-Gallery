@@ -1,0 +1,58 @@
+{
+  "formatVersion": 1,
+  "contentVersion": "2026-11-24",
+  "publicationStatus": "INTERNAL_QA_ONLY",
+  "disclaimer": "Editorial, subjective visual resemblance only. No affiliation, endorsement or identity claim. Wikimedia image licenses do not waive third-party personality or trademark rights.",
+  "pairs": [
+    {
+      "id": "paul-mounet-keanu-reeves",
+      "status": "INTERNAL_QA_REVIEWED",
+      "portrait": {
+        "name": "Paul Mounet",
+        "artist": "Louis-Maurice Boutet de Monvel",
+        "year": "1875",
+        "fileName": "Portrait de Paul Mounet By Louis-Maurice Boutet de Montvel.jpg",
+        "filePage": "https://commons.wikimedia.org/wiki/File:Portrait_de_Paul_Mounet_By_Louis-Maurice_Boutet_de_Montvel.jpg",
+        "license": "Public domain",
+        "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+        "credit": "Louis-Maurice Boutet de Monvel · Fine Arts Museums of San Francisco"
+      },
+      "celebrity": {
+        "name": "Keanu Reeves",
+        "fileName": "Keanu Reeves 2014.jpg",
+        "filePage": "https://commons.wikimedia.org/wiki/File:Keanu_Reeves_2014.jpg",
+        "license": "CC BY 2.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+        "credit": "anna Hanks · Keanu Reeves 2014 (Wikimedia Commons; cropped)"
+      },
+      "editorialEvidence": "https://www.speakart.it/en/five-celebrities-and-their-doppelgangers-in-the-art-world/",
+      "rightsReviewedForInternalPreview": true,
+      "commercialPublicityCleared": false
+    },
+    {
+      "id": "carl-feilberg-john-krasinski",
+      "status": "INTERNAL_QA_REVIEWED",
+      "portrait": {
+        "name": "Carl Adolf Feilberg",
+        "artist": "Christen Købke",
+        "year": "1835",
+        "fileName": "Christen Købke - Portrait of Carl Adolf Feilberg - KMS3157 - Statens Museum for Kunst.jpg",
+        "filePage": "https://commons.wikimedia.org/wiki/File:Christen_K%C3%B8bke_-_Portrait_of_Carl_Adolf_Feilberg_-_KMS3157_-_Statens_Museum_for_Kunst.jpg",
+        "license": "CC0 1.0",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "credit": "Christen Købke · Statens Museum for Kunst (KMS3157)"
+      },
+      "celebrity": {
+        "name": "John Krasinski",
+        "fileName": "John Krasinski 2022.jpg",
+        "filePage": "https://commons.wikimedia.org/wiki/File:John_Krasinski_2022.jpg",
+        "license": "CC BY 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by/3.0/",
+        "credit": "Prime Video AU & NZ · John Krasinski 2022 (frame extraction)"
+      },
+      "editorialEvidence": "https://www.dailyartmagazine.com/famous-people-and-their-doppelgangers-in-art/",
+      "rightsReviewedForInternalPreview": true,
+      "commercialPublicityCleared": false
+    }
+  ]
+}
