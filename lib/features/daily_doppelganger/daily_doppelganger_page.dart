@@ -43,7 +43,9 @@ class _DailyDoppelgangerPageState extends State<DailyDoppelgangerPage>
 
   void _refresh() {
     _openedAt = _now();
-    _today = _load(_openedAt);
+    _today = widget.previewPair == null
+        ? _load(_openedAt)
+        : Future<DailyDoppelgangerPair?>.value(widget.previewPair);
   }
 
   Future<DailyDoppelgangerPair?> _load(DateTime day) async {
