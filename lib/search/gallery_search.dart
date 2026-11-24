@@ -9,6 +9,28 @@ class GallerySearch {
   GallerySearch(this.artworks);
   final List<Artwork> artworks;
 
+  // Search documents are immutable for this catalog snapshot; reusing them
+  // avoids 4,500 allocations on every keystroke / scope switch.
+  final _documentsByScope = <ArtworkSearchScope, List<SearchReferenceDocument>>{};
+  final _artById = <String, Artwork>{};
+
+  int get cachedScopeCount => _documentsByScope.length;
+
+  List<SearchReferenceDocument> _documents(ArtworkSearchScope scope) =>
+      _documentsByScope.putIfAbsent(scope, () {
+        final docs = <SearchReferenceDocument>[];
+        for (final art in artworks) {
+          if (!art.displayable) continue;
+          _artById[art.catalogKey] = art;
+          docs.add(SearchReferenceDocument(
+            id: art.catalogKey,
+            text: _textFor(art, scope),
+            tags: art.subjectTerms,
+          ));
+        }
+        return List.unmodifiable(docs);
+      });
+
   static String _normal(String text) => text.toLowerCase().replaceAll(
     RegExp(r'[àáâäãå]'), 'a').replaceAll(RegExp(r'[èéêë]'), 'e')
     .replaceAll(RegExp(r'[ìíîï]'), 'i').replaceAll(RegExp(r'[òóôöõ]'), 'o')
@@ -63,25 +85,17 @@ class GallerySearch {
       int limit = 35}) {
     final q = query.trim();
     if (q.isEmpty) return const [];
-    final indexed = <String, Artwork>{};
-    final docs = <SearchReferenceDocument>[];
-    for (final a in artworks) {
-      if (!a.displayable) continue;
-      final id = a.catalogKey;
-      indexed[id] = a;
-      docs.add(SearchReferenceDocument(id: id, text: _textFor(a, scope),
-        tags: a.subjectTerms));
-    }
+    final docs = _documents(scope);
     final expanded = scope == ArtworkSearchScope.subject ||
         scope == ArtworkSearchScope.all ? expandSubject(q) : q;
     final result = HybridReferenceSearch.search(
       query: expanded.length <= 1000 ? expanded : q,
       documents: docs,
-      // The certified feature-hash engine is used as a deterministic ranker,
-      // but weak non-lexical collisions are filtered out in artwork discovery.
-      semanticAvailable: true, limit: limit.clamp(1, 100).toInt());
+      // Exact source-metadata retrieval is faster than recomputing feature
+      // hashes for every painting on each keystroke. No invented image tags.
+      semanticAvailable: false, limit: limit.clamp(1, 100).toInt());
     return result.hits.where((h) => h.reasons.contains('lexical'))
-        .map((h) => indexed[h.document.id]).whereType<Artwork>()
+        .map((h) => _artById[h.document.id]).whereType<Artwork>()
         .toList(growable: false);
   }
 
