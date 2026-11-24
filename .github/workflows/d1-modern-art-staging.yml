@@ -1,0 +1,410 @@
+name: Art Drift - D1 review and rights checks (NO remote writes)
+
+on:
+  push:
+    branches: [main, feat/artdrift-consolidate-museums-d1-20261124]
+    paths:
+      - tools/artdrift_museum_ingest.py
+      - tools/artdrift_merge_staging.py
+      - tools/artdrift_cleveland_rights_audit.py
+      - tools/artdrift_cleveland_print_repair.py
+      - tools/test_artdrift_cleveland_print_repair.py
+      - tools/test_artdrift_cleveland_rights_audit.py
+      - tools/test_artdrift_museum_ingest.py
+      - cloudflare/d1/migrations/0001_museum_ingest.sql
+      - .github/workflows/d1-modern-art-staging.yml
+  pull_request:
+    paths:
+      - tools/artdrift_museum_ingest.py
+      - tools/artdrift_merge_staging.py
+      - tools/artdrift_cleveland_rights_audit.py
+      - tools/artdrift_cleveland_print_repair.py
+      - tools/test_artdrift_cleveland_print_repair.py
+      - tools/test_artdrift_cleveland_rights_audit.py
+      - tools/test_artdrift_museum_ingest.py
+      - cloudflare/d1/migrations/0001_museum_ingest.sql
+      - .github/workflows/d1-modern-art-staging.yml
+  workflow_dispatch:
+    inputs:
+      provider:
+        description: 'Provider'
+        required: true
+        default: tate
+        type: choice
+        options:
+          - tate
+          - moma
+          - verified
+          - bulk
+          - wikidata
+      museum:
+        description: 'Optional museum Wikidata QID; empty = all configured museums'
+        default: ''
+        required: false
+        type: string
+      max_records:
+        description: 'Max records, 1..5000'
+        required: true
+        default: '200'
+        type: string
+
+permissions:
+  contents: read
+concurrency:
+  group: artdrift-d1-ingestion-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  preflight_cloudflare:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    env:
+      HAS_CLOUDFLARE_ACCOUNT: ${{ secrets.CLOUDFLARE_ACCOUNT_ID != '' }}
+      HAS_CLOUDFLARE_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN != '' }}
+      HAS_D1_NAME: ${{ vars.ARTDRIFT_D1_DATABASE != '' }}
+    steps:
+      - name: Check existing Cloudflare configuration (never print values)
+        run: |
+          python - <<'PY'
+          import os
+          flags = {
+              "cloudflare_account_secret": os.environ["HAS_CLOUDFLARE_ACCOUNT"] == "true",
+              "cloudflare_api_token_secret": os.environ["HAS_CLOUDFLARE_TOKEN"] == "true",
+              "artdrift_d1_database_variable": os.environ["HAS_D1_NAME"] == "true",
+          }
+          print("CLOUDFLARE_D1_CONFIGURED", all(flags.values()))
+          for key, present in flags.items():
+              print(key, "PRESENT" if present else "NOT_CONFIGURED")
+          PY
+
+  verify_cloudflare_d1_connection:
+    # Safe connectivity test. No migrations, writes, or media transfers.
+    # Secrets are only given to this push job, never to PR validation.
+    if: github.event_name == 'push'
+    needs: preflight_cloudflare
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    env:
+      DATABASE: ${{ vars.ARTDRIFT_D1_DATABASE }}
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify Cloudflare D1 credentials and database identity (read-only)
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -z "$DATABASE" ] || [ -z "$CLOUDFLARE_ACCOUNT_ID" ] || [ -z "$CLOUDFLARE_API_TOKEN" ]; then
+            echo "D1_CONNECTION_MISSING_CONFIG"
+            exit 1
+          fi
+          npx --yes wrangler@4 d1 info "$DATABASE" --json > "$RUNNER_TEMP/artdrift-d1-readonly.json"
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          path = Path(os.environ["RUNNER_TEMP"]) / "artdrift-d1-readonly.json"
+          info = json.loads(path.read_text(encoding="utf-8"))
+          if not isinstance(info, dict):
+              raise ValueError("Unexpected Cloudflare D1 info response")
+          if info.get("name") != os.environ["DATABASE"]:
+              raise ValueError("Cloudflare D1 database name mismatch")
+          print("D1_REMOTE_READONLY_OK")
+          PY
+
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Compile and unit-test offline importer
+        run: |
+          python -m py_compile tools/artdrift_museum_ingest.py tools/artdrift_merge_staging.py tools/artdrift_cleveland_rights_audit.py tools/artdrift_cleveland_print_repair.py
+          python -m unittest discover -s tools -p 'test_artdrift*.py' -v
+      - name: D1 schema smoke on SQLite
+        run: |
+          python - <<'PY'
+          import sqlite3
+          from pathlib import Path
+          con=sqlite3.connect(":memory:")
+          con.executescript(Path("cloudflare/d1/migrations/0001_museum_ingest.sql").read_text())
+          assert con.execute("SELECT count(*) FROM artdrift_publishable_modern_art").fetchone()[0] == 0
+          print("SCHEMA_OK")
+          PY
+
+  preview_tate:
+    if: github.event_name == 'push'
+    needs: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Acquire all matching Tate modern paintings up to 5000 (NO Cloudflare writes)
+        run: |
+          python tools/artdrift_museum_ingest.py --source tate --max-records 5000
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path(".artdrift_ingest/modern_art.jsonl")
+          records=[json.loads(line) for line in p.read_text().splitlines()]
+          assert records and all(r["rights_status"] == "METADATA_ONLY" for r in records)
+          assert all(not r["image_url"] and not r["full_image_url"] for r in records)
+          print("TATE_SOURCE_STAGE_OK", len(records))
+          PY
+      - name: Publish traceable stage files (not image bytes)
+        uses: actions/upload-artifact@v4
+        with:
+          name: tate-modern-metadata-stage-${{ github.run_id }}
+          path: .artdrift_ingest/
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 14
+
+  preview_moma:
+    if: github.event_name == 'push'
+    needs: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Acquire 500 MoMA modern painters metadata (no images)
+        run: |
+          python tools/artdrift_museum_ingest.py --source moma --max-records 500
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          lines=Path(".artdrift_ingest/modern_art.jsonl").read_text().splitlines()
+          records=[json.loads(x) for x in lines]
+          assert records and all(r["provider"] == "moma" and not r["image_url"] for r in records)
+          print("MOMA_METADATA_ONLY", len(records))
+          PY
+      - name: Publish MoMA staged records and SQL
+        uses: actions/upload-artifact@v4
+        with:
+          name: moma-modern-metadata-stage-${{ github.run_id }}
+          path: .artdrift_ingest/
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 14
+
+  # Wikidata Query Service imposes emergency 1 req/min throttling:
+  # museum queries are deliberately manual through workflow_dispatch.
+  # Do not run competing automated museum jobs during service incidents.
+
+  preview_verified:
+    if: github.event_name == 'push'
+    needs: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Stage only famous painters with CC0 images from existing approved museum catalog
+        run: |
+          python tools/artdrift_museum_ingest.py --source verified --max-records 5000
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          lines=Path(".artdrift_ingest/modern_art.jsonl").read_text().splitlines()
+          rows=[json.loads(x) for x in lines]
+          assert rows and all(row["rights_status"] == "IMAGE_RIGHTS_VERIFIED" for row in rows)
+          assert all(row["image_url"].startswith("https://") for row in rows)
+          print("MODERN_CC0_IMAGE_CANDIDATES", len(rows))
+          PY
+      - name: Publish verified image URL candidates for rights re-review
+        uses: actions/upload-artifact@v4
+        with:
+          name: artdrift-existing-modern-cc0-images-${{ github.run_id }}
+          path: .artdrift_ingest/
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 14
+
+  audit_cleveland_live_rights:
+    # Per-work public-source rights and image URL evidence, NEVER write to D1.
+    if: github.event_name == 'push'
+    needs: [validate, preview_verified]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Read current 49 Cleveland records from official public API
+        run: |
+          python tools/artdrift_cleveland_rights_audit.py \
+            --out .artdrift_ingest/cleveland-rights-audit.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          x = json.loads(Path('.artdrift_ingest/cleveland-rights-audit.json').read_text())
+          assert x['total'] == 49
+          assert x['all_publication_status'] == 'HOLD'
+          assert x['editorial_approved'] == x['published'] == 0
+          assert all(r['publication_status'] == 'HOLD' for r in x['works'])
+          print('CLEVELAND_RIGHTS_AUDIT_CAPTURED', x['source_checks'])
+          PY
+      - name: Publish per-item rights evidence and pending review ledger
+        uses: actions/upload-artifact@v4
+        with:
+          name: artdrift-cleveland-rights-review-${{ github.run_id }}
+          path: .artdrift_ingest/cleveland-rights-audit.json
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 30
+
+  merge_staged:
+    if: github.event_name == 'push'
+    needs: [validate, preview_tate, preview_moma, preview_verified]
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Download complete Tate stage from this exact workflow run
+        uses: actions/download-artifact@v4
+        with:
+          name: tate-modern-metadata-stage-${{ github.run_id }}
+          path: .artdrift_inputs/tate/
+      - name: Download complete MoMA stage
+        uses: actions/download-artifact@v4
+        with:
+          name: moma-modern-metadata-stage-${{ github.run_id }}
+          path: .artdrift_inputs/moma/
+      - name: Download existing CC0 image candidates
+        uses: actions/download-artifact@v4
+        with:
+          name: artdrift-existing-modern-cc0-images-${{ github.run_id }}
+          path: .artdrift_inputs/verified/
+      - name: Merge and revalidate all sources; simulate full D1 batch
+        run: |
+          python tools/artdrift_merge_staging.py \
+            .artdrift_inputs/tate/modern_art.jsonl \
+            .artdrift_inputs/moma/modern_art.jsonl \
+            .artdrift_inputs/verified/modern_art.jsonl
+          python - <<'PY'
+          import json
+          import sqlite3
+          from pathlib import Path
+          rows = [json.loads(x) for x in Path(".artdrift_ingest/modern_art.jsonl").read_text().splitlines()]
+          assert rows
+          assert len({r["source_key"] for r in rows}) == len(rows)
+          assert {"tate", "moma"}.issubset({r["provider"] for r in rows})
+          conn = sqlite3.connect(":memory:")
+          conn.executescript(Path("cloudflare/d1/migrations/0001_museum_ingest.sql").read_text())
+          sql = Path(".artdrift_ingest/modern_art.sql").read_text()
+          conn.executescript(sql)
+          assert conn.execute("SELECT COUNT(*) FROM artdrift_museum_ingest").fetchone()[0] == len(rows)
+          assert conn.execute("SELECT COUNT(*) FROM artdrift_publishable_modern_art").fetchone()[0] == 0
+          conn.executescript(sql)
+          assert conn.execute("SELECT COUNT(*) FROM artdrift_museum_ingest").fetchone()[0] == len(rows)
+          print("STAGING_D1_MERGED_PASS", len(rows))
+          PY
+      - name: Artifact - one consolidated D1-ready JSONL and SQL stage
+        uses: actions/upload-artifact@v4
+        with:
+          name: artdrift-d1-merged-modern-masters-${{ github.run_id }}
+          path: .artdrift_ingest/
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 30
+
+  review_cleveland_print_repair:
+    # Only generate candidate SQL: no Cloudflare writes or editorial approvals.
+    if: github.event_name == 'push'
+    needs: [validate, merge_staged, audit_cleveland_live_rights]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Fetch same-run validated stage and live museum review
+        uses: actions/download-artifact@v4
+        with:
+          pattern: artdrift-*-${{ github.run_id }}
+          path: .artdrift_artifacts/
+          merge-multiple: false
+      - name: Prepare 28 HOLD-only print upgrades and simulate migration
+        run: |
+          python tools/artdrift_cleveland_print_repair.py \
+            --audit .artdrift_artifacts/artdrift-cleveland-rights-review-${{ github.run_id }}/cleveland-rights-audit.json \
+            --stage .artdrift_artifacts/artdrift-d1-merged-modern-masters-${{ github.run_id }}/modern_art.jsonl \
+            --out .artdrift_repairs/cleveland_print_repair.sql
+          python - <<'PY'
+          import sqlite3
+          from pathlib import Path
+          migration=Path('cloudflare/d1/migrations/0001_museum_ingest.sql').read_text()
+          stage=Path('.artdrift_artifacts/artdrift-d1-merged-modern-masters-${{ github.run_id }}/modern_art.sql').read_text()
+          repair=Path('.artdrift_repairs/cleveland_print_repair.sql').read_text()
+          conn=sqlite3.connect(':memory:')
+          conn.executescript(migration)
+          conn.executescript(stage)
+          assert conn.execute('SELECT COUNT(*) FROM artdrift_museum_ingest').fetchone()[0]==535
+          before=conn.total_changes
+          conn.executescript(repair)
+          assert conn.total_changes-before==28
+          assert conn.execute("SELECT COUNT(*) FROM artdrift_museum_ingest WHERE publication_status='HOLD'").fetchone()[0]==535
+          assert conn.execute('SELECT COUNT(*) FROM artdrift_publishable_modern_art').fetchone()[0]==0
+          second=conn.total_changes
+          conn.executescript(repair)
+          assert conn.total_changes==second
+          print('D1_PRINT_REPAIR_PREVIEW_28_PASS_AND_HOLD')
+          PY
+      - name: Export inspectable repair proposal, never execute it remotely
+        uses: actions/upload-artifact@v4
+        with:
+          name: artdrift-cleveland-print-repair-proposal-${{ github.run_id }}
+          path: .artdrift_repairs/
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 30
+
+  acquire:
+    if: github.event_name == 'workflow_dispatch'
+    needs: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      PROVIDER: ${{ inputs.provider }}
+      LIMIT: ${{ inputs.max_records }}
+      MUSEUM: ${{ inputs.museum }}
+      DATABASE: ${{ vars.ARTDRIFT_D1_DATABASE }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Acquire records from primary sources
+        run: |
+          if [ -n "$MUSEUM" ]; then
+            python tools/artdrift_museum_ingest.py --source "$PROVIDER" --museum "$MUSEUM" --max-records "$LIMIT"
+          else
+            python tools/artdrift_museum_ingest.py --source "$PROVIDER" --max-records "$LIMIT"
+          fi
+      - name: Export inspectable staging JSONL and SQL
+        uses: actions/upload-artifact@v4
+        with:
+          name: artdrift-d1-staging-${{ github.run_id }}
+          path: .artdrift_ingest/
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 14

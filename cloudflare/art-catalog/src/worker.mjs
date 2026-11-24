@@ -148,8 +148,11 @@ export default {
       const sql=[
         "SELECT source_key,provider,museum,title,artist,year_text,medium,",
         "metadata_url,image_url,full_image_url,rights_license,rights_evidence_url",
-        "FROM artdrift_publishable_modern_art",
-        "ORDER BY source_key LIMIT ? OFFSET ?"
+        "FROM artdrift_publishable_modern_art v",
+        "WHERE NOT EXISTS (SELECT 1 FROM museum_works m",
+        "WHERE (m.museum_source=v.provider AND m.museum_native_id=v.native_id)",
+        "OR m.source_key=v.source_key)",
+        "ORDER BY v.source_key LIMIT ? OFFSET ?"
       ].join(" ");
       try {
         const rs=await env.CATALOG_DB.prepare(sql).bind(PAGE+1,offset).all();

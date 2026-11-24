@@ -82,6 +82,9 @@ test("modern endpoint reads only SQL APPROVED view; HOLD never queried",async()=
   assert.equal(data.source,"ArtDrift-Modern-Approved");
   assert.deepEqual(data.works,[]);
   assert.match(seen[0],/FROM artdrift_publishable_modern_art/);
+  assert.match(seen[0],/NOT EXISTS/);
+  assert.match(seen[0],/m\.museum_native_id=v\.native_id/);
+  assert.match(seen[0],/m\.source_key=v\.source_key/);
   assert.doesNotMatch(seen[0],/FROM artdrift_museum_ingest/);
   assert.deepEqual(seen[1],[25,0]);
   const invalid=await worker.fetch(new Request("https://test.local/api/v1/modern-approved?cursor=-1"),env);

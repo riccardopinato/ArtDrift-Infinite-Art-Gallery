@@ -11,3 +11,9 @@ android/key.properties
 *.jks
 *.keystore
 .DS_Store
+
+# Generated temporary museum staging, never source or production data
+.artdrift_ingest/
+.artdrift_inputs/
+.artdrift_artifacts/
+.artdrift_repairs/
