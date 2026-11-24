@@ -291,6 +291,7 @@ jobs:
 
   one_shot_remote_stage_535:
     # Only the explicitly authorized, uniquely tagged push can perform this D1 staging write.
+    # Authorized one-time batch: 535 reviewed staging candidates, never publication.
     if: >-
       github.event_name == 'push' &&
       github.ref == 'refs/heads/feat/artdrift-d1-modern-art-ingestion-20261123' &&
