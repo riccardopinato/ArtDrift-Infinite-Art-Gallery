@@ -21,6 +21,19 @@ class D1ReconcileTests(unittest.TestCase):
         self.assertEqual(r["missing_remote_native_ids"],1)
         self.assertEqual(r["distinct_native_identities"],5571)
         self.assertEqual(r["approved_staged_rows"],0)
+    def test_100_new_cleveland_metadata_only_hold_stage(self):
+        local,remote,stage=self.data()
+        stage.extend({'provider':'cleveland','native_id':str(i+70000),
+                      'publication_status':'HOLD','rights_status':'METADATA_ONLY'}
+                     for i in range(100))
+        report=reconcile(local,remote,stage)
+        self.assertEqual(report['staged_rows'],635)
+        self.assertEqual(report['distinct_native_identities'],5671)
+        self.assertEqual(report['staged_hold'],635)
+        self.assertEqual(report['staged_already_in_museum_catalog'],49)
+        stage[-1]['rights_status']='IMAGE_REVIEW'
+        with self.assertRaisesRegex(ValueError,'100 new Cleveland'):
+            reconcile(local,remote,stage)
     def test_stage_approval_fails_closed(self):
         local,remote,stage=self.data()
         stage[0]["publication_status"]="APPROVED"
