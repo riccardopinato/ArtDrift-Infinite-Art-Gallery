@@ -1,0 +1,22 @@
+name: ArtDrift research Doppelganger source index QA (no deployment)
+on:
+  push:
+    branches: ['research/artdrift-doppelganger-*']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify-sources-no-publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python3 tools/validate_doppelganger_research.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ArtDrift-Doppleganger-37-Research-Only-${{ github.sha }}
+          path: research/doppelgangers/candidates_index_20261124.json
+          if-no-files-found: error

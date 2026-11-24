@@ -1,0 +1,521 @@
+{
+  "schemaVersion": 1,
+  "updatedAt": "2026-11-24",
+  "sourceApp": "ArtDrift",
+  "feature": "Doppleganger del giorno",
+  "status": "RESEARCH_ONLY_NOT_RUNTIME",
+  "factoryCoreSHA": "ede07c491e586215598ff68daec43e17d699aa51",
+  "notes": [
+    "37 suggested pairings are source leads, not 37 valid copyright-cleared artworks or biometric face matches.",
+    "9 editorial comparison images were visually inspected; 1 single art original separately examined. Comparison imagery is not proof of authentic original photos.",
+    "No new pair may appear in public runtime without verifying original museum object, original celebrity photo, CC attribution and release/privacy publicity rights.",
+    "Source-only manifest. Product's 2-pair QA catalog in assets/daily_doppelgangers.json is unchanged."
+  ],
+  "sourceRegistry": {
+    "DA": "https://www.dailyartmagazine.com/famous-people-and-their-doppelgangers-in-art/",
+    "SA": "https://www.speakart.it/cinque-celebrita-e-i-loro-doppelganger-nel-mondo-dellarte/",
+    "AN": "https://news.artnet.com/art-world/art-history-celebrity-doppelgangers-2399391",
+    "DZ": "https://origin.dazeddigital.com/art-photography/article/38682/1/we-paired-our-favourite-stars-with-their-art-history-doppelgangers",
+    "RD": "https://www.reddit.com/r/ArtHistory/comments/1e27y0g",
+    "BP": "https://www.boredpanda.com/celebrities-doppelgangers-from-the-past/"
+  },
+  "counts": {
+    "all": 37,
+    "paintingsClaimed": 29,
+    "paintingTypeUncertain": 8,
+    "pairsWithBothMediaLicensesDocumented": 2,
+    "commercialCleared": 0
+  },
+  "pairs": [
+    {
+      "id": "AD-DG-001",
+      "celebrity": "Keanu Reeves",
+      "artworkTitle": "Portrait of Paul Mounet",
+      "artistCreditAsResearched": "Louis-Maurice Boutet de Monvel",
+      "paintingStatus": "CLAIMED_BY_EDITORIAL",
+      "evidence": [
+        "SA",
+        "DA"
+      ],
+      "reviewStatus": "INTERNAL_QA_MEDIA_DOCUMENTED",
+      "independentSourceImagePairReviewed": false,
+      "commercialReleaseCleared": false
+    },
+    {
+      "id": "AD-DG-002",
+      "celebrity": "John Krasinski",
+      "artworkTitle": "Portrait of Carl Adolf Feilberg",
+      "artistCreditAsResearched": "Christen Købke",
+      "paintingStatus": "CLAIMED_BY_EDITORIAL",
+      "evidence": [
+        "DA"
+      ],
+      "reviewStatus": "INTERNAL_QA_MEDIA_DOCUMENTED",
+      "independentSourceImagePairReviewed": false,
+      "commercialReleaseCleared": false
+    },
+    {
+      "id": "AD-DG-003",
+      "celebrity": "Benedict Cumberbatch",
+      "artworkTitle": "Self-Portrait in a Red Turban",
+      "artistCreditAsResearched": "Zygmunt Waliszewski",
+      "paintingStatus": "CLAIMED_BY_EDITORIAL",
+      "evidence": [
+        "DA",
+        "BP"
+      ],
+      "reviewStatus": "HOLD_SOURCE_AND_RIGHTS",
+      "independentSourceImagePairReviewed": false,
+      "commercialReleaseCleared": false
+    },
+    {
+      "id": "AD-DG-004",
+      "celebrity": "Maggie Smith",
+      "artworkTitle": "Lady in Blue",
+      "artistCreditAsResearched": "Paul Cézanne",
+      "paintingStatus": "CLAIMED_BY_EDITORIAL",
+      "evidence": [
+        "DA",
+        "SA"
+      ],
+      "reviewStatus": "HOLD_SOURCE_AND_RIGHTS",
+      "independentSourceImagePairReviewed": false,
+      "commercialReleaseCleared": false
+    },
+    {
+      "id": "AD-DG-005",
+      "celebrity": "Mark Zuckerberg",
+      "artworkTitle": "Portrait of Philip IV",
+      "artistCreditAsResearched": "Diego Velázquez",
+      "paintingStatus": "CLAIMED_BY_EDITORIAL",
+      "evidence": [
+        "DA",
+        "AN"
+      ],
+      "reviewStatus": "HOLD_SOURCE_AND_RIGHTS",
+      "independentSourceImagePairReviewed": false,
+      "commercialReleaseCleared": false
+    },
+    {
+      "id": "AD-DG-006",
+      "celebrity": "Robert De Niro",
+      "artworkTitle": "Portrait of Johann Vogt, Counsellor of Wrocław",
+      "artistCreditAsResearched": "Bartholomeus Strobel",
+      "paintingStatus": "CLAIMED_BY_EDITORIAL",
+      "evidence": [
+        "DA"
+      ],
+      "reviewStatus": "HOLD_SOURCE_AND_RIGHTS",
+      "independentSourceImagePairReviewed": false,
+      "commercialReleaseCleared": false
+    },
+    {
+      "id": "AD-DG-007",
+      "celebrity": "Edward Norton",
+      "artworkTitle": "Self-Portrait",
+      "artistCreditAsResearched": "Hyacinthe Rigaud",
+      "paintingStatus": "CLAIMED_BY_EDITORIAL",
+      "evidence": [
+        "DA",
+        "BP"
+      ],
+      "reviewStatus": "HOLD_SOURCE_AND_RIGHTS",
+      "independentSourceImagePairReviewed": false,
+      "commercialReleaseCleared": false
+    },
+    {
+      "id": "AD-DG-008",
+      "celebrity": "Nicole Kidman",
+      "artworkTitle": "Portrait of Elżbieta Szemplińska-Sobolewska",
+      "artistCreditAsResearched": "Stanisław Ignacy Witkiewicz (Witkacy)",
+      "paintingStatus": "CLAIMED_BY_EDITORIAL",
+      "evidence": [
+        "DA",
+        "SA"
+      ],
+      "reviewStatus": "HOLD_SOURCE_AND_RIGHTS",
+      "independentSourceImagePairReviewed": false,
+      "commercialReleaseCleared": false
+    },
+    {
+      "id": "AD-DG-009",
+      "celebrity": "Keanu Reeves",
+      "artworkTitle": "Portrait of a Man",
+      "artistCreditAsResearched": "Parmigianino",
+      "paintingStatus": "CLAIMED_BY_EDITORIAL",
+      "evidence": [
+        "DA"
+      ],
+      "reviewStatus": "HOLD_SOURCE_AND_RIGHTS",
+      "independentSourceImagePairReviewed": false,
+      "commercialReleaseCleared": false
+    },
+    {
+      "id": "AD-DG-010",
+      "celebrity": "Johnny Depp",
+      "artworkTitle": "Portrait of Jean Alexandre",
+      "artistCreditAsResearched": "Amedeo Modigliani",
+      "paintingStatus": "CLAIMED_BY_EDITORIAL",
+      "evidence": [
+        "DA",
+        "SA"
+      ],
+      "reviewStatus": "HOLD_SOURCE_AND_RIGHTS",
+      "independentSourceImagePairReviewed": false,
+      "commercialReleaseCleared": false
+    },
+    {
+      "id": "AD-DG-011",
+      "celebrity": "Rupert Grint",
+      "artworkTitle": "Artist (Self-Portrait)",
+      "artistCreditAsResearched": "Sir David Wilkie",
+      "paintingStatus": "CLAIMED_BY_EDITORIAL",
+      "evidence": [
+        "DA",
+        "BP"
+      ],
+      "reviewStatus": "HOLD_SOURCE_AND_RIGHTS",
+      "independentSourceImagePairReviewed": false,
+      "commercialReleaseCleared": false
+    },
+    {
+      "id": "AD-DG-012",
+      "celebrity": "Peter Dinklage",
+      "artworkTitle": "Portrait of Sebastián de Morra / El bufón el Primo",
+      "artistCreditAsResearched": "Diego Velázquez",
+      "paintingStatus": "CLAIMED_BY_EDITORIAL",
+      "evidence": [
+        "DA"
+      ],
+      "reviewStatus": "HOLD_SOURCE_AND_RIGHTS",
+      "independentSourceImagePairReviewed": false,
+      "commercialReleaseCleared": false
+    },
+    {
+      "id": "AD-DG-013",
+      "celebrity": "Jack Black",
+      "artworkTitle": "Paul Revere",
+      "artistCreditAsResearched": "John Singleton Copley",
+      "paintingStatus": "CLAIMED_BY_EDITORIAL",
+      "evidence": [
+        "DA",
+        "RD"
+      ],
+      "reviewStatus": "HOLD_SOURCE_AND_RIGHTS",
+      "independentSourceImagePairReviewed": false,
+      "commercialReleaseCleared": false
+    },
+    {
+      "id": "AD-DG-014",
+      "celebrity": "Freddie Mercury",
+      "artworkTitle": "Man Reading (Nicola d'Inverno?)",
+      "artistCreditAsResearched": "John Singer Sargent",
+      "paintingStatus": "CLAIMED_BY_EDITORIAL",
+      "evidence": [
+        "DA"
+      ],
+      "reviewStatus": "HOLD_SOURCE_AND_RIGHTS",
+      "independentSourceImagePairReviewed": false,
+      "commercialReleaseCleared": false
+    },
+    {
+      "id": "AD-DG-015",
+      "celebrity": "Gérard Depardieu",
+      "artworkTitle": "Portrait of a Young Man",
+      "artistCreditAsResearched": "Venetian 16th Century (current NGA attribution); formerly Jacopo de' Barbari",
+      "paintingStatus": "CLAIMED_BY_EDITORIAL",
+      "evidence": [
+        "DA"
+      ],
+      "reviewStatus": "HOLD_SOURCE_AND_RIGHTS",
+      "independentSourceImagePairReviewed": false,
+      "commercialReleaseCleared": false
+    },
+    {
+      "id": "AD-DG-016",
+      "celebrity": "Michael Jackson",
+      "artworkTitle": "Self-Portrait",
+      "artistCreditAsResearched": "Barent Fabritius",
+      "paintingStatus": "CLAIMED_BY_EDITORIAL",
+      "evidence": [
+        "DA"
+      ],
+      "reviewStatus": "HOLD_SOURCE_AND_RIGHTS",
+      "independentSourceImagePairReviewed": false,
+      "commercialReleaseCleared": false
+    },
+    {
+      "id": "AD-DG-017",
+      "celebrity": "Greta Thunberg",
+      "artworkTitle": "Portrait of Comtesse d'Haussonville",
+      "artistCreditAsResearched": "Jean-Auguste-Dominique Ingres",
+      "paintingStatus": "CLAIMED_BY_EDITORIAL",
+      "evidence": [
+        "AN"
+      ],
+      "reviewStatus": "HOLD_SOURCE_AND_RIGHTS",
+      "independentSourceImagePairReviewed": false,
+      "commercialReleaseCleared": false
+    },
+    {
+      "id": "AD-DG-018",
+      "celebrity": "Bella Ramsey",
+      "artworkTitle": "The Irish Girl",
+      "artistCreditAsResearched": "Ford Madox Brown",
+      "paintingStatus": "CLAIMED_BY_EDITORIAL",
+      "evidence": [
+        "AN"
+      ],
+      "reviewStatus": "HOLD_SOURCE_AND_RIGHTS",
+      "independentSourceImagePairReviewed": false,
+      "commercialReleaseCleared": false
+    },
+    {
+      "id": "AD-DG-019",
+      "celebrity": "Prince Harry",
+      "artworkTitle": "The Boy",
+      "artistCreditAsResearched": "Amedeo Modigliani",
+      "paintingStatus": "CLAIMED_BY_EDITORIAL",
+      "evidence": [
+        "AN"
+      ],
+      "reviewStatus": "HOLD_SOURCE_AND_RIGHTS",
+      "independentSourceImagePairReviewed": false,
+      "commercialReleaseCleared": false
+    },
+    {
+      "id": "AD-DG-020",
+      "celebrity": "Keanu Reeves",
+      "artworkTitle": "Pierre Bracquemond as a Child",
+      "artistCreditAsResearched": "Marie Bracquemond",
+      "paintingStatus": "CLAIMED_BY_EDITORIAL",
+      "evidence": [
+        "AN"
+      ],
+      "reviewStatus": "HOLD_SOURCE_AND_RIGHTS",
+      "independentSourceImagePairReviewed": false,
+      "commercialReleaseCleared": false
+    },
+    {
+      "id": "AD-DG-021",
+      "celebrity": "Timothée Chalamet",
+      "artworkTitle": "Composer Franz Liszt",
+      "artistCreditAsResearched": "Henri Lehmann",
+      "paintingStatus": "CLAIMED_BY_EDITORIAL",
+      "evidence": [
+        "AN"
+      ],
+      "reviewStatus": "HOLD_SOURCE_AND_RIGHTS",
+      "independentSourceImagePairReviewed": false,
+      "commercialReleaseCleared": false
+    },
+    {
+      "id": "AD-DG-022",
+      "celebrity": "Daniel Radcliffe",
+      "artworkTitle": "Composer Franz Liszt",
+      "artistCreditAsResearched": "Henri Lehmann",
+      "paintingStatus": "CLAIMED_BY_EDITORIAL",
+      "evidence": [
+        "AN"
+      ],
+      "reviewStatus": "HOLD_SOURCE_AND_RIGHTS",
+      "independentSourceImagePairReviewed": false,
+      "commercialReleaseCleared": false
+    },
+    {
+      "id": "AD-DG-023",
+      "celebrity": "Vladimir Putin",
+      "artworkTitle": "The Arnolfini Portrait (husband)",
+      "artistCreditAsResearched": "Jan van Eyck",
+      "paintingStatus": "CLAIMED_BY_EDITORIAL",
+      "evidence": [
+        "SA"
+      ],
+      "reviewStatus": "HOLD_SOURCE_AND_RIGHTS",
+      "independentSourceImagePairReviewed": false,
+      "commercialReleaseCleared": false
+    },
+    {
+      "id": "AD-DG-024",
+      "celebrity": "Winona Ryder",
+      "artworkTitle": "The Marquise de Pezay and the Marquise de Rougé with Her Sons",
+      "artistCreditAsResearched": "Élisabeth Louise Vigée Le Brun",
+      "paintingStatus": "CLAIMED_BY_EDITORIAL",
+      "evidence": [
+        "DZ"
+      ],
+      "reviewStatus": "HOLD_SOURCE_AND_RIGHTS",
+      "independentSourceImagePairReviewed": false,
+      "commercialReleaseCleared": false
+    },
+    {
+      "id": "AD-DG-025",
+      "celebrity": "Björk",
+      "artworkTitle": "The Conversation",
+      "artistCreditAsResearched": "Abraham Leon Kroll",
+      "paintingStatus": "CLAIMED_BY_EDITORIAL",
+      "evidence": [
+        "DZ"
+      ],
+      "reviewStatus": "HOLD_SOURCE_AND_RIGHTS",
+      "independentSourceImagePairReviewed": false,
+      "commercialReleaseCleared": false
+    },
+    {
+      "id": "AD-DG-026",
+      "celebrity": "Sarah Michelle Gellar",
+      "artworkTitle": "Head of a Youth",
+      "artistCreditAsResearched": "Théodore Géricault",
+      "paintingStatus": "UNCERTAIN",
+      "evidence": [
+        "DZ"
+      ],
+      "reviewStatus": "HOLD_SOURCE_AND_RIGHTS",
+      "independentSourceImagePairReviewed": false,
+      "commercialReleaseCleared": false
+    },
+    {
+      "id": "AD-DG-027",
+      "celebrity": "Marilyn Manson",
+      "artworkTitle": "Self-Portrait with Striped Shirt",
+      "artistCreditAsResearched": "Egon Schiele",
+      "paintingStatus": "CLAIMED_BY_EDITORIAL",
+      "evidence": [
+        "DZ"
+      ],
+      "reviewStatus": "HOLD_SOURCE_AND_RIGHTS",
+      "independentSourceImagePairReviewed": false,
+      "commercialReleaseCleared": false
+    },
+    {
+      "id": "AD-DG-028",
+      "celebrity": "Rose McGowan",
+      "artworkTitle": "Pvt. Dorothy Spaulding",
+      "artistCreditAsResearched": "Francis Vandeveer Kughler",
+      "paintingStatus": "CLAIMED_BY_EDITORIAL",
+      "evidence": [
+        "DZ"
+      ],
+      "reviewStatus": "HOLD_SOURCE_AND_RIGHTS",
+      "independentSourceImagePairReviewed": false,
+      "commercialReleaseCleared": false
+    },
+    {
+      "id": "AD-DG-029",
+      "celebrity": "Kim Kardashian",
+      "artworkTitle": "Martha Graham",
+      "artistCreditAsResearched": "Paul R. Meltsner",
+      "paintingStatus": "CLAIMED_BY_EDITORIAL",
+      "evidence": [
+        "DZ"
+      ],
+      "reviewStatus": "HOLD_SOURCE_AND_RIGHTS",
+      "independentSourceImagePairReviewed": false,
+      "commercialReleaseCleared": false
+    },
+    {
+      "id": "AD-DG-030",
+      "celebrity": "Lana Del Rey",
+      "artworkTitle": "Woman on the Beach",
+      "artistCreditAsResearched": "José Cuchy y Arnau",
+      "paintingStatus": "UNCERTAIN",
+      "evidence": [
+        "DZ"
+      ],
+      "reviewStatus": "HOLD_SOURCE_AND_RIGHTS",
+      "independentSourceImagePairReviewed": false,
+      "commercialReleaseCleared": false
+    },
+    {
+      "id": "AD-DG-031",
+      "celebrity": "Nicki Minaj",
+      "artworkTitle": "A Melancholic Legong",
+      "artistCreditAsResearched": "Guruh Soekarno Putra",
+      "paintingStatus": "UNCERTAIN",
+      "evidence": [
+        "DZ"
+      ],
+      "reviewStatus": "HOLD_SOURCE_AND_RIGHTS",
+      "independentSourceImagePairReviewed": false,
+      "commercialReleaseCleared": false
+    },
+    {
+      "id": "AD-DG-032",
+      "celebrity": "Shirley Henderson",
+      "artworkTitle": "Portrait of Mr. and Mrs. Mifflin (Mrs. Mifflin)",
+      "artistCreditAsResearched": "John Singleton Copley",
+      "paintingStatus": "CLAIMED_BY_EDITORIAL",
+      "evidence": [
+        "RD"
+      ],
+      "reviewStatus": "HOLD_SOURCE_AND_RIGHTS",
+      "independentSourceImagePairReviewed": false,
+      "commercialReleaseCleared": false
+    },
+    {
+      "id": "AD-DG-033",
+      "celebrity": "Jennifer Garner",
+      "artworkTitle": "Portrait of Nancy Woodward",
+      "artistCreditAsResearched": "Artist to identify",
+      "paintingStatus": "UNCERTAIN",
+      "evidence": [
+        "RD"
+      ],
+      "reviewStatus": "HOLD_SOURCE_AND_RIGHTS",
+      "independentSourceImagePairReviewed": false,
+      "commercialReleaseCleared": false
+    },
+    {
+      "id": "AD-DG-034",
+      "celebrity": "Phia Saban",
+      "artworkTitle": "Portrait of Jane Hyde",
+      "artistCreditAsResearched": "Artist to identify",
+      "paintingStatus": "UNCERTAIN",
+      "evidence": [
+        "RD"
+      ],
+      "reviewStatus": "HOLD_SOURCE_AND_RIGHTS",
+      "independentSourceImagePairReviewed": false,
+      "commercialReleaseCleared": false
+    },
+    {
+      "id": "AD-DG-035",
+      "celebrity": "Adrien Brody",
+      "artworkTitle": "Portrait of John Locke",
+      "artistCreditAsResearched": "Artist/source painting to identify",
+      "paintingStatus": "UNCERTAIN",
+      "evidence": [
+        "BP"
+      ],
+      "reviewStatus": "HOLD_SOURCE_AND_RIGHTS",
+      "independentSourceImagePairReviewed": false,
+      "commercialReleaseCleared": false
+    },
+    {
+      "id": "AD-DG-036",
+      "celebrity": "Anne Hathaway",
+      "artworkTitle": "Portrait of Anne Clifford",
+      "artistCreditAsResearched": "Artist/source painting to identify",
+      "paintingStatus": "UNCERTAIN",
+      "evidence": [
+        "BP"
+      ],
+      "reviewStatus": "HOLD_SOURCE_AND_RIGHTS",
+      "independentSourceImagePairReviewed": false,
+      "commercialReleaseCleared": false
+    },
+    {
+      "id": "AD-DG-037",
+      "celebrity": "Michael Phelps",
+      "artworkTitle": "Portrait of Charles Lamb",
+      "artistCreditAsResearched": "Artist/source painting to identify",
+      "paintingStatus": "UNCERTAIN",
+      "evidence": [
+        "BP"
+      ],
+      "reviewStatus": "HOLD_SOURCE_AND_RIGHTS",
+      "independentSourceImagePairReviewed": false,
+      "commercialReleaseCleared": false
+    }
+  ]
+}
