@@ -1,0 +1,82 @@
+name: ArtDrift Doppleganger 5-pair Flutter and ARM64 QA (private no deploy)
+on:
+  push:
+    branches: ['research/artdrift-doppelganger-*']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Flutter stable
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: '3.50.1'
+          cache: true
+      - name: Configure Flutter Gradle composite plugin repositories
+        run: |
+          python3 - <<'PY'
+          import os
+          from pathlib import Path
+          root = Path(os.environ['FLUTTER_ROOT'])
+          path = root / 'packages/flutter_tools/gradle/settings.gradle.kts'
+          text = path.read_text(encoding='utf-8')
+          if 'pluginManagement {' not in text:
+              header = (
+                  'pluginManagement {\n'
+                  '    repositories {\n'
+                  '        google()\n'
+                  '        mavenCentral()\n'
+                  '        gradlePluginPortal()\n'
+                  '    }\n'
+                  '}\n\n'
+              )
+              path.write_text(header + text, encoding='utf-8')
+          print('FLUTTER_COMPOSITE_PLUGIN_REPOS_OK')
+          PY
+      - name: Create Android shell
+        run: flutter create --project-name artdrift --org com.riccardopinato --platforms=android .
+      - name: Remove Flutter-generated demo test
+        run: rm -f test/widget_test.dart
+      - name: Patch native platform
+        run: python3 scripts/patch_android.py
+      - name: Render product launcher icon
+        run: |
+          python3 -m pip install --disable-pip-version-check "CairoSVG==2.7.1"
+          python3 scripts/install_brand_icon.py
+      - name: Dependencies
+        run: flutter pub get
+      - name: Shared engine dependencies
+        run: cd packages/drift_core && flutter pub get
+      - name: Shared engine analyze
+        run: cd packages/drift_core && flutter analyze --no-fatal-infos
+      - name: Shared engine tests
+        run: cd packages/drift_core && flutter test
+      - name: Verify source-only 37 and 30+7 rights gates
+        run: |
+          python3 tools/validate_doppelganger_research.py
+          python3 tools/validate_doppelganger_v2.py
+      - name: Analyze
+        run: flutter analyze --no-fatal-infos
+      - name: Daily Doppleganger focused tests
+        run: flutter test test/daily_doppelganger_test.dart
+      - name: Tests
+        run: flutter test
+      - name: Build optimized Android ARM64 APK (internal test signing)
+        run: flutter build apk --release --target-platform android-arm64
+      - name: Upload optimized ARM64 APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: ArtDrift-Doppleganger-5-pair-internal-ARM64-${{ github.sha }}
+          path: build/app/outputs/flutter-apk/app-release.apk
+          if-no-files-found: error
