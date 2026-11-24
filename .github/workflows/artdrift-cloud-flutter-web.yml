@@ -1,0 +1,27 @@
+name: Art Drift optional read-only museum cloud Flutter Web QA (no APK)
+on:
+  push:
+    branches: ['research/artdrift-flutter-*']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  web_only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: '3.50.1'
+          cache: true
+      - name: Build source; analyze; all Flutter and canonical Core tests
+        run: |
+          flutter create --project-name artdrift --org com.riccardopinato --platforms=web .
+          rm -f test/widget_test.dart
+          flutter pub get
+          (cd packages/drift_core && flutter pub get && flutter analyze --no-fatal-infos && flutter test)
+          flutter analyze --no-fatal-infos
+          flutter test
+          flutter build web --release

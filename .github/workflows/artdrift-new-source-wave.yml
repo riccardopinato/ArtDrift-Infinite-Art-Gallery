@@ -1,0 +1,25 @@
+name: Art Drift bounded Cleveland CC0 painting discovery (no APK)
+on:
+  push:
+    branches: ['research/artdrift-new-museum-wave-*']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source_wave:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Unit test source rights and official-host validation
+        run: python -m unittest discover -s tools -p 'test_artdrift_new_cleveland_wave.py' -v
+      - name: Acquire max 100 distinct paintings with CC0 media status
+        run: python tools/artdrift_new_cleveland_wave.py --max-works 100 --out build/artdrift-new-waves
+      - uses: actions/upload-artifact@v4
+        with:
+          name: artdrift-cleveland-new-hold-wave
+          path: build/artdrift-new-waves/
+          if-no-files-found: error

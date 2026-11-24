@@ -1,0 +1,25 @@
+name: Art Drift 5085 records inventory and review waves (no APK)
+on:
+  push:
+    branches: ['research/artdrift-inventory-*']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  inventory:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Fail-closed inventory tests
+        run: python -m unittest discover -s tools -p 'test_artdrift_inventory_wave.py' -v
+      - name: Write report and 100-work review batches
+        run: python tools/artdrift_inventory_wave.py --expected 5085 --out build/artdrift-inventory
+      - uses: actions/upload-artifact@v4
+        with:
+          name: artdrift-inventory
+          path: build/artdrift-inventory/
+          if-no-files-found: error

@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import '../models/artwork.dart';
 import '../search/gallery_search.dart';
 import '../search/museum_search.dart';
+import '../services/museum_cloud_catalog.dart';
+import 'museum_cloud_catalog_page.dart';
 import '../ui/localization.dart';
 import '../ui/parchment.dart';
 
@@ -23,6 +25,8 @@ class _SearchSheet extends StatefulWidget {
 class _SearchSheetState extends State<_SearchSheet> {
   final TextEditingController _text = TextEditingController();
   final MuseumSearchService _museums = MuseumSearchService();
+  final MuseumCloudCatalog _cloud = MuseumCloudCatalog();
+  static const bool _d1OptIn = bool.fromEnvironment('ARTDRIFT_ENABLE_D1_DISCOVERY',defaultValue:false);
   late final GallerySearch _search;
   ArtworkSearchScope _scope = ArtworkSearchScope.all;
   List<Artwork> _local = const [];
@@ -91,6 +95,7 @@ class _SearchSheetState extends State<_SearchSheet> {
     _text.removeListener(_updateLocal);
     _text.dispose();
     _museums.close();
+    _cloud.close();
     super.dispose();
   }
 
@@ -187,6 +192,20 @@ class _SearchSheetState extends State<_SearchSheet> {
                 icon: const Icon(Icons.museum_outlined),
                 label: Text(_searching ? t('museumSearching') : t('museumSearch')),
               ),
+              if (_d1OptIn && _cloud.enabled)
+                Padding(padding: const EdgeInsets.only(top: 8),
+                  child: OutlinedButton.icon(
+                    key: const Key('artdrift-open-d1-museum-archive'),
+                    onPressed: () => Navigator.of(context).push<void>(
+                      MaterialPageRoute<void>(builder: (_) =>
+                        MuseumCloudCatalogPageScreen(
+                          initialQuery: _text.text.trim()))),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: ArtPaper.ink,
+                      side: const BorderSide(color: ArtPaper.gold)),
+                    icon: const Icon(Icons.account_balance_outlined),
+                    label: Text(t('cloudMuseumArchive')),
+                  )),
               Padding(padding: const EdgeInsets.symmetric(vertical: 6),
                 child: Text(t('queryDisclosure'),
                   style: const TextStyle(color: Color(0xFF765D42),

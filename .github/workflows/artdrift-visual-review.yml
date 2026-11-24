@@ -1,0 +1,28 @@
+name: Art Drift rights-aware image decoding and visual QA board (no APK)
+on:
+  push:
+    branches: ['research/artdrift-visual-*']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  visual:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Pin read-only image decoder dependency
+        run: python -m pip install 'Pillow==11.3.0'
+      - name: Validate 457 real shipped previews without network
+        run: python -m unittest discover -s tools -p 'test_artdrift_visual_review.py' -v
+      - name: Generate baseline contact sheet, source comparisons and aspect metrics
+        run: python tools/artdrift_visual_review.py --board-size 100 --remote-sample 12 --out build/artdrift-visual
+      - name: Upload actual pixels and review metadata, no publication
+        uses: actions/upload-artifact@v4
+        with:
+          name: artdrift-visual-source-board
+          path: build/artdrift-visual/
+          if-no-files-found: error
