@@ -31,16 +31,16 @@ jobs:
         run: |
           python -m unittest discover -s cloudflare/art-catalog/scripts -p 'test_*.py' -v
           python -m unittest discover -s tools -p 'test_artdrift_*.py' -v
-      - name: Rebuild all five catalogs into 5,084 D1 rows without remote writes
+      - name: Rebuild all five catalogs into 5,085 D1 rows without remote writes
         run: |
-          python cloudflare/art-catalog/scripts/make_museum_d1_import.py --root . --out build/d1-museums --expected 5084 --chunk 200
+          python cloudflare/art-catalog/scripts/make_museum_d1_import.py --root . --out build/d1-museums --expected 5085 --chunk 200
           python - <<'PY'
           import json
           from pathlib import Path
           m=json.loads(Path('build/d1-museums/manifest.json').read_text())
-          assert m['records']==5084
+          assert m['records']==5085
           assert m['d1_remote_import']=='REQUIRES_EXPLICIT_APPROVAL'
-          print('MUSEUM_ONLY_CATALOG_5084_PASS')
+          print('MUSEUM_ONLY_CATALOG_5085_PASS')
           PY
       - name: Validate local D1 schema and SQL shards, never publish
         run: |
@@ -51,7 +51,7 @@ jobs:
           c.executescript(Path('cloudflare/art-catalog/museum_schema.sql').read_text())
           for p in sorted(Path('build/d1-museums').glob('museum-*.sql')):
               c.executescript(p.read_text(encoding='utf-8'))
-          assert c.execute('SELECT COUNT(*) FROM museum_works').fetchone()[0]==5084
+          assert c.execute('SELECT COUNT(*) FROM museum_works').fetchone()[0]==5085
           c.executescript(Path('cloudflare/d1/migrations/0001_museum_ingest.sql').read_text())
           assert c.execute('SELECT COUNT(*) FROM artdrift_publishable_modern_art').fetchone()[0]==0
           print('MUSEUM_ONLY_LOCAL_D1_PASS')
