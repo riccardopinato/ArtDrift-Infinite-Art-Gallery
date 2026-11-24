@@ -1,0 +1,114 @@
+name: Art Drift guarded 100 new Cleveland metadata HOLD import D1 (NO APK)
+on:
+  push:
+    branches: ['research/artdrift-d1-new-hold-wave-20261124']
+permissions:
+  contents: read
+concurrency:
+  group: artdrift-only-one-new-100-hold-d1-import-20261124
+  cancel-in-progress: false
+jobs:
+  insert_exact_100:
+    if: >-
+      github.repository == 'riccardopinato/ArtDrift-Infinite-Art-Gallery' &&
+      github.ref == 'refs/heads/research/artdrift-d1-new-hold-wave-20261124' &&
+      contains(github.event.head_commit.message, '[artdrift-one-shot-100-hold-20261124]')
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      DATABASE: ${{ vars.ARTDRIFT_D1_DATABASE }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Test exact metadata-only policy and 100-record collision guards
+        run: |
+          python -m unittest discover -s tools -p 'test_artdrift_prepare_new_cleveland_d1.py' -v
+          python -m unittest discover -s tools -p 'test_artdrift_d1_reconcile.py' -v
+      - name: Verify existing D1 UUID/name, no new service
+        run: |
+          set -euo pipefail
+          test "$DATABASE" = 'artdrift-moma-cc0'
+          test -n "$CLOUDFLARE_API_TOKEN" && test -n "$CLOUDFLARE_ACCOUNT_ID"
+          python - <<'PY'
+          import json
+          cfg=json.load(open('cloudflare/art-catalog/wrangler.jsonc'))
+          assert any(x.get('database_id')=='4e7cb3bf-bf3c-480d-9789-93072e70274c' and x.get('database_name')=='artdrift-moma-cc0' for x in cfg['d1_databases'])
+          print('ARTDRIFT_100_D1_FIXED_UUID_PASS')
+          PY
+          (cd cloudflare/art-catalog && npx --yes wrangler@4 d1 info "$DATABASE" --json) > "$RUNNER_TEMP/d1-info.json"
+          python - <<'PY'
+          import json,os
+          data=json.load(open(os.environ['RUNNER_TEMP']+'/d1-info.json'))
+          assert data.get('name')=='artdrift-moma-cc0'
+          print('ARTDRIFT_100_D1_EXISTING_NAME_PASS')
+          PY
+      - name: Read complete remote museum and staged IDs; SELECT only
+        run: |
+          set -euo pipefail
+          cd cloudflare/art-catalog
+          npx --yes wrangler@4 d1 execute "$DATABASE" --remote --yes --json --command="SELECT museum_source,museum_native_id FROM museum_works ORDER BY museum_source,museum_native_id" > "$RUNNER_TEMP/museum-before.json"
+          npx --yes wrangler@4 d1 execute "$DATABASE" --remote --yes --json --command="SELECT provider,native_id,publication_status FROM artdrift_museum_ingest ORDER BY provider,native_id" > "$RUNNER_TEMP/stage-before.json"
+      - name: Recheck live Cleveland source and generate strict 100-row metadata-only HOLD SQL
+        run: |
+          python tools/artdrift_prepare_new_cleveland_d1.py --museum "$RUNNER_TEMP/museum-before.json" --stage "$RUNNER_TEMP/stage-before.json" --out build/d1-new-hold
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('build/d1-new-hold')
+          m=json.loads((p/'manifest.json').read_text())
+          assert m['record_count']==100 and m['new_ids_verified_not_overlapping']==100
+          assert m['prewrite_museum_rows']==5085 and m['prewrite_staged_rows']==535
+          assert m['rights_status']=='METADATA_ONLY' and m['publication_status']=='HOLD'
+          assert m['image_urls_written']==m['automatic_approvals']==0
+          rows=[json.loads(x) for x in (p/'new-100.jsonl').read_text().splitlines()]
+          assert len(rows)==100 and len({r['source_key'] for r in rows})==100
+          assert all(r['provider']=='cleveland' and r['rights_status']=='METADATA_ONLY' and
+                     r['image_url']==r['full_image_url']==r['rights_license']==r['rights_evidence_url']=='' for r in rows)
+          sql=(p/'new-100-metadata-only.sql').read_text()
+          assert sql.count('INSERT INTO artdrift_museum_ingest')==100
+          assert not any(x in sql.upper() for x in ('DROP TABLE','ALTER TABLE','DELETE FROM','UPDATE ARTDRIFT'))
+          print('D1_100_NEW_CLEVELAND_PREWRITE_EXCLUSIVE_GATE_PASS 100')
+          PY
+      - name: Preserve immutable prewrite evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: artdrift-100-cleveland-hold-prewrite
+          path: build/d1-new-hold/
+          if-no-files-found: error
+      - name: Write ONLY 100 metadata-only candidate source records to existing D1
+        run: |
+          set -euo pipefail
+          cd cloudflare/art-catalog
+          npx --yes wrangler@4 d1 execute "$DATABASE" --remote --yes --file=../../build/d1-new-hold/new-100-metadata-only.sql
+      - name: Read back exactly 635 HOLD, zero approved, source identities preserved
+        run: |
+          set -euo pipefail
+          cd cloudflare/art-catalog
+          npx --yes wrangler@4 d1 execute "$DATABASE" --remote --yes --json --command="SELECT (SELECT COUNT(*) FROM museum_works) AS museums,(SELECT COUNT(*) FROM museum_works_fts) AS fts,(SELECT COUNT(*) FROM artdrift_museum_ingest) AS staged,(SELECT COUNT(*) FROM artdrift_museum_ingest WHERE publication_status='HOLD') AS hold,(SELECT COUNT(*) FROM artdrift_publishable_modern_art) AS publishable,(SELECT COUNT(*) FROM artdrift_museum_ingest WHERE provider='cleveland') AS cleveland,(SELECT COUNT(*) FROM artdrift_museum_ingest WHERE provider='cleveland' AND rights_status='METADATA_ONLY' AND image_url='' AND full_image_url='') AS cleveland_metadata_only" > "$RUNNER_TEMP/counts.json"
+          npx --yes wrangler@4 d1 execute "$DATABASE" --remote --yes --json --command="SELECT provider,native_id,publication_status,rights_status,image_url FROM artdrift_museum_ingest WHERE provider='cleveland'" > "$RUNNER_TEMP/cleveland-after.json"
+          cd ../..
+          python - <<'PY'
+          import json,os
+          from pathlib import Path
+          def rows(path):
+              doc=json.loads(Path(path).read_text())
+              if isinstance(doc,dict):doc=doc.get('result',doc)
+              assert isinstance(doc,list) and len(doc)==1
+              return doc[0]['results']
+          root=Path(os.environ['RUNNER_TEMP'])
+          vals=rows(root/'counts.json')[0]
+          assert (vals['museums'],vals['fts'],vals['staged'],vals['hold'],
+                  vals['publishable'],vals['cleveland'],vals['cleveland_metadata_only'])==(5085,5085,635,635,0,149,100),vals
+          expected={json.loads(x)['native_id'] for x in Path('build/d1-new-hold/new-100.jsonl').read_text().splitlines()}
+          observed={r['native_id']:r for r in rows(root/'cleveland-after.json')}
+          assert len(observed)==149 and expected.issubset(observed)
+          assert all(observed[k]['publication_status']=='HOLD' and observed[k]['rights_status']=='METADATA_ONLY' and observed[k]['image_url']=='' for k in expected)
+          print('ARTDRIFT_D1_NEW_100_HOLD_REMOTE_READBACK_PASS 5085_MUSEUM 635_HOLD 0_PUBLISHED 100_METADATA_ONLY')
+          PY
