@@ -1,0 +1,50 @@
+name: Art Drift 100 Cleveland HOLD D1 preflight ONLY (no APK)
+on:
+  push:
+    branches: ['research/artdrift-d1-new-hold-wave-20261124']
+permissions:
+  contents: read
+jobs:
+  preflight:
+    if: "!contains(github.event.head_commit.message, '[artdrift-one-shot-100-hold-20261124]')"
+    runs-on: ubuntu-latest
+    timeout-minutes: 24
+    env:
+      DATABASE: ${{ vars.ARTDRIFT_D1_DATABASE }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate metadata-only gate and negative security cases
+        run: python -m unittest discover -s tools -p 'test_artdrift_prepare_new_cleveland_d1.py' -v
+      - name: Confirm exact configured D1 database identity
+        run: |
+          set -euo pipefail
+          test "$DATABASE" = artdrift-moma-cc0
+          test -n "$CLOUDFLARE_ACCOUNT_ID" && test -n "$CLOUDFLARE_API_TOKEN"
+          (cd cloudflare/art-catalog && npx --yes wrangler@4 d1 info "$DATABASE" --json) > "$RUNNER_TEMP/d1.json"
+          python - <<'PY'
+          import json,os
+          info=json.load(open(os.environ['RUNNER_TEMP']+'/d1.json'))
+          assert info.get('name')=='artdrift-moma-cc0'
+          print('EXISTING_D1_ONLY_PASS')
+          PY
+      - name: Read only current museum and stage native IDs
+        run: |
+          cd cloudflare/art-catalog
+          npx --yes wrangler@4 d1 execute "$DATABASE" --remote --yes --json --command="SELECT museum_source,museum_native_id FROM museum_works ORDER BY museum_source,museum_native_id" > "$RUNNER_TEMP/museum.json"
+          npx --yes wrangler@4 d1 execute "$DATABASE" --remote --yes --json --command="SELECT provider,native_id,publication_status FROM artdrift_museum_ingest ORDER BY provider,native_id" > "$RUNNER_TEMP/stage.json"
+      - name: Research 100 new candidates and generate metadata-only SQL WITHOUT applying
+        run: |
+          python tools/artdrift_prepare_new_cleveland_d1.py --museum "$RUNNER_TEMP/museum.json" --stage "$RUNNER_TEMP/stage.json" --out build/d1-new-hold
+      - uses: actions/upload-artifact@v4
+        with:
+          name: artdrift-100-cleveland-metadata-only-prewrite
+          path: build/d1-new-hold/
+          if-no-files-found: error
