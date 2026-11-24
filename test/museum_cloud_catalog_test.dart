@@ -11,6 +11,16 @@ void main(){
     source.close();
   });
 
+  test('new approved-modern D1 browsing is disabled by default',() async {
+    final client=MockClient((_req) async {
+      fail('must not send a request while release gate is disabled');
+    });
+    final catalog=MuseumCloudCatalog(baseUrl:'https://d1.example',client:client);
+    expect(catalog.approvedModernEnabled,isFalse);
+    await expectLater(catalog.approvedModern(),throwsStateError);
+    catalog.close();
+  });
+
   test('museum metadata preserves attribution and rejects unsafe media',(){
     final row={
       'source_key':'commons:10000012',
@@ -27,6 +37,7 @@ void main(){
     expect(work.imageUrl,'https://upload.wikimedia.org/example.jpg');
     expect(work.sourceUrl,startsWith('https://commons.wikimedia.org/'));
     expect(MuseumCloudWork.parse({...row,'rights_license':'CC BY-NC 4.0'}),isNull);
+    expect(MuseumCloudWork.parse({...row,'rights_license':'CC0 1.0'})?.title,'Modern Art');
     expect(MuseumCloudWork.parse({...row,'source_key':'evil.test:12'}),isNull);
     expect(MuseumCloudWork.parse({...row,'thumbnail_url':'https://upload.wikimedia.org.evil.test/a.jpg'})?.imageUrl,isNull);
   });
