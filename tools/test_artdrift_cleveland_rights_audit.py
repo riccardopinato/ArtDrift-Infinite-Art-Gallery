@@ -64,6 +64,18 @@ class ClevelandRightsSourceTests(unittest.TestCase):
                 status, _ = audit.assess(self.staged, {"data": {**self.primary["data"], **altered}})
                 self.assertEqual(status, "NEEDS_REVIEW")
 
+    def test_curation_catches_non_target_rousseaus_and_decorative_doors(self):
+        self.assertEqual(audit.curatorial_flags(self.staged), [])
+        row = {**self.staged, "artist": "Pierre Rousseau (French, 1751–1829)",
+               "title": "Double-Leaf Doors"}
+        self.assertIn("surname_collision_not_henri_rousseau",
+                      audit.curatorial_flags(row))
+        self.assertIn("decorative_architecture_review",
+                      audit.curatorial_flags(row))
+        self.assertEqual(audit.curatorial_flags({**row,
+            "artist": "Henri Rousseau (French, 1844–1910)",
+            "title": "Outskirts of Paris"}), [])
+
     def test_invalid_source_fails_closed(self):
         self.assertEqual(audit.assess(self.staged, {"data": []})[0], "SOURCE_REVIEW")
         self.assertEqual(audit.assess({**self.staged, "provider": "tate"}, self.primary)[0],
