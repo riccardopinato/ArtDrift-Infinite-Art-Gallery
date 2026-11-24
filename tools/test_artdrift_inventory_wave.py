@@ -22,5 +22,5 @@ class InventoryTests(unittest.TestCase):
             path=root/SOURCES[0];data=json.loads(path.read_text());data.append(data[0])
             path.write_text(json.dumps(data))
             with self.assertRaisesRegex(ValueError,"Duplicate"):
-                inspect(root,None)
+                inspect(root,None,check_assets=False)
 if __name__=="__main__":unittest.main()
