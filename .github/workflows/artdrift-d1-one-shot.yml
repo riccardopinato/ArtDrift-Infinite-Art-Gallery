@@ -1,0 +1,98 @@
+name: Art Drift one-shot single existing-museum metadata D1 sync (NO APK)
+on:
+  push:
+    branches: ['research/artdrift-d1-20261124']
+permissions:
+  contents: read
+concurrency:
+  group: artdrift-d1-william-linn-single-insert
+  cancel-in-progress: false
+jobs:
+  apply_single_metadata:
+    if: >-
+      github.repository == 'riccardopinato/ArtDrift-Infinite-Art-Gallery' &&
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/research/artdrift-d1-20261124' &&
+      contains(github.event.head_commit.message, '[artdrift-one-shot-william-linn-20261124]')
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      DATABASE: ${{ vars.ARTDRIFT_D1_DATABASE }}
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify exact preexisting Cloudflare D1 identity
+        run: |
+          set -euo pipefail
+          test "$DATABASE" = 'artdrift-moma-cc0'
+          test -n "$CLOUDFLARE_API_TOKEN" && test -n "$CLOUDFLARE_ACCOUNT_ID"
+          python - <<'PY'
+          import json
+          v=json.load(open('cloudflare/art-catalog/wrangler.jsonc'))
+          expected='4e7cb3bf-bf3c-480d-9789-93072e70274c'
+          assert any(x.get('database_id')==expected and x.get('database_name')=='artdrift-moma-cc0' for x in v['d1_databases'])
+          print('D1_ONE_SHOT_FIXED_DATABASE_UUID_GATE_PASS')
+          PY
+          (cd cloudflare/art-catalog && npx --yes wrangler@4 d1 info "$DATABASE" --json) > "$RUNNER_TEMP/info.json"
+          python - <<'PY'
+          import os,json
+          info=json.load(open(os.environ['RUNNER_TEMP']+'/info.json'))
+          assert info.get('name')==os.environ['DATABASE']
+          print('D1_ONE_SHOT_EXISTING_DATABASE_CONFIRMED')
+          PY
+      - name: Read remote full museum identities and separate stage
+        run: |
+          set -euo pipefail
+          cd cloudflare/art-catalog
+          npx --yes wrangler@4 d1 execute "$DATABASE" --remote --yes --json --command="SELECT source_key,museum_source,museum_native_id FROM museum_works ORDER BY source_key" > "$RUNNER_TEMP/museums-before.json"
+          npx --yes wrangler@4 d1 execute "$DATABASE" --remote --yes --json --command="SELECT provider,native_id,publication_status,rights_status FROM artdrift_museum_ingest ORDER BY provider,native_id" > "$RUNNER_TEMP/stage-before.json"
+      - name: Fail closed on anything other than 5084+535 HOLD and one William Linn delta
+        run: |
+          python tools/artdrift_d1_reconcile.py --museum-json "$RUNNER_TEMP/museums-before.json" --stage-json "$RUNNER_TEMP/stage-before.json" --out build/d1-reconciliation
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          report=json.loads(Path('build/d1-reconciliation/report.json').read_text())
+          assert report['local_catalog']==5085
+          assert report['remote_museum_rows_before']==5084
+          assert report['staged_rows']==report['staged_hold']==535
+          assert report['staged_already_in_museum_catalog']==49
+          assert report['approved_staged_rows']==0
+          assert report['missing']==[['smithsonian','npg:npg_NPG.2007.11']]
+          sql=Path('build/d1-reconciliation/museum_delta_NOT_APPLIED.sql').read_text()
+          assert sql.count('INSERT OR IGNORE INTO museum_works')==1
+          assert 'William Linn' in sql and 'npg:npg_NPG.2007.11' in sql
+          print('D1_ONE_SHOT_PREWRITE_GATE_PASS_ONE_METADATA_ROW_ONLY')
+          PY
+      - name: Preserve immutable prewrite snapshot and SQL evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: artdrift-d1-single-row-prewrite
+          path: build/d1-reconciliation/
+          if-no-files-found: error
+      - name: Insert ONLY one verified existing catalog metadata row, never images or approvals
+        run: |
+          set -euo pipefail
+          cd cloudflare/art-catalog
+          npx --yes wrangler@4 d1 execute "$DATABASE" --remote --yes --file=../../build/d1-reconciliation/museum_delta_NOT_APPLIED.sql
+      - name: Confirm exactly 5085 museum identities, 535 HOLD and 0 stage approvals
+        run: |
+          set -euo pipefail
+          cd cloudflare/art-catalog
+          npx --yes wrangler@4 d1 execute "$DATABASE" --remote --yes --json --command="SELECT (SELECT COUNT(*) FROM museum_works) AS museums,(SELECT COUNT(*) FROM museum_works_fts) AS fts,(SELECT COUNT(*) FROM artdrift_museum_ingest) AS stage,(SELECT COUNT(*) FROM artdrift_museum_ingest WHERE publication_status='HOLD') AS hold,(SELECT COUNT(*) FROM artdrift_publishable_modern_art) AS publishable,(SELECT COUNT(*) FROM museum_works WHERE museum_source='smithsonian' AND museum_native_id='npg:npg_NPG.2007.11') AS william" > "$RUNNER_TEMP/after.json"
+          python - <<'PY'
+          import json,os
+          p=json.load(open(os.environ['RUNNER_TEMP']+'/after.json'))
+          if isinstance(p,dict):p=p.get('result',p)
+          assert isinstance(p,list) and len(p)==1 and p[0].get('results')
+          row=p[0]['results'][0]
+          assert (row['museums'],row['fts'],row['stage'],row['hold'],row['publishable'],row['william'])==(5085,5085,535,535,0,1),row
+          print('D1_REMOTE_ONE_METADATA_ROW_SYNC_VERIFIED 5085 5085 535_HOLD 0_PUBLISHED')
+          PY
