@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import worker,{makeMatch,assetUrl,publicRow,publicMuseumRow} from "../src/worker.mjs";
+import worker,{makeMatch,assetUrl,publicRow,publicMuseumRow,publicModernApprovedRow} from "../src/worker.mjs";
 
 test("FTS input is bounded and quoted",()=>{
   assert.equal(makeMatch("Van Gogh","artist"),'artist:"Van"* AND artist:"Gogh"*');
@@ -69,4 +69,44 @@ test("museum D1 query uses bounded FTS and parameterized arguments",async()=>{
   assert.equal(data.works[0].source_key,"met:123");
   assert.deepEqual(observed[1],['artist:"Van"* AND artist:"Gogh"*',25,0]);
   assert.equal((await worker.fetch(new Request("https://test.local/api/v1/museum-search?q=foo&cursor=-1"),env)).status,400);
+});
+
+test("modern endpoint reads only SQL APPROVED view; HOLD never queried",async()=>{
+  const seen=[];
+  const env={CATALOG_DB:{prepare(sql){seen.push(sql);return{bind(...p){
+    seen.push(p);return{async all(){return{results:[]}}};
+  }}}}};
+  const res=await worker.fetch(new Request("https://test.local/api/v1/modern-approved"),env);
+  assert.equal(res.status,200);
+  const data=await res.json();
+  assert.equal(data.source,"ArtDrift-Modern-Approved");
+  assert.deepEqual(data.works,[]);
+  assert.match(seen[0],/FROM artdrift_publishable_modern_art/);
+  assert.doesNotMatch(seen[0],/FROM artdrift_museum_ingest/);
+  assert.deepEqual(seen[1],[25,0]);
+  const invalid=await worker.fetch(new Request("https://test.local/api/v1/modern-approved?cursor=-1"),env);
+  assert.equal(invalid.status,400);
+});
+test("approved-view media still requires official HTTPS and recognized CC0 proof",()=>{
+  const staged={
+    source_key:"cleveland:95272",provider:"cleveland",
+    museum:"Cleveland Museum of Art",title:"Gardener's House at Antibes",
+    artist:"Claude Monet",year_text:"1888",medium:"Oil",
+    metadata_url:"https://clevelandart.org/art/1916.1044",
+    image_url:"https://openaccess-cdn.clevelandart.org/1916.1044/1916.1044_web.jpg",
+    full_image_url:"https://openaccess-cdn.clevelandart.org/1916.1044/1916.1044_print.jpg",
+    rights_license:"CC0 1.0",rights_evidence_url:"https://www.clevelandart.org/open-access"
+  };
+  const safe=publicModernApprovedRow(staged);
+  assert.equal(safe.thumbnail_url,staged.image_url);
+  assert.equal(safe.rights_license,"CC0 1.0");
+  assert.equal(publicModernApprovedRow({...staged,rights_license:"Copyrighted"}),null);
+  assert.equal(publicModernApprovedRow({...staged,image_url:"https://upload.wikimedia.org.evil.test/a.jpg"}),null);
+  assert.equal(publicModernApprovedRow({...staged,rights_evidence_url:"https://evil.example"}),null);
+});
+test("missing D1 approved view fails closed",async()=>{
+  const env={CATALOG_DB:{prepare(){throw Error("no_view")}}};
+  const res=await worker.fetch(new Request("https://test.local/api/v1/modern-approved"),env);
+  assert.equal(res.status,503);
+  assert.equal((await res.json()).error,"modern_catalog_not_ready");
 });
