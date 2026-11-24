@@ -36,6 +36,13 @@ class ClevelandRightsSourceTests(unittest.TestCase):
         self.assertEqual(status, "PRIMARY_SOURCE_MATCH")
         self.assertIn("editorial_and_legal_review_pending", notes)
 
+
+    def test_preview_fallback_is_not_a_license_failure(self):
+        old_catalog = {**self.staged, "full_image_url": self.staged["image_url"]}
+        status, notes = audit.assess(old_catalog, self.primary)
+        self.assertEqual(status, "SOURCE_MATCH_PREVIEW_FALLBACK")
+        self.assertIn("preview_used_as_full_image", notes)
+
     def test_fail_closed_on_changed_rights(self):
         data = {"data": {**self.primary["data"], "share_license_status": "Copyrighted"}}
         status, flags = audit.assess(self.staged, data)
