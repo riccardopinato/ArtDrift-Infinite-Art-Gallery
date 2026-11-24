@@ -108,8 +108,6 @@ def inspect(root,out,board_size=100,remote_sample=0):
         for k in sorted(by_source):
             if by_source[k] and len(board)<board_size:
                 board.append(by_source[k].pop(len(by_source[k])//2))
-    old={x["source_key"]:x for x in entries for _ in [0]}
-    # old above intentionally replaced by direct stable lookup below.
     original={(item.get("museum_source") or "aic")+":"+str(item["id"]):item for item,_ in entries}
     cells=[]
     remote_attempted=0
