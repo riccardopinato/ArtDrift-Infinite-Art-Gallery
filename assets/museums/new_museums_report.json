@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "status": "SOURCE_VERIFIED_CANDIDATES_DELIVERY_AND_RIGHTS_REVIEW_PENDING",
+  "source": "Smithsonian Open Access official EDAN dataset",
+  "source_url": "https://www.si.edu/openaccess",
+  "museums_added": 4,
+  "museum_institutions": {
+    "chndm": {
+      "name": "Cooper Hewitt, Smithsonian Design Museum",
+      "inspected_records": 10829,
+      "shards_read": 48,
+      "shards_held": 0,
+      "source_qualified": 6924,
+      "retained": 250,
+      "post_1950_retained": 0,
+      "art_types": {
+        "Ceramic": 6,
+        "Drawing": 97,
+        "Photograph": 1,
+        "Print": 115,
+        "Textile": 31
+      }
+    },
+    "hmsg": {
+      "name": "Hirshhorn Museum and Sculpture Garden",
+      "inspected_records": 72,
+      "shards_read": 48,
+      "shards_held": 0,
+      "source_qualified": 72,
+      "retained": 72,
+      "post_1950_retained": 0,
+      "art_types": {
+        "Drawing": 20,
+        "Painting": 26,
+        "Photograph": 12,
+        "Print": 5,
+        "Sculpture": 9
+      }
+    },
+    "nmafa": {
+      "name": "Smithsonian National Museum of African Art",
+      "inspected_records": 26,
+      "shards_read": 48,
+      "shards_held": 0,
+      "source_qualified": 16,
+      "retained": 16,
+      "post_1950_retained": 0,
+      "art_types": {
+        "Painting": 3,
+        "Sculpture": 12,
+        "Textile": 1
+      }
+    },
+    "nmaahc": {
+      "name": "Smithsonian National Museum of African American History and Culture",
+      "inspected_records": 7517,
+      "shards_read": 48,
+      "shards_held": 0,
+      "source_qualified": 220,
+      "retained": 220,
+      "post_1950_retained": 18,
+      "art_types": {
+        "Ceramic": 1,
+        "Drawing": 3,
+        "Painting": 4,
+        "Photograph": 84,
+        "Poster": 10,
+        "Print": 112,
+        "Textile": 6
+      }
+    }
+  },
+  "record_count": 558,
+  "post_1950_records": 18,
+  "bytes": 436316,
+  "images_packaged": 0,
+  "rights_rule": "EDAN descriptiveNonRepeating.metadata_usage AND per-media usage must both equal CC0",
+  "source_url_host_allowlist": [
+    "ids.si.edu"
+  ],
+  "original_records_modified": 0,
+  "device_image_delivery": "NOT_VERIFIED",
+  "commercial_rights_review": "PENDING"
+}

@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "status": "PARTIAL_YEAR_SAMPLE_RIGHTS_AND_DELIVERY_REVIEW_PENDING",
+  "provider": "Wikimedia Commons MediaWiki API",
+  "years": 10,
+  "years_sampled": [
+    1950,
+    1960,
+    1970,
+    1980,
+    1990,
+    2000,
+    2010,
+    2020,
+    2023,
+    2024,
+    2025,
+    2026
+  ],
+  "years_failed": [
+    "2025:HTTPError",
+    "2026:HTTPError"
+  ],
+  "files_inspected": 412,
+  "admitted_records": 27,
+  "license_distribution": {
+    "CC BY 3.0": 2,
+    "CC BY 4.0": 1,
+    "CC BY-SA 3.0": 7,
+    "CC BY-SA 4.0": 17
+  },
+  "by_decade": {
+    "1960": 1,
+    "1980": 3,
+    "1990": 5,
+    "2000": 3,
+    "2010": 4,
+    "2020": 11
+  },
+  "data_bytes": 29482,
+  "images_bundled": 0,
+  "rights_basis": "own-work and artist/uploader match + explicit CC license",
+  "underlying_rights_review": "PENDING",
+  "image_delivery_review": "PENDING",
+  "production_release": "NOT_AUTHORIZED"
+}
