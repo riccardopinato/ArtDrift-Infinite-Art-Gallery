@@ -149,3 +149,16 @@ Pending: D1 live upload/test, Cloudflare Worker staging deployment,
 remote image delivery on devices, source-specific commercial rights QA,
 load and quota tests, and optional real account tests. No main merge,
 no production deploy and no R2 photo publication at this stage.
+
+
+## Modern-art D1 reviewed gallery — guarded integration (24 November 2026)
+
+This branch can coexist with the separate Art Drift PR #44 staging import in the **same existing D1 instance**. The museum `museum_works` index here and the `artdrift_museum_ingest` table in PR #44 are independent. **Do not copy the 535 ingest rows into `museum_works`**, and do not run the 5,084-import migration without inspecting remote schema, existing data and quota.
+
+- The staged 535 records were actually uploaded and verified in D1 on [Action 45297815828](https://github.com/riccardopinato/ArtDrift-Infinite-Art-Gallery/actions/runs/45297815828): 233 Tate metadata-only, 253 MoMA metadata-only, 49 Cleveland CC0 candidate image URLs. All 535 remain **HOLD**, `artdrift_publishable_modern_art` returned **0**.
+- `GET /api/v1/modern-approved?cursor=0` accesses **only** `artdrift_publishable_modern_art`. It cannot expose `HOLD` records via the source table; it returns no modern artworks while the review queue is pending. The projection additionally blocks untrusted image and rights-evidence hosts. Missing view returns 503 (fail closed). The endpoint is read-only, paginated by 24, and response caching is disabled for prompt rights revocation.
+- Flutter `MuseumCloudCatalog.approvedModern()` is **disabled by default** unless *both* `ARTDRIFT_CATALOG_API_BASE` is set to an HTTPS Worker and `ARTDRIFT_ENABLE_APPROVED_MODERN=true` is explicitly provided at build time. No new Home button or canvas feed is enabled automatically.
+- `CC0 1.0` in staged records is accepted by the Dart parser, but **a parseable record is not a publishing decision**. Only a separate editorial APPROVED state can make it appear in the Worker view.
+- These are code and automated-test changes on a Draft PR. **No Cloudflare Worker deployment or remote publication** has been executed here. To make the endpoint respond publicly, the Worker must later be deployed after security, Cloudflare D1 schema, quota and device QA.
+
+The official Cleveland per-object API provides a daily updated `share_license_status` field; it is separate from its general metadata CC0 license. A per-work technical audit of the 49 candidate images is implemented in PR #44; **no automatic APPROVED decision** is allowed: https://www.clevelandart.org/terms-and-conditions and https://openaccess-api.clevelandart.org/ .
