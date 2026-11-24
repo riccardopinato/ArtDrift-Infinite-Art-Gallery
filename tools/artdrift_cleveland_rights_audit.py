@@ -51,9 +51,14 @@ def assess(staged: dict, payload: dict) -> tuple[str, list[str]]:
     if web.get("url") != staged.get("image_url") or not safe_https(
             str(web.get("url") or ""), IMAGE_HOST):
         notes.append("web_image_changed_or_untrusted")
-    if print_image.get("url") != staged.get("full_image_url") or not safe_https(
-            str(print_image.get("url") or ""), IMAGE_HOST):
-        notes.append("print_image_changed_or_untrusted")
+    official_print = str(print_image.get("url") or "")
+    if official_print != staged.get("full_image_url") or not safe_https(
+            official_print, IMAGE_HOST):
+        if (staged.get("full_image_url") == staged.get("image_url") and
+                safe_https(official_print, IMAGE_HOST)):
+            notes.append("preview_used_as_full_image")
+        else:
+            notes.append("print_image_changed_or_untrusted")
     if normalize(data.get("url", "")) != normalize(staged.get("metadata_url", "")):
         notes.append("detail_url_changed")
     # Source may name multiple authors or role assignments. No automatic
@@ -68,6 +73,8 @@ def assess(staged: dict, payload: dict) -> tuple[str, list[str]]:
             return len(pairs) == 1 and int(pairs[0][1]) <= 1955
         if len(names) != 1 or not author_pd(names[0]):
             notes.append("complex_or_unverified_author_copyright")
+    if notes == ["preview_used_as_full_image"]:
+        return "SOURCE_MATCH_PREVIEW_FALLBACK", notes
     if notes:
         return "NEEDS_REVIEW", notes
     return "PRIMARY_SOURCE_MATCH", ["editorial_and_legal_review_pending"]
@@ -94,6 +101,16 @@ def audit(max_records: int = 5000, delay: float = 0.45) -> dict:
         try:
             payload = request_json(url, max_bytes=3_000_000)
             status, reasons = assess(record, payload)
+            # Official API URLs are evidence for a possible future repair,
+            # never automatically written to D1 or approved for release.
+            data = payload.get("data") if isinstance(payload, dict) else None
+            if isinstance(data, dict):
+                image = data.get("images") or {}
+                if isinstance(image, dict):
+                    official_print = str((image.get("print") or {}).get("url") or "")
+                    if safe_https(official_print, IMAGE_HOST):
+                        entry["current_official_print_url"] = official_print
+                entry["current_share_license_status"] = str(data.get("share_license_status") or "")
         except (ValueError, TimeoutError, OSError, HTTPError, URLError) as exc:
             status, reasons = "SOURCE_UNAVAILABLE", [type(exc).__name__]
         entry["source_check"] = status
@@ -101,6 +118,7 @@ def audit(max_records: int = 5000, delay: float = 0.45) -> dict:
         out.append(entry)
         time.sleep(delay)
     counts = Counter(x["source_check"] for x in out)
+    reasons = Counter(code for x in out for code in x["review_flags"])
     return {
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "source": "Cleveland Museum of Art Open Access API (live per artwork)",
@@ -108,6 +126,7 @@ def audit(max_records: int = 5000, delay: float = 0.45) -> dict:
         "all_publication_status": "HOLD",
         "total": len(out),
         "source_checks": dict(sorted(counts.items())),
+        "reason_counts": dict(sorted(reasons.items())),
         "works": out,
         "editorial_approved": 0,
         "published": 0,
@@ -125,7 +144,7 @@ def main() -> None:
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(json.dumps({k: result[k] for k in
-        ("total","source_checks","editorial_approved","published")}, sort_keys=True))
+        ("total","source_checks","reason_counts","editorial_approved","published")}, sort_keys=True))
 
 
 if __name__ == "__main__":
