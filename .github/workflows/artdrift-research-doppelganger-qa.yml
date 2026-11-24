@@ -15,8 +15,12 @@ jobs:
         with:
           python-version: '3.12'
       - run: python3 tools/validate_doppelganger_research.py
+      - run: python3 tools/validate_doppelganger_v2.py
       - uses: actions/upload-artifact@v4
         with:
           name: ArtDrift-Doppleganger-37-Research-Only-${{ github.sha }}
-          path: research/doppelgangers/candidates_index_20261124.json
+          path: |
+            research/doppelgangers/candidates_index_20261124.json
+            research/doppelgangers/candidates_index_v2_20261124.json
+            assets/daily_doppelgangers.json
           if-no-files-found: error

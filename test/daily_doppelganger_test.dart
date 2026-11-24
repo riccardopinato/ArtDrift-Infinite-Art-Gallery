@@ -18,13 +18,41 @@ void main() {
 
   test('source metadata and photo attribution are complete', () async {
     final pairs = await DailyDoppelgangerCatalog.load();
-    expect(pairs.length, 2);
+    expect(pairs.length, 5);
     expect(pairs.map((e) => e.id).toSet().length, 2);
     for (final pair in pairs) {
       expect(pair.portrait.previewUrl.startsWith('https://commons.wikimedia.org/'), true);
       expect(pair.celebrity.previewUrl.startsWith('https://commons.wikimedia.org/'), true);
       expect(pair.celebrity.credit, isNotEmpty);
       expect(pair.editorialEvidence.startsWith('https://'), true);
+    }
+  });
+
+  test('source-backed expanded internal pilot contains exactly five stable QA pairs', () async {
+    final pairs = await DailyDoppelgangerCatalog.load();
+    expect(pairs.map((p) => p.id).toSet(), {
+      'paul-mounet-keanu-reeves',
+      'carl-feilberg-john-krasinski',
+      'sir-david-wilkie-rupert-grint',
+      'strobel-johann-vogt-robert-de-niro',
+      'paul-revere-jack-black',
+    });
+    expect(pairs.every((p) => p.portrait.filePage.contains('commons.wikimedia.org/wiki/File:')), true);
+    expect(pairs.every((p) => p.celebrity.filePage.contains('commons.wikimedia.org/wiki/File:')), true);
+    expect(pairs.every((p) => p.celebrity.license.startsWith('CC BY ')), true);
+    final previous = <String>[];
+    for (var day = 1; day < 300; day++) {
+      final date = DateTime.utc(2026, 1, 1).add(Duration(days: day));
+      final chosen = DailyDoppelgangerRotation.select(
+        pairs: pairs, date: date,
+        previousDay: previous.isEmpty
+          ? null
+          : DailyDoppelgangerRotation.dayKey(date.subtract(const Duration(days: 1))),
+        previousId: previous.isEmpty ? null : previous.last,
+      );
+      expect(chosen, isNotNull);
+      if (previous.isNotEmpty) expect(chosen!.id, isNot(previous.last));
+      previous.add(chosen!.id);
     }
   });
 

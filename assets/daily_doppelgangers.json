@@ -1,6 +1,6 @@
 {
   "formatVersion": 1,
-  "contentVersion": "2026-11-24",
+  "contentVersion": "2026-11-24.v2",
   "publicationStatus": "INTERNAL_QA_ONLY",
   "disclaimer": "Editorial, subjective visual resemblance only. No affiliation, endorsement or identity claim. Wikimedia image licenses do not waive third-party personality or trademark rights.",
   "pairs": [
@@ -51,6 +51,81 @@
         "credit": "Prime Video AU & NZ · John Krasinski 2022 (frame extraction)"
       },
       "editorialEvidence": "https://www.dailyartmagazine.com/famous-people-and-their-doppelgangers-in-art/",
+      "rightsReviewedForInternalPreview": true,
+      "commercialPublicityCleared": false
+    },
+    {
+      "id": "sir-david-wilkie-rupert-grint",
+      "portrait": {
+        "name": "Sir David Wilkie (autoritratto)",
+        "artist": "Sir David Wilkie",
+        "year": "1804–1805",
+        "fileName": "Sir David Wilkie - Sir David Wilkie, 1785 - 1841. Artist (Self-portrait) - PG 573 - National Galleries of Scotland.jpg",
+        "license": "Public domain",
+        "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+        "credit": "Sir David Wilkie · National Galleries of Scotland · PG 573",
+        "filePage": "https://commons.wikimedia.org/wiki/File:Sir_David_Wilkie_-_Sir_David_Wilkie%2C_1785_-_1841._Artist_%28Self-portrait%29_-_PG_573_-_National_Galleries_of_Scotland.jpg"
+      },
+      "celebrity": {
+        "name": "Rupert Grint",
+        "fileName": "Rupert Grint 2012.jpg",
+        "license": "CC BY 2.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+        "credit": "Paul Bird · Rupert Grint at Harry Potter Studio Tour, 2012",
+        "filePage": "https://commons.wikimedia.org/wiki/File:Rupert_Grint_2012.jpg"
+      },
+      "editorialEvidence": "https://www.dailyartmagazine.com/famous-people-and-their-doppelgangers-in-art/",
+      "status": "INTERNAL_QA_REVIEWED",
+      "rightsReviewedForInternalPreview": true,
+      "commercialPublicityCleared": false
+    },
+    {
+      "id": "strobel-johann-vogt-robert-de-niro",
+      "portrait": {
+        "name": "Ritratto tradizionalmente identificato con Johann Vogt",
+        "artist": "Bartholomeus Strobel",
+        "year": "1628",
+        "fileName": "Strobel Portrait of Johann Vogt.jpg",
+        "license": "Public domain",
+        "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+        "credit": "Bartholomeus Strobel · Muzeum Narodowe we Wrocławiu · identificazione del soggetto discussa",
+        "filePage": "https://commons.wikimedia.org/wiki/File:Strobel_Portrait_of_Johann_Vogt.jpg"
+      },
+      "celebrity": {
+        "name": "Robert De Niro",
+        "fileName": "Robert De Niro TFF 2011 Shankbone.JPG",
+        "license": "CC BY 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by/3.0/",
+        "credit": "David Shankbone · Robert De Niro al Tribeca Film Festival, 2011",
+        "filePage": "https://commons.wikimedia.org/wiki/File:Robert_De_Niro_TFF_2011_Shankbone.JPG"
+      },
+      "editorialEvidence": "https://www.dailyartmagazine.com/famous-people-and-their-doppelgangers-in-art/",
+      "status": "INTERNAL_QA_REVIEWED",
+      "rightsReviewedForInternalPreview": true,
+      "commercialPublicityCleared": false
+    },
+    {
+      "id": "paul-revere-jack-black",
+      "portrait": {
+        "name": "Paul Revere",
+        "artist": "John Singleton Copley",
+        "year": "1768",
+        "fileName": "J S Copley - Paul Revere.jpg",
+        "license": "Public domain",
+        "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+        "credit": "John Singleton Copley · Museum of Fine Arts, Boston",
+        "filePage": "https://commons.wikimedia.org/wiki/File:J_S_Copley_-_Paul_Revere.jpg"
+      },
+      "celebrity": {
+        "name": "Jack Black",
+        "fileName": "Goosebumps, Jack Black, SDCC 2014 09.jpg",
+        "license": "CC BY 2.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+        "credit": "vagueonthehow · Jack Black, San Diego Comic-Con 2014",
+        "filePage": "https://commons.wikimedia.org/wiki/File:Goosebumps%2C_Jack_Black%2C_SDCC_2014_09.jpg"
+      },
+      "editorialEvidence": "https://www.dailyartmagazine.com/famous-people-and-their-doppelgangers-in-art/",
+      "status": "INTERNAL_QA_REVIEWED",
       "rightsReviewedForInternalPreview": true,
       "commercialPublicityCleared": false
     }

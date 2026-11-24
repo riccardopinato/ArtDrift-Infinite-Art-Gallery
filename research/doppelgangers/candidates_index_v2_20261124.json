@@ -1,0 +1,1118 @@
+{
+  "schemaVersion": 2,
+  "updatedAt": "2026-11-24",
+  "sourceApp": "ArtDrift",
+  "feature": "Doppleganger del giorno",
+  "status": "RESEARCH_ONLY_NOT_RUNTIME",
+  "factoryCoreSHA": "ede07c491e586215598ff68daec43e17d699aa51",
+  "notes": [
+    "37 suggested pairings are source leads, not 37 valid copyright-cleared artworks or biometric face matches.",
+    "9 editorial comparison images were visually inspected; 1 single art original separately examined. Comparison imagery is not proof of authentic original photos.",
+    "No new pair may appear in public runtime without verifying original museum object, original celebrity photo, CC attribution and release/privacy publicity rights.",
+    "Source-only manifest. Product's 2-pair QA catalog in assets/daily_doppelgangers.json is unchanged.",
+    "30 P1 are review PRIORITIES, not validated painting photo pairs. Sources/mediums flagged per ID. Release clearances remain zero."
+  ],
+  "sourceRegistry": {
+    "DA": "https://www.dailyartmagazine.com/famous-people-and-their-doppelgangers-in-art/",
+    "SA": "https://www.speakart.it/cinque-celebrita-e-i-loro-doppelganger-nel-mondo-dellarte/",
+    "AN": "https://news.artnet.com/art-world/art-history-celebrity-doppelgangers-2399391",
+    "DZ": "https://origin.dazeddigital.com/art-photography/article/38682/1/we-paired-our-favourite-stars-with-their-art-history-doppelgangers",
+    "RD": "https://www.reddit.com/r/ArtHistory/comments/1e27y0g",
+    "BP": "https://www.boredpanda.com/celebrities-doppelgangers-from-the-past/"
+  },
+  "counts": {
+    "all": 37,
+    "paintingsClaimed": 29,
+    "paintingTypeUncertain": 8,
+    "pairsWithBothMediaLicensesDocumented": 2,
+    "commercialCleared": 0,
+    "priorityReview": 30,
+    "deferredReview": 7,
+    "confirmedNotPaintingAtLeast": 1,
+    "privateQaPairs": 5
+  },
+  "pairs": [
+    {
+      "id": "AD-DG-001",
+      "celebrity": "Keanu Reeves",
+      "artworkTitle": "Portrait of Paul Mounet",
+      "artistCreditAsResearched": "Louis-Maurice Boutet de Monvel",
+      "paintingStatus": "CLAIMED_BY_EDITORIAL",
+      "evidence": [
+        "SA",
+        "DA"
+      ],
+      "reviewStatus": "INTERNAL_QA_MEDIA_DOCUMENTED",
+      "independentSourceImagePairReviewed": false,
+      "commercialReleaseCleared": false,
+      "reviewV2": {
+        "researchPriority": "P1_REVIEW",
+        "museumObjectUrl": null,
+        "artworkOriginalFilePage": "https://commons.wikimedia.org/wiki/File:Portrait_de_Paul_Mounet_By_Louis-Maurice_Boutet_de_Montvel.jpg",
+        "celebrityPhotoOriginalFilePage": "https://commons.wikimedia.org/wiki/File:Keanu_Reeves_2014.jpg",
+        "celebrityPhotoLicenseClaim": "CC BY 2.0",
+        "photoAuthorCredit": "anna Hanks",
+        "sourceAccess": "SOURCE_LINKS_IDENTIFIED_NOT_FILE_DOWNLOADED",
+        "sourceStatus": "BOTH_SOURCE_IMAGE_FILE_PAGES_DOCUMENTED",
+        "workMedium": "CLAIMED_BY_EDITORIAL",
+        "conflictFlag": null,
+        "independentSideBySideVisualCertified": false,
+        "photoPublicityRightsCleared": false,
+        "commercialReleaseCleared": false,
+        "appPrivateQaIncluded": true
+      }
+    },
+    {
+      "id": "AD-DG-002",
+      "celebrity": "John Krasinski",
+      "artworkTitle": "Portrait of Carl Adolf Feilberg",
+      "artistCreditAsResearched": "Christen Købke",
+      "paintingStatus": "CLAIMED_BY_EDITORIAL",
+      "evidence": [
+        "DA"
+      ],
+      "reviewStatus": "INTERNAL_QA_MEDIA_DOCUMENTED",
+      "independentSourceImagePairReviewed": false,
+      "commercialReleaseCleared": false,
+      "reviewV2": {
+        "researchPriority": "P1_REVIEW",
+        "museumObjectUrl": "https://open.smk.dk/artwork/image/KMS3157",
+        "artworkOriginalFilePage": "https://commons.wikimedia.org/wiki/File:Christen_K%C3%B8bke_-_Portrait_of_Carl_Adolf_Feilberg_-_KMS3157_-_Statens_Museum_for_Kunst.jpg",
+        "celebrityPhotoOriginalFilePage": "https://commons.wikimedia.org/wiki/File:John_Krasinski_2022.jpg",
+        "celebrityPhotoLicenseClaim": "CC BY 3.0",
+        "photoAuthorCredit": "Prime Video AU & NZ",
+        "sourceAccess": "SOURCE_LINKS_IDENTIFIED_NOT_FILE_DOWNLOADED",
+        "sourceStatus": "BOTH_SOURCE_IMAGE_FILE_PAGES_DOCUMENTED",
+        "workMedium": "CLAIMED_BY_EDITORIAL",
+        "conflictFlag": null,
+        "independentSideBySideVisualCertified": false,
+        "photoPublicityRightsCleared": false,
+        "commercialReleaseCleared": false,
+        "appPrivateQaIncluded": true
+      }
+    },
+    {
+      "id": "AD-DG-003",
+      "celebrity": "Benedict Cumberbatch",
+      "artworkTitle": "Self-Portrait in a Red Turban",
+      "artistCreditAsResearched": "Zygmunt Waliszewski",
+      "paintingStatus": "CLAIMED_BY_EDITORIAL",
+      "evidence": [
+        "DA",
+        "BP"
+      ],
+      "reviewStatus": "HOLD_SOURCE_AND_RIGHTS",
+      "independentSourceImagePairReviewed": false,
+      "commercialReleaseCleared": false,
+      "reviewV2": {
+        "researchPriority": "P1_REVIEW",
+        "museumObjectUrl": "https://cyfrowe.mnw.art.pl/en/catalog/513296",
+        "artworkOriginalFilePage": "https://commons.wikimedia.org/wiki/File:Waliszewski-Autoportret_1929.jpg",
+        "celebrityPhotoOriginalFilePage": "https://commons.wikimedia.org/wiki/File:Benedict_Cumberbatch_SDCC_2014.jpg",
+        "celebrityPhotoLicenseClaim": "CC BY-SA 2.0",
+        "photoAuthorCredit": "Gage Skidmore",
+        "sourceAccess": "SOURCE_LINKS_IDENTIFIED_NOT_FILE_DOWNLOADED",
+        "sourceStatus": "SOURCE_GAPS_OR_VARIANT_REVIEW",
+        "workMedium": "CLAIMED_BY_EDITORIAL",
+        "conflictFlag": null,
+        "independentSideBySideVisualCertified": false,
+        "photoPublicityRightsCleared": false,
+        "commercialReleaseCleared": false,
+        "appPrivateQaIncluded": false
+      }
+    },
+    {
+      "id": "AD-DG-004",
+      "celebrity": "Maggie Smith",
+      "artworkTitle": "Lady in Blue",
+      "artistCreditAsResearched": "Paul Cézanne",
+      "paintingStatus": "CLAIMED_BY_EDITORIAL",
+      "evidence": [
+        "DA",
+        "SA"
+      ],
+      "reviewStatus": "HOLD_SOURCE_AND_RIGHTS",
+      "independentSourceImagePairReviewed": false,
+      "commercialReleaseCleared": false,
+      "reviewV2": {
+        "researchPriority": "P1_REVIEW",
+        "museumObjectUrl": "https://www.cezannecatalogue.com/catalogue/entry.php?id=917",
+        "artworkOriginalFilePage": null,
+        "celebrityPhotoOriginalFilePage": "https://commons.wikimedia.org/wiki/File:Dame_Maggie_Smith_face.jpg",
+        "celebrityPhotoLicenseClaim": "CC BY-SA 3.0",
+        "photoAuthorCredit": "Kebl0597 (derived, source review)",
+        "sourceAccess": "SOURCE_LINKS_IDENTIFIED_NOT_FILE_DOWNLOADED",
+        "sourceStatus": "SOURCE_GAPS_OR_VARIANT_REVIEW",
+        "workMedium": "CLAIMED_BY_EDITORIAL",
+        "conflictFlag": null,
+        "independentSideBySideVisualCertified": false,
+        "photoPublicityRightsCleared": false,
+        "commercialReleaseCleared": false,
+        "appPrivateQaIncluded": false
+      }
+    },
+    {
+      "id": "AD-DG-005",
+      "celebrity": "Mark Zuckerberg",
+      "artworkTitle": "Portrait of Philip IV",
+      "artistCreditAsResearched": "Diego Velázquez",
+      "paintingStatus": "CLAIMED_BY_EDITORIAL",
+      "evidence": [
+        "DA",
+        "AN"
+      ],
+      "reviewStatus": "HOLD_SOURCE_AND_RIGHTS",
+      "independentSourceImagePairReviewed": false,
+      "commercialReleaseCleared": false,
+      "reviewV2": {
+        "researchPriority": "P1_REVIEW",
+        "museumObjectUrl": null,
+        "artworkOriginalFilePage": null,
+        "celebrityPhotoOriginalFilePage": null,
+        "celebrityPhotoLicenseClaim": null,
+        "photoAuthorCredit": null,
+        "sourceAccess": "SOURCE_LINKS_IDENTIFIED_NOT_FILE_DOWNLOADED",
+        "sourceStatus": "SOURCE_GAPS_OR_VARIANT_REVIEW",
+        "workMedium": "CLAIMED_BY_EDITORIAL",
+        "conflictFlag": null,
+        "independentSideBySideVisualCertified": false,
+        "photoPublicityRightsCleared": false,
+        "commercialReleaseCleared": false,
+        "appPrivateQaIncluded": false
+      }
+    },
+    {
+      "id": "AD-DG-006",
+      "celebrity": "Robert De Niro",
+      "artworkTitle": "Portrait of Johann Vogt, Counsellor of Wrocław",
+      "artistCreditAsResearched": "Bartholomeus Strobel",
+      "paintingStatus": "CLAIMED_BY_EDITORIAL",
+      "evidence": [
+        "DA"
+      ],
+      "reviewStatus": "HOLD_SOURCE_AND_RIGHTS",
+      "independentSourceImagePairReviewed": false,
+      "commercialReleaseCleared": false,
+      "reviewV2": {
+        "researchPriority": "P1_REVIEW",
+        "museumObjectUrl": "https://mnwr.pl/en/silesian-art-from-the-16th-19th-century/",
+        "artworkOriginalFilePage": "https://commons.wikimedia.org/wiki/File:Strobel_Portrait_of_Johann_Vogt.jpg",
+        "celebrityPhotoOriginalFilePage": "https://commons.wikimedia.org/wiki/File:Robert_De_Niro_TFF_2011_Shankbone.JPG",
+        "celebrityPhotoLicenseClaim": "CC BY 3.0",
+        "photoAuthorCredit": "David Shankbone",
+        "sourceAccess": "SOURCE_LINKS_IDENTIFIED_NOT_FILE_DOWNLOADED",
+        "sourceStatus": "BOTH_SOURCE_IMAGE_FILE_PAGES_DOCUMENTED",
+        "workMedium": "CLAIMED_BY_EDITORIAL",
+        "conflictFlag": "SITTER_ATTRIBUTION_UNCERTAIN",
+        "independentSideBySideVisualCertified": false,
+        "photoPublicityRightsCleared": false,
+        "commercialReleaseCleared": false,
+        "appPrivateQaIncluded": true
+      }
+    },
+    {
+      "id": "AD-DG-007",
+      "celebrity": "Edward Norton",
+      "artworkTitle": "Self-Portrait",
+      "artistCreditAsResearched": "Hyacinthe Rigaud",
+      "paintingStatus": "CLAIMED_BY_EDITORIAL",
+      "evidence": [
+        "DA",
+        "BP"
+      ],
+      "reviewStatus": "HOLD_SOURCE_AND_RIGHTS",
+      "independentSourceImagePairReviewed": false,
+      "commercialReleaseCleared": false,
+      "reviewV2": {
+        "researchPriority": "P1_REVIEW",
+        "museumObjectUrl": "https://collections.louvre.fr/en/ark:/53355/cl010057893",
+        "artworkOriginalFilePage": "https://commons.wikimedia.org/wiki/File:JacintRigau-autoretrat-2578.jpg",
+        "celebrityPhotoOriginalFilePage": "https://commons.wikimedia.org/wiki/File:Edward_Norton_2012.jpg",
+        "celebrityPhotoLicenseClaim": "CC BY 2.0",
+        "photoAuthorCredit": "Steve Jurvetson",
+        "sourceAccess": "SOURCE_LINKS_IDENTIFIED_NOT_FILE_DOWNLOADED",
+        "sourceStatus": "SOURCE_GAPS_OR_VARIANT_REVIEW",
+        "workMedium": "CLAIMED_BY_EDITORIAL",
+        "conflictFlag": "VARIANT_NOT_CONFIRMED",
+        "independentSideBySideVisualCertified": false,
+        "photoPublicityRightsCleared": false,
+        "commercialReleaseCleared": false,
+        "appPrivateQaIncluded": false
+      }
+    },
+    {
+      "id": "AD-DG-008",
+      "celebrity": "Nicole Kidman",
+      "artworkTitle": "Portrait of Elżbieta Szemplińska-Sobolewska",
+      "artistCreditAsResearched": "Stanisław Ignacy Witkiewicz (Witkacy)",
+      "paintingStatus": "CLAIMED_BY_EDITORIAL",
+      "evidence": [
+        "DA",
+        "SA"
+      ],
+      "reviewStatus": "HOLD_SOURCE_AND_RIGHTS",
+      "independentSourceImagePairReviewed": false,
+      "commercialReleaseCleared": false,
+      "reviewV2": {
+        "researchPriority": "P1_REVIEW",
+        "museumObjectUrl": null,
+        "artworkOriginalFilePage": "https://commons.wikimedia.org/wiki/File:Witkacy_-_El%C5%BCbieta_Szempli%C5%84ska-Sobolewska.jpg",
+        "celebrityPhotoOriginalFilePage": "https://commons.wikimedia.org/wiki/File:Nicole_Kidman_Cannes_2014.jpg",
+        "celebrityPhotoLicenseClaim": "CC BY-SA 3.0",
+        "photoAuthorCredit": null,
+        "sourceAccess": "SOURCE_LINKS_IDENTIFIED_NOT_FILE_DOWNLOADED",
+        "sourceStatus": "SOURCE_GAPS_OR_VARIANT_REVIEW",
+        "workMedium": "CLAIMED_BY_EDITORIAL",
+        "conflictFlag": "MEDIUM_PASTEL_CHECK",
+        "independentSideBySideVisualCertified": false,
+        "photoPublicityRightsCleared": false,
+        "commercialReleaseCleared": false,
+        "appPrivateQaIncluded": false
+      }
+    },
+    {
+      "id": "AD-DG-009",
+      "celebrity": "Keanu Reeves",
+      "artworkTitle": "Portrait of a Man",
+      "artistCreditAsResearched": "Parmigianino",
+      "paintingStatus": "CLAIMED_BY_EDITORIAL",
+      "evidence": [
+        "DA"
+      ],
+      "reviewStatus": "HOLD_SOURCE_AND_RIGHTS",
+      "independentSourceImagePairReviewed": false,
+      "commercialReleaseCleared": false,
+      "reviewV2": {
+        "researchPriority": "P1_REVIEW",
+        "museumObjectUrl": null,
+        "artworkOriginalFilePage": null,
+        "celebrityPhotoOriginalFilePage": null,
+        "celebrityPhotoLicenseClaim": null,
+        "photoAuthorCredit": null,
+        "sourceAccess": "SOURCE_LINKS_IDENTIFIED_NOT_FILE_DOWNLOADED",
+        "sourceStatus": "SOURCE_GAPS_OR_VARIANT_REVIEW",
+        "workMedium": "CLAIMED_BY_EDITORIAL",
+        "conflictFlag": null,
+        "independentSideBySideVisualCertified": false,
+        "photoPublicityRightsCleared": false,
+        "commercialReleaseCleared": false,
+        "appPrivateQaIncluded": false
+      }
+    },
+    {
+      "id": "AD-DG-010",
+      "celebrity": "Johnny Depp",
+      "artworkTitle": "Portrait of Jean Alexandre",
+      "artistCreditAsResearched": "Amedeo Modigliani",
+      "paintingStatus": "CLAIMED_BY_EDITORIAL",
+      "evidence": [
+        "DA",
+        "SA"
+      ],
+      "reviewStatus": "HOLD_SOURCE_AND_RIGHTS",
+      "independentSourceImagePairReviewed": false,
+      "commercialReleaseCleared": false,
+      "reviewV2": {
+        "researchPriority": "P1_REVIEW",
+        "museumObjectUrl": "https://www.christies.com/en/lot/lot-5893247",
+        "artworkOriginalFilePage": "https://commons.wikimedia.org/wiki/File:Amedeo_Modigliani_-_Jean_Alexandre_-_1909_-_001.jpg",
+        "celebrityPhotoOriginalFilePage": "https://commons.wikimedia.org/wiki/File:Johnny_Depp_2011.jpg",
+        "celebrityPhotoLicenseClaim": "CC BY-SA 2.0",
+        "photoAuthorCredit": null,
+        "sourceAccess": "SOURCE_LINKS_IDENTIFIED_NOT_FILE_DOWNLOADED",
+        "sourceStatus": "SOURCE_GAPS_OR_VARIANT_REVIEW",
+        "workMedium": "CLAIMED_BY_EDITORIAL",
+        "conflictFlag": "MAGAZINE_PHOTO_DIFFERS",
+        "independentSideBySideVisualCertified": false,
+        "photoPublicityRightsCleared": false,
+        "commercialReleaseCleared": false,
+        "appPrivateQaIncluded": false
+      }
+    },
+    {
+      "id": "AD-DG-011",
+      "celebrity": "Rupert Grint",
+      "artworkTitle": "Artist (Self-Portrait)",
+      "artistCreditAsResearched": "Sir David Wilkie",
+      "paintingStatus": "CLAIMED_BY_EDITORIAL",
+      "evidence": [
+        "DA",
+        "BP"
+      ],
+      "reviewStatus": "HOLD_SOURCE_AND_RIGHTS",
+      "independentSourceImagePairReviewed": false,
+      "commercialReleaseCleared": false,
+      "reviewV2": {
+        "researchPriority": "P1_REVIEW",
+        "museumObjectUrl": "https://www.nationalgalleries.org/art-and-artists/4106",
+        "artworkOriginalFilePage": "https://commons.wikimedia.org/wiki/File:Sir_David_Wilkie_-_Sir_David_Wilkie%2C_1785_-_1841._Artist_%28Self-portrait%29_-_PG_573_-_National_Galleries_of_Scotland.jpg",
+        "celebrityPhotoOriginalFilePage": "https://commons.wikimedia.org/wiki/File:Rupert_Grint_2012.jpg",
+        "celebrityPhotoLicenseClaim": "CC BY 2.0",
+        "photoAuthorCredit": "Paul Bird",
+        "sourceAccess": "SOURCE_LINKS_IDENTIFIED_NOT_FILE_DOWNLOADED",
+        "sourceStatus": "BOTH_SOURCE_IMAGE_FILE_PAGES_DOCUMENTED",
+        "workMedium": "CLAIMED_BY_EDITORIAL",
+        "conflictFlag": "MUSEUM_PHOTO_POLICY_PERSONAL_USE",
+        "independentSideBySideVisualCertified": false,
+        "photoPublicityRightsCleared": false,
+        "commercialReleaseCleared": false,
+        "appPrivateQaIncluded": true
+      }
+    },
+    {
+      "id": "AD-DG-012",
+      "celebrity": "Peter Dinklage",
+      "artworkTitle": "Portrait of Sebastián de Morra / El bufón el Primo",
+      "artistCreditAsResearched": "Diego Velázquez",
+      "paintingStatus": "CLAIMED_BY_EDITORIAL",
+      "evidence": [
+        "DA"
+      ],
+      "reviewStatus": "HOLD_SOURCE_AND_RIGHTS",
+      "independentSourceImagePairReviewed": false,
+      "commercialReleaseCleared": false,
+      "reviewV2": {
+        "researchPriority": "P1_REVIEW",
+        "museumObjectUrl": null,
+        "artworkOriginalFilePage": "https://commons.wikimedia.org/wiki/File:Diego_Vel%C3%A1zquez_%E2%80%93_El_buf%C3%B3n_el_Primo_%28Museo_del_Prado%2C_1644%29.jpg",
+        "celebrityPhotoOriginalFilePage": "https://commons.wikimedia.org/wiki/File:Peter_Dinklage.jpg",
+        "celebrityPhotoLicenseClaim": "CC BY-SA 2.0",
+        "photoAuthorCredit": null,
+        "sourceAccess": "SOURCE_LINKS_IDENTIFIED_NOT_FILE_DOWNLOADED",
+        "sourceStatus": "SOURCE_GAPS_OR_VARIANT_REVIEW",
+        "workMedium": "CLAIMED_BY_EDITORIAL",
+        "conflictFlag": "SITTER_IDENTITY_DISPUTED",
+        "independentSideBySideVisualCertified": false,
+        "photoPublicityRightsCleared": false,
+        "commercialReleaseCleared": false,
+        "appPrivateQaIncluded": false
+      }
+    },
+    {
+      "id": "AD-DG-013",
+      "celebrity": "Jack Black",
+      "artworkTitle": "Paul Revere",
+      "artistCreditAsResearched": "John Singleton Copley",
+      "paintingStatus": "CLAIMED_BY_EDITORIAL",
+      "evidence": [
+        "DA",
+        "RD"
+      ],
+      "reviewStatus": "HOLD_SOURCE_AND_RIGHTS",
+      "independentSourceImagePairReviewed": false,
+      "commercialReleaseCleared": false,
+      "reviewV2": {
+        "researchPriority": "P1_REVIEW",
+        "museumObjectUrl": "https://collections.mfa.org/objects/32401",
+        "artworkOriginalFilePage": "https://commons.wikimedia.org/wiki/File:J_S_Copley_-_Paul_Revere.jpg",
+        "celebrityPhotoOriginalFilePage": "https://commons.wikimedia.org/wiki/File:Goosebumps%2C_Jack_Black%2C_SDCC_2014_09.jpg",
+        "celebrityPhotoLicenseClaim": "CC BY 2.0",
+        "photoAuthorCredit": "vagueonthehow",
+        "sourceAccess": "SOURCE_LINKS_IDENTIFIED_NOT_FILE_DOWNLOADED",
+        "sourceStatus": "BOTH_SOURCE_IMAGE_FILE_PAGES_DOCUMENTED",
+        "workMedium": "CLAIMED_BY_EDITORIAL",
+        "conflictFlag": "CURRENT_PHOTO_DIFFERS_FROM_MAGAZINE",
+        "independentSideBySideVisualCertified": false,
+        "photoPublicityRightsCleared": false,
+        "commercialReleaseCleared": false,
+        "appPrivateQaIncluded": true
+      }
+    },
+    {
+      "id": "AD-DG-014",
+      "celebrity": "Freddie Mercury",
+      "artworkTitle": "Man Reading (Nicola d'Inverno?)",
+      "artistCreditAsResearched": "John Singer Sargent",
+      "paintingStatus": "CLAIMED_BY_EDITORIAL",
+      "evidence": [
+        "DA"
+      ],
+      "reviewStatus": "HOLD_SOURCE_AND_RIGHTS",
+      "independentSourceImagePairReviewed": false,
+      "commercialReleaseCleared": false,
+      "reviewV2": {
+        "researchPriority": "P1_REVIEW",
+        "museumObjectUrl": null,
+        "artworkOriginalFilePage": null,
+        "celebrityPhotoOriginalFilePage": null,
+        "celebrityPhotoLicenseClaim": null,
+        "photoAuthorCredit": null,
+        "sourceAccess": "SOURCE_LINKS_IDENTIFIED_NOT_FILE_DOWNLOADED",
+        "sourceStatus": "SOURCE_GAPS_OR_VARIANT_REVIEW",
+        "workMedium": "CLAIMED_BY_EDITORIAL",
+        "conflictFlag": null,
+        "independentSideBySideVisualCertified": false,
+        "photoPublicityRightsCleared": false,
+        "commercialReleaseCleared": false,
+        "appPrivateQaIncluded": false
+      }
+    },
+    {
+      "id": "AD-DG-015",
+      "celebrity": "Gérard Depardieu",
+      "artworkTitle": "Portrait of a Young Man",
+      "artistCreditAsResearched": "Venetian 16th Century (current NGA attribution); formerly Jacopo de' Barbari",
+      "paintingStatus": "CLAIMED_BY_EDITORIAL",
+      "evidence": [
+        "DA"
+      ],
+      "reviewStatus": "HOLD_SOURCE_AND_RIGHTS",
+      "independentSourceImagePairReviewed": false,
+      "commercialReleaseCleared": false,
+      "reviewV2": {
+        "researchPriority": "P1_REVIEW",
+        "museumObjectUrl": "https://www.nga.gov/artworks/1235-portrait-young-man",
+        "artworkOriginalFilePage": null,
+        "celebrityPhotoOriginalFilePage": "https://commons.wikimedia.org/wiki/File:G%C3%A9rard_Depardieu_2010.jpg",
+        "celebrityPhotoLicenseClaim": "CC BY-SA 3.0",
+        "photoAuthorCredit": null,
+        "sourceAccess": "SOURCE_LINKS_IDENTIFIED_NOT_FILE_DOWNLOADED",
+        "sourceStatus": "SOURCE_GAPS_OR_VARIANT_REVIEW",
+        "workMedium": "CLAIMED_BY_EDITORIAL",
+        "conflictFlag": "ATTRIBUTION_VENETIAN_16TH_CENTURY",
+        "independentSideBySideVisualCertified": false,
+        "photoPublicityRightsCleared": false,
+        "commercialReleaseCleared": false,
+        "appPrivateQaIncluded": false
+      }
+    },
+    {
+      "id": "AD-DG-016",
+      "celebrity": "Michael Jackson",
+      "artworkTitle": "Self-Portrait",
+      "artistCreditAsResearched": "Barent Fabritius",
+      "paintingStatus": "CLAIMED_BY_EDITORIAL",
+      "evidence": [
+        "DA"
+      ],
+      "reviewStatus": "HOLD_SOURCE_AND_RIGHTS",
+      "independentSourceImagePairReviewed": false,
+      "commercialReleaseCleared": false,
+      "reviewV2": {
+        "researchPriority": "P1_REVIEW",
+        "museumObjectUrl": null,
+        "artworkOriginalFilePage": null,
+        "celebrityPhotoOriginalFilePage": "https://commons.wikimedia.org/wiki/File:Michael_Jackson_1984.jpg",
+        "celebrityPhotoLicenseClaim": "Public domain",
+        "photoAuthorCredit": "White House Photo Office",
+        "sourceAccess": "SOURCE_LINKS_IDENTIFIED_NOT_FILE_DOWNLOADED",
+        "sourceStatus": "SOURCE_GAPS_OR_VARIANT_REVIEW",
+        "workMedium": "CLAIMED_BY_EDITORIAL",
+        "conflictFlag": null,
+        "independentSideBySideVisualCertified": false,
+        "photoPublicityRightsCleared": false,
+        "commercialReleaseCleared": false,
+        "appPrivateQaIncluded": false
+      }
+    },
+    {
+      "id": "AD-DG-017",
+      "celebrity": "Greta Thunberg",
+      "artworkTitle": "Portrait of Comtesse d'Haussonville",
+      "artistCreditAsResearched": "Jean-Auguste-Dominique Ingres",
+      "paintingStatus": "CLAIMED_BY_EDITORIAL",
+      "evidence": [
+        "AN"
+      ],
+      "reviewStatus": "HOLD_SOURCE_AND_RIGHTS",
+      "independentSourceImagePairReviewed": false,
+      "commercialReleaseCleared": false,
+      "reviewV2": {
+        "researchPriority": "P1_REVIEW",
+        "museumObjectUrl": "https://customprints.frick.org/detail/476354/ingres-comtesse-dhaussonville-1845",
+        "artworkOriginalFilePage": null,
+        "celebrityPhotoOriginalFilePage": "https://commons.wikimedia.org/wiki/File:Greta_Thunberg_at_the_Parliament_(33744698908).jpg",
+        "celebrityPhotoLicenseClaim": "CC BY 4.0",
+        "photoAuthorCredit": "European Union",
+        "sourceAccess": "SOURCE_LINKS_IDENTIFIED_NOT_FILE_DOWNLOADED",
+        "sourceStatus": "SOURCE_GAPS_OR_VARIANT_REVIEW",
+        "workMedium": "CLAIMED_BY_EDITORIAL",
+        "conflictFlag": null,
+        "independentSideBySideVisualCertified": false,
+        "photoPublicityRightsCleared": false,
+        "commercialReleaseCleared": false,
+        "appPrivateQaIncluded": false
+      }
+    },
+    {
+      "id": "AD-DG-018",
+      "celebrity": "Bella Ramsey",
+      "artworkTitle": "The Irish Girl",
+      "artistCreditAsResearched": "Ford Madox Brown",
+      "paintingStatus": "CLAIMED_BY_EDITORIAL",
+      "evidence": [
+        "AN"
+      ],
+      "reviewStatus": "HOLD_SOURCE_AND_RIGHTS",
+      "independentSourceImagePairReviewed": false,
+      "commercialReleaseCleared": false,
+      "reviewV2": {
+        "researchPriority": "P1_REVIEW",
+        "museumObjectUrl": null,
+        "artworkOriginalFilePage": null,
+        "celebrityPhotoOriginalFilePage": null,
+        "celebrityPhotoLicenseClaim": null,
+        "photoAuthorCredit": null,
+        "sourceAccess": "SOURCE_LINKS_IDENTIFIED_NOT_FILE_DOWNLOADED",
+        "sourceStatus": "SOURCE_GAPS_OR_VARIANT_REVIEW",
+        "workMedium": "CLAIMED_BY_EDITORIAL",
+        "conflictFlag": null,
+        "independentSideBySideVisualCertified": false,
+        "photoPublicityRightsCleared": false,
+        "commercialReleaseCleared": false,
+        "appPrivateQaIncluded": false
+      }
+    },
+    {
+      "id": "AD-DG-019",
+      "celebrity": "Prince Harry",
+      "artworkTitle": "The Boy",
+      "artistCreditAsResearched": "Amedeo Modigliani",
+      "paintingStatus": "CLAIMED_BY_EDITORIAL",
+      "evidence": [
+        "AN"
+      ],
+      "reviewStatus": "HOLD_SOURCE_AND_RIGHTS",
+      "independentSourceImagePairReviewed": false,
+      "commercialReleaseCleared": false,
+      "reviewV2": {
+        "researchPriority": "P1_REVIEW",
+        "museumObjectUrl": null,
+        "artworkOriginalFilePage": "https://commons.wikimedia.org/wiki/File:Modigliani%2C_Amedeo_-_The_Boy_-_Google_Art_Project.jpg",
+        "celebrityPhotoOriginalFilePage": "https://commons.wikimedia.org/wiki/File:Prince_Harry_in_2018.jpg",
+        "celebrityPhotoLicenseClaim": "CC BY 2.0",
+        "photoAuthorCredit": null,
+        "sourceAccess": "SOURCE_LINKS_IDENTIFIED_NOT_FILE_DOWNLOADED",
+        "sourceStatus": "SOURCE_GAPS_OR_VARIANT_REVIEW",
+        "workMedium": "CLAIMED_BY_EDITORIAL",
+        "conflictFlag": null,
+        "independentSideBySideVisualCertified": false,
+        "photoPublicityRightsCleared": false,
+        "commercialReleaseCleared": false,
+        "appPrivateQaIncluded": false
+      }
+    },
+    {
+      "id": "AD-DG-020",
+      "celebrity": "Keanu Reeves",
+      "artworkTitle": "Pierre Bracquemond as a Child",
+      "artistCreditAsResearched": "Marie Bracquemond",
+      "paintingStatus": "CLAIMED_BY_EDITORIAL",
+      "evidence": [
+        "AN"
+      ],
+      "reviewStatus": "HOLD_SOURCE_AND_RIGHTS",
+      "independentSourceImagePairReviewed": false,
+      "commercialReleaseCleared": false,
+      "reviewV2": {
+        "researchPriority": "P1_REVIEW",
+        "museumObjectUrl": null,
+        "artworkOriginalFilePage": "https://commons.wikimedia.org/wiki/File:Pierre_Bracquemond_as_a_Child_(1878).png",
+        "celebrityPhotoOriginalFilePage": "https://commons.wikimedia.org/wiki/File:Keanu_Reeves_2014.jpg",
+        "celebrityPhotoLicenseClaim": "CC BY 2.0",
+        "photoAuthorCredit": "anna Hanks",
+        "sourceAccess": "SOURCE_LINKS_IDENTIFIED_NOT_FILE_DOWNLOADED",
+        "sourceStatus": "SOURCE_GAPS_OR_VARIANT_REVIEW",
+        "workMedium": "CLAIMED_BY_EDITORIAL",
+        "conflictFlag": "PAINTING_FILE_PNG_NOT_ACCEPTED_BY_CURRENT_RUNTIME",
+        "independentSideBySideVisualCertified": false,
+        "photoPublicityRightsCleared": false,
+        "commercialReleaseCleared": false,
+        "appPrivateQaIncluded": false
+      }
+    },
+    {
+      "id": "AD-DG-021",
+      "celebrity": "Timothée Chalamet",
+      "artworkTitle": "Composer Franz Liszt",
+      "artistCreditAsResearched": "Henri Lehmann",
+      "paintingStatus": "CLAIMED_BY_EDITORIAL",
+      "evidence": [
+        "AN"
+      ],
+      "reviewStatus": "HOLD_SOURCE_AND_RIGHTS",
+      "independentSourceImagePairReviewed": false,
+      "commercialReleaseCleared": false,
+      "reviewV2": {
+        "researchPriority": "P1_REVIEW",
+        "museumObjectUrl": null,
+        "artworkOriginalFilePage": "https://commons.wikimedia.org/wiki/File:Henri_Lehmann_-_Portrait_de_Franz_Liszt_(1811-1886)%2C_compositeur_et_pianiste_-_P1683_-_Mus%C3%A9e_Carnavalet_-_2.jpg",
+        "celebrityPhotoOriginalFilePage": "https://commons.wikimedia.org/wiki/File:Interview_with_Timoth%C3%A9e_Chalamet,_2019.png",
+        "celebrityPhotoLicenseClaim": "CC BY 3.0",
+        "photoAuthorCredit": null,
+        "sourceAccess": "SOURCE_LINKS_IDENTIFIED_NOT_FILE_DOWNLOADED",
+        "sourceStatus": "SOURCE_GAPS_OR_VARIANT_REVIEW",
+        "workMedium": "CLAIMED_BY_EDITORIAL",
+        "conflictFlag": "PHOTO_PNG",
+        "independentSideBySideVisualCertified": false,
+        "photoPublicityRightsCleared": false,
+        "commercialReleaseCleared": false,
+        "appPrivateQaIncluded": false
+      }
+    },
+    {
+      "id": "AD-DG-022",
+      "celebrity": "Daniel Radcliffe",
+      "artworkTitle": "Composer Franz Liszt",
+      "artistCreditAsResearched": "Henri Lehmann",
+      "paintingStatus": "CLAIMED_BY_EDITORIAL",
+      "evidence": [
+        "AN"
+      ],
+      "reviewStatus": "HOLD_SOURCE_AND_RIGHTS",
+      "independentSourceImagePairReviewed": false,
+      "commercialReleaseCleared": false,
+      "reviewV2": {
+        "researchPriority": "P1_REVIEW",
+        "museumObjectUrl": null,
+        "artworkOriginalFilePage": "https://commons.wikimedia.org/wiki/File:Liszt_(Lehmann_portrait).jpg",
+        "celebrityPhotoOriginalFilePage": "https://commons.wikimedia.org/wiki/File:Daniel_Radcliffe_2011.jpg",
+        "celebrityPhotoLicenseClaim": "CC BY-SA 2.0",
+        "photoAuthorCredit": null,
+        "sourceAccess": "SOURCE_LINKS_IDENTIFIED_NOT_FILE_DOWNLOADED",
+        "sourceStatus": "SOURCE_GAPS_OR_VARIANT_REVIEW",
+        "workMedium": "CLAIMED_BY_EDITORIAL",
+        "conflictFlag": "SAME_ORIGINAL_AS_AD_DG_021",
+        "independentSideBySideVisualCertified": false,
+        "photoPublicityRightsCleared": false,
+        "commercialReleaseCleared": false,
+        "appPrivateQaIncluded": false
+      }
+    },
+    {
+      "id": "AD-DG-023",
+      "celebrity": "Vladimir Putin",
+      "artworkTitle": "The Arnolfini Portrait (husband)",
+      "artistCreditAsResearched": "Jan van Eyck",
+      "paintingStatus": "CLAIMED_BY_EDITORIAL",
+      "evidence": [
+        "SA"
+      ],
+      "reviewStatus": "HOLD_SOURCE_AND_RIGHTS",
+      "independentSourceImagePairReviewed": false,
+      "commercialReleaseCleared": false,
+      "reviewV2": {
+        "researchPriority": "P1_REVIEW",
+        "museumObjectUrl": "https://www.nationalgallery.org.uk/painting-items/jan-van-eyck-the-arnolfini-portrait",
+        "artworkOriginalFilePage": "https://commons.wikimedia.org/wiki/File:Arnolfini_Portrait.jpg",
+        "celebrityPhotoOriginalFilePage": "https://commons.wikimedia.org/wiki/File:Vladimir_Putin_2018.jpg",
+        "celebrityPhotoLicenseClaim": "CC BY 4.0",
+        "photoAuthorCredit": null,
+        "sourceAccess": "SOURCE_LINKS_IDENTIFIED_NOT_FILE_DOWNLOADED",
+        "sourceStatus": "SOURCE_GAPS_OR_VARIANT_REVIEW",
+        "workMedium": "CLAIMED_BY_EDITORIAL",
+        "conflictFlag": "SITTER_IDENTITY_AND_POLITICAL_SUBJECTIVITY",
+        "independentSideBySideVisualCertified": false,
+        "photoPublicityRightsCleared": false,
+        "commercialReleaseCleared": false,
+        "appPrivateQaIncluded": false
+      }
+    },
+    {
+      "id": "AD-DG-024",
+      "celebrity": "Winona Ryder",
+      "artworkTitle": "The Marquise de Pezay and the Marquise de Rougé with Her Sons",
+      "artistCreditAsResearched": "Élisabeth Louise Vigée Le Brun",
+      "paintingStatus": "CLAIMED_BY_EDITORIAL",
+      "evidence": [
+        "DZ"
+      ],
+      "reviewStatus": "HOLD_SOURCE_AND_RIGHTS",
+      "independentSourceImagePairReviewed": false,
+      "commercialReleaseCleared": false,
+      "reviewV2": {
+        "researchPriority": "P1_REVIEW",
+        "museumObjectUrl": "https://www.nga.gov/artworks/50215-marquise-de-pezay-and-marquise-de-rouge-her-sons-alexis-and-adrien",
+        "artworkOriginalFilePage": null,
+        "celebrityPhotoOriginalFilePage": null,
+        "celebrityPhotoLicenseClaim": null,
+        "photoAuthorCredit": null,
+        "sourceAccess": "SOURCE_LINKS_IDENTIFIED_NOT_FILE_DOWNLOADED",
+        "sourceStatus": "SOURCE_GAPS_OR_VARIANT_REVIEW",
+        "workMedium": "CLAIMED_BY_EDITORIAL",
+        "conflictFlag": "MULTI_SUBJECT_REQUIRES_REGION",
+        "independentSideBySideVisualCertified": false,
+        "photoPublicityRightsCleared": false,
+        "commercialReleaseCleared": false,
+        "appPrivateQaIncluded": false
+      }
+    },
+    {
+      "id": "AD-DG-025",
+      "celebrity": "Björk",
+      "artworkTitle": "The Conversation",
+      "artistCreditAsResearched": "Abraham Leon Kroll",
+      "paintingStatus": "CLAIMED_BY_EDITORIAL",
+      "evidence": [
+        "DZ"
+      ],
+      "reviewStatus": "HOLD_SOURCE_AND_RIGHTS",
+      "independentSourceImagePairReviewed": false,
+      "commercialReleaseCleared": false,
+      "reviewV2": {
+        "researchPriority": "P1_REVIEW",
+        "museumObjectUrl": null,
+        "artworkOriginalFilePage": null,
+        "celebrityPhotoOriginalFilePage": null,
+        "celebrityPhotoLicenseClaim": null,
+        "photoAuthorCredit": null,
+        "sourceAccess": "SOURCE_LINKS_IDENTIFIED_NOT_FILE_DOWNLOADED",
+        "sourceStatus": "SOURCE_GAPS_OR_VARIANT_REVIEW",
+        "workMedium": "CLAIMED_BY_EDITORIAL",
+        "conflictFlag": null,
+        "independentSideBySideVisualCertified": false,
+        "photoPublicityRightsCleared": false,
+        "commercialReleaseCleared": false,
+        "appPrivateQaIncluded": false
+      }
+    },
+    {
+      "id": "AD-DG-026",
+      "celebrity": "Sarah Michelle Gellar",
+      "artworkTitle": "Head of a Youth",
+      "artistCreditAsResearched": "Théodore Géricault",
+      "paintingStatus": "UNCERTAIN",
+      "evidence": [
+        "DZ"
+      ],
+      "reviewStatus": "HOLD_SOURCE_AND_RIGHTS",
+      "independentSourceImagePairReviewed": false,
+      "commercialReleaseCleared": false,
+      "reviewV2": {
+        "researchPriority": "P2_DEFER",
+        "museumObjectUrl": null,
+        "artworkOriginalFilePage": null,
+        "celebrityPhotoOriginalFilePage": null,
+        "celebrityPhotoLicenseClaim": null,
+        "photoAuthorCredit": null,
+        "sourceAccess": "SOURCE_LINKS_IDENTIFIED_NOT_FILE_DOWNLOADED",
+        "sourceStatus": "SOURCE_GAPS_OR_VARIANT_REVIEW",
+        "workMedium": "UNCERTAIN",
+        "conflictFlag": null,
+        "independentSideBySideVisualCertified": false,
+        "photoPublicityRightsCleared": false,
+        "commercialReleaseCleared": false,
+        "appPrivateQaIncluded": false
+      }
+    },
+    {
+      "id": "AD-DG-027",
+      "celebrity": "Marilyn Manson",
+      "artworkTitle": "Self-Portrait with Striped Shirt",
+      "artistCreditAsResearched": "Egon Schiele",
+      "paintingStatus": "CLAIMED_BY_EDITORIAL",
+      "evidence": [
+        "DZ"
+      ],
+      "reviewStatus": "HOLD_SOURCE_AND_RIGHTS",
+      "independentSourceImagePairReviewed": false,
+      "commercialReleaseCleared": false,
+      "reviewV2": {
+        "researchPriority": "P1_REVIEW",
+        "museumObjectUrl": null,
+        "artworkOriginalFilePage": "https://commons.wikimedia.org/wiki/File:Egon_Schiele_-_Self-Portrait_with_Striped_Shirt_-_Google_Art_Project.jpg",
+        "celebrityPhotoOriginalFilePage": "https://commons.wikimedia.org/wiki/File:Marilyn_Manson_Rotr_2015_(109543887).jpeg",
+        "celebrityPhotoLicenseClaim": "CC BY 3.0",
+        "photoAuthorCredit": null,
+        "sourceAccess": "SOURCE_LINKS_IDENTIFIED_NOT_FILE_DOWNLOADED",
+        "sourceStatus": "SOURCE_GAPS_OR_VARIANT_REVIEW",
+        "workMedium": "DRAWING_CONFIRMED_EXCLUDE_FROM_PAINTING_ONLY",
+        "conflictFlag": "DRAWING_NOT_PAINTING_EXCLUDE_FROM_PAINTING_MODULE",
+        "independentSideBySideVisualCertified": false,
+        "photoPublicityRightsCleared": false,
+        "commercialReleaseCleared": false,
+        "appPrivateQaIncluded": false
+      }
+    },
+    {
+      "id": "AD-DG-028",
+      "celebrity": "Rose McGowan",
+      "artworkTitle": "Pvt. Dorothy Spaulding",
+      "artistCreditAsResearched": "Francis Vandeveer Kughler",
+      "paintingStatus": "CLAIMED_BY_EDITORIAL",
+      "evidence": [
+        "DZ"
+      ],
+      "reviewStatus": "HOLD_SOURCE_AND_RIGHTS",
+      "independentSourceImagePairReviewed": false,
+      "commercialReleaseCleared": false,
+      "reviewV2": {
+        "researchPriority": "P1_REVIEW",
+        "museumObjectUrl": null,
+        "artworkOriginalFilePage": null,
+        "celebrityPhotoOriginalFilePage": null,
+        "celebrityPhotoLicenseClaim": null,
+        "photoAuthorCredit": null,
+        "sourceAccess": "SOURCE_LINKS_IDENTIFIED_NOT_FILE_DOWNLOADED",
+        "sourceStatus": "SOURCE_GAPS_OR_VARIANT_REVIEW",
+        "workMedium": "CLAIMED_BY_EDITORIAL",
+        "conflictFlag": null,
+        "independentSideBySideVisualCertified": false,
+        "photoPublicityRightsCleared": false,
+        "commercialReleaseCleared": false,
+        "appPrivateQaIncluded": false
+      }
+    },
+    {
+      "id": "AD-DG-029",
+      "celebrity": "Kim Kardashian",
+      "artworkTitle": "Martha Graham",
+      "artistCreditAsResearched": "Paul R. Meltsner",
+      "paintingStatus": "CLAIMED_BY_EDITORIAL",
+      "evidence": [
+        "DZ"
+      ],
+      "reviewStatus": "HOLD_SOURCE_AND_RIGHTS",
+      "independentSourceImagePairReviewed": false,
+      "commercialReleaseCleared": false,
+      "reviewV2": {
+        "researchPriority": "P1_REVIEW",
+        "museumObjectUrl": null,
+        "artworkOriginalFilePage": null,
+        "celebrityPhotoOriginalFilePage": null,
+        "celebrityPhotoLicenseClaim": null,
+        "photoAuthorCredit": null,
+        "sourceAccess": "SOURCE_LINKS_IDENTIFIED_NOT_FILE_DOWNLOADED",
+        "sourceStatus": "SOURCE_GAPS_OR_VARIANT_REVIEW",
+        "workMedium": "CLAIMED_BY_EDITORIAL",
+        "conflictFlag": null,
+        "independentSideBySideVisualCertified": false,
+        "photoPublicityRightsCleared": false,
+        "commercialReleaseCleared": false,
+        "appPrivateQaIncluded": false
+      }
+    },
+    {
+      "id": "AD-DG-030",
+      "celebrity": "Lana Del Rey",
+      "artworkTitle": "Woman on the Beach",
+      "artistCreditAsResearched": "José Cuchy y Arnau",
+      "paintingStatus": "UNCERTAIN",
+      "evidence": [
+        "DZ"
+      ],
+      "reviewStatus": "HOLD_SOURCE_AND_RIGHTS",
+      "independentSourceImagePairReviewed": false,
+      "commercialReleaseCleared": false,
+      "reviewV2": {
+        "researchPriority": "P2_DEFER",
+        "museumObjectUrl": null,
+        "artworkOriginalFilePage": null,
+        "celebrityPhotoOriginalFilePage": null,
+        "celebrityPhotoLicenseClaim": null,
+        "photoAuthorCredit": null,
+        "sourceAccess": "SOURCE_LINKS_IDENTIFIED_NOT_FILE_DOWNLOADED",
+        "sourceStatus": "SOURCE_GAPS_OR_VARIANT_REVIEW",
+        "workMedium": "UNCERTAIN",
+        "conflictFlag": null,
+        "independentSideBySideVisualCertified": false,
+        "photoPublicityRightsCleared": false,
+        "commercialReleaseCleared": false,
+        "appPrivateQaIncluded": false
+      }
+    },
+    {
+      "id": "AD-DG-031",
+      "celebrity": "Nicki Minaj",
+      "artworkTitle": "A Melancholic Legong",
+      "artistCreditAsResearched": "Guruh Soekarno Putra",
+      "paintingStatus": "UNCERTAIN",
+      "evidence": [
+        "DZ"
+      ],
+      "reviewStatus": "HOLD_SOURCE_AND_RIGHTS",
+      "independentSourceImagePairReviewed": false,
+      "commercialReleaseCleared": false,
+      "reviewV2": {
+        "researchPriority": "P1_REVIEW",
+        "museumObjectUrl": null,
+        "artworkOriginalFilePage": null,
+        "celebrityPhotoOriginalFilePage": null,
+        "celebrityPhotoLicenseClaim": null,
+        "photoAuthorCredit": null,
+        "sourceAccess": "SOURCE_LINKS_IDENTIFIED_NOT_FILE_DOWNLOADED",
+        "sourceStatus": "SOURCE_GAPS_OR_VARIANT_REVIEW",
+        "workMedium": "UNCERTAIN",
+        "conflictFlag": null,
+        "independentSideBySideVisualCertified": false,
+        "photoPublicityRightsCleared": false,
+        "commercialReleaseCleared": false,
+        "appPrivateQaIncluded": false
+      }
+    },
+    {
+      "id": "AD-DG-032",
+      "celebrity": "Shirley Henderson",
+      "artworkTitle": "Portrait of Mr. and Mrs. Mifflin (Mrs. Mifflin)",
+      "artistCreditAsResearched": "John Singleton Copley",
+      "paintingStatus": "CLAIMED_BY_EDITORIAL",
+      "evidence": [
+        "RD"
+      ],
+      "reviewStatus": "HOLD_SOURCE_AND_RIGHTS",
+      "independentSourceImagePairReviewed": false,
+      "commercialReleaseCleared": false,
+      "reviewV2": {
+        "researchPriority": "P1_REVIEW",
+        "museumObjectUrl": null,
+        "artworkOriginalFilePage": null,
+        "celebrityPhotoOriginalFilePage": null,
+        "celebrityPhotoLicenseClaim": null,
+        "photoAuthorCredit": null,
+        "sourceAccess": "SOURCE_LINKS_IDENTIFIED_NOT_FILE_DOWNLOADED",
+        "sourceStatus": "SOURCE_GAPS_OR_VARIANT_REVIEW",
+        "workMedium": "CLAIMED_BY_EDITORIAL",
+        "conflictFlag": null,
+        "independentSideBySideVisualCertified": false,
+        "photoPublicityRightsCleared": false,
+        "commercialReleaseCleared": false,
+        "appPrivateQaIncluded": false
+      }
+    },
+    {
+      "id": "AD-DG-033",
+      "celebrity": "Jennifer Garner",
+      "artworkTitle": "Portrait of Nancy Woodward",
+      "artistCreditAsResearched": "Artist to identify",
+      "paintingStatus": "UNCERTAIN",
+      "evidence": [
+        "RD"
+      ],
+      "reviewStatus": "HOLD_SOURCE_AND_RIGHTS",
+      "independentSourceImagePairReviewed": false,
+      "commercialReleaseCleared": false,
+      "reviewV2": {
+        "researchPriority": "P2_DEFER",
+        "museumObjectUrl": null,
+        "artworkOriginalFilePage": null,
+        "celebrityPhotoOriginalFilePage": null,
+        "celebrityPhotoLicenseClaim": null,
+        "photoAuthorCredit": null,
+        "sourceAccess": "SOURCE_LINKS_IDENTIFIED_NOT_FILE_DOWNLOADED",
+        "sourceStatus": "SOURCE_GAPS_OR_VARIANT_REVIEW",
+        "workMedium": "UNCERTAIN",
+        "conflictFlag": null,
+        "independentSideBySideVisualCertified": false,
+        "photoPublicityRightsCleared": false,
+        "commercialReleaseCleared": false,
+        "appPrivateQaIncluded": false
+      }
+    },
+    {
+      "id": "AD-DG-034",
+      "celebrity": "Phia Saban",
+      "artworkTitle": "Portrait of Jane Hyde",
+      "artistCreditAsResearched": "Artist to identify",
+      "paintingStatus": "UNCERTAIN",
+      "evidence": [
+        "RD"
+      ],
+      "reviewStatus": "HOLD_SOURCE_AND_RIGHTS",
+      "independentSourceImagePairReviewed": false,
+      "commercialReleaseCleared": false,
+      "reviewV2": {
+        "researchPriority": "P2_DEFER",
+        "museumObjectUrl": null,
+        "artworkOriginalFilePage": null,
+        "celebrityPhotoOriginalFilePage": null,
+        "celebrityPhotoLicenseClaim": null,
+        "photoAuthorCredit": null,
+        "sourceAccess": "SOURCE_LINKS_IDENTIFIED_NOT_FILE_DOWNLOADED",
+        "sourceStatus": "SOURCE_GAPS_OR_VARIANT_REVIEW",
+        "workMedium": "UNCERTAIN",
+        "conflictFlag": null,
+        "independentSideBySideVisualCertified": false,
+        "photoPublicityRightsCleared": false,
+        "commercialReleaseCleared": false,
+        "appPrivateQaIncluded": false
+      }
+    },
+    {
+      "id": "AD-DG-035",
+      "celebrity": "Adrien Brody",
+      "artworkTitle": "Portrait of John Locke",
+      "artistCreditAsResearched": "Artist/source painting to identify",
+      "paintingStatus": "UNCERTAIN",
+      "evidence": [
+        "BP"
+      ],
+      "reviewStatus": "HOLD_SOURCE_AND_RIGHTS",
+      "independentSourceImagePairReviewed": false,
+      "commercialReleaseCleared": false,
+      "reviewV2": {
+        "researchPriority": "P2_DEFER",
+        "museumObjectUrl": null,
+        "artworkOriginalFilePage": null,
+        "celebrityPhotoOriginalFilePage": null,
+        "celebrityPhotoLicenseClaim": null,
+        "photoAuthorCredit": null,
+        "sourceAccess": "SOURCE_LINKS_IDENTIFIED_NOT_FILE_DOWNLOADED",
+        "sourceStatus": "SOURCE_GAPS_OR_VARIANT_REVIEW",
+        "workMedium": "UNCERTAIN",
+        "conflictFlag": null,
+        "independentSideBySideVisualCertified": false,
+        "photoPublicityRightsCleared": false,
+        "commercialReleaseCleared": false,
+        "appPrivateQaIncluded": false
+      }
+    },
+    {
+      "id": "AD-DG-036",
+      "celebrity": "Anne Hathaway",
+      "artworkTitle": "Portrait of Anne Clifford",
+      "artistCreditAsResearched": "Artist/source painting to identify",
+      "paintingStatus": "UNCERTAIN",
+      "evidence": [
+        "BP"
+      ],
+      "reviewStatus": "HOLD_SOURCE_AND_RIGHTS",
+      "independentSourceImagePairReviewed": false,
+      "commercialReleaseCleared": false,
+      "reviewV2": {
+        "researchPriority": "P2_DEFER",
+        "museumObjectUrl": null,
+        "artworkOriginalFilePage": null,
+        "celebrityPhotoOriginalFilePage": null,
+        "celebrityPhotoLicenseClaim": null,
+        "photoAuthorCredit": null,
+        "sourceAccess": "SOURCE_LINKS_IDENTIFIED_NOT_FILE_DOWNLOADED",
+        "sourceStatus": "SOURCE_GAPS_OR_VARIANT_REVIEW",
+        "workMedium": "UNCERTAIN",
+        "conflictFlag": null,
+        "independentSideBySideVisualCertified": false,
+        "photoPublicityRightsCleared": false,
+        "commercialReleaseCleared": false,
+        "appPrivateQaIncluded": false
+      }
+    },
+    {
+      "id": "AD-DG-037",
+      "celebrity": "Michael Phelps",
+      "artworkTitle": "Portrait of Charles Lamb",
+      "artistCreditAsResearched": "Artist/source painting to identify",
+      "paintingStatus": "UNCERTAIN",
+      "evidence": [
+        "BP"
+      ],
+      "reviewStatus": "HOLD_SOURCE_AND_RIGHTS",
+      "independentSourceImagePairReviewed": false,
+      "commercialReleaseCleared": false,
+      "reviewV2": {
+        "researchPriority": "P2_DEFER",
+        "museumObjectUrl": null,
+        "artworkOriginalFilePage": null,
+        "celebrityPhotoOriginalFilePage": null,
+        "celebrityPhotoLicenseClaim": null,
+        "photoAuthorCredit": null,
+        "sourceAccess": "SOURCE_LINKS_IDENTIFIED_NOT_FILE_DOWNLOADED",
+        "sourceStatus": "SOURCE_GAPS_OR_VARIANT_REVIEW",
+        "workMedium": "UNCERTAIN",
+        "conflictFlag": null,
+        "independentSideBySideVisualCertified": false,
+        "photoPublicityRightsCleared": false,
+        "commercialReleaseCleared": false,
+        "appPrivateQaIncluded": false
+      }
+    }
+  ]
+}
