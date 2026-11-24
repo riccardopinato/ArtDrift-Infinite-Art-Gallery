@@ -4,6 +4,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../models/artwork.dart';
 import '../ui/art_remote_image.dart';
+import '../ui/artwork_preview_image.dart';
 import '../services/wallpaper.dart';
 
 /// Full-screen viewer inspired by the reference interaction, with our own UI,
@@ -24,6 +25,7 @@ class ArtworkDetail extends StatefulWidget {
 class _ArtworkDetailState extends State<ArtworkDetail> {
   late int _index;
   bool _busy = false;
+  bool _contemplation = false;
 
   @override
   void initState() {
@@ -94,45 +96,33 @@ class _ArtworkDetailState extends State<ArtworkDetail> {
           onMuseum: _openMuseum,
           onWallpaper: _busy || kIsWeb ? null : _setWallpaper,
         );
-        final painting = InteractiveViewer(
+        final painting = GestureDetector(
+          behavior: HitTestBehavior.translucent,
+          onTap: () => setState(() => _contemplation = !_contemplation),
+          child: InteractiveViewer(
           key: ValueKey('detail-${current.id}'),
           minScale: 0.9, maxScale: 5,
           child: Center(child: ArtRemoteImage(
             artwork: current,
             width: 843,
             fit: BoxFit.contain,
-            fallback: current.hasBundledPreview
-                ? Image.asset(current.bootstrapAsset, fit: BoxFit.contain)
-                : Center(child: Column(mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(Icons.account_balance_outlined,
-                          color: Colors.white54, size: 36),
-                      const SizedBox(height: 14),
-                      const Text('Anteprima non disponibile da questo museo',
-                          style: TextStyle(color: Colors.white70)),
-                      const SizedBox(height: 8),
-                      Text(current.displayedMuseum,
-                          style: const TextStyle(color: Colors.white38)),
-                    ])),
-            loading: current.hasBundledPreview
-                ? Image.asset(current.bootstrapAsset, fit: BoxFit.contain)
-                // Progressive detail: keep the same museum's smaller preview
-                // visible while its full-resolution source is still loading.
-                : Image.network(
-                    current.imageUrl(width: 400),
-                    fit: BoxFit.contain,
-                    webHtmlElementStrategy:
-                        ArtRemoteImage.strategyFor(isWeb: kIsWeb),
-                    errorBuilder: (_, error, stack) =>
-                        const Center(child: CircularProgressIndicator(
-                            color: Colors.white54)),
-                  ),
+            fallback: ArtworkPreviewImage(
+              artwork: current,
+              fit: BoxFit.contain,
+              cacheWidth: 240,
+            ),
+            // Same-art packaged WebP appears immediately during HD loading.
+            loading: ArtworkPreviewImage(
+              artwork: current,
+              fit: BoxFit.contain,
+              cacheWidth: 240,
+            ),
           )),
-        );
+        ));
         return Stack(children: [
           Padding(
-            padding: const EdgeInsets.only(top: 56),
-            child: wide
+            padding: EdgeInsets.only(top: _contemplation ? 0 : 56),
+            child: _contemplation ? Center(child: painting) : wide
                 ? Row(children: [
                     SizedBox(width: 290, child: caption),
                     Expanded(child: Padding(
@@ -145,12 +135,12 @@ class _ArtworkDetailState extends State<ArtworkDetail> {
                     SizedBox(height: constraints.maxHeight * 0.31, child: caption),
                   ]),
           ),
-          Positioned(left: 8, top: 3, child: IconButton(
+          if (!_contemplation) Positioned(left: 8, top: 3, child: IconButton(
             tooltip: 'Torna alla galleria',
             color: Colors.white,
             icon: const Icon(Icons.close_rounded),
             onPressed: () => Navigator.of(context).pop())),
-          Positioned(right: 8, top: 3, child: Row(children: [
+          if (!_contemplation) Positioned(right: 8, top: 3, child: Row(children: [
             IconButton(tooltip: 'Precedente', icon: const Icon(Icons.arrow_back),
               color: Colors.white70, onPressed: () => _next(-1)),
             IconButton(tooltip: 'Successivo', icon: const Icon(Icons.arrow_forward),

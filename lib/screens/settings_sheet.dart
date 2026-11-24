@@ -1,5 +1,8 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import '../services/art_frame_performance.dart';
+import '../services/art_image_delivery_metrics.dart';
 import '../ui/localization.dart';
 import '../ui/parchment.dart';
 
@@ -61,6 +64,12 @@ class _ArtDriftSettingsState extends State<_ArtDriftSettingsSheet> {
               color: Color(0xFF725B40), fontSize: 12)),
             const SizedBox(height: 24),
             _ActionTile(
+              icon: Icons.speed_rounded,
+              title: _performanceTitle(),
+              subtitle: _performanceSubtitle(),
+              onTap: () => _showPerformanceDiagnostics(context),
+            ),
+            _ActionTile(
               icon: Icons.auto_awesome_outlined, title: t('pro'),
               subtitle: t('proStatus'), onTap: () => _showDocument(context,
                 t('pro'), t('proDescription') + '\n\n' + t('proComing')),
@@ -84,6 +93,83 @@ class _ArtDriftSettingsState extends State<_ArtDriftSettingsSheet> {
         ],
       )));
   }
+
+  String _performanceTitle() {
+    const titles = <String, String>{
+      'it':'Prestazioni Android','en':'Android performance',
+      'fr':'Performances Android','es':'Rendimiento Android',
+      'de':'Android-Leistung','pt':'Desempenho Android',
+    };
+    return titles[ArtDriftLocale.current.value] ?? titles['en']!;
+  }
+
+  String _performanceSubtitle() {
+    const disabled = <String, String>{
+      'it':'Misura i tempi dei frame solo sul dispositivo',
+      'en':'Measure frame times locally on this device',
+      'fr':'Mesure locale des temps de rendu',
+      'es':'Mide localmente los tiempos de fotograma',
+      'de':'Framezeiten lokal auf diesem Gerät messen',
+      'pt':'Mede os tempos de quadro neste aparelho',
+    };
+    return disabled[ArtDriftLocale.current.value] ?? disabled['en']!;
+  }
+
+  Future<void> _showPerformanceDiagnostics(BuildContext context) =>
+      showDialog<void>(
+        context: context,
+        builder: (dialogContext) => StatefulBuilder(
+          builder: (dialogContext, update) {
+            final monitor = ArtFramePerformance.instance;
+            final report = monitor.snapshot().report + '\n\n' +
+                ArtImageDeliveryMetrics.instance.report;
+            final language = ArtDriftLocale.current.value;
+            String label(String italian, String english) =>
+                language == 'it' ? italian : english;
+            return AlertDialog(
+              backgroundColor: ArtPaper.ivory,
+              title: Text(_performanceTitle(),
+                style: const TextStyle(color: ArtPaper.ink)),
+              content: SizedBox(
+                width: 360,
+                child: SingleChildScrollView(
+                  child: SelectableText(report,
+                    style: const TextStyle(color: ArtPaper.ink,
+                      fontSize: 12, height: 1.5)))),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    if (monitor.isRecording) {
+                      monitor.stop();
+                    } else {
+                      monitor.start();
+                    }
+                    update(() {});
+                  },
+                  child: Text(monitor.isRecording
+                    ? label('Ferma','Stop')
+                    : label('Avvia','Start'),
+                    style: const TextStyle(color: ArtPaper.ink)),
+                ),
+                TextButton(
+                  onPressed: () async {
+                    await Clipboard.setData(ClipboardData(
+                      text: monitor.snapshot().report + '\n\n' +
+                      ArtImageDeliveryMetrics.instance.report));
+                  },
+                  child: Text(label('Copia report','Copy report'),
+                    style: const TextStyle(color: ArtPaper.ink)),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.of(dialogContext).pop(),
+                  child: Text(t('close'),
+                    style: const TextStyle(color: ArtPaper.ink)),
+                ),
+              ],
+            );
+          },
+        ),
+      );
 
   Future<void> _showDocument(BuildContext context, String title, String body) =>
       showDialog<void>(context: context, builder: (context) => AlertDialog(

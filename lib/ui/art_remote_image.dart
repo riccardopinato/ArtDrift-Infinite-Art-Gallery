@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 
 import '../models/artwork.dart';
 import '../services/art_offline_thumbnail_index.dart';
+import '../services/art_image_delivery_metrics.dart';
 
 /// Displays the museum's own image. Web images use HTML platform views to
 /// avoid CORS failures; no third-party proxy or substituted artwork is used.
@@ -48,6 +49,7 @@ class _ArtRemoteImageState extends State<ArtRemoteImage> {
   static const retryDelay = Duration(milliseconds: 1600);
   int _retryCount = 0;
   Timer? _retryTimer;
+  final _reportedFailures = <String>{};
 
   @override
   void didUpdateWidget(covariant ArtRemoteImage oldWidget) {
@@ -57,6 +59,7 @@ class _ArtRemoteImageState extends State<ArtRemoteImage> {
       _retryTimer?.cancel();
       _retryTimer = null;
       _retryCount = 0;
+      _reportedFailures.clear();
     }
   }
 
@@ -82,6 +85,15 @@ class _ArtRemoteImageState extends State<ArtRemoteImage> {
     if (urls.isEmpty) return widget.fallback;
 
     final localUrl = ArtOfflineThumbnailIndex.instance.urlFor(widget.artwork);
+    final nativeAsset = ArtOfflineThumbnailIndex.instance.assetFor(widget.artwork);
+    Widget nativePreview({required Widget Function() onError}) => Image.asset(
+          nativeAsset!,
+          fit: widget.fit,
+          cacheWidth: 240,
+          filterQuality: FilterQuality.low,
+          gaplessPlayback: true,
+          errorBuilder: (context, error, stack) => onError(),
+        );
     // Local files are tiny same-origin WebP; unlike museum HTML platform views,
     // Flutter can decode them efficiently into a regular image layer.
     Widget packaged({required Widget Function() onError}) => Image.network(
@@ -92,12 +104,16 @@ class _ArtRemoteImageState extends State<ArtRemoteImage> {
           webHtmlElementStrategy: WebHtmlElementStrategy.never,
           errorBuilder: (context, error, stack) => onError(),
         );
-    Widget initialPreview() => localUrl == null
-        ? widget.loading
-        : packaged(onError: () => widget.loading);
-    Widget finalFallback() => localUrl == null
-        ? widget.fallback
-        : packaged(onError: () => widget.fallback);
+    Widget initialPreview() => nativeAsset != null
+        ? nativePreview(onError: () => widget.loading)
+        : localUrl != null
+            ? packaged(onError: () => widget.loading)
+            : widget.loading;
+    Widget finalFallback() => nativeAsset != null
+        ? nativePreview(onError: () => widget.fallback)
+        : localUrl != null
+            ? packaged(onError: () => widget.fallback)
+            : widget.fallback;
 
     Widget imageAt(int index) {
       final url = urls[index];
@@ -114,6 +130,11 @@ class _ArtRemoteImageState extends State<ArtRemoteImage> {
         frameBuilder: (context, child, frame, wasSynchronouslyLoaded) =>
             wasSynchronouslyLoaded || frame != null ? child : initialPreview(),
         errorBuilder: (_, error, stack) {
+          final failureKey = '$index:$_retryCount';
+          if (_reportedFailures.add(failureKey)) {
+            ArtImageDeliveryMetrics.instance.recordFailure(
+              widget.artwork, error);
+          }
           if (index + 1 < urls.length) return imageAt(index + 1);
           _retryWhenVisible();
           return finalFallback();

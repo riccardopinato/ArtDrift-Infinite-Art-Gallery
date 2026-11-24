@@ -1,0 +1,23 @@
+name: Art Drift verified 4042 offline WebP source gate
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'web/museum_thumbs/**'
+      - 'scripts/verify_mobile_thumbnail_pack.py'
+      - 'lib/**'
+      - 'pubspec.yaml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  integrity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify all packed WebPs and exact canonical art IDs
+        run: python scripts/verify_mobile_thumbnail_pack.py

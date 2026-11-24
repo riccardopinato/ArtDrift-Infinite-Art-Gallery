@@ -41,9 +41,12 @@ class ArtThumbnailPrefetch {
   /// A queue rejection is never stored in the cooldown map.
   Future<void> warm(BuildContext context, Artwork art, double zoom) {
     if (!context.mounted) return Future.value();
-    final bundledPreview = art.hasBundledPreview && zoom <= 1.65;
+    final localAsset = art.hasBundledPreview
+        ? art.bootstrapAsset
+        : ArtOfflineThumbnailIndex.instance.assetFor(art);
+    final bundledPreview = localAsset != null && zoom <= 1.65;
     final key = bundledPreview
-        ? 'asset:${art.bootstrapAsset}'
+        ? 'asset:$localAsset'
         : 'url:${art.imageUrl(width: 400)}';
     final now = DateTime.now();
     final until = _cooldownUntil[key];
@@ -111,8 +114,11 @@ class ArtThumbnailPrefetch {
     var failed = false;
     try {
       // Match Image.asset(cacheWidth: 240) used by the displayed tile.
+      final localAsset = art.hasBundledPreview ? art.bootstrapAsset :
+          ArtOfflineThumbnailIndex.instance.assetFor(art);
+      if (localAsset == null) return false;
       final image = ResizeImage.resizeIfNeeded(
-          240, null, AssetImage(art.bootstrapAsset));
+          240, null, AssetImage(localAsset));
       await precacheImage(image, context, onError: (error, stack) {
         failed = true;
       }).timeout(const Duration(seconds: 7));
