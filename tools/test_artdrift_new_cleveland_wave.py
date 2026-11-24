@@ -14,7 +14,7 @@ class ClevelandTests(unittest.TestCase):
         self.assertEqual(obj["publication_status"],"HOLD")
         self.assertEqual(obj["rights_status"],"IMAGE_REVIEW")
         self.assertEqual(obj["image_print_candidate"],"https://openaccess-cdn.clevelandart.org/print.jpg")
-        self.assertIsNone(candidate({...} if False else dict(fixture(),share_license_status="Copyrighted")))
+        self.assertIsNone(candidate(dict(fixture(),share_license_status="Copyrighted")))
         self.assertIsNone(candidate(dict(fixture(),type="Sculpture")))
         changed=fixture();changed["images"]["web"]["url"]="https://openaccess-cdn.clevelandart.org.evil/a"
         self.assertIsNone(candidate(changed))
