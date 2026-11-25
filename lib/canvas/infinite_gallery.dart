@@ -23,6 +23,8 @@ class InfiniteGallery extends StatelessWidget {
     if (localAsset != null) {
       return Image.asset(
         localAsset,
+        width: double.infinity,
+        height: double.infinity,
         fit: fit,
         filterQuality: FilterQuality.low,
         cacheWidth: 240,

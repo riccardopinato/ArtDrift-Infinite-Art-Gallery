@@ -88,6 +88,8 @@ class _ArtRemoteImageState extends State<ArtRemoteImage> {
     final nativeAsset = ArtOfflineThumbnailIndex.instance.assetFor(widget.artwork);
     Widget nativePreview({required Widget Function() onError}) => Image.asset(
           nativeAsset!,
+          width: double.infinity,
+          height: double.infinity,
           fit: widget.fit,
           cacheWidth: 240,
           filterQuality: FilterQuality.low,
@@ -98,6 +100,8 @@ class _ArtRemoteImageState extends State<ArtRemoteImage> {
     // Flutter can decode them efficiently into a regular image layer.
     Widget packaged({required Widget Function() onError}) => Image.network(
           localUrl!,
+          width: double.infinity,
+          height: double.infinity,
           fit: widget.fit,
           cacheWidth: kIsWeb ? null : widget.width,
           gaplessPlayback: true,
@@ -120,6 +124,8 @@ class _ArtRemoteImageState extends State<ArtRemoteImage> {
       return Image.network(
         url,
         key: ValueKey('${widget.artwork.catalogKey}:$index:$_retryCount'),
+        width: double.infinity,
+        height: double.infinity,
         fit: widget.fit,
         cacheWidth: kIsWeb ? null : widget.width,
         filterQuality: FilterQuality.low,

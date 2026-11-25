@@ -419,12 +419,16 @@ class _DriftCanvasState<T> extends State<DriftCanvas<T>>
                       _pauseAuto();
                       widget.onOpen(widget.items[tile.artworkIndex]);
                     },
-                    child: ColoredBox(
-                      color: const Color(0xFF24232A),
-                      child: widget.tileBuilderWithTile?.call(context,
-                            widget.items[tile.artworkIndex], _zoom, tile)
-                            ?? widget.tileBuilder(context,
-                            widget.items[tile.artworkIndex], _zoom),
+                    child: ClipRect(
+                      child: SizedBox.expand(
+                        child: ColoredBox(
+                          color: const Color(0xFF24232A),
+                          child: widget.tileBuilderWithTile?.call(context,
+                                widget.items[tile.artworkIndex], _zoom, tile)
+                                ?? widget.tileBuilder(context,
+                                widget.items[tile.artworkIndex], _zoom),
+                        ),
+                      ),
                     ),
                   ),
                 ),
