@@ -32,9 +32,11 @@ TITLE_POS=("landscape","garden","gardens","flowers","flower","orchard","bloom",
            "mountain","view","village","hills","hill","tree","trees","brittany",
            "provence","cove","tropez","lake","canal","sailboat","window",
            "irises","dahlia","parc","park","countryside","country")
-TITLE_AVOID=("portrait","self-portrait","head of","seated woman","nude","bather",
-             "figure of","old man","young girl","young woman","mother and child",
-             "sketch of a woman","caricature","study of a head","photograph")
+TITLE_AVOID=("portrait","self-portrait","head of","woman","women","lady","girl","girls",
+             "man ","men ","peasant","seamstress","figures","figure of","couple",
+             "child","children","mother","daughter","son ","nude","bather",
+             "caricature","photograph","dusk","twilight","nocturne","night",
+             "moonlight","imitator","portrait study")
 ARTISTS=("claude monet","vincent van gogh","paul cezanne","paul gauguin",
          "georges seurat","paul signac","auguste renoir","pierre auguste renoir",
          "camille pissarro","alfred sisley","berthe morisot","henri matisse",
@@ -125,6 +127,7 @@ def load_objects():
             title=str(row.get("title") or "").strip()
             artist=str(row.get("attribution") or "").strip()
             score=title_score(title,artist,yr)
+            if any(z in ascii_text(artist) for z in ("imitator","after ","school of","follower of")):continue
             if score<10:continue
             candidates[native]={"native_id":native,"title":title,"artist":artist,
                                 "date":str(row.get("displaydate") or ""),
