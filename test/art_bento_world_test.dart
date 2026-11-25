@@ -15,68 +15,67 @@ Artwork sample(int i) => Artwork(
 
 void main() {
   final items = List.generate(240, sample);
-  final pixelScores = <String,int>{
+  final pixels = <String,int>{
     for (var i = 0; i < items.length; i++) items[i].catalogKey: i,
   };
-  final bento = ArtBentoWorld(items, pixelScores);
+  final mosaic = ArtBentoWorld(items, pixels);
 
-  test('actual widths, heights, square/horizontal/portrait/XL vary', () {
-    final tiles = bento.visible(const Rect.fromLTWH(0, 0, 3150, 3150),
-        items.length, limit: 1000);
-    expect(tiles.length, greaterThan(100));
-    expect(tiles.map((t) => t.rect.width).toSet(),
-        containsAll([150.0, 300.0, 450.0]));
-    expect(tiles.map((t) => t.rect.height).toSet(),
-        containsAll([150.0, 300.0, 450.0]));
-    expect(tiles.any((t) => t.rect.width > t.rect.height), isTrue);
-    expect(tiles.any((t) => t.rect.height > t.rect.width), isTrue);
+  test('natural shape and visible size variation', () {
+    final tiles = mosaic.visible(const Rect.fromLTWH(0,0,3150,3150),
+        items.length,limit:1000);
+    expect(tiles.length,greaterThan(90));
+    expect(tiles.map((t)=>t.rect.height).toSet().length,greaterThan(5));
+    expect(tiles.map((t)=>t.rect.width).toSet().length,greaterThan(6));
+    expect(tiles.any((t)=>t.rect.width>t.rect.height),true);
+    expect(tiles.any((t)=>t.rect.height>t.rect.width),true);
+    for(final t in tiles) {
+      expect((t.rect.width/t.rect.height -
+          items[t.artworkIndex].naturalAspectRatio).abs(),
+          lessThan(0.00000001));
+    }
   });
 
-  test('tile ID, geometry, collision-free placement are deterministic', () {
-    const area = Rect.fromLTWH(-1000, -800, 2200, 1800);
-    final first = bento.visible(area, items.length, limit: 800);
-    final second = bento.visible(area, items.length, limit: 800);
-    expect(first.map((t) => t.key + '/' + t.artworkIndex.toString() +
-        '/' + t.rect.toString()).toList(),
-      second.map((t) => t.key + '/' + t.artworkIndex.toString() +
-        '/' + t.rect.toString()).toList());
-    expect(first.map((t) => t.key).toSet().length, first.length);
-    for (var i = 0; i < first.length; i++) {
-      for (var j = i + 1; j < first.length; j++) {
-        expect(first[i].rect.overlaps(first[j].rect), isFalse);
+  test('same coordinates yield same painting, no tile collisions', () {
+    const region=Rect.fromLTWH(-1000,-800,2200,1800);
+    final a=mosaic.visible(region,items.length,limit:800);
+    final b=mosaic.visible(region,items.length,limit:800);
+    String signature(dynamic t) =>
+      t.key.toString()+'/'+t.artworkIndex.toString()+'/'+t.rect.toString();
+    expect(a.map(signature).toList(),b.map(signature).toList());
+    expect(a.map((t)=>t.key).toSet().length,a.length);
+    for(var i=0;i<a.length;i++){
+      for(var j=i+1;j<a.length;j++){
+        expect(a[i].rect.overlaps(a[j].rect),false);
       }
     }
   });
 
-  test('XL and long large tiles outrank small by source image color', () {
-    final tiles = bento.visible(const Rect.fromLTWH(-1800, -900, 3600, 2200),
-        items.length, limit: 900);
-    final large = tiles.where((t) =>
-        t.rect.width >= 440 || t.rect.height >= 440).toList();
-    final small = tiles.where((t) =>
-        t.rect.width == 150 && t.rect.height == 150).toList();
-    expect(large, isNotEmpty);
-    expect(small, isNotEmpty);
-    final minLarge = large.map((t) =>
-      pixelScores[items[t.artworkIndex].catalogKey]!).reduce(
-        (a,b) => a < b ? a : b);
-    final maxSmall = small.map((t) =>
-      pixelScores[items[t.artworkIndex].catalogKey]!).reduce(
-        (a,b) => a > b ? a : b);
-    expect(minLarge, greaterThan(maxSmall));
+  test('most vivid score class gets biggest rows', () {
+    final tiles=mosaic.visible(const Rect.fromLTWH(-1200,-1100,3200,3000),
+        items.length,limit:900);
+    final hero=tiles.where((t)=>t.rect.height>=385);
+    final small=tiles.where((t)=>t.rect.height<=230);
+    expect(hero,isNotEmpty);
+    expect(small,isNotEmpty);
+    final low=hero.map((t)=>pixels[items[t.artworkIndex].catalogKey]!)
+        .reduce((a,b)=>a<b?a:b);
+    final high=small.map((t)=>pixels[items[t.artworkIndex].catalogKey]!)
+        .reduce((a,b)=>a>b?a:b);
+    expect(low,greaterThan(high));
   });
 
-  test('far coordinates and viewport priority respect render cap', () {
-    const viewport = Rect.fromLTWH(0, 0, 660, 1000);
-    final onscreen = bento.visible(viewport, items.length, limit: 180)
-        .map((t) => t.key).toSet();
-    final render = bento.visible(
-        const Rect.fromLTWH(-1500, -1200, 3500, 3700),
-        items.length, limit: 180, priorityViewport: viewport);
-    expect(render.length, lessThanOrEqualTo(180));
-    expect(onscreen.difference(render.map((t) => t.key).toSet()), isEmpty);
-    expect(bento.visible(
-        const Rect.fromLTWH(-2000000, 1000000, 900, 1600),
-        items.length, limit: 100), isNotEmpty);
+  test('bounded distant coordinates and viewport priority', () {
+    expect(mosaic.visible(const Rect.fromLTWH(-2000000,1000000,900,1600),
+        items.length,limit:100),isNotEmpty);
+    expect(mosaic.visible(const Rect.fromLTWH(1500000,-1200000,900,1600),
+        items.length,limit:100),isNotEmpty);
+    const view=Rect.fromLTWH(0,0,660,1000);
+    final all=mosaic.visible(view,items.length,limit:180)
+        .map((t)=>t.key).toSet();
+    final capped=mosaic.visible(
+        const Rect.fromLTWH(-1500,-1200,3500,3700),items.length,
+        limit:180,priorityViewport:view);
+    expect(capped.length,lessThanOrEqualTo(180));
+    expect(all.difference(capped.map((t)=>t.key).toSet()),isEmpty);
   });
 }
