@@ -6,7 +6,7 @@ import '../services/art_thumbnail_prefetch.dart';
 import '../services/art_offline_thumbnail_index.dart';
 import 'art_bento_world.dart';
 
-/// Art-specific adapter. Visual appearance, preview and camera keys preserved.
+/// Art-only native-proportion adapter: whole paintings, never cropped.\n/// World geometry matches the source width/height; GalleryDrift untouched.
 class InfiniteGallery extends StatelessWidget {
   const InfiniteGallery({super.key, required this.artworks, required this.onOpen,
     this.cameraKey = 'artdrift.camera', this.initialWorldCenter, this.bento});
@@ -80,10 +80,11 @@ class InfiniteGallery extends StatelessWidget {
   @override
   Widget build(BuildContext context) => DriftCanvas<Artwork>(
     items: artworks, onOpen: onOpen,
-    tileBuilder: (context, art, zoom) => _tileImage(art, zoom, BoxFit.cover),
+    tileBuilder: (context, art, zoom) => _tileImage(
+      art, zoom, BoxFit.contain),
     tileLayout: bento?.visible,
     tileBuilderWithTile: bento == null ? null : (context, art, zoom, tile) =>
-      _tileImage(art, zoom, BoxFit.cover),
+      _tileImage(art, zoom, BoxFit.contain),
     prefetchItem: ArtThumbnailPrefetch.instance.warm,
     cameraKey: cameraKey,
     initialWorldCenter: initialWorldCenter,
