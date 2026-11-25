@@ -46,14 +46,6 @@ class ArtBentoWorld {
         (_portrait.hasMatch(art.title) ? 22 : 0);
   }
 
-  /// The grid hash chooses only the geometric pattern; it cannot accidentally
-  /// repeat images. Source IDs are chosen through a separate permutation.
-  static int _patternIndex(int x, int y) {
-    var h = (x * 11 + y * 23 + (x ^ y) * 7) % _patterns.length;
-    if (h < 0) h += _patterns.length;
-    return h;
-  }
-
   // Every pattern contains precisely four pieces covering all nine 150px
   // cells. Unlike the old layout there are no three- or six-piece templates.
   static const List<List<_Cell>> _patterns = [
@@ -81,25 +73,70 @@ class ArtBentoWorld {
     return index;
   }
 
-  /// Sort the four shapes by area and allocate one artwork from each of four
-  /// nonoverlapping score bands. No per-tile independent random sampling.
-  List<int> _indices(int x, int y, List<_Cell> shapes) {
+  /// Select four unique works independently of the chosen puzzle geometry.
+  /// Each image comes from a separate color-ranked quarter of the playlist.
+  List<int> _bandSelection(int x, int y) {
     final count = _ranked.length;
-    final slots = [0, 1, 2, 3]..sort((a, b) {
-      final difference = shapes[b].area.compareTo(shapes[a].area);
-      return difference != 0 ? difference : a.compareTo(b);
-    });
-    final indices = List<int>.filled(4, 0);
+    final result = <int>[];
     for (var band = 0; band < 4; band++) {
       final begin = count * band ~/ 4;
       final end = count * (band + 1) ~/ 4;
       final span = end - begin;
-      final index = span > 0
+      result.add(span > 0
           ? _ranked[begin + _cycle(x, y, span)]
-          : _ranked[(band + _cycle(x, y, count)) % count];
-      indices[slots[band]] = index;
+          : _ranked[(band + _cycle(x, y, count)) % count]);
     }
-    return indices;
+    return result;
+  }
+
+  /// Choose a gapless puzzle arrangement by comparing the actual source
+  /// artwork aspect ratios to each of six full-coverage templates. The
+  /// most colorful work always owns the largest tile. Slight layout-rhythm
+  /// variation avoids monotonous repeated macroblock shapes, without
+  /// overriding a strong source/image aspect-ratio mismatch.
+  ({List<_Cell> shapes, List<int> indices}) _layout(int x, int y) {
+    final paintings = _bandSelection(x, y);
+    var bestScore = double.negativeInfinity;
+    late List<_Cell> chosenShapes;
+    late List<int> chosenIndices;
+
+    for (var pattern = 0; pattern < _patterns.length; pattern++) {
+      final shapes = _patterns[pattern];
+      final sortedSlots = [0, 1, 2, 3]..sort((a, b) {
+        final diff = shapes[b].area.compareTo(shapes[a].area);
+        return diff != 0 ? diff : a.compareTo(b);
+      });
+      final indices = List<int>.filled(4, 0);
+      var score = 0.0;
+      var heroFit = 0.0;
+      for (var band = 0; band < 4; band++) {
+        final slot = sortedSlots[band];
+        final shape = shapes[slot];
+        final targetAspect = shape.w / shape.h;
+        final imageAspect = items[paintings[band]].naturalAspectRatio;
+        final retained = math.min(
+            imageAspect / targetAspect, targetAspect / imageAspect);
+        score += shape.area * retained;
+        if (band == 0) heroFit = retained;
+        indices[slot] = paintings[band];
+      }
+
+      // For broadly compatible images, allow more compact 2x2 hero frames
+      // to add visual rhythm without sacrificing image coverage excessively.
+      if (shapes[sortedSlots.first].area == 4 && heroFit >= 0.7) {
+        score += 1.4;
+      }
+      var tie = (x * 17 + y * 11 + pattern * 13) % 11;
+      if (tie < 0) tie += 11;
+      score += tie * 0.08;
+
+      if (score > bestScore) {
+        bestScore = score;
+        chosenShapes = shapes;
+        chosenIndices = indices;
+      }
+    }
+    return (shapes: chosenShapes, indices: chosenIndices);
   }
 
   /// Stateless: same world position always yields the same painting and rect.
@@ -116,8 +153,9 @@ class ArtBentoWorld {
     final bottom = (world.bottom / block).floor();
     for (var x = left; x <= right; x++) {
       for (var y = top; y <= bottom; y++) {
-        final shapes = _patterns[_patternIndex(x, y)];
-        final indices = _indices(x, y, shapes);
+        final selected = _layout(x, y);
+        final shapes = selected.shapes;
+        final indices = selected.indices;
         for (var slot = 0; slot < shapes.length; slot++) {
           final shape = shapes[slot];
           final rect = Rect.fromLTWH(
