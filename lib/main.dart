@@ -83,8 +83,10 @@ class _GalleryHomeState extends State<GalleryHome> {
       final extras = ArtJoyfulPalette.supplement(works, pixelScores, colorFirst);
       final canvas = await ArtMobileCanvasSelection.select(works,
         initialColorPlaylist: colorFirst, additionalColorPlaylist: extras);
-      final bento = pixelScores.length == works.length &&
-          canvas.isNotEmpty ? ArtBentoWorld(canvas, pixelScores) : null;
+      // The new layout is the approved Art UI even if the optional color
+      // manifest fails closed. Without scores, metadata-only ranking remains
+      // deterministic; verified pixel scores are still preferred when present.
+      final bento = canvas.isNotEmpty ? ArtBentoWorld(canvas, pixelScores) : null;
       if (!mounted) return;
       // A new region only on a fresh app opening, not on catalogue refresh.
       final launch = _launchWorldCenter ??
