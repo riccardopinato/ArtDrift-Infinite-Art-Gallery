@@ -1,145 +1,159 @@
+import 'dart:math' as math;
 import 'dart:ui';
+
 import 'package:drift_core/drift_core.dart';
 import '../models/artwork.dart';
 
-/// Art-only deterministic colorful bento world. The generic canvas still
-/// handles gestures, camera, culling and prefetch; GalleryDrift keeps columns.
+/// Gapless, infinite Art-only jigsaw. GalleryDrift retains its original core.
+///
+/// Each 450x450 macroblock contains four non-overlapping S/M/L/XL rectangles
+/// that tessellate the complete 3x3 cell grid. The tile gutters are zero.
+///
+/// Worldwide unique paintings on an infinite plane with a finite catalog
+/// are mathematically impossible. For the normal 3,200-item playlist, four
+/// disjoint 800-image score bands map to a stable 2-D sequence: no painting
+/// repeats in any 12x12 neighboring macroblock window. Distant regions
+/// reuse images only after a much larger amount of exploration.
 class ArtBentoWorld {
   ArtBentoWorld(this.items, this.scores)
       : _ranked = List<int>.generate(items.length, (i) => i) {
     _ranked.sort((a, b) {
       final diff = _quality(items[b]).compareTo(_quality(items[a]));
-      return diff != 0 ? diff : items[a].catalogKey.compareTo(items[b].catalogKey);
+      return diff != 0
+          ? diff
+          : items[a].catalogKey.compareTo(items[b].catalogKey);
     });
   }
 
   final List<Artwork> items;
   final Map<String, int> scores;
   final List<int> _ranked;
-  static const double cell = 150, block = 450, gap = 5;
+  static const double cell = 150, block = 450;
 
   static final _scenery = RegExp(
     r'landscape|paesagg|paysage|seascape|sea\b|coast|garden|giardin|'
     r'flower|fiori|fleur|blossom|lake|river|mountain|forest|sunset|'
-    r'water lilies|meadow|sky|harbor|village|spring', caseSensitive: false);
+    r'water lilies|meadow|sky|harbor|village|spring',
+    caseSensitive: false);
   static final _portrait = RegExp(
     r'portrait|ritratto|portr[aä]t|bust of|head of|autoritratto',
     caseSensitive: false);
 
-  double _quality(Artwork a) {
-    final text = a.title + ' ' + a.subjectTerms.join(' ');
-    return (scores[a.catalogKey] ?? 0).toDouble() +
-        (_scenery.hasMatch(text) ? 14 : 0) -
-        (_portrait.hasMatch(a.title) ? 22 : 0);
+  double _quality(Artwork art) {
+    final labels = art.title + ' ' + art.subjectTerms.join(' ');
+    return (scores[art.catalogKey] ?? 0).toDouble() +
+        (_scenery.hasMatch(labels) ? 14 : 0) -
+        (_portrait.hasMatch(art.title) ? 22 : 0);
   }
 
-  static int _hash(int x, int y, int salt) {
-    var h = ((x * 73856093) ^ (y * 19349663) ^ (salt * 83492791))
-        & 0x7fffffff;
-    h ^= h >> 13;
-    // Multiplication modulo 2^31 with exact small limbs on Dart Web.
-    const factor = 1274126177;
-    final lo = h & 0xffff;
-    final hi = (h >> 16) & 0x7fff;
-    final productLo = lo * (factor & 0xffff);
-    final productHi = hi * (factor & 0xffff) +
-        lo * ((factor >> 16) & 0xffff) + productLo ~/ 65536;
-    h = (productHi % 32768) * 65536 + (productLo % 65536);
-    h ^= h >> 16;
-    return h & 0x7fffffff;
+  /// The grid hash chooses only the geometric pattern; it cannot accidentally
+  /// repeat images. Source IDs are chosen through a separate permutation.
+  static int _patternIndex(int x, int y) {
+    var h = (x * 11 + y * 23 + (x ^ y) * 7) % _patterns.length;
+    if (h < 0) h += _patterns.length;
+    return h;
   }
 
-  /// Each pattern tiles exactly the 3x3 grid without overlaps.
-  static const _patterns = <List<_Cell>>[
-    [_Cell(0,0,2,2), _Cell(2,0,1,2), _Cell(0,2,1,1), _Cell(1,2,2,1)],
-    [_Cell(0,0,3,2), _Cell(0,2,1,1), _Cell(1,2,1,1), _Cell(2,2,1,1)],
-    [_Cell(0,0,1,2), _Cell(1,0,2,1), _Cell(1,1,2,2), _Cell(0,2,1,1)],
-    [_Cell(0,0,2,1), _Cell(2,0,1,1), _Cell(0,1,1,2),
-     _Cell(1,1,2,1), _Cell(1,2,1,1), _Cell(2,2,1,1)],
-    [_Cell(0,0,1,1), _Cell(1,0,2,2), _Cell(0,1,1,2), _Cell(1,2,2,1)],
-    [_Cell(0,0,1,3), _Cell(1,0,2,2), _Cell(1,2,2,1)],
-    [_Cell(0,0,2,2), _Cell(2,0,1,1), _Cell(2,1,1,2), _Cell(0,2,2,1)],
-    [_Cell(0,0,2,3), _Cell(2,0,1,1), _Cell(2,1,1,1), _Cell(2,2,1,1)],
+  // Every pattern contains precisely four pieces covering all nine 150px
+  // cells. Unlike the old layout there are no three- or six-piece templates.
+  static const List<List<_Cell>> _patterns = [
+    [_Cell(0, 0, 2, 2), _Cell(2, 0, 1, 2),
+     _Cell(0, 2, 1, 1), _Cell(1, 2, 2, 1)],
+    [_Cell(0, 0, 3, 2), _Cell(0, 2, 1, 1),
+     _Cell(1, 2, 1, 1), _Cell(2, 2, 1, 1)],
+    [_Cell(0, 0, 1, 2), _Cell(1, 0, 2, 1),
+     _Cell(1, 1, 2, 2), _Cell(0, 2, 1, 1)],
+    [_Cell(0, 0, 1, 1), _Cell(1, 0, 2, 2),
+     _Cell(0, 1, 1, 2), _Cell(1, 2, 2, 1)],
+    [_Cell(0, 0, 2, 2), _Cell(2, 0, 1, 1),
+     _Cell(2, 1, 1, 2), _Cell(0, 2, 2, 1)],
+    [_Cell(0, 0, 2, 3), _Cell(2, 0, 1, 1),
+     _Cell(2, 1, 1, 1), _Cell(2, 2, 1, 1)],
   ];
 
-  /// XL draws from top 12% measured real pixels, L from next 24%, M from
-  /// middle 39%, S from remaining 25%. Aspect ratio reduces bad cropping.
-  int _pick(int x, int y, int slot, _Cell shape, Set<int> used) {
-    final area = shape.w * shape.h;
-    final xl = area >= 6, large = area >= 4 || shape.h == 3;
-    final low = xl ? 0.0 : large ? .12 : area >= 2 ? .36 : .75;
-    final high = xl ? .12 : large ? .36 : area >= 2 ? .75 : 1.0;
-    final n = _ranked.length;
-    final begin = (n * low).floor().clamp(0, n - 1).toInt();
-    final end = (n * high).ceil().clamp(begin + 1, n).toInt();
-    final span = end - begin;
-    final seed = _hash(x, y, slot + 100);
-    final target = (shape.w * cell - gap) / (shape.h * cell - gap);
-    var chosen = _ranked[begin + seed % span];
-    var best = double.negativeInfinity;
-    final attempts = span < 13 ? span : 13;
-    for (var k = 0; k < attempts; k++) {
-      final candidate = _ranked[begin + (seed + k * 29) % span];
-      if (used.contains(candidate)) continue;
-      final a = items[candidate];
-      final visual = _quality(a) -
-          (a.naturalAspectRatio - target).abs() * 18;
-      if (visual > best) { chosen = candidate; best = visual; }
-    }
-    if (used.contains(chosen)) {
-      for (var k = 0; k < span; k++) {
-        final candidate = _ranked[begin + (seed + k) % span];
-        if (!used.contains(candidate)) { chosen = candidate; break; }
-      }
-    }
-    used.add(chosen);
-    return chosen;
+  /// Browser-safe coordinate permutation with deterministic negative axes.
+  /// For a band of 800, the step is 29 and the horizontal period is 800.
+  static int _cycle(int x, int y, int span) {
+    if (span <= 1) return 0;
+    final stride = math.sqrt(span).floor() | 1;
+    var index = (x + y * stride) % span;
+    if (index < 0) index += span;
+    return index;
   }
 
-  /// Pure sparse lookup: world position, shape and IDs are viewport-independent.
+  /// Sort the four shapes by area and allocate one artwork from each of four
+  /// nonoverlapping score bands. No per-tile independent random sampling.
+  List<int> _indices(int x, int y, List<_Cell> shapes) {
+    final count = _ranked.length;
+    final slots = [0, 1, 2, 3]..sort((a, b) {
+      final difference = shapes[b].area.compareTo(shapes[a].area);
+      return difference != 0 ? difference : a.compareTo(b);
+    });
+    final indices = List<int>.filled(4, 0);
+    for (var band = 0; band < 4; band++) {
+      final begin = count * band ~/ 4;
+      final end = count * (band + 1) ~/ 4;
+      final span = end - begin;
+      final index = span > 0
+          ? _ranked[begin + _cycle(x, y, span)]
+          : _ranked[(band + _cycle(x, y, count)) % count];
+      indices[slots[band]] = index;
+    }
+    return indices;
+  }
+
+  /// Stateless: same world position always yields the same painting and rect.
+  /// Infinite panning, prefetch and recenter remain bounded and deterministic.
   List<WorldTile> visible(Rect world, int count,
       {int limit = 180, Rect? priorityViewport}) {
-    if (world.isEmpty || count <= 0 || count != items.length ||
-        limit <= 0) return const [];
-    final result = <WorldTile>[];
+    if (world.isEmpty || count <= 0 || count != items.length || limit <= 0) {
+      return const [];
+    }
+    final output = <WorldTile>[];
     final left = (world.left / block).floor();
     final right = (world.right / block).floor();
     final top = (world.top / block).floor();
     final bottom = (world.bottom / block).floor();
     for (var x = left; x <= right; x++) {
       for (var y = top; y <= bottom; y++) {
-        final cells = _patterns[_hash(x,y,0) % _patterns.length];
-        final used = <int>{};
-        for (var slot = 0; slot < cells.length; slot++) {
-          final s = cells[slot];
-          final rect = Rect.fromLTWH(x * block + s.x * cell,
-              y * block + s.y * cell, s.w * cell - gap, s.h * cell - gap);
-          // Select even offscreen slots to preserve IDs as viewport moves.
-          final index = _pick(x, y, slot, s, used);
+        final shapes = _patterns[_patternIndex(x, y)];
+        final indices = _indices(x, y, shapes);
+        for (var slot = 0; slot < shapes.length; slot++) {
+          final shape = shapes[slot];
+          final rect = Rect.fromLTWH(
+            x * block + shape.x * cell,
+            y * block + shape.y * cell,
+            shape.w * cell,
+            shape.h * cell,
+          );
           if (!rect.overlaps(world)) continue;
-          result.add(WorldTile(column: x, row: y * 8 + slot,
-              rect: rect, artworkIndex: index));
-          if (priorityViewport == null && result.length >= limit) return result;
+          output.add(WorldTile(
+            column: x, row: y * 8 + slot, rect: rect,
+            artworkIndex: indices[slot]));
+          if (priorityViewport == null && output.length >= limit) {
+            return output;
+          }
         }
       }
     }
-    if (priorityViewport != null && result.length > limit) {
-      final center = priorityViewport.center;
-      result.sort((a,b) {
-        final aa = a.rect.overlaps(priorityViewport) ? 0 : 1;
-        final bb = b.rect.overlaps(priorityViewport) ? 0 : 1;
-        if (aa != bb) return aa.compareTo(bb);
-        final d = (a.rect.center - center).distanceSquared.compareTo(
-            (b.rect.center - center).distanceSquared);
-        return d != 0 ? d : a.key.compareTo(b.key);
+    if (priorityViewport != null && output.length > limit) {
+      final focus = priorityViewport.center;
+      output.sort((a, b) {
+        final aOnScreen = a.rect.overlaps(priorityViewport) ? 0 : 1;
+        final bOnScreen = b.rect.overlaps(priorityViewport) ? 0 : 1;
+        if (aOnScreen != bOnScreen) return aOnScreen.compareTo(bOnScreen);
+        final delta = (a.rect.center - focus).distanceSquared.compareTo(
+          (b.rect.center - focus).distanceSquared);
+        return delta != 0 ? delta : a.key.compareTo(b.key);
       });
-      return result.take(limit).toList(growable: false);
+      return output.take(limit).toList(growable: false);
     }
-    return result;
+    return output;
   }
 }
 
 class _Cell {
-  const _Cell(this.x,this.y,this.w,this.h);
-  final int x,y,w,h;
+  const _Cell(this.x, this.y, this.w, this.h);
+  final int x, y, w, h;
+  int get area => w * h;
 }
