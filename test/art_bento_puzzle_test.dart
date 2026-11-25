@@ -101,6 +101,6 @@ void main() {
     final capped = world.visible(bounds, paintings.length,
         limit: 180, priorityViewport: screen);
     expect(capped.length, lessThanOrEqualTo(180));
-    expect(keys.difference(capped.map((t) => t.key).toSet(), isEmpty);
+    expect(keys.difference(capped.map((t) => t.key).toSet()), isEmpty);
   });
 }
