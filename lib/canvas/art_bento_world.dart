@@ -43,7 +43,7 @@ class ArtBentoWorld {
   }
 
   /// Each pattern tiles exactly the 3x3 grid without overlaps.
-  static const patterns = <List<_Cell>>[
+  static const _patterns = <List<_Cell>>[
     [_Cell(0,0,2,2), _Cell(2,0,1,2), _Cell(0,2,1,1), _Cell(1,2,2,1)],
     [_Cell(0,0,3,2), _Cell(0,2,1,1), _Cell(1,2,1,1), _Cell(2,2,1,1)],
     [_Cell(0,0,1,2), _Cell(1,0,2,1), _Cell(1,1,2,2), _Cell(0,2,1,1)],
@@ -101,7 +101,7 @@ class ArtBentoWorld {
     final bottom = (world.bottom / block).floor();
     for (var x = left; x <= right; x++) {
       for (var y = top; y <= bottom; y++) {
-        final cells = patterns[_hash(x,y,0) % patterns.length];
+        final cells = _patterns[_hash(x,y,0) % patterns.length];
         final used = <int>{};
         for (var slot = 0; slot < cells.length; slot++) {
           final s = cells[slot];

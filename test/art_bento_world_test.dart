@@ -74,7 +74,7 @@ void main() {
         const Rect.fromLTWH(-1500, -1200, 3500, 3700),
         items.length, limit: 180, priorityViewport: viewport);
     expect(render.length, lessThanOrEqualTo(180));
-    expect(onscreen.difference(render.map((t) => t.key).toSet(), isEmpty);
+    expect(onscreen.difference(render.map((t) => t.key).toSet()), isEmpty;
     expect(bento.visible(
         const Rect.fromLTWH(-2000000, 1000000, 900, 1600),
         items.length, limit: 100), isNotEmpty);
