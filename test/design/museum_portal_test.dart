@@ -35,6 +35,26 @@ void main() {
     expect(find.text('La galleria non è disponibile'), findsOneWidget);
   });
 
+  testWidgets('portal structural labels are localized in all six languages',
+      (tester) async {
+    for (final code in ArtDriftLocale.codes) {
+      ArtDriftLocale.current.value = code;
+      await tester.pumpWidget(const MaterialApp(
+        home: MuseumPortal.loading(),
+      ));
+      expect(find.text(ArtDriftLocale.text('portalEntryLabel')),
+          findsOneWidget);
+      expect(find.text(ArtDriftLocale.text('portalFooter')),
+          findsOneWidget);
+
+      await tester.pumpWidget(MaterialApp(
+        home: MuseumPortal.unavailable(onRetry: () {}),
+      ));
+      expect(find.text(ArtDriftLocale.text('portalInterruptionLabel')),
+          findsOneWidget);
+    }
+  });
+
   testWidgets('six locales have nonempty and distinct portal headlines',
       (tester) async {
     final seen = <String>{};
