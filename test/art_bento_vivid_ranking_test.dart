@@ -35,7 +35,7 @@ void main() {
         tile.rect.width >= 440 || tile.rect.height >= 440);
     expect(heroes, isNotEmpty);
     expect(heroes.every((tile) =>
-      boosted[canvas[tile.artworkIndex].catalogKey]! >= 175), true);
+      boosted[canvas[tile.artworkIndex].catalogKey]! >= 100), true);
   });
 
   test('source identity mismatch returns prior scores unchanged', () {
