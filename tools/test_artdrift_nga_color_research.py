@@ -12,6 +12,10 @@ class NgaResearchPolicy(unittest.TestCase):
     def test_no_portraits(self):
         self.assertEqual(nga.title_score("Portrait of a Lady","Claude Monet",1910),0)
         self.assertEqual(nga.title_score("Self-Portrait in a Garden","Vincent van Gogh",1887),0)
+        self.assertEqual(nga.title_score("Woman with a Sunflower","Mary Cassatt",1905),0)
+        self.assertEqual(nga.title_score("Girl in a Boat with Geese","Berthe Morisot",1889),0)
+        self.assertEqual(nga.title_score("Young Peasant Girls Resting in the Fields","Camille Pissarro",1882),0)
+        self.assertEqual(nga.title_score("Waterloo Bridge, London, at Dusk","Claude Monet",1904),0)
         self.assertGreater(nga.title_score("Garden at Vetheuil","Claude Monet",1880),0)
 
     def test_official_image_only(self):
