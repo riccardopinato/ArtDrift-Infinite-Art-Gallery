@@ -18,6 +18,11 @@ class NgaResearchPolicy(unittest.TestCase):
         self.assertEqual(nga.title_score("Waterloo Bridge, London, at Dusk","Claude Monet",1904),0)
         self.assertGreater(nga.title_score("Garden at Vetheuil","Claude Monet",1880),0)
 
+    def test_visual_qa_exclusions(self):
+        self.assertIn("46622",nga.VISUAL_QA_EXCLUSIONS)
+        self.assertIn("164936",nga.VISUAL_QA_EXCLUSIONS)
+        self.assertIn("164950",nga.VISUAL_QA_EXCLUSIONS)
+
     def test_official_image_only(self):
         self.assertIsNone(nga.image_url("https://api.nga.gov.evil.example/iiif/x"))
         self.assertIsNone(nga.image_url("http://api.nga.gov/iiif/x"))
