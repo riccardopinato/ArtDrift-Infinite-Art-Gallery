@@ -25,6 +25,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/gallery/catalog.json
+    - assets/doppleganger.json
     - assets/gallery/thumbs/
     - assets/museums/catalog.json
     - assets/museums/catalog_global.json

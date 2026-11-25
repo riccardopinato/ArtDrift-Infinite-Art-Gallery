@@ -3,6 +3,7 @@ import 'package:flutter/painting.dart';
 
 import 'canvas/infinite_gallery.dart';
 import 'screens/search_sheet.dart';
+import 'screens/doppleganger.dart';
 import 'screens/settings_sheet.dart';
 import 'screens/favorites_sheet.dart';
 import 'ui/gallery_toolbar.dart';
@@ -156,6 +157,19 @@ class _GalleryHomeState extends State<GalleryHome> {
           onFavorites: _openFavorites,
           onSettings: () => showArtDriftSettings(context),
         ))),
+      Positioned(
+        right: 16,
+        bottom: 16,
+        child: SafeArea(
+          child: FilledButton.tonalIcon(
+            onPressed: () => Navigator.of(context).push<void>(
+              MaterialPageRoute(builder: (_) => const DopplegangerScreen()),
+            ),
+            icon: const Icon(Icons.compare_outlined),
+            label: const Text('Doppleganger'),
+          ),
+        ),
+      ),
     ]));
   }
 }
