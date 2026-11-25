@@ -74,3 +74,57 @@ jobs:
           name: ArtDrift-modern-masters-discovery-HOLD
           path: .artdrift_research/modern_masters/discover_report.json
           if-no-files-found: warn
+
+  modern-evidence-archive:
+    if: github.ref_name == 'feat/artdrift-curated-modern-53-20261125'
+    needs: [modern-target, modern-discovery]
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    permissions: {contents: write}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: ArtDrift-modern-masters-*
+          path: .artdrift_research/modern_masters
+          merge-multiple: true
+      - name: Validate independent evidence reports and archive as non-runtime research
+        run: |
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          root=Path('.artdrift_research/modern_masters')
+          t=json.loads((root/'target_report.json').read_text())
+          d=json.loads((root/'discover_report.json').read_text())
+          i=json.loads((root/'inventory_report.json').read_text())
+          assert i['total']==53
+          assert t['integrated_into_runtime']==0 and d['integrated_into_runtime']==0
+          assert t['approved_for_worldwide']==0 and d['approved_for_worldwide']==0
+          assert len(t['media_review_records'])==t['media_verified']
+          assert len(d['candidates'])==d['new_candidate_ids']
+          assert all(x['runtime_visible'] is False and
+                     x['publication_status'].startswith('HOLD_')
+                     for x in t['media_review_records']+d['candidates'])
+          dest=Path('research/observations/20261125')
+          dest.mkdir(parents=True,exist_ok=True)
+          for name in ('target_report.json','discover_report.json','inventory_report.json'):
+              (dest/name).write_bytes((root/name).read_bytes())
+          (dest/'provenance.json').write_text(json.dumps({
+              'source_commit':os.environ['GITHUB_SHA'],
+              'workflow_run_id':os.environ['GITHUB_RUN_ID'],
+              'staging_only':True,'catalog_runtime_changed':False,
+              'images_verified':t['media_verified'],
+              'already_in_main':t['already_in_main_catalog'],
+              'additional_discoveries':d['new_candidate_ids'],
+              'worldwide_clearance_count':0},indent=2)+'\n')
+          print('STAGED_SOURCE_EVIDENCE',t['media_verified'],d['new_candidate_ids'])
+          PY
+      - name: Commit research-only evidence on dedicated Draft PR branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add research/observations/20261125/
+          if ! git diff --cached --quiet; then
+            git commit -m "research(artdrift): freeze official API evidence, media hashes and 24 discoveries (HOLD)"
+            git push origin HEAD:feat/artdrift-curated-modern-53-20261125
+          fi
