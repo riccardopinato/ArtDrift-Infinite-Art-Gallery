@@ -34,8 +34,25 @@ void main() {
     final heroes = tiles.where((tile) =>
         tile.rect.width >= 440 || tile.rect.height >= 440);
     expect(heroes, isNotEmpty);
+    // "Most colorful in the largest frames" is relative to the real
+    // 3,200-image canvas. An arbitrary fixed 100 cutoff wrongly penalized
+    // a valid top quartile after user-pinned selection changes.
+    final sortedScores = canvas.map((a) => boosted[a.catalogKey]!).toList()
+      ..sort((a,b) => b.compareTo(a));
+    final heroQuartileCutoff = sortedScores[(canvas.length - 1) ~/ 4];
     expect(heroes.every((tile) =>
-      boosted[canvas[tile.artworkIndex].catalogKey]! >= 100), true);
+        boosted[canvas[tile.artworkIndex].catalogKey]! >=
+          heroQuartileCutoff), true);
+    final small = tiles.where((tile) =>
+        tile.rect.width == 150 && tile.rect.height == 150);
+    expect(small, isNotEmpty);
+    final smallestHero = heroes
+        .map((tile) => boosted[canvas[tile.artworkIndex].catalogKey]!)
+        .reduce((a,b) => a < b ? a : b);
+    final brightestSmall = small
+        .map((tile) => boosted[canvas[tile.artworkIndex].catalogKey]!)
+        .reduce((a,b) => a > b ? a : b);
+    expect(smallestHero, greaterThanOrEqualTo(brightestSmall));
   });
 
   test('source identity mismatch returns prior scores unchanged', () {

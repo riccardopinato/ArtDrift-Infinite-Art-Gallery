@@ -41,9 +41,12 @@ class ArtBentoWorld {
 
   double _quality(Artwork art) {
     final labels = art.title + ' ' + art.subjectTerms.join(' ');
-    return (scores[art.catalogKey] ?? 0).toDouble() +
-        (_scenery.hasMatch(labels) ? 14 : 0) -
-        (_portrait.hasMatch(art.title) ? 22 : 0);
+    // Measured image colors must strictly outrank descriptive metadata:
+    // otherwise a richly titled dark painting may displace a brighter one
+    // into the hero tier, leaving the colorful work in a tiny frame.
+    return (scores[art.catalogKey] ?? 0) * 100.0 +
+        (_scenery.hasMatch(labels) ? 10 : 0) -
+        (_portrait.hasMatch(art.title) ? 10 : 0);
   }
 
   // Every pattern contains precisely four pieces covering all nine 150px
