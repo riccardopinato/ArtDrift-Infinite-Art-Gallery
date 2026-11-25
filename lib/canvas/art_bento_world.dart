@@ -37,7 +37,14 @@ class ArtBentoWorld {
     var h = ((x * 73856093) ^ (y * 19349663) ^ (salt * 83492791))
         & 0x7fffffff;
     h ^= h >> 13;
-    h = (h * 1274126177) & 0x7fffffff;
+    // Multiplication modulo 2^31 with exact small limbs on Dart Web.
+    const factor = 1274126177;
+    final lo = h & 0xffff;
+    final hi = (h >> 16) & 0x7fff;
+    final productLo = lo * (factor & 0xffff);
+    final productHi = hi * (factor & 0xffff) +
+        lo * ((factor >> 16) & 0xffff) + productLo ~/ 65536;
+    h = (productHi % 32768) * 65536 + (productLo % 65536);
     h ^= h >> 16;
     return h & 0x7fffffff;
   }

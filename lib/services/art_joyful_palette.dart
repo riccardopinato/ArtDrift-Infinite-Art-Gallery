@@ -12,11 +12,23 @@ class ArtJoyfulPalette {
   ArtJoyfulPalette._();
   static const assetPath = 'assets/museums/canvas_joyful_pixel_scores_v2.json';
 
+  /// FNV-1a 32, computed with 16-bit limbs. A native 32-bit multiply
+  /// loses integer precision in JavaScript (Dart Web), incorrectly rejecting
+  /// the otherwise valid 4,500-record color manifest. No fingerprint change.
   static int fingerprint(List<String> keys) {
     var hash = 0x811c9dc5;
     for (final key in keys) {
       for (final byte in utf8.encode('$key\u0000')) {
-        hash = ((hash ^ byte) * 0x01000193) & 0xffffffff;
+        var mixed = hash ^ byte;
+        if (mixed < 0) mixed += 0x100000000;
+        final low = mixed % 65536;
+        final high = mixed ~/ 65536;
+        const primeLow = 0x0193;
+        const primeHigh = 0x0100;
+        final lowProduct = low * primeLow;
+        final highProduct = high * primeLow +
+            low * primeHigh + lowProduct ~/ 65536;
+        hash = (highProduct % 65536) * 65536 + lowProduct % 65536;
       }
     }
     return hash;

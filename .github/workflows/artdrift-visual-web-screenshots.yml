@@ -23,6 +23,7 @@ jobs:
           flutter pub get
           flutter analyze --no-fatal-infos
           flutter test
+          flutter test --platform chrome test/art_joyful_browser_test.dart
           flutter build web --release
       - name: Capture 390 and 820 px real viewport screenshots, Chrome headless
         run: |
