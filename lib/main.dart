@@ -132,9 +132,10 @@ class _GalleryHomeState extends State<GalleryHome> {
           onSettings: () => showArtDriftSettings(context),
         ))),
       Positioned(
-        right: 16,
-        bottom: 16,
+        left: 16,
+        bottom: 73,
         child: SafeArea(
+          top: false,
           child: FilledButton.tonalIcon(
             onPressed: () => Navigator.of(context).push<void>(
               MaterialPageRoute(builder: (_) => const DopplegangerScreen()),
