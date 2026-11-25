@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:flutter/foundation.dart';
 import '../models/artwork.dart';
 import 'art_joyful_palette.dart';
 
@@ -22,7 +21,6 @@ class ArtBentoVividRanking {
 
   /// Pure transform: existing score manifest must agree with full catalog,
   /// otherwise return the unmodified original map (fail closed).
-  @visibleForTesting
   static Map<String,int> prioritize(List<Artwork> catalog,
       Map<String,int> pixelScores) {
     if (catalog.length != 4500 || pixelScores.length != catalog.length) {
