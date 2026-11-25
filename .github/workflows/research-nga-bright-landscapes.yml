@@ -1,0 +1,68 @@
+name: Art Drift NGA Open Access — color-first landscape research
+on:
+  push:
+    branches: [research/artdrift-nga-bright-landscapes-20261125]
+    paths:
+      - tools/artdrift_nga_color_research.py
+      - tools/test_artdrift_nga_color_research.py
+      - docs/ARTDRIFT_NGA_COLOR_RESEARCH_20261125.md
+      - .github/workflows/research-nga-bright-landscapes.yml
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: artdrift-nga-color-first-research
+  cancel-in-progress: false
+jobs:
+  color-intake:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install image decoder (research only)
+        run: python -m pip install --disable-pip-version-check Pillow==11.3.0
+      - name: Verify deterministic rules and source syntax
+        run: |
+          python -m py_compile tools/artdrift_nga_color_research.py
+          python -m unittest discover -s tools -p test_artdrift_nga_color_research.py -v
+      - name: Audit NGA official objects and Open Access images, then 130 real color samples
+        run: python -u tools/artdrift_nga_color_research.py --max-probe 130 --max-accepted 100 --workers 4
+      - name: Preserve image evidence (not runtime assets)
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ArtDrift-NGA-OpenAccess-bright-landscapes-research
+          path: .artdrift_research/nga_color/
+          include-hidden-files: true
+          if-no-files-found: warn
+      - name: Verify no public catalog ever changed
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          report=json.loads(Path('.artdrift_research/nga_color/nga_bright_review.json').read_text())
+          assert report['runtime_imported']==0
+          assert report['commercial_worldwide_approved']==0
+          assert report['portrait_count']==0
+          assert report['selected_bright_landscape_works']>=10
+          assert len({r['museum_native_id'] for r in report['works']})==len(report['works'])
+          assert all(r['museum_source']=='nga' and r['public_domain_image_flag'] and
+                     r['color_metrics']['bright_color_pass'] and
+                     r['publication_status'].startswith('HOLD') and
+                     not r['runtime_visible'] for r in report['works'])
+          print('NGA_BRIGHT_NO_RUNTIME_MUTATION',report['selected_bright_landscape_works'])
+          PY
+      - name: Commit selected source evidence to research branch (not assets)
+        run: |
+          mkdir -p research/nga/20261125
+          cp .artdrift_research/nga_color/nga_bright_review.json research/nga/20261125/nga_bright_review.json
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add research/nga/20261125/nga_bright_review.json
+          if ! git diff --cached --quiet; then
+            git commit -m "research(artdrift): NGA bright landscapes verified and rights-HOLD evidence"
+            git push origin HEAD:research/artdrift-nga-bright-landscapes-20261125
+          fi
