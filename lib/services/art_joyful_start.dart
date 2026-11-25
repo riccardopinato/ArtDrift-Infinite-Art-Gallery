@@ -43,7 +43,7 @@ class ArtJoyfulStart {
     math.Random? random,
     Offset? previous,
     bool Function(Artwork)? hasImage,
-    int candidates = 44,
+    int candidates = 96,
     Map<String,int> pixelScores = const {},
   }) {
     if (items.isEmpty) return Offset.zero;
@@ -75,17 +75,25 @@ class ArtJoyfulStart {
         final art = items[tile.artworkIndex];
         final text = '${art.title} ${art.subjectTerms.join(' ')}';
         if (source(art)) {
-          score += 3 + ((pixelScores[art.catalogKey] ?? 0) / 255.0) * 16;
+          final measured = pixelScores[art.catalogKey];
+          // The photographed pixels outrank title-only classifications.
+          // Low-saturation / dark tiles should not dominate the first view.
+          if (measured == null) {
+            score += 2;
+          } else {
+            score += 2 + measured / 255.0 * 36;
+            if (measured < 50) score -= 8;
+          }
         } else {
-          score -= 20;
+          score -= 24;
         }
-        if (_landscape.hasMatch(text)) { score += 7; landscapes++; }
-        if (_floral.hasMatch(text)) score += 6;
+        if (_landscape.hasMatch(text)) { score += 4; landscapes++; }
+        if (_floral.hasMatch(text)) score += 4;
         if (_portrait.hasMatch(art.title)) score -= 6;
         if (_modern.hasMatch(art.date)) score += 1.5;
       }
       if (unique.isNotEmpty) {
-        score = score / unique.length + landscapes * 0.65 +
+        score = score / unique.length + landscapes * 0.45 +
             rng.nextDouble() * 0.3;
         scored.add((center: location, score: score));
       }
@@ -95,7 +103,7 @@ class ArtJoyfulStart {
       return (previous ?? Offset.zero) + const Offset(1278, 1620);
     }
     scored.sort((a, b) => b.score.compareTo(a.score));
-    final best = math.min(5, scored.length);
+    final best = math.min(3, scored.length);
     return scored[rng.nextInt(best)].center;
   }
 
