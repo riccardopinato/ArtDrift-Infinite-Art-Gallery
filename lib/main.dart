@@ -4,6 +4,7 @@ import 'package:flutter/painting.dart';
 import 'canvas/infinite_gallery.dart';
 import 'canvas/art_bento_world.dart';
 import 'services/art_bento_vivid_ranking.dart';
+import 'services/art_real_preview_dimensions.dart';
 import 'screens/search_sheet.dart';
 import 'screens/doppleganger.dart';
 import 'screens/settings_sheet.dart';
@@ -78,6 +79,9 @@ class _GalleryHomeState extends State<GalleryHome> {
       // Use real pixel chroma/brightness, with the pinned color-first
       // playlist as a fail-closed fallback for any catalogue identity drift.
       final pixelScores = await ArtJoyfulPalette.load(works);
+      // Measure bundled source pictures by their actual WebP bytes;
+      // museum thumbnail metadata can describe a different crop.
+      final imageRatios = await ArtRealPreviewDimensions.load(works);
       final vibrant = ArtJoyfulPalette.select(works, pixelScores);
       final colorFirst = vibrant.isNotEmpty ? vibrant :
           await ArtVisualColorSelection.select(works);
@@ -88,7 +92,8 @@ class _GalleryHomeState extends State<GalleryHome> {
       // manifest fails closed. Without scores, metadata-only ranking remains
       // deterministic; verified pixel scores are still preferred when present.
       final vividScores = ArtBentoVividRanking.prioritize(works, pixelScores);
-      final bento = canvas.isNotEmpty ? ArtBentoWorld(canvas, vividScores) : null;
+      final bento = canvas.isNotEmpty ? ArtBentoWorld(
+          canvas, vividScores, actualRatios: imageRatios) : null;
       if (!mounted) return;
       // A new region only on a fresh app opening, not on catalogue refresh.
       final launch = _launchWorldCenter ??

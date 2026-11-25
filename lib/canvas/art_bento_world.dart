@@ -19,7 +19,8 @@ import '../models/artwork.dart';
 /// With finitely many works, remote repetition is unavoidable on an infinite
 /// plane; painting identity is always stable when returning to coordinates.
 class ArtBentoWorld {
-  ArtBentoWorld(this.items, this.scores)
+  ArtBentoWorld(this.items, this.scores,
+      {this.actualRatios = const {}})
       : _ranked = List<int>.generate(items.length, (i) => i) {
     _ranked.sort((a, b) {
       final score = (scores[items[b].catalogKey] ?? 0)
@@ -32,6 +33,8 @@ class ArtBentoWorld {
 
   final List<Artwork> items;
   final Map<String, int> scores;
+  /// Exact locally packaged WebP aspect ratios, keyed to museum source ID.
+  final Map<String, double> actualRatios;
   final List<int> _ranked;
 
   /// XL receives the top 25% score band, L the next 25%, and so on.
@@ -81,12 +84,17 @@ class ArtBentoWorld {
     if (count > 0) {
       for (var i = 0; i < count; i++) {
         final index = _ranked[start + (offset + i) % count];
-        edges.add(edges.last +
-            _heights[phase] * items[index].naturalAspectRatio);
+        final art = items[index];
+        final ratio = actualRatios[art.catalogKey] ??
+            art.naturalAspectRatio;
+        edges.add(edges.last + _heights[phase] *
+            (ratio.isFinite && ratio > 0 ? ratio :
+                art.naturalAspectRatio));
       }
     } else if (_ranked.isNotEmpty) {
+      final art = items[_ranked[row % _ranked.length]];
       edges.add(_heights[phase] *
-          items[_ranked[row % _ranked.length]].naturalAspectRatio);
+          (actualRatios[art.catalogKey] ?? art.naturalAspectRatio));
     }
     final value = _Strip(
       row: row, rankStart: start,

@@ -31,6 +31,7 @@ flutter:
     - assets/museums/catalog_global.json
     - assets/museums/canvas_visual_color_v1.json
     - assets/museums/canvas_joyful_pixel_scores_v2.json
+    - assets/museums/canvas_real_webp_dimensions_v1.json
     - assets/museums/thumbs/
     # Reconciled source-identity-verified WebP pack shared by Android/Web.
     - web/museum_thumbs/
