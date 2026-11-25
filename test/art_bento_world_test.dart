@@ -25,9 +25,9 @@ void main() {
         items.length, limit: 1000);
     expect(tiles.length, greaterThan(100));
     expect(tiles.map((t) => t.rect.width).toSet(),
-        containsAll([145.0, 295.0, 445.0]));
+        containsAll([150.0, 300.0, 450.0]));
     expect(tiles.map((t) => t.rect.height).toSet(),
-        containsAll([145.0, 295.0, 445.0]));
+        containsAll([150.0, 300.0, 450.0]));
     expect(tiles.any((t) => t.rect.width > t.rect.height), isTrue);
     expect(tiles.any((t) => t.rect.height > t.rect.width), isTrue);
   });
@@ -54,7 +54,7 @@ void main() {
     final large = tiles.where((t) =>
         t.rect.width >= 440 || t.rect.height >= 440).toList();
     final small = tiles.where((t) =>
-        t.rect.width == 145 && t.rect.height == 145).toList();
+        t.rect.width == 150 && t.rect.height == 150).toList();
     expect(large, isNotEmpty);
     expect(small, isNotEmpty);
     final minLarge = large.map((t) =>

@@ -33,9 +33,9 @@ void main() {
     final tiles = bento.visible(area, artworks.length, limit: 900);
     expect(tiles, isNotEmpty);
     expect(tiles.map((t) => t.rect.width).toSet(),
-        containsAll([145.0, 295.0, 445.0]));
+        containsAll([150.0, 300.0, 450.0]));
     expect(tiles.map((t) => t.rect.height).toSet(),
-        containsAll([145.0, 295.0, 445.0]));
+        containsAll([150.0, 300.0, 450.0]));
     expect(tiles.any((t) => t.rect.width > t.rect.height), isTrue);
     expect(tiles.any((t) => t.rect.height > t.rect.width), isTrue);
   });
