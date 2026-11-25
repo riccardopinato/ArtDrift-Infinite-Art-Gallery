@@ -7,7 +7,11 @@ import 'package:url_launcher/url_launcher.dart';
 import '../ui/localization.dart';
 
 class DopplegangerScreen extends StatefulWidget {
-  const DopplegangerScreen({super.key});
+  const DopplegangerScreen({super.key, this.catalogLoader});
+
+  /// Allows deterministic catalogue loading in widget tests without changing
+  /// the bundled, verified portrait catalogue used by the actual app.
+  final Future<List<Map<String, dynamic>>> Function()? catalogLoader;
 
   @override
   State<DopplegangerScreen> createState() => _DopplegangerScreenState();
@@ -22,6 +26,9 @@ class _DopplegangerScreenState extends State<DopplegangerScreen> {
   String _text(String key) => ArtDriftLocale.text(key);
 
   Future<List<Map<String, dynamic>>> _load() async {
+    if (widget.catalogLoader != null) {
+      return widget.catalogLoader!();
+    }
     final raw = await rootBundle.loadString('assets/doppleganger.json');
     final rows = (jsonDecode(raw) as List).cast<Map<String, dynamic>>();
     final verified = rows.where((row) => row['status'] == 'verified').toList();
