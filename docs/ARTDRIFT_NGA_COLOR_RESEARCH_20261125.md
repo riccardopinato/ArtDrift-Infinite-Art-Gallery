@@ -53,4 +53,7 @@ Questi limiti possono essere ulteriormente corretti dopo collaudo visivo su imma
 
 Report `.artdrift_research/nga_color/nga_bright_review.json` e contact sheet destinati alla CI. Solo i record con `openaccess=1` e verifica immagine entreranno come CANDIDATE, non come MAIN_LIVE o PLAY_READY. Le immagini sono richieste in basso peso solo per selezione, MAI inserite automaticamente in APK/D1/R2.
 
+## QA visivo aggiuntivo (25 novembre 2026)
+Il foglio con 25 immagini reali della prima wave ha individuato tre falsi positivi: NGA 46622 (The Basket of Flowers, figura femminile grande), NGA 164936 (The Watering Can, natura morta industriale e poco vivace) e NGA 164950 (Landscape, Ile-de-France, tavolozza quasi beige). Questi tre ID sono bloccati esplicitamente dal motore di ricerca e vengono esclusi dalla nuova selezione, senza alterare le immagini o il catalogo runtime. Il conteggio finale va letto dalla CI successiva a questa correzione.
+
 Stato: RESEARCH_PENDING_CI; 0 nuove opere integrate da questa PR. La precedente wave SMK è autonoma in PR #68. Nessun merge/deploy senza gate pertinenti.
