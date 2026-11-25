@@ -45,7 +45,7 @@ class ArtBentoVividRanking {
     // Non-hero supporting imagery retains its relative source pixel score,
     // but cannot displace the vetted vivid band in the XL frames.
     final result = <String,int>{
-      for (final key in keys) key: (pixelScores[key] ?? 0).clamp(0,70),
+      for (final key in keys) key: (pixelScores[key] ?? 0).clamp(0,70).toInt(),
     };
     for (var rank=0; rank<indices.length; rank++) {
       result[keys[indices[rank]]] = 255 - (rank * 144 ~/ (count-1));
