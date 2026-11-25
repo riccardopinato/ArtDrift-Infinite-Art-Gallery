@@ -1,5 +1,4 @@
 import 'dart:collection';
-import 'dart:math' as math;
 import 'dart:ui';
 
 import 'package:drift_core/drift_core.dart';
@@ -90,7 +89,7 @@ class ArtBentoWorld {
           items[_ranked[row % _ranked.length]].naturalAspectRatio);
     }
     final value = _Strip(
-      row: row, height: _heights[phase], rankStart: start,
+      row: row, rankStart: start,
       count: count, offset: offset, edges: edges,
     );
     _cache[row] = value;
@@ -203,13 +202,11 @@ class ArtBentoWorld {
 class _Strip {
   const _Strip({
     required this.row,
-    required this.height,
     required this.rankStart,
     required this.count,
     required this.offset,
     required this.edges,
   });
   final int row, rankStart, count, offset;
-  final double height;
   final List<double> edges;
 }
