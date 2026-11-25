@@ -1,0 +1,23 @@
+name: Art Drift — measure actual WebP preview dimensions
+on:
+  push:
+    branches: ['feat/artdrift-joyful-random-start-*']
+    paths:
+      - 'scripts/generate_real_webp_dimensions.py'
+      - '.github/workflows/artdrift-real-webp-dimensions.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  dimensions:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Scan WebP RIFF headers and generate source-bound aspect manifest
+        run: python3 scripts/generate_real_webp_dimensions.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: artdrift-real-webp-dimensions
+          path: assets/museums/canvas_real_webp_dimensions_v1.json
+          if-no-files-found: error
