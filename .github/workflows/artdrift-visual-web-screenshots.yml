@@ -1,7 +1,7 @@
 name: Art Drift genuine Flutter Web screenshot evidence (no APK)
 on:
   push:
-    branches: ['research/artdrift-visual-*', 'research/artdrift-roadmap-review-*']
+    branches: ['research/artdrift-visual-*', 'research/artdrift-roadmap-review-*', 'feat/artdrift-joyful-random-start-*']
   workflow_dispatch:
 permissions:
   contents: read
@@ -23,6 +23,7 @@ jobs:
           flutter pub get
           flutter analyze --no-fatal-infos
           flutter test
+          flutter test --platform chrome test/art_joyful_browser_test.dart
           flutter build web --release
       - name: Capture 390 and 820 px real viewport screenshots, Chrome headless
         run: |
@@ -55,8 +56,20 @@ jobs:
                   image.load()
                   stats=ImageStat.Stat(image.convert('RGB').resize((80,80)))
                   variance=sum(stats.var)/3
+                  # Empty world/letterbox pixels were the owner's real
+                  # regression: a plausible pixel variance alone is not QA.
+                  # The center area excludes toolbar and bottom actions.
+                  core=image.convert('RGB').crop((0,150,image.width,image.height-100))
+                  darks=((36,35,42),(16,17,23))
+                  empty=sum(1 for pixel in core.getdata()
+                      if any(all(abs(pixel[i]-bg[i])<=5 for i in range(3))
+                             for bg in darks))
+                  empty_fraction=empty/(core.width*core.height)
                   row={'file':p.name,'width':image.width,'height':image.height,
-                       'pixel_variance':round(variance,2),'visual_approval':'PENDING_REVIEW'}
+                       'pixel_variance':round(variance,2),
+                       'empty_background_fraction':round(empty_fraction,5),
+                       'visual_approval':'PENDING_REVIEW'}
+                  assert empty_fraction<0.05,'Visible empty mosaic background'
               assert row['width']>=300 and row['height']>=400
               assert row['pixel_variance']>25,'Blank render'
               rows.append(row)

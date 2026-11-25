@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 
 import 'canvas/infinite_gallery.dart';
+import 'canvas/art_bento_world.dart';
+import 'services/art_bento_vivid_ranking.dart';
+import 'services/art_real_preview_dimensions.dart';
 import 'screens/search_sheet.dart';
 import 'screens/doppleganger.dart';
 import 'screens/settings_sheet.dart';
@@ -14,6 +17,10 @@ import 'screens/artwork_detail.dart';
 import 'services/catalog_service.dart';
 import 'services/favorites.dart';
 import 'services/art_offline_thumbnail_index.dart';
+import 'services/art_mobile_canvas_selection.dart';
+import 'services/art_visual_color_selection.dart';
+import 'services/art_joyful_palette.dart';
+import 'services/art_joyful_start.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -50,6 +57,9 @@ class _GalleryHomeState extends State<GalleryHome> {
   final CatalogService _catalog = CatalogService();
   final Favorites _favorites = Favorites();
   List<Artwork> _artworks = [];
+  List<Artwork> _canvasArtworks = [];
+  Offset? _launchWorldCenter;
+  ArtBentoWorld? _bento;
   bool _loading = true;
   String? _error;
 
@@ -66,8 +76,38 @@ class _GalleryHomeState extends State<GalleryHome> {
       // Fetch a tiny same-origin index before mounting remote image widgets.
       await ArtOfflineThumbnailIndex.instance.initialize();
       final works = await _catalog.load(refresh: refresh);
+      // Use real pixel chroma/brightness, with the pinned color-first
+      // playlist as a fail-closed fallback for any catalogue identity drift.
+      final pixelScores = await ArtJoyfulPalette.load(works);
+      // Measure bundled source pictures by their actual WebP bytes;
+      // museum thumbnail metadata can describe a different crop.
+      final imageRatios = await ArtRealPreviewDimensions.load(works);
+      final vibrant = ArtJoyfulPalette.select(works, pixelScores);
+      final colorFirst = vibrant.isNotEmpty ? vibrant :
+          await ArtVisualColorSelection.select(works);
+      final extras = ArtJoyfulPalette.supplement(works, pixelScores, colorFirst);
+      final canvas = await ArtMobileCanvasSelection.select(works,
+        initialColorPlaylist: colorFirst, additionalColorPlaylist: extras);
+      // The new layout is the approved Art UI even if the optional color
+      // manifest fails closed. Without scores, metadata-only ranking remains
+      // deterministic; verified pixel scores are still preferred when present.
+      final vividScores = ArtBentoVividRanking.prioritize(works, pixelScores);
+      final bento = canvas.isNotEmpty ? ArtBentoWorld(
+          canvas, vividScores, actualRatios: imageRatios) : null;
       if (!mounted) return;
-      setState(() { _artworks = works; _loading = false; });
+      // A new region only on a fresh app opening, not on catalogue refresh.
+      final launch = _launchWorldCenter ??
+          await ArtJoyfulStart.chooseForLaunch(canvas,
+            viewport: MediaQuery.sizeOf(context),
+            pixelScores: vividScores, bento: bento);
+      if (!mounted) return;
+      setState(() {
+        _artworks = works;
+        _canvasArtworks = canvas.isNotEmpty ? canvas : works;
+        _bento = bento;
+        _launchWorldCenter = launch;
+        _loading = false;
+      });
     } catch (error) {
       if (!mounted) return;
       setState(() { _loading = false; _error = '$error'; });
@@ -124,7 +164,12 @@ class _GalleryHomeState extends State<GalleryHome> {
       return MuseumPortal.unavailable(onRetry: _initialize);
     }
     return Scaffold(body: Stack(fit: StackFit.expand, children: [
-      InfiniteGallery(artworks: _artworks, onOpen: _open),
+      InfiniteGallery(
+        artworks: _canvasArtworks,
+        onOpen: _open,
+        initialWorldCenter: _launchWorldCenter,
+        bento: _bento,
+      ),
       Positioned(top: 0, left: 0, right: 0,
         child: SafeArea(bottom: false, child: ArtDriftToolbar(
           onSearch: _openSearch,

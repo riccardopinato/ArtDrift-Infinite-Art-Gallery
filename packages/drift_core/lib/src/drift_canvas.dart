@@ -10,6 +10,13 @@ import 'world_layout.dart';
 typedef DriftPrefetchItem<T> = Future<void> Function(
     BuildContext context, T item, double zoom);
 
+/// Optional product-specific geometry. Null preserves canonical Gallery columns.
+typedef DriftTileLayout = List<WorldTile> Function(Rect bounds, int count,
+    {int limit, Rect? priorityViewport});
+/// Optional product-specific image framing by the actual tile geometry.
+typedef DriftTileBuilder<T> = Widget Function(
+    BuildContext context, T item, double zoom, WorldTile tile);
+
 /// Infinite mosaic shared by Art Drift and Gallery Drift.
 /// Camera/world mapping and tile identity remain unchanged.
 class DriftCanvas<T> extends StatefulWidget {
@@ -24,6 +31,9 @@ class DriftCanvas<T> extends StatefulWidget {
     required this.hintText,
     required this.recenterTooltip,
     this.prefetchItem,
+    this.initialWorldCenter,
+    this.tileLayout,
+    this.tileBuilderWithTile,
   });
 
   final List<T> items;
@@ -31,6 +41,14 @@ class DriftCanvas<T> extends StatefulWidget {
   final Widget Function(BuildContext, T, double) tileBuilder;
   final String cameraKey, compactBrand, fullBrand, hintText, recenterTooltip;
   final DriftPrefetchItem<T>? prefetchItem;
+  final DriftTileLayout? tileLayout;
+  final DriftTileBuilder<T>? tileBuilderWithTile;
+
+  /// Optional Art-only launch destination in immutable world coordinates.
+  /// When set, the launch intentionally ignores saved camera x/y/zoom but
+  /// still restores the user's automatic-scroll speed. Default preserves
+  /// original camera persistence for GalleryDrift and legacy consumers.
+  final Offset? initialWorldCenter;
 
   @override
   State<DriftCanvas<T>> createState() => _DriftCanvasState<T>();
@@ -61,6 +79,16 @@ class _DriftCanvasState<T> extends State<DriftCanvas<T>>
   bool _controlsDimmed = false;
   int _autoSpeed = 25;
   Size _viewport = Size.zero;
+
+  List<WorldTile> _visible(Rect bounds, int count,
+      {int limit = 180, Rect? priorityViewport}) {
+    final layout = widget.tileLayout;
+    return layout == null
+        ? _world.visible(bounds, count, limit: limit,
+            priorityViewport: priorityViewport)
+        : layout(bounds, count, limit: limit,
+            priorityViewport: priorityViewport);
+  }
 
   static const int _prefetchBatchSize = 8;
   static const int _warmHistoryLimit = 256;
@@ -157,7 +185,8 @@ class _DriftCanvasState<T> extends State<DriftCanvas<T>>
       if (speed != null && const [25, 50, 75, 100].contains(speed)) {
         _autoSpeed = speed;
       }
-      if (prefs.containsKey('${widget.cameraKey}.x')) {
+      if (widget.initialWorldCenter == null &&
+          prefs.containsKey('${widget.cameraKey}.x')) {
         _offset = Offset(
           prefs.getDouble('${widget.cameraKey}.x') ?? 0,
           prefs.getDouble('${widget.cameraKey}.y') ?? 0);
@@ -247,7 +276,7 @@ class _DriftCanvasState<T> extends State<DriftCanvas<T>>
         visible, movement, auto: _autoRunning);
     final priority = Rect.fromCenter(
         center: focus, width: visible.width, height: visible.height);
-    final futureTiles = _world.visible(nearby, widget.items.length,
+    final futureTiles = _visible(nearby, widget.items.length,
         limit: 240, priorityViewport: priority);
     futureTiles.sort((a, b) {
       final aDelta = (a.rect.center - focus).distanceSquared;
@@ -348,7 +377,11 @@ class _DriftCanvasState<T> extends State<DriftCanvas<T>>
     return LayoutBuilder(builder: (context, constraints) {
       _viewport = Size(constraints.maxWidth, constraints.maxHeight);
       if (!_cameraInitialized) {
-        _offset = Offset(_viewport.width / 2, _viewport.height / 2);
+        final start = widget.initialWorldCenter ?? Offset.zero;
+        _offset = Offset(
+          _viewport.width / 2 - start.dx * _zoom,
+          _viewport.height / 2 - start.dy * _zoom,
+        );
         _cameraInitialized = true;
       }
       // Narrow render overdraw stays bounded; separate prefetch is farther out.
@@ -363,7 +396,7 @@ class _DriftCanvasState<T> extends State<DriftCanvas<T>>
         (_viewport.width - _offset.dx) / _zoom,
         (_viewport.height - _offset.dy) / _zoom,
       );
-      final tiles = _world.visible(bounds, widget.items.length,
+      final tiles = _visible(bounds, widget.items.length,
           priorityViewport: actualViewport);
       _queuePrefetch(actualViewport);
       return Stack(fit: StackFit.expand, children: [
@@ -386,10 +419,16 @@ class _DriftCanvasState<T> extends State<DriftCanvas<T>>
                       _pauseAuto();
                       widget.onOpen(widget.items[tile.artworkIndex]);
                     },
-                    child: ColoredBox(
-                      color: const Color(0xFF24232A),
-                      child: widget.tileBuilder(context,
-                          widget.items[tile.artworkIndex], _zoom),
+                    child: ClipRect(
+                      child: SizedBox.expand(
+                        child: ColoredBox(
+                          color: const Color(0xFF24232A),
+                          child: widget.tileBuilderWithTile?.call(context,
+                                widget.items[tile.artworkIndex], _zoom, tile)
+                                ?? widget.tileBuilder(context,
+                                widget.items[tile.artworkIndex], _zoom),
+                        ),
+                      ),
                     ),
                   ),
                 ),
