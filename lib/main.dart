@@ -16,6 +16,7 @@ import 'services/favorites.dart';
 import 'services/art_offline_thumbnail_index.dart';
 import 'services/art_mobile_canvas_selection.dart';
 import 'services/art_visual_color_selection.dart';
+import 'services/art_joyful_palette.dart';
 import 'services/art_joyful_start.dart';
 
 Future<void> main() async {
@@ -71,14 +72,20 @@ class _GalleryHomeState extends State<GalleryHome> {
       // Fetch a tiny same-origin index before mounting remote image widgets.
       await ArtOfflineThumbnailIndex.instance.initialize();
       final works = await _catalog.load(refresh: refresh);
-      final colorFirst = await ArtVisualColorSelection.select(works);
+      // Use real pixel chroma/brightness, with the pinned color-first
+      // playlist as a fail-closed fallback for any catalogue identity drift.
+      final pixelScores = await ArtJoyfulPalette.load(works);
+      final vibrant = ArtJoyfulPalette.select(works, pixelScores);
+      final colorFirst = vibrant.isNotEmpty ? vibrant :
+          await ArtVisualColorSelection.select(works);
       final canvas = await ArtMobileCanvasSelection.select(works,
         initialColorPlaylist: colorFirst);
       if (!mounted) return;
       // A new region only on a fresh app opening, not on catalogue refresh.
       final launch = _launchWorldCenter ??
           await ArtJoyfulStart.chooseForLaunch(canvas,
-            viewport: MediaQuery.sizeOf(context));
+            viewport: MediaQuery.sizeOf(context),
+            pixelScores: pixelScores);
       if (!mounted) return;
       setState(() {
         _artworks = works;

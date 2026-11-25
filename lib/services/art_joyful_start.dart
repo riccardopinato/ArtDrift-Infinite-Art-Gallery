@@ -44,6 +44,7 @@ class ArtJoyfulStart {
     Offset? previous,
     bool Function(Artwork)? hasImage,
     int candidates = 44,
+    Map<String,int> pixelScores = const {},
   }) {
     if (items.isEmpty) return Offset.zero;
     final rng = random ?? math.Random();
@@ -73,7 +74,11 @@ class ArtJoyfulStart {
         if (!tile.rect.overlaps(view) || !unique.add(tile.artworkIndex)) continue;
         final art = items[tile.artworkIndex];
         final text = '${art.title} ${art.subjectTerms.join(' ')}';
-        if (source(art)) { score += 3; } else { score -= 15; }
+        if (source(art)) {
+          score += 3 + ((pixelScores[art.catalogKey] ?? 0) / 255.0) * 16;
+        } else {
+          score -= 20;
+        }
         if (_landscape.hasMatch(text)) { score += 7; landscapes++; }
         if (_floral.hasMatch(text)) score += 6;
         if (_portrait.hasMatch(art.title)) score -= 6;
@@ -97,6 +102,7 @@ class ArtJoyfulStart {
   static Future<Offset> chooseForLaunch(List<Artwork> artworks, {
     required Size viewport,
     math.Random? random,
+    Map<String,int> pixelScores = const {},
   }) async {
     SharedPreferences? prefs;
     Offset? previous;
@@ -111,7 +117,7 @@ class ArtJoyfulStart {
       // Browsing still works without local preferences.
     }
     final choice = choose(artworks, viewport: viewport,
-        random: random, previous: previous);
+        random: random, previous: previous, pixelScores: pixelScores);
     try {
       if (prefs != null) {
         await prefs.setDouble(_prefX, choice.dx);
