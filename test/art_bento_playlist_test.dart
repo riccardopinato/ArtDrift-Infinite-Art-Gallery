@@ -22,8 +22,12 @@ void main() {
     final works = List.generate(500, (i) => sample(i + 1));
     final primary = works.take(320).toList();
     final extras = works.skip(320).take(150).toList();
-    final before = await ArtMobileCanvasSelection.select(works,
-        initialColorPlaylist: primary);
+    // Simulate an existing v1 installation, before the v2 migration marker.
+    SharedPreferences.setMockInitialValues({
+      ArtMobileCanvasSelection.preferenceKey:
+          primary.map((a) => a.catalogKey).toList(),
+    });
+    final before = await ArtMobileCanvasSelection.select(works);
     expect(before.length, 320);
     final after = await ArtMobileCanvasSelection.select(works,
         additionalColorPlaylist: extras);
