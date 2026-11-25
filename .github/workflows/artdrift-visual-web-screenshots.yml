@@ -1,7 +1,7 @@
 name: Art Drift genuine Flutter Web screenshot evidence (no APK)
 on:
   push:
-    branches: ['research/artdrift-visual-*', 'research/artdrift-roadmap-review-*']
+    branches: ['research/artdrift-visual-*', 'research/artdrift-roadmap-review-*', 'feat/artdrift-joyful-random-start-*']
   workflow_dispatch:
 permissions:
   contents: read
