@@ -101,7 +101,7 @@ class ArtBentoWorld {
     final bottom = (world.bottom / block).floor();
     for (var x = left; x <= right; x++) {
       for (var y = top; y <= bottom; y++) {
-        final cells = _patterns[_hash(x,y,0) % patterns.length];
+        final cells = _patterns[_hash(x,y,0) % _patterns.length];
         final used = <int>{};
         for (var slot = 0; slot < cells.length; slot++) {
           final s = cells[slot];
