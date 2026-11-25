@@ -68,6 +68,34 @@ class ArtJoyfulPalette {
     caseSensitive:false);
   static final _modern = RegExp(r'18[8-9]\d|19\d\d|20\d\d');
 
+  static double _quality(Artwork art, Map<String, int> scores) {
+    final text = art.title + ' ' + art.subjectTerms.join(' ');
+    return (scores[art.catalogKey] ?? 0) / 255.0 +
+        (_landscape.hasMatch(text) ? .07 : 0) +
+        (_flowers.hasMatch(text) ? .07 : 0) +
+        (_modern.hasMatch(art.date) ? .085 : 0) -
+        (_portrait.hasMatch(art.title) ? .11 : 0);
+  }
+
+  /// Additional real image-backed works from the *existing* 4,500-record
+  /// museum catalog. No new licenses and no unpublished file downloads.
+  static List<Artwork> supplement(List<Artwork> catalog,
+      Map<String, int> scores, List<Artwork> primary, {int limit = 800}) {
+    if (scores.length != catalog.length || primary.isEmpty || limit <= 0) {
+      return const [];
+    }
+    final used = primary.map((art) => art.catalogKey).toSet();
+    final candidates = catalog.where((art) =>
+      !used.contains(art.catalogKey) && art.displayable &&
+      (art.hasBundledPreview ||
+       ArtOfflineThumbnailIndex.instance.has(art))).toList();
+    candidates.sort((a,b) {
+      final diff = _quality(b, scores).compareTo(_quality(a, scores));
+      return diff != 0 ? diff : a.catalogKey.compareTo(b.catalogKey);
+    });
+    return List.unmodifiable(candidates.take(limit));
+  }
+
   /// The "modern" term denotes a period-based heuristic, not a claim of
   /// post-1950 copyright clearance. Only real image-backed works may enter.
   static List<Artwork> select(List<Artwork> catalog,
@@ -79,16 +107,8 @@ class ArtJoyfulPalette {
       art.displayable && (art.hasBundledPreview ||
         ArtOfflineThumbnailIndex.instance.has(art))).toList();
     if (candidates.length < 2400) return const [];
-    double quality(Artwork art) {
-      final text = '${art.title} ${art.subjectTerms.join(' ')}';
-      return (scores[art.catalogKey] ?? 0) / 255.0 +
-        (_landscape.hasMatch(text) ? .07 : 0) +
-        (_flowers.hasMatch(text) ? .07 : 0) +
-        (_modern.hasMatch(art.date) ? .085 : 0) -
-        (_portrait.hasMatch(art.title) ? .11 : 0);
-    }
     candidates.sort((a,b) {
-      final diff = quality(b).compareTo(quality(a));
+      final diff = _quality(b, scores).compareTo(_quality(a, scores));
       return diff != 0 ? diff : a.catalogKey.compareTo(b.catalogKey);
     });
     return List.unmodifiable(candidates.take(2400));

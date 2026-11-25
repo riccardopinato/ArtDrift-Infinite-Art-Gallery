@@ -9,9 +9,11 @@ class ArtMobileCanvasSelection {
   ArtMobileCanvasSelection._();
 
   static const preferenceKey = 'artdrift.canvas.offline.v1.keys';
+  static const extendedKey = 'artdrift.canvas.bento.v2.supplemented';
 
   static Future<List<Artwork>> select(List<Artwork> catalog, {
     List<Artwork> initialColorPlaylist = const [],
+    List<Artwork> additionalColorPlaylist = const [],
   }) async {
     if (catalog.isEmpty) return catalog;
     final prefs = await SharedPreferences.getInstance();
@@ -24,7 +26,25 @@ class ArtMobileCanvasSelection {
         final artwork = byKey[id];
         if (artwork != null && seen.add(id)) pinned.add(artwork);
       }
-      if (pinned.isNotEmpty) return List.unmodifiable(pinned);
+      if (pinned.isNotEmpty) {
+        // v2 deliberately changes Art tile geometry. Preserve every pinned
+        // source ID and order, then append verified discoveries only once.
+        if (additionalColorPlaylist.isNotEmpty &&
+            prefs.getBool(extendedKey) != true && pinned.length < 3200) {
+          for (final candidate in additionalColorPlaylist) {
+            final art = byKey[candidate.catalogKey];
+            if (art != null && seen.add(art.catalogKey) &&
+                (art.hasBundledPreview ||
+                 ArtOfflineThumbnailIndex.instance.has(art))) {
+              pinned.add(art);
+            }
+          }
+          await prefs.setStringList(preferenceKey,
+              pinned.map((art) => art.catalogKey).toList(growable: false));
+          await prefs.setBool(extendedKey, true);
+        }
+        return List.unmodifiable(pinned);
+      }
     }
 
     // Legacy 0.3.5 users have persisted camera coordinates but never stored a
@@ -47,7 +67,7 @@ class ArtMobileCanvasSelection {
     final availableByKey = {for (final art in available) art.catalogKey: art};
     final curated = <Artwork>[];
     final seen = <String>{};
-    for (final art in initialColorPlaylist) {
+    for (final art in initialColorPlaylist.followedBy(additionalColorPlaylist)) {
       final backed = availableByKey[art.catalogKey];
       if (backed != null && seen.add(art.catalogKey)) curated.add(backed);
     }
@@ -55,6 +75,7 @@ class ArtMobileCanvasSelection {
         (available.isNotEmpty ? available : catalog);
     await prefs.setStringList(preferenceKey,
         first.map((art) => art.catalogKey).toList(growable: false));
+    await prefs.setBool(extendedKey, true);
     return List.unmodifiable(first);
   }
 }

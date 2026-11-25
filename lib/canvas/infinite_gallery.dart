@@ -4,24 +4,26 @@ import '../models/artwork.dart';
 import '../ui/art_remote_image.dart';
 import '../services/art_thumbnail_prefetch.dart';
 import '../services/art_offline_thumbnail_index.dart';
+import 'art_bento_world.dart';
 
 /// Art-specific adapter. Visual appearance, preview and camera keys preserved.
 class InfiniteGallery extends StatelessWidget {
   const InfiniteGallery({super.key, required this.artworks, required this.onOpen,
-    this.cameraKey = 'artdrift.camera', this.initialWorldCenter});
+    this.cameraKey = 'artdrift.camera', this.initialWorldCenter, this.bento});
   final List<Artwork> artworks;
   final ValueChanged<Artwork> onOpen;
   final String cameraKey;
   final Offset? initialWorldCenter;
+  final ArtBentoWorld? bento;
 
-  Widget _preview(Artwork art) {
+  Widget _preview(Artwork art, BoxFit fit) {
     final localAsset = art.hasBundledPreview
         ? art.bootstrapAsset
         : ArtOfflineThumbnailIndex.instance.assetFor(art);
     if (localAsset != null) {
       return Image.asset(
         localAsset,
-        fit: BoxFit.cover,
+        fit: fit,
         filterQuality: FilterQuality.low,
         cacheWidth: 240,
         gaplessPlayback: true,
@@ -56,19 +58,19 @@ class InfiniteGallery extends StatelessWidget {
     );
   }
 
-  Widget _tileImage(Artwork art, double zoom) {
+  Widget _tileImage(Artwork art, double zoom, BoxFit fit) {
     // Real bundled WebP previews show on the very first frame even offline.
     // Zooming in opts into a higher-detail remote IIIF rendition only then.
     if (zoom <= 1.65 && (art.hasBundledPreview ||
         ArtOfflineThumbnailIndex.instance.assetFor(art) != null)) {
-      return _preview(art);
+      return _preview(art, fit);
     }
     return ArtRemoteImage(
       artwork: art,
-      width: 400,
-      fit: BoxFit.cover,
-      fallback: _preview(art),
-      loading: _preview(art),
+      width: fit == BoxFit.contain ? 800 : 400,
+      fit: fit,
+      fallback: _preview(art, fit),
+      loading: _preview(art, fit),
     );
   }
 
@@ -76,7 +78,12 @@ class InfiniteGallery extends StatelessWidget {
   @override
   Widget build(BuildContext context) => DriftCanvas<Artwork>(
     items: artworks, onOpen: onOpen,
-    tileBuilder: (context, art, zoom) => _tileImage(art, zoom),
+    tileBuilder: (context, art, zoom) => _tileImage(art, zoom, BoxFit.cover),
+    tileLayout: bento?.visible,
+    tileBuilderWithTile: bento == null ? null : (context, art, zoom, tile) =>
+      _tileImage(art, zoom,
+        tile.rect.width >= 290 || tile.rect.height >= 290
+            ? BoxFit.contain : BoxFit.cover),
     prefetchItem: ArtThumbnailPrefetch.instance.warm,
     cameraKey: cameraKey,
     initialWorldCenter: initialWorldCenter,

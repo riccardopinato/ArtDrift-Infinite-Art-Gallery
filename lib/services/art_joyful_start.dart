@@ -5,6 +5,7 @@ import 'package:drift_core/drift_core.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/artwork.dart';
+import '../canvas/art_bento_world.dart';
 import 'art_offline_thumbnail_index.dart';
 
 /// Art-only discovery entry points. The InfiniteWorld hash/ID order is NEVER
@@ -45,6 +46,7 @@ class ArtJoyfulStart {
     bool Function(Artwork)? hasImage,
     int candidates = 96,
     Map<String,int> pixelScores = const {},
+    ArtBentoWorld? bento,
   }) {
     if (items.isEmpty) return Offset.zero;
     final rng = random ?? math.Random();
@@ -64,36 +66,43 @@ class ArtJoyfulStart {
            (location - previous).distanceSquared < _radius * _radius) ||
           !checked.add('$column:$band')) continue;
       final view = Rect.fromCenter(center: location, width: w, height: h);
-      final tiles = world.visible(view, items.length,
+      final tiles = bento?.visible(view, items.length,
+          limit: 100, priorityViewport: view) ??
+          world.visible(view, items.length,
           limit: 100, priorityViewport: view);
       if (tiles.isEmpty) continue;
       var score = 0.0;
-      var landscapes = 0;
+      var landscapes = 0.0;
+      var totalWeight = 0.0;
       final unique = <int>{};
       for (final tile in tiles) {
         if (!tile.rect.overlaps(view) || !unique.add(tile.artworkIndex)) continue;
         final art = items[tile.artworkIndex];
+        final weight = bento == null ? 1.0 :
+            (tile.rect.width * tile.rect.height / 21025.0)
+                .clamp(1.0, 8.0).toDouble();
+        totalWeight += weight;
         final text = '${art.title} ${art.subjectTerms.join(' ')}';
         if (source(art)) {
           final measured = pixelScores[art.catalogKey];
           // The photographed pixels outrank title-only classifications.
           // Low-saturation / dark tiles should not dominate the first view.
           if (measured == null) {
-            score += 2;
+            score += 2 * weight;
           } else {
-            score += 2 + measured / 255.0 * 36;
-            if (measured < 50) score -= 8;
+            score += (2 + measured / 255.0 * 36) * weight;
+            if (measured < 50) score -= 8 * weight;
           }
         } else {
-          score -= 24;
+          score -= 24 * weight;
         }
-        if (_landscape.hasMatch(text)) { score += 4; landscapes++; }
-        if (_floral.hasMatch(text)) score += 4;
-        if (_portrait.hasMatch(art.title)) score -= 6;
-        if (_modern.hasMatch(art.date)) score += 1.5;
+        if (_landscape.hasMatch(text)) { score += 4 * weight; landscapes += weight; }
+        if (_floral.hasMatch(text)) score += 4 * weight;
+        if (_portrait.hasMatch(art.title)) score -= 6 * weight;
+        if (_modern.hasMatch(art.date)) score += 1.5 * weight;
       }
       if (unique.isNotEmpty) {
-        score = score / unique.length + landscapes * 0.45 +
+        score = score / totalWeight + landscapes / totalWeight * 0.45 +
             rng.nextDouble() * 0.3;
         scored.add((center: location, score: score));
       }
@@ -111,6 +120,7 @@ class ArtJoyfulStart {
     required Size viewport,
     math.Random? random,
     Map<String,int> pixelScores = const {},
+    ArtBentoWorld? bento,
   }) async {
     SharedPreferences? prefs;
     Offset? previous;
@@ -125,7 +135,8 @@ class ArtJoyfulStart {
       // Browsing still works without local preferences.
     }
     final choice = choose(artworks, viewport: viewport,
-        random: random, previous: previous, pixelScores: pixelScores);
+        random: random, previous: previous,
+        pixelScores: pixelScores, bento: bento);
     try {
       if (prefs != null) {
         await prefs.setDouble(_prefX, choice.dx);

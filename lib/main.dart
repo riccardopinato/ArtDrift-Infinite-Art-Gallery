@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 
 import 'canvas/infinite_gallery.dart';
+import 'canvas/art_bento_world.dart';
 import 'screens/search_sheet.dart';
 import 'screens/doppleganger.dart';
 import 'screens/settings_sheet.dart';
@@ -56,6 +57,7 @@ class _GalleryHomeState extends State<GalleryHome> {
   List<Artwork> _artworks = [];
   List<Artwork> _canvasArtworks = [];
   Offset? _launchWorldCenter;
+  ArtBentoWorld? _bento;
   bool _loading = true;
   String? _error;
 
@@ -78,18 +80,22 @@ class _GalleryHomeState extends State<GalleryHome> {
       final vibrant = ArtJoyfulPalette.select(works, pixelScores);
       final colorFirst = vibrant.isNotEmpty ? vibrant :
           await ArtVisualColorSelection.select(works);
+      final extras = ArtJoyfulPalette.supplement(works, pixelScores, colorFirst);
       final canvas = await ArtMobileCanvasSelection.select(works,
-        initialColorPlaylist: colorFirst);
+        initialColorPlaylist: colorFirst, additionalColorPlaylist: extras);
+      final bento = pixelScores.length == works.length &&
+          canvas.isNotEmpty ? ArtBentoWorld(canvas, pixelScores) : null;
       if (!mounted) return;
       // A new region only on a fresh app opening, not on catalogue refresh.
       final launch = _launchWorldCenter ??
           await ArtJoyfulStart.chooseForLaunch(canvas,
             viewport: MediaQuery.sizeOf(context),
-            pixelScores: pixelScores);
+            pixelScores: pixelScores, bento: bento);
       if (!mounted) return;
       setState(() {
         _artworks = works;
         _canvasArtworks = canvas.isNotEmpty ? canvas : works;
+        _bento = bento;
         _launchWorldCenter = launch;
         _loading = false;
       });
@@ -153,6 +159,7 @@ class _GalleryHomeState extends State<GalleryHome> {
         artworks: _canvasArtworks,
         onOpen: _open,
         initialWorldCenter: _launchWorldCenter,
+        bento: _bento,
       ),
       Positioned(top: 0, left: 0, right: 0,
         child: SafeArea(bottom: false, child: ArtDriftToolbar(
