@@ -1,0 +1,1097 @@
+{
+  "schema_version": 1,
+  "as_of": "2026-11-25",
+  "source": "ArtDrift_Pittori_Novecento_Diritti_2026.csv — user library",
+  "artists": [
+    {
+      "artist": "Henri Matisse",
+      "death_year": 1954,
+      "eu_public_domain_from": 2025,
+      "movement": "Fauvismo / avanguardie",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "ALTA",
+      "source_note": "SMK dipinti colorati; verificare copyright USA per singolo lavoro",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "André Derain",
+      "death_year": 1954,
+      "eu_public_domain_from": 2025,
+      "movement": "Fauvismo",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "ALTA",
+      "source_note": "SMK diversi dipinti dichiarati free to use",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "Raoul Dufy",
+      "death_year": 1953,
+      "eu_public_domain_from": 2024,
+      "movement": "Fauvismo",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "ALTA",
+      "source_note": "Opere cromatiche; reperire file OA, non solo metadati",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "Albert Marquet",
+      "death_year": 1947,
+      "eu_public_domain_from": 2018,
+      "movement": "Fauvismo / paesaggio",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "ALTA",
+      "source_note": "Vedute e colori; fonti imaging da trovare",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "Henri Rousseau",
+      "death_year": 1910,
+      "eu_public_domain_from": 1981,
+      "movement": "Naïf / postimpressionismo",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "ALTA",
+      "source_note": "Paesaggi tropicali; ottima priorità",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "Pierre Bonnard",
+      "death_year": 1947,
+      "eu_public_domain_from": 2018,
+      "movement": "Nabis / intimismo",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "ALTA",
+      "source_note": "Campiture gialle, arancio, interni",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "Édouard Vuillard",
+      "death_year": 1940,
+      "eu_public_domain_from": 2011,
+      "movement": "Nabis",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "MEDIA",
+      "source_note": "Interni, decorazioni e cromie",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "Maurice Denis",
+      "death_year": 1943,
+      "eu_public_domain_from": 2014,
+      "movement": "Nabis",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "MEDIA",
+      "source_note": "Campiture decorativo-simboliste",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "Paul Sérusier",
+      "death_year": 1927,
+      "eu_public_domain_from": 1998,
+      "movement": "Nabis / sintetismo",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "ALTA",
+      "source_note": "Colori sintetici e paesaggi",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "Félix Vallotton",
+      "death_year": 1925,
+      "eu_public_domain_from": 1996,
+      "movement": "Nabis",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "MEDIA",
+      "source_note": "Grandi forme; tagli grafici",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "Odilon Redon",
+      "death_year": 1916,
+      "eu_public_domain_from": 1987,
+      "movement": "Simbolismo / colore",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "ALTA",
+      "source_note": "Fiori, pastelli e visioni",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "Paul Signac",
+      "death_year": 1935,
+      "eu_public_domain_from": 2006,
+      "movement": "Neoimpressionismo",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "ALTA",
+      "source_note": "Puntinismo e marine molto colorate",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "Paul Cézanne",
+      "death_year": 1906,
+      "eu_public_domain_from": 1977,
+      "movement": "Postimpressionismo",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "ALTA",
+      "source_note": "Paesaggi e natura morta del primo 900",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "Paul Gauguin",
+      "death_year": 1903,
+      "eu_public_domain_from": 1974,
+      "movement": "Postimpressionismo",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "ALTA",
+      "source_note": "Opere create 1900-1903 e altre pertinenti al progetto",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "Henri de Toulouse-Lautrec",
+      "death_year": 1901,
+      "eu_public_domain_from": 1972,
+      "movement": "Postimpressionismo / manifesti",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "MEDIA",
+      "source_note": "Opere inizio 900 e grafiche",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "Suzanne Valadon",
+      "death_year": 1938,
+      "eu_public_domain_from": 2009,
+      "movement": "Postimpressionismo",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "ALTA",
+      "source_note": "Figure e nature morte vivaci",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "Henri-Edmond Cross",
+      "death_year": 1910,
+      "eu_public_domain_from": 1981,
+      "movement": "Neoimpressionismo",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "ALTA",
+      "source_note": "Paesaggi mediterranei cromatici",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "Othon Friesz",
+      "death_year": 1949,
+      "eu_public_domain_from": 2020,
+      "movement": "Fauvismo",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "ALTA",
+      "source_note": "Paesaggi e campiture vivaci",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "Maurice de Vlaminck",
+      "death_year": 1958,
+      "eu_public_domain_from": 2029,
+      "movement": "Fauvismo",
+      "eu_status": "PROTETTO",
+      "color_priority": "BLOCCATO",
+      "source_note": "NON ancora PD UE; dal 2029",
+      "source_import_status": "NO - DIRITTI ANCORA ATTIVI UE"
+    },
+    {
+      "artist": "Fernand Léger",
+      "death_year": 1955,
+      "eu_public_domain_from": 2026,
+      "movement": "Cubismo / modernismo",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "ALTA",
+      "source_note": "2026 primo anno PD UE, verificare immagini US",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "Juan Gris",
+      "death_year": 1927,
+      "eu_public_domain_from": 1998,
+      "movement": "Cubismo",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "ALTA",
+      "source_note": "Cubismo colorato, nature morte",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "Albert Gleizes",
+      "death_year": 1953,
+      "eu_public_domain_from": 2024,
+      "movement": "Cubismo",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "MEDIA",
+      "source_note": "Geometrie e composizioni",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "Robert Delaunay",
+      "death_year": 1941,
+      "eu_public_domain_from": 2012,
+      "movement": "Orfismo / cubismo",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "ALTA",
+      "source_note": "Colori puri, dischi e città",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "Wassily Kandinsky",
+      "death_year": 1944,
+      "eu_public_domain_from": 2015,
+      "movement": "Astrattismo",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "ALTA",
+      "source_note": "Cruciale; Cleveland segnala alcune immagini copyright USA",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "Paul Klee",
+      "death_year": 1940,
+      "eu_public_domain_from": 2011,
+      "movement": "Astrattismo",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "ALTA",
+      "source_note": "Molte immagini storiche; link e diritti da validare",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "Piet Mondrian",
+      "death_year": 1944,
+      "eu_public_domain_from": 2015,
+      "movement": "Neoplasticismo",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "ALTA",
+      "source_note": "Quadri geometrici e pre-astratti",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "Theo van Doesburg",
+      "death_year": 1931,
+      "eu_public_domain_from": 2002,
+      "movement": "De Stijl",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "ALTA",
+      "source_note": "Geometrie colorate",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "Francis Picabia",
+      "death_year": 1953,
+      "eu_public_domain_from": 2024,
+      "movement": "Dada / astrazione",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "ALTA",
+      "source_note": "Opere astratte/colorate; licenze per riproduzioni",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "Kazimir Malevič",
+      "death_year": 1935,
+      "eu_public_domain_from": 2006,
+      "movement": "Suprematismo",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "ALTA",
+      "source_note": "Avanguardie geometriche",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "Ljubov Popova",
+      "death_year": 1924,
+      "eu_public_domain_from": 1995,
+      "movement": "Costruttivismo russo",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "ALTA",
+      "source_note": "Composizioni geometriche",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "Olga Rozanova",
+      "death_year": 1918,
+      "eu_public_domain_from": 1989,
+      "movement": "Suprematismo",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "ALTA",
+      "source_note": "Composizioni cromatiche",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "Alexandra Exter",
+      "death_year": 1949,
+      "eu_public_domain_from": 2020,
+      "movement": "Avanguardie russe",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "ALTA",
+      "source_note": "Cubofuturismo molto vivace",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "El Lissitzky",
+      "death_year": 1941,
+      "eu_public_domain_from": 2012,
+      "movement": "Costruttivismo",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "ALTA",
+      "source_note": "Grafiche geometriche; distinguere opere visive",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "Hilma af Klint",
+      "death_year": 1944,
+      "eu_public_domain_from": 2015,
+      "movement": "Astrattismo",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "ALTA",
+      "source_note": "Forme astratte molto colorate; foto/image rights",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "Natalia Goncharova",
+      "death_year": 1962,
+      "eu_public_domain_from": 2033,
+      "movement": "Avanguardie russe",
+      "eu_status": "PROTETTO",
+      "color_priority": "BLOCCATO",
+      "source_note": "NON PD UE fino al 2033",
+      "source_import_status": "NO - DIRITTI ANCORA ATTIVI UE"
+    },
+    {
+      "artist": "Sonia Delaunay",
+      "death_year": 1979,
+      "eu_public_domain_from": 2050,
+      "movement": "Orfismo",
+      "eu_status": "PROTETTO",
+      "color_priority": "BLOCCATO",
+      "source_note": "NON PD UE fino al 2050",
+      "source_import_status": "NO - DIRITTI ANCORA ATTIVI UE"
+    },
+    {
+      "artist": "Georges Braque",
+      "death_year": 1963,
+      "eu_public_domain_from": 2034,
+      "movement": "Cubismo",
+      "eu_status": "PROTETTO",
+      "color_priority": "BLOCCATO",
+      "source_note": "NON PD UE fino al 2034",
+      "source_import_status": "NO - DIRITTI ANCORA ATTIVI UE"
+    },
+    {
+      "artist": "František Kupka",
+      "death_year": 1957,
+      "eu_public_domain_from": 2028,
+      "movement": "Astrattismo",
+      "eu_status": "PROTETTO",
+      "color_priority": "BLOCCATO",
+      "source_note": "NON PD UE fino al 2028",
+      "source_import_status": "NO - DIRITTI ANCORA ATTIVI UE"
+    },
+    {
+      "artist": "Edvard Munch",
+      "death_year": 1944,
+      "eu_public_domain_from": 2015,
+      "movement": "Espressionismo",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "ALTA",
+      "source_note": "SMK dipinti e grafiche dichiarati Free to use",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "Ernst Ludwig Kirchner",
+      "death_year": 1938,
+      "eu_public_domain_from": 2009,
+      "movement": "Espressionismo",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "ALTA",
+      "source_note": "Colori forti e paesaggi",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "Franz Marc",
+      "death_year": 1916,
+      "eu_public_domain_from": 1987,
+      "movement": "Espressionismo",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "ALTA",
+      "source_note": "Animali blu e forme vivaci",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "August Macke",
+      "death_year": 1914,
+      "eu_public_domain_from": 1985,
+      "movement": "Espressionismo",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "ALTA",
+      "source_note": "Città/giardini intensi",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "Alexej von Jawlensky",
+      "death_year": 1941,
+      "eu_public_domain_from": 2012,
+      "movement": "Espressionismo",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "ALTA",
+      "source_note": "Teste cromatiche e paesaggi",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "Max Pechstein",
+      "death_year": 1955,
+      "eu_public_domain_from": 2026,
+      "movement": "Espressionismo",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "ALTA",
+      "source_note": "Nuovo PD UE dal 2026",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "Max Beckmann",
+      "death_year": 1950,
+      "eu_public_domain_from": 2021,
+      "movement": "Nuova Oggettività / espressionismo",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "MEDIA",
+      "source_note": "Figure e composizioni",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "James Ensor",
+      "death_year": 1949,
+      "eu_public_domain_from": 2020,
+      "movement": "Espressionismo / simbolismo",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "MEDIA",
+      "source_note": "Maschere; scene variopinte",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "Paula Modersohn-Becker",
+      "death_year": 1907,
+      "eu_public_domain_from": 1978,
+      "movement": "Espressionismo",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "MEDIA",
+      "source_note": "Ritratti e paesaggi",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "Otto Mueller",
+      "death_year": 1930,
+      "eu_public_domain_from": 2001,
+      "movement": "Espressionismo",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "MEDIA",
+      "source_note": "Figure e nature",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "Gustav Klimt",
+      "death_year": 1918,
+      "eu_public_domain_from": 1989,
+      "movement": "Secessione viennese",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "ALTA",
+      "source_note": "Decori e dorature; selezione non ripetitiva",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "Egon Schiele",
+      "death_year": 1918,
+      "eu_public_domain_from": 1989,
+      "movement": "Espressionismo",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "MEDIA",
+      "source_note": "Disegni e figure",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "Koloman Moser",
+      "death_year": 1918,
+      "eu_public_domain_from": 1989,
+      "movement": "Secessione",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "ALTA",
+      "source_note": "Motivi geometrici e decorativi",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "Käthe Kollwitz",
+      "death_year": 1945,
+      "eu_public_domain_from": 2016,
+      "movement": "Espressionismo / grafica",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "MEDIA",
+      "source_note": "Grafiche generalmente monocrome",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "Emil Nolde",
+      "death_year": 1956,
+      "eu_public_domain_from": 2027,
+      "movement": "Espressionismo",
+      "eu_status": "PROTETTO",
+      "color_priority": "BLOCCATO",
+      "source_note": "NON PD UE fino al 2027",
+      "source_import_status": "NO - DIRITTI ANCORA ATTIVI UE"
+    },
+    {
+      "artist": "Gabriele Münter",
+      "death_year": 1962,
+      "eu_public_domain_from": 2033,
+      "movement": "Espressionismo",
+      "eu_status": "PROTETTO",
+      "color_priority": "BLOCCATO",
+      "source_note": "NON PD UE fino al 2033",
+      "source_import_status": "NO - DIRITTI ANCORA ATTIVI UE"
+    },
+    {
+      "artist": "Amedeo Modigliani",
+      "death_year": 1920,
+      "eu_public_domain_from": 1991,
+      "movement": "Scuola di Parigi",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "ALTA",
+      "source_note": "SMK Alice, ritratti e disegni liberi",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "Chaïm Soutine",
+      "death_year": 1943,
+      "eu_public_domain_from": 2014,
+      "movement": "Scuola di Parigi",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "ALTA",
+      "source_note": "Pennellate e paesaggi vibranti",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "Maurice Utrillo",
+      "death_year": 1955,
+      "eu_public_domain_from": 2026,
+      "movement": "Scuola di Parigi",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "MEDIA",
+      "source_note": "Nuovo PD UE 2026",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "Nicolas de Staël",
+      "death_year": 1955,
+      "eu_public_domain_from": 2026,
+      "movement": "Astrazione / paesaggi",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "ALTA",
+      "source_note": "Nuovo PD UE 2026, forte priorità; licenze immagini",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "Yves Tanguy",
+      "death_year": 1955,
+      "eu_public_domain_from": 2026,
+      "movement": "Surrealismo",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "ALTA",
+      "source_note": "Nuovo PD UE 2026; paesaggi surreali",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "Vilhelm Lundstrøm",
+      "death_year": 1950,
+      "eu_public_domain_from": 2021,
+      "movement": "Cubismo danese",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "ALTA",
+      "source_note": "SMK nature morte e opere colorate",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "Karl Isakson",
+      "death_year": 1922,
+      "eu_public_domain_from": 1993,
+      "movement": "Modernismo scandinavo",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "ALTA",
+      "source_note": "SMK nature morte e paesaggi colorati",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "Ludvig Karsten",
+      "death_year": 1926,
+      "eu_public_domain_from": 1997,
+      "movement": "Espressionismo norvegese",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "MEDIA",
+      "source_note": "SMK opere con licenza esplicita",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "Vilhelm Hammershøi",
+      "death_year": 1916,
+      "eu_public_domain_from": 1987,
+      "movement": "Modernismo nordico",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "MEDIA",
+      "source_note": "Dipinti 1900-1909, palette attenuate",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "L.A. Ring",
+      "death_year": 1933,
+      "eu_public_domain_from": 2004,
+      "movement": "Realismo / simbolismo danese",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "MEDIA",
+      "source_note": "Opere 1900-1910 con immagini SMK OA",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "Umberto Boccioni",
+      "death_year": 1916,
+      "eu_public_domain_from": 1987,
+      "movement": "Futurismo italiano",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "ALTA",
+      "source_note": "Priorità alle opere astratte/di movimento",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "Luigi Russolo",
+      "death_year": 1947,
+      "eu_public_domain_from": 2018,
+      "movement": "Futurismo italiano",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "ALTA",
+      "source_note": "Opere pittoriche e manifesti; immagini da verificare",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "Carlo Carrà",
+      "death_year": 1966,
+      "eu_public_domain_from": 2037,
+      "movement": "Futurismo italiano",
+      "eu_status": "PROTETTO",
+      "color_priority": "BLOCCATO",
+      "source_note": "NON PD UE fino al 2037",
+      "source_import_status": "NO - DIRITTI ANCORA ATTIVI UE"
+    },
+    {
+      "artist": "Giacomo Balla",
+      "death_year": 1958,
+      "eu_public_domain_from": 2029,
+      "movement": "Futurismo italiano",
+      "eu_status": "PROTETTO",
+      "color_priority": "BLOCCATO",
+      "source_note": "NON PD UE fino al 2029",
+      "source_import_status": "NO - DIRITTI ANCORA ATTIVI UE"
+    },
+    {
+      "artist": "Gino Severini",
+      "death_year": 1966,
+      "eu_public_domain_from": 2037,
+      "movement": "Futurismo italiano",
+      "eu_status": "PROTETTO",
+      "color_priority": "BLOCCATO",
+      "source_note": "NON PD UE fino al 2037",
+      "source_import_status": "NO - DIRITTI ANCORA ATTIVI UE"
+    },
+    {
+      "artist": "Fortunato Depero",
+      "death_year": 1960,
+      "eu_public_domain_from": 2031,
+      "movement": "Futurismo / grafica",
+      "eu_status": "PROTETTO",
+      "color_priority": "BLOCCATO",
+      "source_note": "NON PD UE fino al 2031",
+      "source_import_status": "NO - DIRITTI ANCORA ATTIVI UE"
+    },
+    {
+      "artist": "Giorgio Morandi",
+      "death_year": 1964,
+      "eu_public_domain_from": 2035,
+      "movement": "Modernismo italiano",
+      "eu_status": "PROTETTO",
+      "color_priority": "BLOCCATO",
+      "source_note": "NON PD UE fino al 2035",
+      "source_import_status": "NO - DIRITTI ANCORA ATTIVI UE"
+    },
+    {
+      "artist": "Giorgio de Chirico",
+      "death_year": 1978,
+      "eu_public_domain_from": 2049,
+      "movement": "Pittura metafisica",
+      "eu_status": "PROTETTO",
+      "color_priority": "BLOCCATO",
+      "source_note": "NON PD UE fino al 2049",
+      "source_import_status": "NO - DIRITTI ANCORA ATTIVI UE"
+    },
+    {
+      "artist": "Marsden Hartley",
+      "death_year": 1943,
+      "eu_public_domain_from": 2014,
+      "movement": "Modernismo statunitense",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "ALTA",
+      "source_note": "Paesaggi e geometrie; attenzione US copyright",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "Arthur Dove",
+      "death_year": 1946,
+      "eu_public_domain_from": 2017,
+      "movement": "Astrattismo statunitense",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "ALTA",
+      "source_note": "Astratto colorato; US rights per work",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "Joseph Stella",
+      "death_year": 1946,
+      "eu_public_domain_from": 2017,
+      "movement": "Modernismo americano",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "ALTA",
+      "source_note": "Ponti/città astratti; US rights per work",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "Charles Demuth",
+      "death_year": 1935,
+      "eu_public_domain_from": 2006,
+      "movement": "Precisionismo",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "ALTA",
+      "source_note": "Acquerelli/astrazione; US rights per work",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "John Marin",
+      "death_year": 1953,
+      "eu_public_domain_from": 2024,
+      "movement": "Modernismo americano",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "MEDIA",
+      "source_note": "Alcuni Cleveland segnati ARS copyright",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "Grant Wood",
+      "death_year": 1942,
+      "eu_public_domain_from": 2013,
+      "movement": "Regionalismo americano",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "MEDIA",
+      "source_note": "Paesaggi; US rights per work",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "Horace Pippin",
+      "death_year": 1946,
+      "eu_public_domain_from": 2017,
+      "movement": "Arte afroamericana",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "ALTA",
+      "source_note": "Colori e scene familiari; US rights",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "George Bellows",
+      "death_year": 1925,
+      "eu_public_domain_from": 1996,
+      "movement": "Realismo americano",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "MEDIA",
+      "source_note": "Opere 1900-1920",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "John Sloan",
+      "death_year": 1951,
+      "eu_public_domain_from": 2022,
+      "movement": "Ashcan School",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "MEDIA",
+      "source_note": "Scene urbane",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "Maurice Prendergast",
+      "death_year": 1924,
+      "eu_public_domain_from": 1995,
+      "movement": "Postimpressionismo americano",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "ALTA",
+      "source_note": "Folle colorate, marine",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "Paul Nash",
+      "death_year": 1946,
+      "eu_public_domain_from": 2017,
+      "movement": "Modernismo britannico",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "MEDIA",
+      "source_note": "Paesaggi e opere di guerra; UK rights",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "Eric Ravilious",
+      "death_year": 1942,
+      "eu_public_domain_from": 2013,
+      "movement": "Modernismo britannico",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "ALTA",
+      "source_note": "Acquerelli e paesaggi; UK/US rights",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "C.R.W. Nevinson",
+      "death_year": 1946,
+      "eu_public_domain_from": 2017,
+      "movement": "Futurismo britannico",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "MEDIA",
+      "source_note": "Scene dinamiche",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "Walter Sickert",
+      "death_year": 1942,
+      "eu_public_domain_from": 2013,
+      "movement": "Postimpressionismo britannico",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "MEDIA",
+      "source_note": "Interni e paesaggi",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "Christopher Wood",
+      "death_year": 1930,
+      "eu_public_domain_from": 2001,
+      "movement": "Modernismo britannico",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "MEDIA",
+      "source_note": "Scene cromatiche",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "Gwen John",
+      "death_year": 1939,
+      "eu_public_domain_from": 2010,
+      "movement": "Modernismo britannico",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "MEDIA",
+      "source_note": "Ritratti con palette tenui",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "Dora Carrington",
+      "death_year": 1932,
+      "eu_public_domain_from": 2003,
+      "movement": "Modernismo britannico",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "MEDIA",
+      "source_note": "Paesaggi e figure",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "Akseli Gallen-Kallela",
+      "death_year": 1931,
+      "eu_public_domain_from": 2002,
+      "movement": "Simbolismo finlandese",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "ALTA",
+      "source_note": "Paesaggi e mitologie",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "Helene Schjerfbeck",
+      "death_year": 1946,
+      "eu_public_domain_from": 2017,
+      "movement": "Modernismo finlandese",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "MEDIA",
+      "source_note": "Ritratti",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "Ellen Thesleff",
+      "death_year": 1954,
+      "eu_public_domain_from": 2025,
+      "movement": "Modernismo finlandese",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "ALTA",
+      "source_note": "Paesaggi e colori",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "Frances Hodgkins",
+      "death_year": 1947,
+      "eu_public_domain_from": 2018,
+      "movement": "Modernismo neozelandese",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "ALTA",
+      "source_note": "Nature morte e astrazione",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "Amrita Sher-Gil",
+      "death_year": 1941,
+      "eu_public_domain_from": 2012,
+      "movement": "Modernismo indiano",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "ALTA",
+      "source_note": "Opere brillanti; note policy indiane",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "Abanindranath Tagore",
+      "death_year": 1951,
+      "eu_public_domain_from": 2022,
+      "movement": "Modernismo indiano",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "MEDIA",
+      "source_note": "Miniature e pittura bengalese",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "Rabindranath Tagore",
+      "death_year": 1941,
+      "eu_public_domain_from": 2012,
+      "movement": "Modernismo indiano",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "MEDIA",
+      "source_note": "Quadri e disegni",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "Uemura Shōen",
+      "death_year": 1949,
+      "eu_public_domain_from": 2020,
+      "movement": "Nihonga giapponese",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "MEDIA",
+      "source_note": "Dipinti con figure e colori",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "Hiroshi Yoshida",
+      "death_year": 1950,
+      "eu_public_domain_from": 2021,
+      "movement": "Shin-hanga giapponese",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "ALTA",
+      "source_note": "Paesaggi, stampe con colori",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "Tsuchiya Kōitsu",
+      "death_year": 1949,
+      "eu_public_domain_from": 2020,
+      "movement": "Shin-hanga giapponese",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "ALTA",
+      "source_note": "Paesaggi/stampe colorate",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    },
+    {
+      "artist": "Pablo Picasso",
+      "death_year": 1973,
+      "eu_public_domain_from": 2044,
+      "movement": "Cubismo",
+      "eu_status": "PROTETTO",
+      "color_priority": "BLOCCATO",
+      "source_note": "NON PD UE fino al 2044; Succession Picasso/ARS",
+      "source_import_status": "NO - DIRITTI ANCORA ATTIVI UE"
+    },
+    {
+      "artist": "Joan Miró",
+      "death_year": 1983,
+      "eu_public_domain_from": 2054,
+      "movement": "Surrealismo",
+      "eu_status": "PROTETTO",
+      "color_priority": "BLOCCATO",
+      "source_note": "NON PD UE fino al 2054",
+      "source_import_status": "NO - DIRITTI ANCORA ATTIVI UE"
+    },
+    {
+      "artist": "Salvador Dalí",
+      "death_year": 1989,
+      "eu_public_domain_from": 2060,
+      "movement": "Surrealismo",
+      "eu_status": "PROTETTO",
+      "color_priority": "BLOCCATO",
+      "source_note": "NON PD UE fino al 2060",
+      "source_import_status": "NO - DIRITTI ANCORA ATTIVI UE"
+    },
+    {
+      "artist": "René Magritte",
+      "death_year": 1967,
+      "eu_public_domain_from": 2038,
+      "movement": "Surrealismo",
+      "eu_status": "PROTETTO",
+      "color_priority": "BLOCCATO",
+      "source_note": "NON PD UE fino al 2038",
+      "source_import_status": "NO - DIRITTI ANCORA ATTIVI UE"
+    },
+    {
+      "artist": "Georgia O’Keeffe",
+      "death_year": 1986,
+      "eu_public_domain_from": 2057,
+      "movement": "Modernismo americano",
+      "eu_status": "PROTETTO",
+      "color_priority": "BLOCCATO",
+      "source_note": "NON PD UE fino al 2057",
+      "source_import_status": "NO - DIRITTI ANCORA ATTIVI UE"
+    },
+    {
+      "artist": "Jackson Pollock",
+      "death_year": 1956,
+      "eu_public_domain_from": 2027,
+      "movement": "Espressionismo astratto",
+      "eu_status": "PROTETTO",
+      "color_priority": "BLOCCATO",
+      "source_note": "NON PD UE fino al 2027",
+      "source_import_status": "NO - DIRITTI ANCORA ATTIVI UE"
+    },
+    {
+      "artist": "Mark Rothko",
+      "death_year": 1970,
+      "eu_public_domain_from": 2041,
+      "movement": "Espressionismo astratto",
+      "eu_status": "PROTETTO",
+      "color_priority": "BLOCCATO",
+      "source_note": "NON PD UE fino al 2041",
+      "source_import_status": "NO - DIRITTI ANCORA ATTIVI UE"
+    },
+    {
+      "artist": "Andy Warhol",
+      "death_year": 1987,
+      "eu_public_domain_from": 2058,
+      "movement": "Pop Art",
+      "eu_status": "PROTETTO",
+      "color_priority": "BLOCCATO",
+      "source_note": "NON PD UE fino al 2058",
+      "source_import_status": "NO - DIRITTI ANCORA ATTIVI UE"
+    },
+    {
+      "artist": "Roy Lichtenstein",
+      "death_year": 1997,
+      "eu_public_domain_from": 2068,
+      "movement": "Pop Art",
+      "eu_status": "PROTETTO",
+      "color_priority": "BLOCCATO",
+      "source_note": "NON PD UE fino al 2068",
+      "source_import_status": "NO - DIRITTI ANCORA ATTIVI UE"
+    },
+    {
+      "artist": "Frida Kahlo",
+      "death_year": 1954,
+      "eu_public_domain_from": 2025,
+      "movement": "Modernismo messicano",
+      "eu_status": "PRESUMIBILMENTE_PD",
+      "color_priority": "BLOCCATO",
+      "source_note": "EU presumibilmente PD dal 2025; diritti speciali in Messico (vita+100) e per immagini; non abilitare globalmente senza revisione",
+      "source_import_status": "NO - SERVE SINGOLA IMMAGINE/LICENZA"
+    }
+  ]
+}
