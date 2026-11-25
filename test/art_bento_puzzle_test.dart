@@ -93,6 +93,36 @@ void main() {
     }
   });
 
+  test('puzzle frame orientation follows original painting orientation', () {
+    List<Artwork> oriented(bool wide) => List.generate(240, (i) => Artwork(
+      id: i + 1,
+      title: 'Example painting',
+      artist: 'Painter',
+      date: '1890',
+      imageId: '01234567-0123-0123-0123-0123456789ab',
+      publicDomain: true,
+      artworkType: 'Painting',
+      imageWidth: wide ? 1000 : 500,
+      imageHeight: wide ? 500 : 1000,
+    ));
+
+    for (final wide in [true, false]) {
+      final works = oriented(wide);
+      final adaptive = ArtBentoWorld(works, const {});
+      final tiles = adaptive.visible(
+          const Rect.fromLTWH(0, 0, 450, 450), works.length);
+      expect(tiles.length, 4);
+      final hero = tiles.reduce((a, b) =>
+        a.rect.width * a.rect.height >= b.rect.width * b.rect.height
+          ? a : b);
+      if (wide) {
+        expect(hero.rect.width, greaterThan(hero.rect.height));
+      } else {
+        expect(hero.rect.height, greaterThan(hero.rect.width));
+      }
+    }
+  });
+
   test('all on-screen tiles survive priority culling and prefetch limits', () {
     const screen = Rect.fromLTWH(0, 0, 650, 1000);
     const bounds = Rect.fromLTWH(-1500, -1200, 3500, 3700);

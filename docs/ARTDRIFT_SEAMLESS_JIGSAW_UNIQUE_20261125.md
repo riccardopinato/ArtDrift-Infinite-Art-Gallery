@@ -6,7 +6,7 @@ The previous PR #67 visual QA was insufficient: a desktop screenshot showed
 several copies of the same paintings and large dark gaps around images.
 
 ### Art-only corrective layout
-- Real 450x450 world macroblocks using six four-piece arrangements.
+- Real 450x450 world macroblocks using six four-piece arrangements.\n- Each 450px block chooses its puzzle template using the actual image\n  width/height ratios of the four unique works. Landscape paintings receive\n  wider frames and portrait paintings receive taller frames; a bounded\n  visual-rhythm preference balances variation against cropping.
 - The same S/M/L/XL tiles now cover every one of the nine 150px cells.
 - No 5px gutters and no missing cells, including macroblock boundaries.
 - The nested image widgets are forced to fill their tiles with
