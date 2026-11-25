@@ -10,7 +10,7 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  test('Chrome has exact 32-bit image-ID fingerprints and varied bento tiles', () {
+  test('Chrome has exact pixel fingerprint and uncropped whole-art mosaic', () {
     final keys = List<String>.generate(
         4500, (i) => 'met:' + (i + 1).toString())..sort();
     expect(ArtJoyfulPalette.fingerprint(keys), 660349192);
@@ -32,10 +32,15 @@ void main() {
     const area = Rect.fromLTWH(-900, -1200, 2700, 2400);
     final tiles = bento.visible(area, artworks.length, limit: 900);
     expect(tiles, isNotEmpty);
-    expect(tiles.map((t) => t.rect.width).toSet(),
-        containsAll([150.0, 300.0, 450.0]));
-    expect(tiles.map((t) => t.rect.height).toSet(),
-        containsAll([150.0, 300.0, 450.0]));
+    expect(tiles.map((t) => t.rect.width).toSet().length,
+        greaterThanOrEqualTo(7));
+    expect(tiles.map((t) => t.rect.height).toSet().length,
+        greaterThanOrEqualTo(6));
+    for (final tile in tiles) {
+      expect((tile.rect.width / tile.rect.height -
+          artworks[tile.artworkIndex].naturalAspectRatio).abs(),
+          lessThan(0.00000001));
+    }
     expect(tiles.any((t) => t.rect.width > t.rect.height), isTrue);
     expect(tiles.any((t) => t.rect.height > t.rect.width), isTrue);
   });

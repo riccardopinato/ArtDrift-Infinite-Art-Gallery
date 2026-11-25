@@ -31,8 +31,7 @@ void main() {
     final world = ArtBentoWorld(canvas, boosted);
     final tiles = world.visible(const Rect.fromLTWH(-1000, -2000, 3600, 3800),
         canvas.length, limit: 2000);
-    final heroes = tiles.where((tile) =>
-        tile.rect.width >= 440 || tile.rect.height >= 440);
+    final heroes = tiles.where((tile) => tile.rect.height >= 385);
     expect(heroes, isNotEmpty);
     // "Most colorful in the largest frames" is relative to the real
     // 3,200-image canvas. An arbitrary fixed 100 cutoff wrongly penalized
@@ -43,8 +42,7 @@ void main() {
     expect(heroes.every((tile) =>
         boosted[canvas[tile.artworkIndex].catalogKey]! >=
           heroQuartileCutoff), true);
-    final small = tiles.where((tile) =>
-        tile.rect.width == 150 && tile.rect.height == 150);
+    final small = tiles.where((tile) => tile.rect.height <= 230);
     expect(small, isNotEmpty);
     final smallestHero = heroes
         .map((tile) => boosted[canvas[tile.artworkIndex].catalogKey]!)
@@ -53,6 +51,10 @@ void main() {
         .map((tile) => boosted[canvas[tile.artworkIndex].catalogKey]!)
         .reduce((a,b) => a > b ? a : b);
     expect(smallestHero, greaterThanOrEqualTo(brightestSmall));
+    expect(tiles.every((tile) =>
+      (tile.rect.width / tile.rect.height -
+        canvas[tile.artworkIndex].naturalAspectRatio).abs() < 0.00000001),
+      true);
   });
 
   test('source identity mismatch returns prior scores unchanged', () {
