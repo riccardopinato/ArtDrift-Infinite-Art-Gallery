@@ -25,6 +25,13 @@ NGA_SHA="2470472572fdca2a24a741bb50eaba7301c47fa9"
 URL=f"https://raw.githubusercontent.com/NationalGalleryOfArt/opendata/{NGA_SHA}/data/"
 RIGHTS="https://www.nga.gov/artworks/free-images-and-open-access"
 OUT=ROOT/".artdrift_research/nga_color"
+# Individually visually reviewed against the real 25-image contact sheet,
+# 2026-11-25. Do not automatically re-admit misleading titles.
+VISUAL_QA_EXCLUSIONS = {
+    "46622": "Prominent woman in painting, despite title The Basket of Flowers",
+    "164936": "Muted industrial still life; not a vibrant landscape",
+    "164950": "Washed-out beige landscape, too little color for this themed wave",
+}
 TITLE_POS=("landscape","garden","gardens","flowers","flower","orchard","bloom",
            "meadow","valley","wheat","fields","field","harbor","harbour","port",
            "river","seine","sea","coast","shore","beach","water","boats","boat",
@@ -121,7 +128,7 @@ def load_objects():
             if "paint" not in ascii_text(row.get("classification")):
                 continue
             native=str(row.get("objectid") or "").strip()
-            if not native.isdecimal() or native in existing:continue
+            if not native.isdecimal() or native in existing or native in VISUAL_QA_EXCLUSIONS:continue
             yr=year(row)
             if yr is None:continue
             title=str(row.get("title") or "").strip()
