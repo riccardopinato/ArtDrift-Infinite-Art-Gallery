@@ -40,3 +40,19 @@ This was caused by a fixed rectangular puzzle layout and BoxFit.cover.
   at 390×844 and 820×1180 and Android ARM64 build for exact commit.
 - User visual approval and physical Android acceptance pending; Draft PR #67
   remains unmerged and commercial image rights remain subject to audit.
+
+
+## Corrective evidence: museum metadata does NOT equal local preview frame
+
+A genuine headless Chrome capture after the first strips implementation still
+showed internal black bands: BoxFit.contain was correct but the frame ratio
+was derived from museum JSON metadata rather than the actual local image.
+On 25 Nov, a GitHub CI RIFF parser measured 4,499 exact offline WebP files
+(1 catalog entry has no packaged image). The measurements are stored, in
+source-ID-sorted big-endian uint16 width/height form, in
+assets/museums/canvas_real_webp_dimensions_v1.json (4500 IDs,
+FNV1a32=2742452096). The exact pixel width/height of a bundled painting is
+now authoritative for the tile width; the artwork still uses BoxFit.contain.
+The manifest is checked at startup against the full 4500-entry catalog and
+fails closed on identity drift. This correction must pass actual Chrome
+screenshot QA and source-ratio tests before visual acceptance.
