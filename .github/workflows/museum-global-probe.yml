@@ -1,12 +1,19 @@
-name: Museum expansion — read-only source schemas
+name: Museum source probes — original and modern masters
 on:
   push:
-    branches: [feat/artdrift-open-access-museums-20261121]
-    paths: ['scripts/probe_global_museums.py']
+    branches: [feat/artdrift-open-access-museums-20261121, feat/artdrift-curated-modern-53-20261125]
+    paths:
+      - scripts/probe_global_museums.py
+      - tools/artdrift_modern_masters.py
+      - tools/test_artdrift_modern_masters.py
+      - research/modern_masters_53_20261125.json
+      - research/modern_artists_109_20261125.json
+      - .github/workflows/museum-global-probe.yml
   workflow_dispatch:
 permissions: {contents: read}
 jobs:
-  probe:
+  original-probe:
+    if: github.ref_name == 'feat/artdrift-open-access-museums-20261121'
     runs-on: ubuntu-latest
     timeout-minutes: 6
     steps:
@@ -14,3 +21,56 @@ jobs:
       - uses: actions/setup-python@v5
         with: {python-version: '3.12'}
       - run: python -u scripts/probe_global_museums.py
+  modern-inventory:
+    if: github.ref_name == 'feat/artdrift-curated-modern-53-20261125'
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - name: Verify source-native inventory, rights and no-publication contract
+        run: |
+          python -m py_compile tools/artdrift_modern_masters.py tools/test_artdrift_modern_masters.py
+          python -m unittest discover -s tools -p test_artdrift_modern_masters.py -v
+          python tools/artdrift_modern_masters.py --mode inventory
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ArtDrift-modern-masters-inventory
+          path: .artdrift_research/modern_masters/inventory_report.json
+          if-no-files-found: warn
+  modern-target:
+    if: github.ref_name == 'feat/artdrift-curated-modern-53-20261125'
+    needs: modern-inventory
+    runs-on: ubuntu-latest
+    timeout-minutes: 29
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - name: Check source-level image rights and actual image bytes, exact IDs
+        run: python tools/artdrift_modern_masters.py --mode target --max-records 48 --workers 3
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ArtDrift-modern-masters-target-rights-HOLD
+          path: .artdrift_research/modern_masters/target_report.json
+          if-no-files-found: warn
+  modern-discovery:
+    if: github.ref_name == 'feat/artdrift-curated-modern-53-20261125'
+    needs: modern-inventory
+    runs-on: ubuntu-latest
+    timeout-minutes: 29
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - name: Discover other modern painters using independent SMK source queries
+        run: python tools/artdrift_modern_masters.py --mode discover --max-artists 30 --max-records 100 --workers 3
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ArtDrift-modern-masters-discovery-HOLD
+          path: .artdrift_research/modern_masters/discover_report.json
+          if-no-files-found: warn
