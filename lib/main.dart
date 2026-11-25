@@ -14,6 +14,9 @@ import 'screens/artwork_detail.dart';
 import 'services/catalog_service.dart';
 import 'services/favorites.dart';
 import 'services/art_offline_thumbnail_index.dart';
+import 'services/art_mobile_canvas_selection.dart';
+import 'services/art_visual_color_selection.dart';
+import 'services/art_joyful_start.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -50,6 +53,8 @@ class _GalleryHomeState extends State<GalleryHome> {
   final CatalogService _catalog = CatalogService();
   final Favorites _favorites = Favorites();
   List<Artwork> _artworks = [];
+  List<Artwork> _canvasArtworks = [];
+  Offset? _launchWorldCenter;
   bool _loading = true;
   String? _error;
 
@@ -66,8 +71,21 @@ class _GalleryHomeState extends State<GalleryHome> {
       // Fetch a tiny same-origin index before mounting remote image widgets.
       await ArtOfflineThumbnailIndex.instance.initialize();
       final works = await _catalog.load(refresh: refresh);
+      final colorFirst = await ArtVisualColorSelection.select(works);
+      final canvas = await ArtMobileCanvasSelection.select(works,
+        initialColorPlaylist: colorFirst);
       if (!mounted) return;
-      setState(() { _artworks = works; _loading = false; });
+      // A new region only on a fresh app opening, not on catalogue refresh.
+      final launch = _launchWorldCenter ??
+          await ArtJoyfulStart.chooseForLaunch(canvas,
+            viewport: MediaQuery.sizeOf(context));
+      if (!mounted) return;
+      setState(() {
+        _artworks = works;
+        _canvasArtworks = canvas.isNotEmpty ? canvas : works;
+        _launchWorldCenter = launch;
+        _loading = false;
+      });
     } catch (error) {
       if (!mounted) return;
       setState(() { _loading = false; _error = '$error'; });
@@ -124,7 +142,11 @@ class _GalleryHomeState extends State<GalleryHome> {
       return MuseumPortal.unavailable(onRetry: _initialize);
     }
     return Scaffold(body: Stack(fit: StackFit.expand, children: [
-      InfiniteGallery(artworks: _artworks, onOpen: _open),
+      InfiniteGallery(
+        artworks: _canvasArtworks,
+        onOpen: _open,
+        initialWorldCenter: _launchWorldCenter,
+      ),
       Positioned(top: 0, left: 0, right: 0,
         child: SafeArea(bottom: false, child: ArtDriftToolbar(
           onSearch: _openSearch,
