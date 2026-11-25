@@ -1,0 +1,10 @@
+{
+  "source_commit": "2bdb408ab4ad80438d74be65998627700d839172",
+  "workflow_run_id": "45654759888",
+  "staging_only": true,
+  "catalog_runtime_changed": false,
+  "images_verified": 31,
+  "already_in_main": 11,
+  "additional_discoveries": 24,
+  "worldwide_clearance_count": 0
+}

@@ -1,0 +1,250 @@
+{
+  "mode": "discover",
+  "artist_queries": 30,
+  "new_candidate_ids": 24,
+  "approved_for_worldwide": 0,
+  "integrated_into_runtime": 0,
+  "query_errors": [],
+  "candidates": [
+    {
+      "museum_source": "smk",
+      "museum_native_id": "DEP717",
+      "artist": "Edvard Munch",
+      "source_url": "https://open.smk.dk/en/artwork/image/DEP717",
+      "rights_evidence_url": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "remote_preview_url": "https://iip.smk.dk/iiif/jp2/pg15bj05v_DEP717-cropped.tif.jp2/full/300,/0/default.jpg",
+      "publication_status": "HOLD_MEDIA_AND_TERRITORY",
+      "runtime_visible": false
+    },
+    {
+      "museum_source": "smk",
+      "museum_native_id": "KMS2070",
+      "artist": "Edvard Munch",
+      "source_url": "https://open.smk.dk/en/artwork/image/KMS2070",
+      "rights_evidence_url": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "remote_preview_url": "https://iip.smk.dk/iiif/jp2/x346d7279_KMS2070.tif.reconstructed.tif.jp2/full/300,/0/default.jpg",
+      "publication_status": "HOLD_MEDIA_AND_TERRITORY",
+      "runtime_visible": false
+    },
+    {
+      "museum_source": "smk",
+      "museum_native_id": "KMSr146",
+      "artist": "Raoul Dufy",
+      "source_url": "https://open.smk.dk/en/artwork/image/KMSr146",
+      "rights_evidence_url": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "remote_preview_url": "https://iip.smk.dk/iiif/jp2/0z709019x_kmsr146.tif.reconstructed.tif.jp2/full/300,/0/default.jpg",
+      "publication_status": "HOLD_MEDIA_AND_TERRITORY",
+      "runtime_visible": false
+    },
+    {
+      "museum_source": "smk",
+      "museum_native_id": "KMSr15",
+      "artist": "André Derain",
+      "source_url": "https://open.smk.dk/en/artwork/image/KMSr15",
+      "rights_evidence_url": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "remote_preview_url": "https://iip.smk.dk/iiif/jp2/nv935370w_KMSKMSr15.tif.jp2/full/300,/0/default.jpg",
+      "publication_status": "HOLD_MEDIA_AND_TERRITORY",
+      "runtime_visible": false
+    },
+    {
+      "museum_source": "smk",
+      "museum_native_id": "KMSr156",
+      "artist": "André Derain",
+      "source_url": "https://open.smk.dk/en/artwork/image/KMSr156",
+      "rights_evidence_url": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "remote_preview_url": "https://iip.smk.dk/iiif/jp2/h702q9606_KMSr156.tif.reconstructed.tif.jp2/full/300,/0/default.jpg",
+      "publication_status": "HOLD_MEDIA_AND_TERRITORY",
+      "runtime_visible": false
+    },
+    {
+      "museum_source": "smk",
+      "museum_native_id": "KMSr157",
+      "artist": "Suzanne Valadon",
+      "source_url": "https://open.smk.dk/en/artwork/image/KMSr157",
+      "rights_evidence_url": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "remote_preview_url": "https://iip.smk.dk/iiif/jp2/pn89db72f_kmsr157.tif.jp2/full/300,/0/default.jpg",
+      "publication_status": "HOLD_MEDIA_AND_TERRITORY",
+      "runtime_visible": false
+    },
+    {
+      "museum_source": "smk",
+      "museum_native_id": "KMSr162",
+      "artist": "Juan Gris",
+      "source_url": "https://open.smk.dk/en/artwork/image/KMSr162",
+      "rights_evidence_url": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "remote_preview_url": "https://iip.smk.dk/iiif/jp2/f7623d38r_KMSr162.tif.jp2/full/300,/0/default.jpg",
+      "publication_status": "HOLD_MEDIA_AND_TERRITORY",
+      "runtime_visible": false
+    },
+    {
+      "museum_source": "smk",
+      "museum_native_id": "KMSr19",
+      "artist": "André Derain",
+      "source_url": "https://open.smk.dk/en/artwork/image/KMSr19",
+      "rights_evidence_url": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "remote_preview_url": "https://iip.smk.dk/iiif/jp2/ff365840z_KMSr19.tif.reconstructed.tif.jp2/full/300,/0/default.jpg",
+      "publication_status": "HOLD_MEDIA_AND_TERRITORY",
+      "runtime_visible": false
+    },
+    {
+      "museum_source": "smk",
+      "museum_native_id": "KMSr20",
+      "artist": "André Derain",
+      "source_url": "https://open.smk.dk/en/artwork/image/KMSr20",
+      "rights_evidence_url": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "remote_preview_url": "https://iip.smk.dk/iiif/jp2/j9602357w_KMSr20.tif.reconstructed.tif.jp2/full/300,/0/default.jpg",
+      "publication_status": "HOLD_MEDIA_AND_TERRITORY",
+      "runtime_visible": false
+    },
+    {
+      "museum_source": "smk",
+      "museum_native_id": "KMSr21",
+      "artist": "André Derain",
+      "source_url": "https://open.smk.dk/en/artwork/image/KMSr21",
+      "rights_evidence_url": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "remote_preview_url": "https://iip.smk.dk/iiif/jp2/db78tg02h_KMSr21.tif.reconstructed.tif.jp2/full/300,/0/default.jpg",
+      "publication_status": "HOLD_MEDIA_AND_TERRITORY",
+      "runtime_visible": false
+    },
+    {
+      "museum_source": "smk",
+      "museum_native_id": "KMSr27",
+      "artist": "André Derain",
+      "source_url": "https://open.smk.dk/en/artwork/image/KMSr27",
+      "rights_evidence_url": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "remote_preview_url": "https://iip.smk.dk/iiif/jp2/sx61dq35x_KMSr27.tif.reconstructed.tif.jp2/full/300,/0/default.jpg",
+      "publication_status": "HOLD_MEDIA_AND_TERRITORY",
+      "runtime_visible": false
+    },
+    {
+      "museum_source": "smk",
+      "museum_native_id": "KMSr29",
+      "artist": "André Derain",
+      "source_url": "https://open.smk.dk/en/artwork/image/KMSr29",
+      "rights_evidence_url": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "remote_preview_url": "https://iip.smk.dk/iiif/jp2/0c483n70d_KMSr29.tif.reconstructed.tif.jp2/full/300,/0/default.jpg",
+      "publication_status": "HOLD_MEDIA_AND_TERRITORY",
+      "runtime_visible": false
+    },
+    {
+      "museum_source": "smk",
+      "museum_native_id": "KMSr49",
+      "artist": "Emile Othon Friesz",
+      "source_url": "https://open.smk.dk/en/artwork/image/KMSr49",
+      "rights_evidence_url": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "remote_preview_url": "https://iip.smk.dk/iiif/jp2/bc386n527_KMSr49.tif.reconstructed.tif.jp2/full/300,/0/default.jpg",
+      "publication_status": "HOLD_MEDIA_AND_TERRITORY",
+      "runtime_visible": false
+    },
+    {
+      "museum_source": "smk",
+      "museum_native_id": "KMSr51",
+      "artist": "Emile Othon Friesz",
+      "source_url": "https://open.smk.dk/en/artwork/image/KMSr51",
+      "rights_evidence_url": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "remote_preview_url": "https://iip.smk.dk/iiif/jp2/w9505325c_KMSr51.tif.reconstructed.tif.jp2/full/300,/0/default.jpg",
+      "publication_status": "HOLD_MEDIA_AND_TERRITORY",
+      "runtime_visible": false
+    },
+    {
+      "museum_source": "smk",
+      "museum_native_id": "KMSr54",
+      "artist": "Emile Othon Friesz",
+      "source_url": "https://open.smk.dk/en/artwork/image/KMSr54",
+      "rights_evidence_url": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "remote_preview_url": "https://iip.smk.dk/iiif/jp2/xg94hs541_KMSr54.tif.reconstructed.tif.jp2/full/300,/0/default.jpg",
+      "publication_status": "HOLD_MEDIA_AND_TERRITORY",
+      "runtime_visible": false
+    },
+    {
+      "museum_source": "smk",
+      "museum_native_id": "KMSr56",
+      "artist": "Emile Othon Friesz",
+      "source_url": "https://open.smk.dk/en/artwork/image/KMSr56",
+      "rights_evidence_url": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "remote_preview_url": "https://iip.smk.dk/iiif/jp2/df65vb80x_KMSr56.tif.reconstructed.tif.jp2/full/300,/0/default.jpg",
+      "publication_status": "HOLD_MEDIA_AND_TERRITORY",
+      "runtime_visible": false
+    },
+    {
+      "museum_source": "smk",
+      "museum_native_id": "KMSr57",
+      "artist": "Emile Othon Friesz",
+      "source_url": "https://open.smk.dk/en/artwork/image/KMSr57",
+      "rights_evidence_url": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "remote_preview_url": "https://iip.smk.dk/iiif/jp2/ft848t765_KMSKMSr57.tif.reconstructed.tif.jp2/full/300,/0/default.jpg",
+      "publication_status": "HOLD_MEDIA_AND_TERRITORY",
+      "runtime_visible": false
+    },
+    {
+      "museum_source": "smk",
+      "museum_native_id": "KMSr71",
+      "artist": "Albert Marquet",
+      "source_url": "https://open.smk.dk/en/artwork/image/KMSr71",
+      "rights_evidence_url": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "remote_preview_url": "https://iip.smk.dk/iiif/jp2/2514nr457_KMSr71.tif.jp2/full/300,/0/default.jpg",
+      "publication_status": "HOLD_MEDIA_AND_TERRITORY",
+      "runtime_visible": false
+    },
+    {
+      "museum_source": "smk",
+      "museum_native_id": "KMSr72",
+      "artist": "Henri Matisse",
+      "source_url": "https://open.smk.dk/en/artwork/image/KMSr72",
+      "rights_evidence_url": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "remote_preview_url": "https://iip.smk.dk/iiif/jp2/z890s035h_kmsr72.tif.jp2/full/300,/0/default.jpg",
+      "publication_status": "HOLD_MEDIA_AND_TERRITORY",
+      "runtime_visible": false
+    },
+    {
+      "museum_source": "smk",
+      "museum_native_id": "KMSr73",
+      "artist": "Henri Matisse",
+      "source_url": "https://open.smk.dk/en/artwork/image/KMSr73",
+      "rights_evidence_url": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "remote_preview_url": "https://iip.smk.dk/iiif/jp2/gx41mp54f_kmsr73.tif.jp2/full/300,/0/default.jpg",
+      "publication_status": "HOLD_MEDIA_AND_TERRITORY",
+      "runtime_visible": false
+    },
+    {
+      "museum_source": "smk",
+      "museum_native_id": "KMSr75",
+      "artist": "Henri Matisse",
+      "source_url": "https://open.smk.dk/en/artwork/image/KMSr75",
+      "rights_evidence_url": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "remote_preview_url": "https://iip.smk.dk/iiif/jp2/d217qt074_KMSr75_-_cropped.tif.jp2/full/300,/0/default.jpg",
+      "publication_status": "HOLD_MEDIA_AND_TERRITORY",
+      "runtime_visible": false
+    },
+    {
+      "museum_source": "smk",
+      "museum_native_id": "KMSr76",
+      "artist": "Henri Matisse",
+      "source_url": "https://open.smk.dk/en/artwork/image/KMSr76",
+      "rights_evidence_url": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "remote_preview_url": "https://iip.smk.dk/iiif/jp2/qr46r489h_KMSr76.tif.reconstructed.tif.jp2/full/300,/0/default.jpg",
+      "publication_status": "HOLD_MEDIA_AND_TERRITORY",
+      "runtime_visible": false
+    },
+    {
+      "museum_source": "smk",
+      "museum_native_id": "KMSr84",
+      "artist": "Henri Matisse",
+      "source_url": "https://open.smk.dk/en/artwork/image/KMSr84",
+      "rights_evidence_url": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "remote_preview_url": "https://iip.smk.dk/iiif/jp2/b8515r67b_KMSr84_-_cropped.tif.jp2/full/300,/0/default.jpg",
+      "publication_status": "HOLD_MEDIA_AND_TERRITORY",
+      "runtime_visible": false
+    },
+    {
+      "museum_source": "smk",
+      "museum_native_id": "KMSr86",
+      "artist": "Henri Matisse",
+      "source_url": "https://open.smk.dk/en/artwork/image/KMSr86",
+      "rights_evidence_url": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "remote_preview_url": "https://iip.smk.dk/iiif/jp2/k3569777r_KMSr86_-_cropped.tif.jp2/full/300,/0/default.jpg",
+      "publication_status": "HOLD_MEDIA_AND_TERRITORY",
+      "runtime_visible": false
+    }
+  ]
+}

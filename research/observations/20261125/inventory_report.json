@@ -1,0 +1,11 @@
+{
+  "mode": "inventory",
+  "total": 53,
+  "rights": {
+    "LICENZA_RICHIESTA__NON_USARE": 4,
+    "MUSEO_DICHIARA_FREE_TO_USE__PRE_IMPORT": 32,
+    "NO_IMAGE__NON_IMPORTARE": 1,
+    "SCHEDA_INDIVIDUATA__LICENZA_IMMAGINE_DA_VERIFICARE": 16
+  },
+  "integrated_into_runtime": 0
+}
