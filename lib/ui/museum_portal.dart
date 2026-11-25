@@ -53,7 +53,7 @@ class MuseumPortal extends StatelessWidget {
                     else
                       const _MuseumEmblem(unavailable: false),
                     SizedBox(height: compact ? 17 : 25),
-                    Text(unavailable ? '02 / INTERRUZIONE' : '01 / INGRESSO',
+                    Text(_t(unavailable ? 'portalInterruptionLabel' : 'portalEntryLabel'),
                       textAlign: TextAlign.center,
                       style: const TextStyle(fontSize: 10,
                         color: _gold, letterSpacing: 1.7)),
@@ -121,9 +121,9 @@ class MuseumPortal extends StatelessWidget {
               ),
             )),
             const Divider(color: Color(0x706F573F), height: 1, indent: 22, endIndent: 22),
-            const Padding(padding: EdgeInsets.fromLTRB(22, 10, 22, 16),
+            Padding(padding: const EdgeInsets.fromLTRB(22, 10, 22, 16),
               child: Row(children: [
-                Text('UN MUSEO SENZA FINE', style: TextStyle(
+                Text(_t('portalFooter'), style: TextStyle(
                   color: _gold, fontSize: 9, letterSpacing: 1.4)),
                 Spacer(),
                 Text('✦', style: TextStyle(color: _gold, fontSize: 16)),

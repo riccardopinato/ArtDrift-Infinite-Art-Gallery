@@ -30,6 +30,9 @@ abstract final class ArtDriftLocale {
 
   static const Map<String, Map<String, String>> _messages = {
     'it': {
+      'portalEntryLabel': '01 / INGRESSO',
+      'portalInterruptionLabel': '02 / INTERRUZIONE',
+      'portalFooter': 'UN MUSEO SENZA FINE',
       'portalLine1': 'Il museo sta aprendo',
       'portalLine2': 'la visita sta per cominciare',
       'portalLoading': 'Carichiamo le opere del tuo museo…',
@@ -79,6 +82,9 @@ abstract final class ArtDriftLocale {
       'emptyQuery': 'Scrivi almeno una lettera per iniziare.',
     },
     'en': {
+      'portalEntryLabel': '01 / ENTRY',
+      'portalInterruptionLabel': '02 / INTERRUPTION',
+      'portalFooter': 'AN ENDLESS MUSEUM',
       'portalLine1': 'The museum is opening',
       'portalLine2': 'your visit is about to begin',
       'portalLoading': 'Preparing the artwork collection…',
@@ -127,6 +133,9 @@ abstract final class ArtDriftLocale {
       'emptyQuery': 'Enter a letter to begin.',
     },
     'fr': {
+      'portalEntryLabel': '01 / ENTRÉE',
+      'portalInterruptionLabel': '02 / INTERRUPTION',
+      'portalFooter': 'UN MUSÉE SANS FIN',
       'portalLine1': 'Le musée ouvre ses portes',
       'portalLine2': 'la visite va commencer',
       'portalLoading': 'Nous préparons les œuvres du musée…',
@@ -175,6 +184,9 @@ abstract final class ArtDriftLocale {
       'emptyQuery': 'Saisissez une lettre pour commencer.',
     },
     'es': {
+      'portalEntryLabel': '01 / ENTRADA',
+      'portalInterruptionLabel': '02 / INTERRUPCIÓN',
+      'portalFooter': 'UN MUSEO SIN FIN',
       'portalLine1': 'El museo está abriendo',
       'portalLine2': 'la visita está a punto de comenzar',
       'portalLoading': 'Preparamos las obras de tu museo…',
@@ -223,6 +235,9 @@ abstract final class ArtDriftLocale {
       'emptyQuery': 'Escribe una letra para empezar.',
     },
     'de': {
+      'portalEntryLabel': '01 / EINGANG',
+      'portalInterruptionLabel': '02 / UNTERBRECHUNG',
+      'portalFooter': 'EIN MUSEUM OHNE ENDE',
       'portalLine1': 'Das Museum öffnet',
       'portalLine2': 'dein Besuch beginnt gleich',
       'portalLoading': 'Wir bereiten die Kunstwerke vor…',
@@ -271,6 +286,9 @@ abstract final class ArtDriftLocale {
       'emptyQuery': 'Einen Buchstaben eingeben.',
     },
     'pt': {
+      'portalEntryLabel': '01 / ENTRADA',
+      'portalInterruptionLabel': '02 / INTERRUPÇÃO',
+      'portalFooter': 'UM MUSEU SEM FIM',
       'portalLine1': 'O museu está a abrir',
       'portalLine2': 'a visita está prestes a começar',
       'portalLoading': 'Estamos a preparar as obras do museu…',
