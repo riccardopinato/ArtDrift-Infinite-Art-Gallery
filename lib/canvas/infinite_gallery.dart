@@ -81,9 +81,7 @@ class InfiniteGallery extends StatelessWidget {
     tileBuilder: (context, art, zoom) => _tileImage(art, zoom, BoxFit.cover),
     tileLayout: bento?.visible,
     tileBuilderWithTile: bento == null ? null : (context, art, zoom, tile) =>
-      _tileImage(art, zoom,
-        tile.rect.width >= 290 || tile.rect.height >= 290
-            ? BoxFit.contain : BoxFit.cover),
+      _tileImage(art, zoom, BoxFit.cover),
     prefetchItem: ArtThumbnailPrefetch.instance.warm,
     cameraKey: cameraKey,
     initialWorldCenter: initialWorldCenter,

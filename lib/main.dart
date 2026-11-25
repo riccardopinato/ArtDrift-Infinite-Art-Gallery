@@ -3,6 +3,7 @@ import 'package:flutter/painting.dart';
 
 import 'canvas/infinite_gallery.dart';
 import 'canvas/art_bento_world.dart';
+import 'services/art_bento_vivid_ranking.dart';
 import 'screens/search_sheet.dart';
 import 'screens/doppleganger.dart';
 import 'screens/settings_sheet.dart';
@@ -86,13 +87,14 @@ class _GalleryHomeState extends State<GalleryHome> {
       // The new layout is the approved Art UI even if the optional color
       // manifest fails closed. Without scores, metadata-only ranking remains
       // deterministic; verified pixel scores are still preferred when present.
-      final bento = canvas.isNotEmpty ? ArtBentoWorld(canvas, pixelScores) : null;
+      final vividScores = ArtBentoVividRanking.prioritize(works, pixelScores);
+      final bento = canvas.isNotEmpty ? ArtBentoWorld(canvas, vividScores) : null;
       if (!mounted) return;
       // A new region only on a fresh app opening, not on catalogue refresh.
       final launch = _launchWorldCenter ??
           await ArtJoyfulStart.chooseForLaunch(canvas,
             viewport: MediaQuery.sizeOf(context),
-            pixelScores: pixelScores, bento: bento);
+            pixelScores: vividScores, bento: bento);
       if (!mounted) return;
       setState(() {
         _artworks = works;
