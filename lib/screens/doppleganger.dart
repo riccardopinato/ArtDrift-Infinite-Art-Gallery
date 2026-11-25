@@ -51,23 +51,28 @@ class _DopplegangerScreenState extends State<DopplegangerScreen> {
       );
 
   Widget _credits(Map<String, dynamic> data) {
-    final links = (data['links'] as List).cast<String>();
+    final links = (data['links'] as Map).cast<String, String>();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(data['credit'] as String),
         Wrap(children: [
-          for (var index = 0; index < links.length; index++)
+          for (final link in links.entries)
             TextButton(
               onPressed: () async {
-                final opened = await launchUrl(Uri.parse(links[index]));
+                var opened = false;
+                try {
+                  opened = await launchUrl(Uri.parse(link.value));
+                } on PlatformException {
+                  // The browser or platform may reject external navigation.
+                }
                 if (!opened && mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text(_text('doppleUnavailable'))),
                   );
                 }
               },
-              child: Text(_text(index == 0 ? 'doppleLicense' : 'doppleSource')),
+              child: Text(_text(link.key)),
             ),
         ]),
       ],
