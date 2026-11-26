@@ -1,0 +1,83 @@
+name: Art Drift — Exact paintings and targeted Monet Commons QA
+on:
+  push:
+    branches:
+      - research/artdrift-user-palette-artists-20261126
+    paths:
+      - tools/artdrift_artist_exact_works.py
+      - tools/test_artdrift_artist_exact_works.py
+      - .github/workflows/artdrift-artist-exact-works.yml
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: artdrift-user-palette-artists-sources
+  cancel-in-progress: false
+jobs:
+  artwork-identities:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate exact author/title matching, 429 stop and provenance HOLD
+        run: |
+          python -m py_compile tools/artdrift_artist_exact_works.py
+          python -m unittest discover -s tools -p 'test_artdrift_artist_exact_works.py' -v
+          python -m unittest discover -s tools -p 'test_artdrift_user_artist_pipeline.py' -v
+      - name: Bounded Commons search for three requested artworks and Monet
+        run: python -u tools/artdrift_artist_exact_works.py --max-queries 9
+      - name: Reuse the nine completed museum source inventories
+        run: |
+          mkdir -p research/museums/20261126/lanes/imports
+          for source in rijks nationalmuseum_se staedel finnish_national_gallery birmingham belvedere paris_musees te_papa nasjonalmuseet; do
+            git fetch --quiet origin "research/artdrift-harvest-$source-20261126"
+            git show "FETCH_HEAD:research/museums/20261126/lanes/results/$source.json" > "research/museums/20261126/lanes/imports/$source.json"
+            test -s "research/museums/20261126/lanes/imports/$source.json"
+          done
+      - name: Refresh deduplicated visual/rights HOLD shortlist
+        run: python -u tools/artdrift_user_artist_pipeline.py --phase shortlist
+      - name: Zero import and zero commercial approval gate
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          base=Path('research/artists/20261126')
+          a=json.loads((base/'artist_commons_source_evidence.json').read_text())
+          b=json.loads((base/'user_artist_visual_qa.json').read_text())
+          assert a['commercially_approved']==b['commercially_approved']==0
+          assert a['runtime_imported']==b['runtime_imported']==0
+          assert b['museum_reports_read']==9
+          assert len({x['identity'] for x in b['priority_shortlist']})==len(b['priority_shortlist'])
+          assert all(x['commercially_approved'] is False for x in b['priority_shortlist'])
+          print('VERIFIED targeted file search',a['targeted_new_files_this_run'])
+          print('EXACT work-family matches',b['exact_work_family_matches'])
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ArtDrift-Three-Exact-Works-And-Monet-Research
+          path: |
+            research/artists/20261126/user_palette_artist_seeds.json
+            research/artists/20261126/artist_commons_source_evidence.json
+            research/artists/20261126/user_artist_visual_qa.json
+          retention-days: 30
+          if-no-files-found: warn
+      - name: Preserve only source research JSON
+        if: success()
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          cp research/artists/20261126/artist_commons_source_evidence.json /tmp/artist-source.json
+          cp research/artists/20261126/user_artist_visual_qa.json /tmp/artist-review.json
+          git fetch origin research/artdrift-user-palette-artists-20261126
+          git reset --hard FETCH_HEAD
+          cp /tmp/artist-source.json research/artists/20261126/artist_commons_source_evidence.json
+          cp /tmp/artist-review.json research/artists/20261126/user_artist_visual_qa.json
+          git add research/artists/20261126/artist_commons_source_evidence.json research/artists/20261126/user_artist_visual_qa.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'research(artists): exact work identity and Monet topical source discovery'
+            git push origin HEAD:research/artdrift-user-palette-artists-20261126
+          fi
