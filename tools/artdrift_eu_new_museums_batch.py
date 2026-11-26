@@ -237,6 +237,19 @@ def search_rijks(q,periods=("18??","19??"),max_pages=3):
             time.sleep(.07)
     return out,count
 
+def visual_review_exception(c):
+    """High-color near misses are HOLD for visual review, never automatic PASS.
+
+    A picture with 19% very dark pixels can still be lively and belong
+    to the user's preferred 15-20% conditional range. A mean luminance
+    cutoff alone must not silently erase the candidate from research.
+    """
+    return bool(isinstance(c,dict) and
+                0 <= c.get("dark_fraction",1) <= .20 and
+                c.get("luminance",0)>=.46 and
+                c.get("saturation",0)>=.30 and
+                c.get("vivid_fraction",0)>=.35)
+
 def run_rijks(shard,max_images):
     terms=RIJKS_QUERIES[shard]
     ids={}
@@ -303,8 +316,20 @@ def run_rijks(shard,max_images):
                 rec["image_sha256"]=sha;rec["color_metrics"]=c
                 tier=color_tier(c)
                 if tier.startswith("HOLD"):
-                    holds.append({"id":rec["museum_native_id"],"reason":tier,
-                                  "title":rec["title"],"metrics":c})
+                    if visual_review_exception(c):
+                        stats["high_chroma_visual_review_only"]+=1
+                        holds.append({
+                            "id":rec["museum_native_id"],
+                            "title":rec["title"],"artist":rec["artist"],
+                            "year":rec["year"],"image_sha256":sha,
+                            "source_url":rec["museum_url"],
+                            "remote_preview_url":rec["remote_preview_url"],
+                            "reason":"HOLD_HIGH_CHROMA_VISUAL_REVIEW__MEAN_LUMINANCE_ONLY",
+                            "metrics":c,"runtime_visible":False})
+                        thumbs[rec["museum_native_id"]]=img
+                    else:
+                        holds.append({"id":rec["museum_native_id"],"reason":tier,
+                                      "title":rec["title"],"metrics":c})
                     continue
                 rec["color_tier"]=tier
                 rec["curatorial_status"]="HOLD_VISUAL_CHECK"
@@ -516,6 +541,7 @@ def save(provider,shard,works,holds,stats,images,errors):
             "search_stats":dict(stats),"source_errors":errors[:12],
             "verified_images_bright":len(filtered),
             "holds":holds[:90],
+            "high_chroma_visual_review_only":sum(x.get("reason","").startswith("HOLD_HIGH_CHROMA_VISUAL_REVIEW") for x in holds),
             "title_author_and_image_license_gates":True,
             "pixel_thresholds":{"preferred_dark_max":.15,"conditional_dark_max":.20,
                                 "conditional_min_saturation":.24,
@@ -534,6 +560,22 @@ def save(provider,shard,works,holds,stats,images,errors):
             painter.text((x+2,y+140),w["title"][:25],fill="black")
             painter.text((x+2,y+157),w["source"]+" "+str(w["year"]),fill="black")
         sheet.save(out/"artworks_contact_sheet.jpg",quality=84,optimize=True)
+    # Separate media preview for near-miss candidates: this is explicitly
+    # not a list of auto-approved artworks. It is necessary for real visual QA.
+    visual=[x for x in holds if x.get("reason","").startswith(
+        "HOLD_HIGH_CHROMA_VISUAL_REVIEW")]
+    if visual:
+        cols=5;W=190;H=181
+        sheet=Image.new("RGB",(cols*W,((len(visual[:50])+cols-1)//cols)*H),"white")
+        painter=ImageDraw.Draw(sheet)
+        for i,v in enumerate(visual[:50]):
+            im=images.get(v["id"])
+            if im is None:continue
+            x=i%cols*W;y=i//cols*H
+            sheet.paste(im,(x+(W-im.width)//2,y+(136-im.height)//2))
+            painter.text((x+2,y+139),v["title"][:24],fill="black")
+            painter.text((x+2,y+157),f"REVIEW {v['metrics']['dark_fraction']:.1%} dark",fill="black")
+        sheet.save(out/"visual_review_high_chroma.jpg",quality=85,optimize=True)
     print(json.dumps({k:v for k,v in report.items() if k not in ("works","holds")},
                      sort_keys=True,ensure_ascii=False),flush=True)
 def main():
