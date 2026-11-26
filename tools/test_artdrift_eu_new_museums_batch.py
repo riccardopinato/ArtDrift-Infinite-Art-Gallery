@@ -47,6 +47,19 @@ class EuropeanMuseumSourceTests(unittest.TestCase):
         self.assertEqual(eu.rijks_artist(obj),"Artist Example")
         self.assertTrue(eu.scene_title(eu.display_name(obj["identified_by"])))
 
+    def test_high_chroma_near_miss_preserved_for_visual_qa(self):
+        # Actual Rijksmuseum SK-A-2288, Landscape on the Oise.
+        vivid={"luminance":.4935,"dark_fraction":.1906,
+               "saturation":.5389,"vivid_fraction":.5614}
+        self.assertTrue(eu.visual_review_exception(vivid))
+        from artdrift_dark_threshold_ab import color_tier
+        self.assertTrue(color_tier(vivid).startswith("HOLD"))
+        # A predominantly dark low-chroma image is still rejected.
+        self.assertFalse(eu.visual_review_exception(
+            {"luminance":.29,"dark_fraction":.65,"saturation":.52,"vivid_fraction":.55}))
+        self.assertFalse(eu.visual_review_exception(
+            {"luminance":.59,"dark_fraction":.08,"saturation":.13,"vivid_fraction":.12}))
+
     def test_sweden_requires_public_domain_and_actual_creation_date(self):
         obj={"pageid":52109999,"title":"File:Summer Landscape (Test Artist) - Nationalmuseum - 9999.tif",
              "imageinfo":[{"mime":"image/tiff","thumburl":
