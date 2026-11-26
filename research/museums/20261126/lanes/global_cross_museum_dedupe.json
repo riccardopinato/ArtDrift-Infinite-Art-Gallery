@@ -1,0 +1,472 @@
+{
+  "catalog_exhaustively_searched": false,
+  "commercially_approved": 0,
+  "cross_museum_exact_file_cluster_examples": [
+    [
+      "finnish_national_gallery:127949028",
+      "nasjonalmuseet:127949028"
+    ],
+    [
+      "finnish_national_gallery:29841363",
+      "nasjonalmuseet:29841363"
+    ],
+    [
+      "finnish_national_gallery:66317188",
+      "nasjonalmuseet:66317188"
+    ],
+    [
+      "finnish_national_gallery:66389414",
+      "nasjonalmuseet:66389414"
+    ],
+    [
+      "finnish_national_gallery:66452677",
+      "nasjonalmuseet:66452677"
+    ],
+    [
+      "finnish_national_gallery:69278473",
+      "nasjonalmuseet:69278473"
+    ],
+    [
+      "finnish_national_gallery:80490696",
+      "nasjonalmuseet:80490696"
+    ],
+    [
+      "finnish_national_gallery:80538945",
+      "nasjonalmuseet:80538945"
+    ],
+    [
+      "finnish_national_gallery:98009616",
+      "nasjonalmuseet:98009616"
+    ],
+    [
+      "paris_musees:10765320",
+      "te_papa:10765320"
+    ],
+    [
+      "paris_musees:98186036",
+      "te_papa:98186036"
+    ]
+  ],
+  "cross_museum_exact_file_clusters": 11,
+  "exact_file_cluster_count": 4245,
+  "exact_match_evidence": [
+    {
+      "fingerprint": "10765320",
+      "match_type": "commons_file",
+      "museum_sources": [
+        "paris_musees",
+        "te_papa"
+      ],
+      "record_keys": [
+        "paris_musees:10765320",
+        "te_papa:10765320"
+      ],
+      "review_status": "HOLD_CROSS_SOURCE_DUPLICATE_OR_PROVENANCE"
+    },
+    {
+      "fingerprint": "127949028",
+      "match_type": "commons_file",
+      "museum_sources": [
+        "finnish_national_gallery",
+        "nasjonalmuseet"
+      ],
+      "record_keys": [
+        "finnish_national_gallery:127949028",
+        "nasjonalmuseet:127949028"
+      ],
+      "review_status": "HOLD_CROSS_SOURCE_DUPLICATE_OR_PROVENANCE"
+    },
+    {
+      "fingerprint": "29841363",
+      "match_type": "commons_file",
+      "museum_sources": [
+        "finnish_national_gallery",
+        "nasjonalmuseet"
+      ],
+      "record_keys": [
+        "finnish_national_gallery:29841363",
+        "nasjonalmuseet:29841363"
+      ],
+      "review_status": "HOLD_CROSS_SOURCE_DUPLICATE_OR_PROVENANCE"
+    },
+    {
+      "fingerprint": "66317188",
+      "match_type": "commons_file",
+      "museum_sources": [
+        "finnish_national_gallery",
+        "nasjonalmuseet"
+      ],
+      "record_keys": [
+        "finnish_national_gallery:66317188",
+        "nasjonalmuseet:66317188"
+      ],
+      "review_status": "HOLD_CROSS_SOURCE_DUPLICATE_OR_PROVENANCE"
+    },
+    {
+      "fingerprint": "66389414",
+      "match_type": "commons_file",
+      "museum_sources": [
+        "finnish_national_gallery",
+        "nasjonalmuseet"
+      ],
+      "record_keys": [
+        "finnish_national_gallery:66389414",
+        "nasjonalmuseet:66389414"
+      ],
+      "review_status": "HOLD_CROSS_SOURCE_DUPLICATE_OR_PROVENANCE"
+    },
+    {
+      "fingerprint": "66452677",
+      "match_type": "commons_file",
+      "museum_sources": [
+        "finnish_national_gallery",
+        "nasjonalmuseet"
+      ],
+      "record_keys": [
+        "finnish_national_gallery:66452677",
+        "nasjonalmuseet:66452677"
+      ],
+      "review_status": "HOLD_CROSS_SOURCE_DUPLICATE_OR_PROVENANCE"
+    },
+    {
+      "fingerprint": "69278473",
+      "match_type": "commons_file",
+      "museum_sources": [
+        "finnish_national_gallery",
+        "nasjonalmuseet"
+      ],
+      "record_keys": [
+        "finnish_national_gallery:69278473",
+        "nasjonalmuseet:69278473"
+      ],
+      "review_status": "HOLD_CROSS_SOURCE_DUPLICATE_OR_PROVENANCE"
+    },
+    {
+      "fingerprint": "80490696",
+      "match_type": "commons_file",
+      "museum_sources": [
+        "finnish_national_gallery",
+        "nasjonalmuseet"
+      ],
+      "record_keys": [
+        "finnish_national_gallery:80490696",
+        "nasjonalmuseet:80490696"
+      ],
+      "review_status": "HOLD_CROSS_SOURCE_DUPLICATE_OR_PROVENANCE"
+    },
+    {
+      "fingerprint": "80538945",
+      "match_type": "commons_file",
+      "museum_sources": [
+        "finnish_national_gallery",
+        "nasjonalmuseet"
+      ],
+      "record_keys": [
+        "finnish_national_gallery:80538945",
+        "nasjonalmuseet:80538945"
+      ],
+      "review_status": "HOLD_CROSS_SOURCE_DUPLICATE_OR_PROVENANCE"
+    },
+    {
+      "fingerprint": "98009616",
+      "match_type": "commons_file",
+      "museum_sources": [
+        "finnish_national_gallery",
+        "nasjonalmuseet"
+      ],
+      "record_keys": [
+        "finnish_national_gallery:98009616",
+        "nasjonalmuseet:98009616"
+      ],
+      "review_status": "HOLD_CROSS_SOURCE_DUPLICATE_OR_PROVENANCE"
+    },
+    {
+      "fingerprint": "98186036",
+      "match_type": "commons_file",
+      "museum_sources": [
+        "paris_musees",
+        "te_papa"
+      ],
+      "record_keys": [
+        "paris_musees:98186036",
+        "te_papa:98186036"
+      ],
+      "review_status": "HOLD_CROSS_SOURCE_DUPLICATE_OR_PROVENANCE"
+    },
+    {
+      "fingerprint": "13ae4fbb9ff005146fb06d1d924a65acd9f166f6",
+      "match_type": "file_sha1",
+      "museum_sources": [
+        "finnish_national_gallery",
+        "nasjonalmuseet"
+      ],
+      "record_keys": [
+        "finnish_national_gallery:80490696",
+        "nasjonalmuseet:80490696"
+      ],
+      "review_status": "HOLD_CROSS_SOURCE_DUPLICATE_OR_PROVENANCE"
+    },
+    {
+      "fingerprint": "288ab0d5ee464e146abd0b617e7e699b3fb0a5b1",
+      "match_type": "file_sha1",
+      "museum_sources": [
+        "finnish_national_gallery",
+        "nasjonalmuseet"
+      ],
+      "record_keys": [
+        "finnish_national_gallery:98009616",
+        "nasjonalmuseet:98009616"
+      ],
+      "review_status": "HOLD_CROSS_SOURCE_DUPLICATE_OR_PROVENANCE"
+    },
+    {
+      "fingerprint": "3fee3f38886a5d158113e35db113e4f20e9e6ed7",
+      "match_type": "file_sha1",
+      "museum_sources": [
+        "finnish_national_gallery",
+        "nasjonalmuseet"
+      ],
+      "record_keys": [
+        "finnish_national_gallery:80538945",
+        "nasjonalmuseet:80538945"
+      ],
+      "review_status": "HOLD_CROSS_SOURCE_DUPLICATE_OR_PROVENANCE"
+    },
+    {
+      "fingerprint": "51136b575aa07b2f8d99e709fc2996b50157c901",
+      "match_type": "file_sha1",
+      "museum_sources": [
+        "finnish_national_gallery",
+        "nasjonalmuseet"
+      ],
+      "record_keys": [
+        "finnish_national_gallery:66317188",
+        "nasjonalmuseet:66317188"
+      ],
+      "review_status": "HOLD_CROSS_SOURCE_DUPLICATE_OR_PROVENANCE"
+    },
+    {
+      "fingerprint": "5cf8918c0beaa89de5d6c046d0cabacc8ae71df3",
+      "match_type": "file_sha1",
+      "museum_sources": [
+        "paris_musees",
+        "te_papa"
+      ],
+      "record_keys": [
+        "paris_musees:98186036",
+        "te_papa:98186036"
+      ],
+      "review_status": "HOLD_CROSS_SOURCE_DUPLICATE_OR_PROVENANCE"
+    },
+    {
+      "fingerprint": "688426160336927de75a7cbf007aa9b2e36786a8",
+      "match_type": "file_sha1",
+      "museum_sources": [
+        "finnish_national_gallery",
+        "nasjonalmuseet"
+      ],
+      "record_keys": [
+        "finnish_national_gallery:29841363",
+        "nasjonalmuseet:29841363"
+      ],
+      "review_status": "HOLD_CROSS_SOURCE_DUPLICATE_OR_PROVENANCE"
+    },
+    {
+      "fingerprint": "74d24bd892923ec33a63fb83b1150504f509221d",
+      "match_type": "file_sha1",
+      "museum_sources": [
+        "finnish_national_gallery",
+        "nasjonalmuseet"
+      ],
+      "record_keys": [
+        "finnish_national_gallery:66452677",
+        "nasjonalmuseet:66452677"
+      ],
+      "review_status": "HOLD_CROSS_SOURCE_DUPLICATE_OR_PROVENANCE"
+    },
+    {
+      "fingerprint": "94b8142a2c3da633e4a7b878ae887216f7e63796",
+      "match_type": "file_sha1",
+      "museum_sources": [
+        "paris_musees",
+        "te_papa"
+      ],
+      "record_keys": [
+        "paris_musees:10765320",
+        "te_papa:10765320"
+      ],
+      "review_status": "HOLD_CROSS_SOURCE_DUPLICATE_OR_PROVENANCE"
+    },
+    {
+      "fingerprint": "a70775ced756d33b602a78bd1fa834b9cc539371",
+      "match_type": "file_sha1",
+      "museum_sources": [
+        "finnish_national_gallery",
+        "nasjonalmuseet"
+      ],
+      "record_keys": [
+        "finnish_national_gallery:66389414",
+        "nasjonalmuseet:66389414"
+      ],
+      "review_status": "HOLD_CROSS_SOURCE_DUPLICATE_OR_PROVENANCE"
+    },
+    {
+      "fingerprint": "e00505b6da27345aeca7c3abced4450169ccda7c",
+      "match_type": "file_sha1",
+      "museum_sources": [
+        "finnish_national_gallery",
+        "nasjonalmuseet"
+      ],
+      "record_keys": [
+        "finnish_national_gallery:69278473",
+        "nasjonalmuseet:69278473"
+      ],
+      "review_status": "HOLD_CROSS_SOURCE_DUPLICATE_OR_PROVENANCE"
+    },
+    {
+      "fingerprint": "ff51d23c17dc2fffed959022e3d3821e247fbd17",
+      "match_type": "file_sha1",
+      "museum_sources": [
+        "finnish_national_gallery",
+        "nasjonalmuseet"
+      ],
+      "record_keys": [
+        "finnish_national_gallery:127949028",
+        "nasjonalmuseet:127949028"
+      ],
+      "review_status": "HOLD_CROSS_SOURCE_DUPLICATE_OR_PROVENANCE"
+    },
+    {
+      "fingerprint": "2c4dd4be7b0daec861d016e0cf87a803d5fd7d5065fc85e2ab4d87b9096cb951",
+      "match_type": "raster_sha256",
+      "museum_sources": [
+        "finnish_national_gallery",
+        "nasjonalmuseet"
+      ],
+      "record_keys": [
+        "finnish_national_gallery:29841363",
+        "nasjonalmuseet:29841363"
+      ],
+      "review_status": "HOLD_CROSS_SOURCE_DUPLICATE_OR_PROVENANCE"
+    },
+    {
+      "fingerprint": "3eca39f844cfc713a10eb040c85c0d2bb73877e5a1f527c2c7ea51c674a927b0",
+      "match_type": "raster_sha256",
+      "museum_sources": [
+        "finnish_national_gallery",
+        "nasjonalmuseet"
+      ],
+      "record_keys": [
+        "finnish_national_gallery:127949028",
+        "nasjonalmuseet:127949028"
+      ],
+      "review_status": "HOLD_CROSS_SOURCE_DUPLICATE_OR_PROVENANCE"
+    }
+  ],
+  "exact_match_evidence_count": 24,
+  "license_per_object_review": "REQUIRED",
+  "museum_custody_confirmed": false,
+  "next_step": "Human visual audit and institutional source/licensing verification of shortlisted candidates",
+  "per_museum": [
+    {
+      "catalog_exhaustively_searched": false,
+      "commercially_approved": 0,
+      "latest_run_records": 46,
+      "records_retained": 46,
+      "source": "rijks",
+      "source_identifiers_tracked": 343,
+      "technical_color_pass": 2
+    },
+    {
+      "catalog_exhaustively_searched": false,
+      "commercially_approved": 0,
+      "latest_run_records": 500,
+      "records_retained": 992,
+      "source": "nationalmuseum_se",
+      "source_identifiers_tracked": 826,
+      "technical_color_pass": 1
+    },
+    {
+      "catalog_exhaustively_searched": false,
+      "commercially_approved": 0,
+      "latest_run_records": 5,
+      "records_retained": 5,
+      "source": "staedel",
+      "source_identifiers_tracked": 58,
+      "technical_color_pass": 0
+    },
+    {
+      "catalog_exhaustively_searched": false,
+      "commercially_approved": 0,
+      "latest_run_records": 448,
+      "records_retained": 591,
+      "source": "finnish_national_gallery",
+      "source_identifiers_tracked": 520,
+      "technical_color_pass": 9
+    },
+    {
+      "catalog_exhaustively_searched": false,
+      "commercially_approved": 0,
+      "latest_run_records": 500,
+      "records_retained": 703,
+      "source": "birmingham",
+      "source_identifiers_tracked": 686,
+      "technical_color_pass": 9
+    },
+    {
+      "catalog_exhaustively_searched": false,
+      "commercially_approved": 0,
+      "latest_run_records": 441,
+      "records_retained": 585,
+      "source": "belvedere",
+      "source_identifiers_tracked": 529,
+      "technical_color_pass": 2
+    },
+    {
+      "catalog_exhaustively_searched": false,
+      "commercially_approved": 0,
+      "latest_run_records": 398,
+      "records_retained": 597,
+      "source": "paris_musees",
+      "source_identifiers_tracked": 581,
+      "technical_color_pass": 8
+    },
+    {
+      "catalog_exhaustively_searched": false,
+      "commercially_approved": 0,
+      "latest_run_records": 308,
+      "records_retained": 308,
+      "source": "te_papa",
+      "source_identifiers_tracked": 308,
+      "technical_color_pass": 1
+    },
+    {
+      "catalog_exhaustively_searched": false,
+      "commercially_approved": 0,
+      "latest_run_records": 429,
+      "records_retained": 429,
+      "source": "nasjonalmuseet",
+      "source_identifiers_tracked": 429,
+      "technical_color_pass": 11
+    }
+  ],
+  "purpose": "RESEARCH_ONLY__CROSS_SOURCE_FILE_DUPLICATES_AND_PROVENANCE",
+  "records_retained_across_museums": 4256,
+  "runtime_imported": 0,
+  "schema_version": 1,
+  "semantic_match_evidence": [],
+  "semantic_match_evidence_count": 0,
+  "source_count": 9,
+  "source_report_sha256": {
+    "belvedere": "e602be88f97f3411a8ec6e491c8f437fc11efc2ca13b25440d8f11053fea3d70",
+    "birmingham": "d0c6a84442fd6909a632c4305c7bf9b9b045ca2740ba66a1887e248442613e6d",
+    "finnish_national_gallery": "449a9b5fa768a973365516a0512bb91836aca46e32fd95a73100fe971e9dc09d",
+    "nasjonalmuseet": "5a3ad6808d8da9704f0725bd8cfe1bafacab9afe55dcbdbc313852173def9f5c",
+    "nationalmuseum_se": "63e8ce58e3946b37364cdbf5303af5ac01d47b9b5b81ebc64c82456cce250fb7",
+    "paris_musees": "227eb476a6d088514cedc29fd09ad2d8bc74e1d6d77129b688220714ac33eea7",
+    "rijks": "4d78453224e18d4864dca73d397cd23346e74a9689c6320380e933ed52985a91",
+    "staedel": "7f570d32fad41d701660bdc3796ad959d208f82a56b3ea6002777d0d9b0293bf",
+    "te_papa": "1c1529db1e360a9bf542fe39bf93b95db95e04385fef574e066e38d1fe1997ce"
+  },
+  "unique_paintings_proven": false
+}
