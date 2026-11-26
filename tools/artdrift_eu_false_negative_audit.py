@@ -13,6 +13,8 @@ def staedel():
     try:record=staedel_records()
     except Exception as e:return {"error":str(e)[:250]}
     data["inspected_record_count"]=len(record)
+    data["record_status_summary"]="Only active records returned by corrected staedel_records()"
+    data["active_lido_percentage"]=(100*sum(r.find(".//lido:lido",{"lido":"http://www.lido-schema.org"}) is not None for r in record)/len(record)) if record else 0
     if record:
         first=record[0]
         data["first_record_children"]=[{"tag":x.tag,"attrs":dict(x.attrib)} for x in first[:12]]
