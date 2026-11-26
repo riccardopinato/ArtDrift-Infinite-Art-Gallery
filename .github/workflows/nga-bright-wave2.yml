@@ -1,0 +1,73 @@
+name: Art Drift NGA — Wave 2, stronger bright-palette filtering
+on:
+  push:
+    branches: [research/artdrift-nga-bright-landscapes-20261125]
+    paths:
+      - tools/artdrift_nga_bright_wave2.py
+      - tools/test_artdrift_nga_bright_wave2.py
+      - tools/artdrift_nga_color_research.py
+      - research/nga/20261125/nga_bright_review.json
+      - .github/workflows/nga-bright-wave2.yml
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: artdrift-nga-bright-wave2
+  cancel-in-progress: false
+jobs:
+  source-and-color-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install raster decoding
+        run: python -m pip install --disable-pip-version-check Pillow==11.3.0
+      - name: Check source and mandatory regression tests
+        run: |
+          python -m py_compile tools/artdrift_nga_bright_wave2.py
+          python -m unittest discover -s tools -p test_artdrift_nga_bright_wave2.py -v
+      - name: NGA official data wave2 and real-image strict color filter
+        run: python -u tools/artdrift_nga_bright_wave2.py --max-probe 230 --max-selected 150 --workers 4
+      - name: Evidence as contact-sheet and JSON (non-runtime)
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: NGA-Bright-Wave2-Raster-QA
+          path: .artdrift_research/nga_bright_wave2/
+          include-hidden-files: true
+          if-no-files-found: warn
+      - name: Validate no dark, duplicates, portrait-labeled or runtime changes
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          a=json.loads(Path('research/nga/20261125/nga_bright_review.json').read_text())
+          b=json.loads(Path('.artdrift_research/nga_bright_wave2/nga_bright_wave2_review.json').read_text())
+          ia={x['museum_native_id'] for x in a['works']}
+          ib={x['museum_native_id'] for x in b['works']}
+          assert len(ia)==22 and len(ib)>=5 and not (ia&ib), (len(ia),len(ib),ia&ib)
+          assert b['runtime_imported']==0 and b['portrait_count']==0
+          assert b['territorial_and_final_curation_approved']==0
+          for w in b['works']:
+              c=w['color_metrics']
+              assert c['luminance']>=.595 and c['dark_fraction']<=.095
+              assert c['vivid_fraction']>=.255 and c['saturation']>=.235
+              assert w['public_domain_image_flag'] is True
+              assert w['runtime_visible'] is False
+              assert w['publication_status'].startswith('HOLD')
+          print('WAVE2_NEW_STRICT_BRIGHT',len(ib),'WAVE1_PRESERVED',len(ia))
+          PY
+      - name: Persist wave2 evidence on research branch only
+        run: |
+          mkdir -p research/nga/20261126
+          cp .artdrift_research/nga_bright_wave2/nga_bright_wave2_review.json research/nga/20261126/nga_bright_wave2_review.json
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add research/nga/20261126/nga_bright_wave2_review.json
+          if ! git diff --cached --quiet; then
+            git commit -m "research(nga): second bright wave color-verified and held"
+            git push origin HEAD:research/artdrift-nga-bright-landscapes-20261125
+          fi
