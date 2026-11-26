@@ -36,7 +36,7 @@ jobs:
           if test -f research/museums/20261126/lanes/results/rijks.json; then cp research/museums/20261126/lanes/results/rijks.json .artdrift_eu/previous/rijks.json; fi
       - name: Fresh museum search only on explicit source-run event
         if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[harvest:rijks]')
-        run: python -u tools/artdrift_parallel_museum_harvest.py --provider rijks --max-records 260 --max-image-checks 85
+        run: python -u tools/artdrift_parallel_museum_harvest.py --provider rijks --max-records 540 --max-image-checks 130
       - name: Preserve union and create human-only visual shortlist (no API calls)
         run: |
           python -u tools/artdrift_parallel_museum_reconcile.py --provider rijks --prior .artdrift_eu/previous/rijks.json --snapshot research/museums/20261126/lanes/snapshots/rijks_first_discovery.json --max-review 120

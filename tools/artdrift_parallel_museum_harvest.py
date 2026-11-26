@@ -254,7 +254,7 @@ def discover_rijks(bound: int):
             errors.append({"query":term,"error":str(e)[:190]})
         time.sleep(0.10)
 
-    def period_scan(period,limit=3):
+    def period_scan(period,limit=6):
         q={"type":"painting","imageAvailable":"true","creationDate":period}
         uri="https://data.rijksmuseum.nl/search/collection?"+urllib.parse.urlencode(q)
         seen_tokens=set();ids=[];first_total=0
