@@ -53,3 +53,11 @@
 Official Städel docs:
 https://sammlung.staedelmuseum.de/en/oai/guide
 https://sammlung.staedelmuseum.de/en/concept
+
+## Final reconciled state — updated after Städel LIDO stage-two
+Global cross-museum CI https://github.com/riccardopinato/ArtDrift-Infinite-Art-Gallery/actions/runs/45860598837 is PASS.
+The authoritative latest audit JSON now contains **4,271 retained museum research records**, **11 cross-museum exact-file groups**, **4,260 provisional file clusters**. These clusters are not certified unique artworks.
+Städel metadata preflight: 1,040 active IDs and 601 tombstones in the official major set. The stratified 90-ID follow-up processed 60 fresh LIDO records before HTTP 429; eight held candidates (no color PASS) were merged into the previous five: **13 retained records**, of which **7 appear in the human visual review queue** after suppressing figure- and event-centred material. All remain HOLD.
+Rijks: 343 source IDs, 53 scenic/image research candidates, 2 technical color PASS.
+Finnish Commons: 591 retained candidates, nine cumulative technical color PASS; last 429 cursor preserved for future permitted continuation.
+Nine research branches remain Draft; zero app assets imported, zero commercial approvals, zero merges. The earlier totals in this document were intermediate snapshots; always use the latest global audit JSON and per-branch reports when reconciling counts.
