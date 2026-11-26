@@ -1,0 +1,125 @@
+name: Art Drift — Final 486 provenance, duplicates and license gates
+on:
+  push:
+    branches:
+      - qa/artdrift-486-final-gates-20261126
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: artdrift-final-486-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --disable-pip-version-check rapidfuzz==3.14.3
+      - run: python -m unittest tools/test_artdrift_486_final_release_qa.py -v
+      - name: Load verified rights evidence from PR91
+        uses: actions/download-artifact@v4
+        with:
+          name: ARTDRIFT-486-LICENSE-RIGHTS-EVIDENCE-REPORT
+          run-id: '45907246535'
+          repository: ${{ github.repository }}
+          github-token: ${{ github.token }}
+          path: rights-source
+      - name: Load ALL 18 source-identical image QA shards from PR89
+        uses: actions/download-artifact@v4
+        with:
+          pattern: artist-review-shard-*
+          merge-multiple: true
+          run-id: '45905782588'
+          repository: ${{ github.repository }}
+          github-token: ${{ github.token }}
+          path: pixel-source
+      - name: Reconcile all 486 IDs against current runtime catalogs
+        run: |
+          python tools/artdrift_486_final_release_qa.py --action prepare \
+            --rights rights-source --pixels pixel-source --root . --out final-results
+      - name: Verify the output remains release-blocked
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          a=json.loads(Path("final-results/final_summary.json").read_text())
+          b=json.loads(Path("final-results/final_486_queue.json").read_text())
+          assert a["total"] == len(b) == 486
+          assert a["commercially_approved"] == a["runtime_imported"] == a["release_ready"] == 0
+          assert all(x["commercially_approved"] is False and x["runtime_visible"] is False for x in b)
+          print("PASS 486/486 CLOSED PUBLICATION GATE")
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ArtDrift-486-Final-Release-Preflight
+          path: final-results/*
+          if-no-files-found: error
+          retention-days: 60
+  wiki-sources:
+    needs: prepare
+    strategy:
+      max-parallel: 2
+      fail-fast: false
+      matrix:
+        shard: [0,1,2,3]
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --disable-pip-version-check rapidfuzz==3.14.3
+      - uses: actions/download-artifact@v4
+        with:
+          name: ArtDrift-486-Final-Release-Preflight
+          path: final-results
+      - name: Inspect individual original Wikimedia file descriptions
+        run: |
+          python -u tools/artdrift_486_final_release_qa.py --action wiki \
+            --queue final-results/final_486_queue.json --shard ${{ matrix.shard }} \
+            --shards 4 --out wiki-results
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ArtDrift-Final-Original-Source-${{ matrix.shard }}
+          path: wiki-results/wiki_*.json
+          retention-days: 60
+          if-no-files-found: error
+  reconcile:
+    if: always()
+    needs: [prepare,wiki-sources]
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --disable-pip-version-check rapidfuzz==3.14.3
+      - uses: actions/download-artifact@v4
+        with:
+          name: ArtDrift-486-Final-Release-Preflight
+          path: final-results
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: ArtDrift-Final-Original-Source-*
+          merge-multiple: true
+          path: wiki-results
+      - name: Fail-closed exact 486-image source reconciliation
+        run: |
+          python tools/artdrift_486_final_release_qa.py --action reconcile \
+            --queue final-results/final_486_queue.json --wiki-dir wiki-results \
+            --shards 4 --out source-aggregate
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ArtDrift-486-Final-Source-Provenance
+          path: source-aggregate/*
+          if-no-files-found: error
+          retention-days: 60
