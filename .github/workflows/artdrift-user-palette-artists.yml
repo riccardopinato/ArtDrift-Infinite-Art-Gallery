@@ -1,0 +1,87 @@
+name: Art Drift — User palette artists research and visual QA
+on:
+  push:
+    branches:
+      - research/artdrift-user-palette-artists-20261126
+    paths:
+      - research/artists/20261126/user_palette_artist_seeds.json
+      - tools/artdrift_user_artist_pipeline.py
+      - tools/test_artdrift_user_artist_pipeline.py
+      - .github/workflows/artdrift-user-palette-artists.yml
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: artdrift-user-palette-artists-sources
+  cancel-in-progress: false
+jobs:
+  curated-artists:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate source restrictions, artist matching and cursor recovery offline
+        run: |
+          python -m py_compile tools/artdrift_user_artist_pipeline.py
+          python -m unittest discover -s tools -p 'test_artdrift_user_artist_pipeline.py' -v
+      - name: Controlled metadata-only artist-category discovery
+        run: python -u tools/artdrift_user_artist_pipeline.py --phase discover --max-pages 12
+      - name: Import exactly nine retained museum research inventories
+        run: |
+          mkdir -p research/museums/20261126/lanes/imports
+          for source in rijks nationalmuseum_se staedel finnish_national_gallery birmingham belvedere paris_musees te_papa nasjonalmuseet; do
+            git fetch --quiet origin "research/artdrift-harvest-$source-20261126"
+            git show "FETCH_HEAD:research/museums/20261126/lanes/results/$source.json" > "research/museums/20261126/lanes/imports/$source.json"
+            test -s "research/museums/20261126/lanes/imports/$source.json"
+          done
+      - name: Deduplicate and prioritize artist matches without image imports
+        run: python -u tools/artdrift_user_artist_pipeline.py --phase shortlist
+      - name: Contract — not licensed for gallery publishing
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          base=Path('research/artists/20261126')
+          a=json.loads((base/'artist_commons_source_evidence.json').read_text(encoding='utf-8'))
+          b=json.loads((base/'user_artist_visual_qa.json').read_text(encoding='utf-8'))
+          assert a['commercially_approved']==0 and a['runtime_imported']==0
+          assert b['commercially_approved']==0 and b['runtime_imported']==0
+          assert b['artist_count']==7 and b['named_works_count']==3
+          assert b['museum_reports_read']==9
+          assert all(x['commercially_approved'] is False and x['runtime_visible'] is False
+                     for x in b['priority_shortlist'])
+          assert len({x['identity'] for x in b['priority_shortlist']})==len(b['priority_shortlist'])
+          print('VERIFIED research-only: artists',b['matches_by_artist'],
+                'distinct matched files',b['artist_matched_distinct_files'],
+                'Commons source files',b['commons_artist_files_discovered'])
+          PY
+      - name: Preserve transparent candidate report and source evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ArtDrift-User-Artists-Curatorial-Research
+          path: |
+            research/artists/20261126/user_palette_artist_seeds.json
+            research/artists/20261126/artist_commons_source_evidence.json
+            research/artists/20261126/user_artist_visual_qa.json
+          retention-days: 30
+          if-no-files-found: warn
+      - name: Commit only evidence JSON, never app catalog or assets
+        if: success()
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          cp research/artists/20261126/artist_commons_source_evidence.json /tmp/artist-source.json
+          cp research/artists/20261126/user_artist_visual_qa.json /tmp/artist-review.json
+          git fetch origin research/artdrift-user-palette-artists-20261126
+          git reset --hard FETCH_HEAD
+          cp /tmp/artist-source.json research/artists/20261126/artist_commons_source_evidence.json
+          cp /tmp/artist-review.json research/artists/20261126/user_artist_visual_qa.json
+          git add research/artists/20261126/artist_commons_source_evidence.json research/artists/20261126/user_artist_visual_qa.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'research(artists): user-selected palette source inventory and visual HOLD shortlist'
+            git push origin HEAD:research/artdrift-user-palette-artists-20261126
+          fi
