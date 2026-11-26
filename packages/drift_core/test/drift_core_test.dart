@@ -171,4 +171,52 @@ void main() {
     expect(find.text('Generic canvas'), findsOneWidget);
     expect(find.byTooltip('Center'), findsOneWidget);
   });
+
+  testWidgets('tile motion zooms 12% on mouse hover and restores on exit',
+      (tester) async {
+    await tester.pumpWidget(MaterialApp(home: Scaffold(
+      body: DriftCanvas<String>(
+        items: const ['image'], onOpen: (_) {},
+        tileBuilder: (_, item, zoom) =>
+            const ColoredBox(color: Colors.blue),
+        cameraKey: 'test.hover', compactBrand: 'A∞',
+        fullBrand: 'artdrift ∞', hintText: 'Canvas',
+        recenterTooltip: 'Center'),
+    )));
+    await tester.pump();
+    final tile = find.byKey(const ValueKey('0:0'));
+    final motion = find.byKey(const ValueKey('drift-motion-0:0'));
+    expect(tester.widget<AnimatedScale>(motion).scale, 1.0);
+    final mouse = await tester.createGesture(kind: PointerDeviceKind.mouse);
+    await mouse.addPointer(location: const Offset(1, 1));
+    await mouse.moveTo(tester.getCenter(tile));
+    await tester.pump();
+    expect(tester.widget<AnimatedScale>(motion).scale, 1.12);
+    await mouse.moveTo(const Offset(1, 1));
+    await tester.pump();
+    expect(tester.widget<AnimatedScale>(motion).scale, 1.0);
+    await mouse.removePointer();
+  });
+
+  testWidgets('touch zoom resets without stealing canvas gestures',
+      (tester) async {
+    await tester.pumpWidget(MaterialApp(home: Scaffold(
+      body: DriftCanvas<String>(
+        items: const ['image'], onOpen: (_) {},
+        tileBuilder: (_, item, zoom) =>
+            const ColoredBox(color: Colors.blue),
+        cameraKey: 'test.touch-motion', compactBrand: 'A∞',
+        fullBrand: 'artdrift ∞', hintText: 'Canvas',
+        recenterTooltip: 'Center'),
+    )));
+    await tester.pump();
+    final motion = find.byKey(const ValueKey('drift-motion-0:0'));
+    final gesture = await tester.startGesture(
+        tester.getCenter(find.byKey(const ValueKey('0:0'))));
+    await tester.pump();
+    expect(tester.widget<AnimatedScale>(motion).scale, 1.12);
+    await gesture.up();
+    await tester.pump();
+    expect(tester.widget<AnimatedScale>(motion).scale, 1.0);
+  });
 }
