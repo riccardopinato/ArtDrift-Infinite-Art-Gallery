@@ -1,0 +1,63 @@
+name: Art Drift — Städel official OAI identifier preflight
+on:
+  push:
+    branches:
+      - research/artdrift-harvest-staedel-20261126
+    paths:
+      - tools/artdrift_staedel_identifiers.py
+      - tools/test_artdrift_staedel_identifiers.py
+      - .github/workflows/artdrift-staedel-oai-identifiers.yml
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: artdrift-individual-staedel-identifier-preflight
+  cancel-in-progress: false
+jobs:
+  list-identifiers:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --disable-pip-version-check Pillow==11.3.0
+      - name: Offline parsers and pagination tests
+        run: |
+          python -m py_compile tools/artdrift_staedel_identifiers.py
+          python -m unittest discover -s tools -p 'test_artdrift_staedel_identifiers.py' -v
+      - name: Official Städel OAI active identifiers (no image downloads)
+        run: python -u tools/artdrift_staedel_identifiers.py --max-pages 15
+      - name: Verify identifier-only and nonpublishing evidence
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          o=json.loads(Path('research/museums/20261126/lanes/staedel_identifier_inventory.json').read_text())
+          assert o['provider']=='staedel' and o['runtime_imported']==0
+          assert o['commercially_approved']==0 and o['source_zero_artworks_proven'] is False
+          print('Stadel OAI count',o['distinct_active_identifier_count'],
+                'complete',o['catalog_iteration_completed'],'errors',o['errors'][:3])
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ArtDrift-Staedel-Official-OAI-Identifiers
+          path: research/museums/20261126/lanes/staedel_identifier_inventory.json
+          retention-days: 30
+          if-no-files-found: warn
+      - name: Commit only Städel OAI identifier inventory
+        if: success()
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          cp research/museums/20261126/lanes/staedel_identifier_inventory.json /tmp/staedel-ids.json
+          git fetch origin research/artdrift-harvest-staedel-20261126
+          git reset --hard FETCH_HEAD
+          cp /tmp/staedel-ids.json research/museums/20261126/lanes/staedel_identifier_inventory.json
+          git add research/museums/20261126/lanes/staedel_identifier_inventory.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'research(staedel): retain official major-work identifiers'
+            git push origin HEAD:research/artdrift-harvest-staedel-20261126
+          fi
