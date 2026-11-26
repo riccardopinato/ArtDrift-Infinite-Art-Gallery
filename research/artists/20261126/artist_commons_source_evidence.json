@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
   "provider": "wikimedia_artist_categories",
-  "as_of_utc": "2026-11-26T21:37:26.769320+00:00",
-  "pages_retrieved_this_run": 11,
+  "as_of_utc": "2026-11-26T21:39:53.234804+00:00",
+  "pages_retrieved_this_run": 0,
   "total_distinct_commons_files": 462,
   "records_by_commons_pageid": {
     "3048604": {
@@ -11845,90 +11845,5 @@
   "license_gate": "HOLD_EACH_FILE",
   "source_evidence_is_not_artwork_ownership": true,
   "runtime_imported": 0,
-  "commercially_approved": 0,
-  "targeted_search_progress": {
-    "exact_karsten": {
-      "completed": true,
-      "continuation": null,
-      "last_results_eligible": 1,
-      "query": "File:Ludvig Karsten - The Blue Kitchen - NG.M.01507 - National Museum of Art, Architecture and Design.jpg",
-      "expected_artist": "ludvig_karsten"
-    },
-    "search_0": {
-      "completed": false,
-      "continuation": {
-        "gsroffset": 50,
-        "continue": "gsroffset||"
-      },
-      "last_results_eligible": 10,
-      "query": "Caillebotte Yerres",
-      "expected_artist": "gustave_caillebotte"
-    },
-    "search_1": {
-      "completed": true,
-      "continuation": null,
-      "last_results_eligible": 0,
-      "query": "Périssoires sur l Yerres",
-      "expected_artist": "gustave_caillebotte"
-    },
-    "search_2": {
-      "completed": true,
-      "continuation": null,
-      "last_results_eligible": 8,
-      "query": "Sisley Villeneuve-la-Garenne bridge",
-      "expected_artist": "alfred_sisley"
-    },
-    "search_3": {
-      "completed": true,
-      "continuation": null,
-      "last_results_eligible": 8,
-      "query": "Alfred Sisley pont Villeneuve",
-      "expected_artist": "alfred_sisley"
-    },
-    "search_4": {
-      "completed": false,
-      "continuation": {
-        "gsroffset": 50,
-        "continue": "gsroffset||"
-      },
-      "last_results_eligible": 39,
-      "query": "Monet Water Lilies",
-      "expected_artist": "claude_monet"
-    },
-    "search_5": {
-      "completed": false,
-      "continuation": {
-        "gsroffset": 50,
-        "continue": "gsroffset||"
-      },
-      "last_results_eligible": 20,
-      "query": "Claude Monet Giverny garden",
-      "expected_artist": "claude_monet"
-    },
-    "search_6": {
-      "completed": false,
-      "continuation": {
-        "gsroffset": 50,
-        "continue": "gsroffset||"
-      },
-      "last_results_eligible": 44,
-      "query": "Monet nympheas water",
-      "expected_artist": "claude_monet"
-    },
-    "search_7": {
-      "completed": false,
-      "continuation": {
-        "gsroffset": 50,
-        "continue": "gsroffset||"
-      },
-      "last_results_eligible": 47,
-      "query": "Claude Monet river landscape",
-      "expected_artist": "claude_monet"
-    }
-  },
-  "targeted_queries_executed_this_run": 9,
-  "targeted_new_files_this_run": 161,
-  "targeted_source_host_throttled": false,
-  "targeted_errors": [],
-  "targeted_as_of_utc": "2026-11-26T21:38:59.936830+00:00"
+  "commercially_approved": 0
 }
