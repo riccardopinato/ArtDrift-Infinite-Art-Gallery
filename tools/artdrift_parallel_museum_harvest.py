@@ -225,56 +225,111 @@ def discover_commons(museum: str, bound: int):
 
 
 def discover_rijks(bound: int):
-    """Broad query inventory before inspecting full records or pixels."""
-    terms = LANES["rijks"]["terms"]
-    discovered = {}
-    counts = Counter()
-    errors = []
+    """Metadata-first discovery: thematic search PLUS broad decade inventories.
+
+    Any filter on title alone silently loses landscapes titled by local place,
+    artist or historical numbering. Search dates without title terms and retain
+    not-yet-inspected IDs; inspect a balanced sample only after discovery.
+    """
+    terms=LANES["rijks"]["terms"]
+    decades=("185?","186?","187?","188?","189?","190?",
+             "191?","192?","193?","194?","195?")
+    discovered={};counts=Counter();errors=[];buckets=[]
+    def record(ident,kind):
+        if not re.fullmatch(r"https://id\.rijksmuseum\.nl/\d+",str(ident)):
+            return
+        if ident not in discovered:
+            discovered[ident]={"id":ident,"search_terms":[]}
+        if kind not in discovered[ident]["search_terms"]:
+            discovered[ident]["search_terms"].append(kind)
+
     for term in terms:
         try:
-            ids, total = search_rijks(term, max_pages=5)
-            counts["sum_query_matches_nonunique"] += total
-            counts["id_links_returned_nonunique"] += len(ids)
-            for ident in ids:
-                discovered.setdefault(ident, {"id": ident, "search_terms": []})
-                discovered[ident]["search_terms"].append(term)
+            ids,total=search_rijks(term,max_pages=5)
+            counts["sum_query_matches_nonunique"]+=total
+            counts["id_links_returned_nonunique"]+=len(ids)
+            buckets.append((term,ids))
+            for ident in ids:record(ident,term)
         except Exception as e:
-            errors.append({"query": term, "error": str(e)[:190]})
-        time.sleep(0.12)
-    ids = list(discovered)
-    # Interleave query buckets rather than giving the entire budget to term 1.
-    buckets = [[ident for ident, v in discovered.items() if term in v["search_terms"]]
-               for term in terms]
-    balanced = []
-    seen = set()
-    for index in range(max((len(b) for b in buckets), default=0)):
-        for b in buckets:
-            if index < len(b) and b[index] not in seen:
-                seen.add(b[index])
-                balanced.append(b[index])
-    counts["unique_search_ids"] = len(ids)
-    counts["uninspected_metadata_count"] = max(0, len(ids)-bound)
-    candidates = []
+            errors.append({"query":term,"error":str(e)[:190]})
+        time.sleep(0.10)
+
+    def period_scan(period,limit=3):
+        q={"type":"painting","imageAvailable":"true","creationDate":period}
+        uri="https://data.rijksmuseum.nl/search/collection?"+urllib.parse.urlencode(q)
+        seen_tokens=set();ids=[];first_total=0
+        for page in range(limit):
+            if uri in seen_tokens:
+                raise ValueError("REPEATED_RIJKS_NEXT_LINK")
+            seen_tokens.add(uri)
+            response=jget(uri)
+            if page==0:
+                first_total=int((response.get("partOf") or {}).get("totalItems") or 0)
+            for x in response.get("orderedItems") or []:
+                if isinstance(x,dict) and x.get("id"):
+                    ids.append(x["id"])
+            nxt=response.get("next")
+            uri=nxt.get("id") if isinstance(nxt,dict) else None
+            if not uri or not uri.startswith("https://data.rijksmuseum.nl/"):
+                break
+            time.sleep(.10)
+        return ids,first_total
+
+    decade_success=0
+    for era in decades:
+        try:
+            ids,total=period_scan(era)
+            decade_success+=1
+            buckets.append((era,ids))
+            counts["era_search_matches_nonunique"]+=total
+            counts["era_identifier_links_returned"]+=len(ids)
+            for ident in ids:record(ident,era)
+        except Exception as e:
+            errors.append({"period":era,"error":str(e)[:190]})
+        time.sleep(.12)
+
+    # If an upstream API stops accepting 3-digit decade wildcards, still
+    # discover by the officially documented 18?? / 19?? century format.
+    if not decade_success or counts["era_identifier_links_returned"]==0:
+        for era in ("18??","19??"):
+            try:
+                ids,total=period_scan(era,limit=7)
+                buckets.append((era,ids))
+                counts["era_search_matches_nonunique"]+=total
+                counts["era_identifier_links_returned"]+=len(ids)
+                for ident in ids:record(ident,era)
+            except Exception as e:
+                errors.append({"period":era,"error":str(e)[:190]})
+
+    balanced=[];seen=set()
+    # Diverse thematic/chronological buckets prevent older masters from
+    # monopolizing the bound and avoid random sampling before qualification.
+    max_len=max((len(ids) for _,ids in buckets),default=0)
+    for i in range(max_len):
+        for _,ids in buckets:
+            if i<len(ids) and ids[i] not in seen:
+                seen.add(ids[i]);balanced.append(ids[i])
+    counts["unique_search_ids"]=len(discovered)
+    counts["uninspected_metadata_count"]=max(0,len(balanced)-bound)
+    candidates=[]
     for ident in balanced[:bound]:
         try:
-            work = rijks_object(ident)
+            work=rijks_object(ident)
             if work is not None:
-                work["source_queries"] = discovered[ident]["search_terms"]
-                work["runtime_visible"] = False
-                work["commercially_approved"] = False
-                work["review_status"] = "HOLD_VISUAL_AND_PER_IMAGE_RIGHTS"
+                work["source_queries"]=discovered[ident]["search_terms"]
+                work["runtime_visible"]=False
+                work["commercially_approved"]=False
+                work["review_status"]="HOLD_VISUAL_AND_PER_IMAGE_RIGHTS"
                 candidates.append(work)
-                counts["full_records_scenic_with_media"] += 1
+                counts["full_records_scenic_with_media"]+=1
             else:
-                counts["full_records_filtered_or_without_iiif"] += 1
+                counts["full_records_filtered_or_without_iiif"]+=1
         except Exception as e:
-            counts["object_errors"] += 1
-            if len(errors) < 20:
-                errors.append({"id": ident, "error": str(e)[:190]})
-    counts["full_records_attempted"] = min(len(ids), bound)
-    # Retain ALL candidate identifiers even when metadata selection fails,
-    # so uninspected URLs are never confused with rejected artwork.
-    return candidates, counts, errors, balanced[:500]
+            counts["object_errors"]+=1
+            if len(errors)<30:
+                errors.append({"id":ident,"error":str(e)[:190]})
+    counts["full_records_attempted"]=min(len(balanced),bound)
+    return candidates,counts,errors,balanced[:500]
 
 
 def discover_staedel(bound: int):
