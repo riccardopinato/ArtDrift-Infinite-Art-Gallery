@@ -22,7 +22,9 @@ class Wave2PolicyTest(unittest.TestCase):
     def test_no_portrait_or_night(self):
         for title in ("Woman in a Garden","Portrait of the Artist","Girl at the Beach",
                       "Clouds at Dusk","A Country Landscape at Night",
-                      "Fishermen on Boats", "Young Child with Flowers"):
+                      "Fishermen on Boats", "Young Child with Flowers",
+                      "Washerwomen on the Beach", "Dancing Couple in the Snow",
+                      "A Plow Horse in a Field"):
             self.assertEqual(w.scenery_score(title,"Claude Monet",1890),0,title)
     def test_new_titles(self):
         self.assertGreater(w.scenery_score("Haystacks","Claude Monet",1890),0)
