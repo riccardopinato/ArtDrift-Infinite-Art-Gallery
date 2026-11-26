@@ -1,0 +1,168 @@
+{
+  "schema_version": 1,
+  "as_of": "2026-11-26",
+  "scope": "new museums in Europe; excludes four US catalogues and SMK",
+  "us_museums_queried": 0,
+  "source_batch_reports_received": 9,
+  "sources": [
+    {
+      "provider": "rijks",
+      "shards_received": 3,
+      "bright_images_before_dedup": 1
+    },
+    {
+      "provider": "nationalmuseum_se",
+      "shards_received": 3,
+      "bright_images_before_dedup": 0
+    },
+    {
+      "provider": "staedel",
+      "shards_received": 3,
+      "bright_images_before_dedup": 0
+    }
+  ],
+  "bright_images_after_preliminary_dedup": 1,
+  "cross_source_possible_duplicates_held": [],
+  "thresholds": {
+    "preferred_dark_max": 0.15,
+    "conditional_dark_max": 0.2,
+    "conditional_min_vivid_fraction": 0.3,
+    "conditional_min_saturation": 0.24
+  },
+  "rights_status": "HOLD_PER_OBJECT_LICENSE_TERRITORY_AND_VISUAL",
+  "runtime_imported": 0,
+  "approved_for_commercial_app": 0,
+  "batch_reports": [
+    {
+      "provider": "nationalmuseum_se",
+      "shard": 0,
+      "search_stats": {
+        "search_listed": 221,
+        "metadata_or_license_not_eligible": 31,
+        "unique_institution_files_search": 211
+      },
+      "bright": 0,
+      "errors": []
+    },
+    {
+      "provider": "nationalmuseum_se",
+      "shard": 1,
+      "search_stats": {
+        "search_listed": 144,
+        "metadata_or_license_not_eligible": 27,
+        "unique_institution_files_search": 135
+      },
+      "bright": 0,
+      "errors": []
+    },
+    {
+      "provider": "nationalmuseum_se",
+      "shard": 2,
+      "search_stats": {
+        "search_listed": 207,
+        "metadata_or_license_not_eligible": 29,
+        "unique_institution_files_search": 193
+      },
+      "bright": 0,
+      "errors": []
+    },
+    {
+      "provider": "rijks",
+      "shard": 0,
+      "search_stats": {
+        "search_listed": 199,
+        "search_catalog_matches": 345,
+        "metadata_not_modern_scenic_or_image": 29,
+        "unique_source_identifiers": 199
+      },
+      "bright": 1,
+      "errors": []
+    },
+    {
+      "provider": "rijks",
+      "shard": 1,
+      "search_stats": {
+        "search_listed": 57,
+        "search_catalog_matches": 57,
+        "metadata_not_modern_scenic_or_image": 33,
+        "unique_source_identifiers": 57
+      },
+      "bright": 0,
+      "errors": []
+    },
+    {
+      "provider": "rijks",
+      "shard": 2,
+      "search_stats": {
+        "search_listed": 14,
+        "search_catalog_matches": 14,
+        "metadata_not_modern_scenic_or_image": 10,
+        "duplicates_existing_artdrift": 1,
+        "unique_source_identifiers": 14
+      },
+      "bright": 0,
+      "errors": []
+    },
+    {
+      "provider": "staedel",
+      "shard": 0,
+      "search_stats": {
+        "oai_records_read": 200,
+        "modern_scenic_image_metadata": 0
+      },
+      "bright": 0,
+      "errors": []
+    },
+    {
+      "provider": "staedel",
+      "shard": 1,
+      "search_stats": {
+        "oai_records_read": 200,
+        "modern_scenic_image_metadata": 0
+      },
+      "bright": 0,
+      "errors": []
+    },
+    {
+      "provider": "staedel",
+      "shard": 2,
+      "search_stats": {
+        "oai_records_read": 200,
+        "modern_scenic_image_metadata": 0
+      },
+      "bright": 0,
+      "errors": []
+    }
+  ],
+  "works": [
+    {
+      "source": "rijks",
+      "museum_native_id": "SK-C-429",
+      "title": "'Our Pioneers': Seventeenth-Century Ships at Sea",
+      "artist": "jonkheer Jacob Eduard van Heemskerck van Beest",
+      "year": 1880,
+      "museum": "Rijksmuseum, Amsterdam",
+      "museum_url": "https://www.rijksmuseum.nl/en/collection/SK-C-429",
+      "record_api_url": "https://data.rijksmuseum.nl/20029066",
+      "remote_preview_url": "https://iiif.micr.io/EJPgc/full/280,/0/default.jpg",
+      "remote_full_url": "https://iiif.micr.io/EJPgc/full/max/0/default.jpg",
+      "rights_evidence_url": "https://data.rijksmuseum.nl/about/",
+      "image_license_per_item": "UNVERIFIED__CHECK_PD_CC0_ON_OBJECT",
+      "source_data_model": "Linked Art 2026 3-hop IIIF",
+      "copyright_hold": "HOLD_PER_OBJECT_LICENSE_AND_COUNTRY",
+      "image_sha256": "419382d34d6659f2a065cb26c57601cb878875037c964504c3051bdc99465553",
+      "color_metrics": {
+        "luminance": 0.6127,
+        "saturation": 0.3429,
+        "dark_fraction": 0.0405,
+        "very_dark_fraction": 0.0008,
+        "vivid_fraction": 0.5831,
+        "bright_pass": true
+      },
+      "color_tier": "PREFERRED_AT_MOST_15_PERCENT_DARK",
+      "curatorial_status": "HOLD_VISUAL_CHECK",
+      "runtime_visible": false,
+      "commercially_approved": false
+    }
+  ]
+}
