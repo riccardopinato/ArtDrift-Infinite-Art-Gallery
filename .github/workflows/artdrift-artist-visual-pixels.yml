@@ -29,7 +29,7 @@ jobs:
           python -m unittest discover -s tools -p 'test_artdrift_user_artist_visual_pixels.py' -v
       - name: Raster pixel review of Commons images and visual contact sheet
         run: python -u tools/artdrift_user_artist_visual_pixels.py --max-images 35
-      - name: Gate: visual QA assets are NOT artist publication approvals
+      - name: "Gate - visual QA assets are NOT artist publication approvals"
         run: |
           python - <<'PY'
           import json
