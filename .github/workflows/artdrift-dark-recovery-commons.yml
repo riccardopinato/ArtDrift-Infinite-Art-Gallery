@@ -1,0 +1,68 @@
+name: Art Drift — reverify bright artworks recovered at 15 to 20 dark percent
+on:
+  push:
+    branches: [research/artdrift-bright-megabatches-20261126]
+    paths:
+      - tools/artdrift_dark_recovery_commons.py
+      - .github/workflows/artdrift-dark-recovery-commons.yml
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: artdrift-dark-recovery-common-pages
+  cancel-in-progress: false
+jobs:
+  official-file-reverification:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install raster decoder
+        run: python -m pip install --disable-pip-version-check Pillow==11.3.0
+      - name: Check source code syntax and required input evidence
+        run: |
+          python -m py_compile tools/artdrift_dark_recovery_commons.py
+          python -m unittest discover -s tools -p test_artdrift_dark_threshold_ab.py -v
+          test -f research/experiments/20261126/dark_threshold_10_15_20.json
+      - name: Recover original Commons file titles, PD rights and raster hashes
+        run: python -u tools/artdrift_dark_recovery_commons.py
+      - name: Verify 20 percent visual gate is only conditional at high chroma
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          j=json.loads(Path('research/experiments/20261126/commons_dark15_20_recovered.json').read_text())
+          assert j['runtime_imported']==0 and j['publication_ready']==0
+          assert j['historical_new_dark10_to_20_pixel_candidates']==14
+          assert len({x['commons_page_id'] for x in j['accepted_for_curation']})==len(j['accepted_for_curation'])
+          for x in j['accepted_for_curation']:
+              assert x['dark_fraction']<=.20 and x['luminance']>=.55
+              if x['dark_fraction']>.15:
+                  assert x['saturation']>=.24 and x['vivid_fraction']>=.30
+              assert x['publication_status'].startswith('HOLD')
+          print('SOURCE_RIGHTS_AND_15_20_COLOR_GATE_PASS')
+          PY
+      - name: Preserve new candidate thumbnails for visual QA only
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ArtDrift-15-20-percent-recovered-and-real-images
+          path: |
+            research/experiments/20261126/commons_dark15_20_recovered.json
+            .artdrift_dark_ab_evidence/recovered_sheets/
+          include-hidden-files: true
+          if-no-files-found: warn
+      - name: Commit documented candidates to research branch only
+        if: success()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add research/experiments/20261126/commons_dark15_20_recovered.json
+          if ! git diff --cached --quiet; then
+            git commit -m "research(artdrift): independently verify bright 15-20 Commons originals"
+            git pull --rebase origin research/artdrift-bright-megabatches-20261126
+            git push origin HEAD:research/artdrift-bright-megabatches-20261126
+          fi
