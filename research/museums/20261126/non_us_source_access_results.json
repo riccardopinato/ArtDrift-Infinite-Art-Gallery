@@ -3,10 +3,13 @@
   "as_of": "2026-11-26",
   "non_us_museums_checked": [
     "belvedere",
+    "birmingham",
+    "finnish_national_gallery",
     "nationalmuseum_se",
     "paris_musees",
     "rijks",
-    "staedel"
+    "staedel",
+    "te_papa"
   ],
   "source_diagnostics": {
     "belvedere": {
@@ -150,9 +153,50 @@
       "has_open_content": true,
       "html_contains_object_links": false,
       "probe_sample": "2026-11-26T13:05:37Z  http://sammlung.staedelmuseum.de/api/oai   Städel Museum, Frankfurt</repositor"
+    },
+    "finnish_national_gallery": {
+      "museum_key": "finnish_national_gallery",
+      "source_url": "https://kokoelma.kansallisgalleria.fi/",
+      "source_host": "kokoelma.kansallisgalleria.fi",
+      "kind": "collection_portal_html",
+      "status": "HTTP_200",
+      "media_type": "text/html; charset=utf-8",
+      "bytes": 5478,
+      "metadata_only": true,
+      "runtime_imported": 0,
+      "licensed_artwork_images": 0,
+      "has_open_content": false,
+      "html_contains_object_links": false,
+      "probe_sample": "Public institutional collection portal HTML"
+    },
+    "birmingham": {
+      "museum_key": "birmingham",
+      "source_url": "https://dams.birminghammuseums.org.uk/",
+      "source_host": "dams.birminghammuseums.org.uk",
+      "kind": "image_portal_html",
+      "status": "HTTP_200",
+      "media_type": "text/html;charset=UTF-8",
+      "bytes": 149751,
+      "metadata_only": true,
+      "runtime_imported": 0,
+      "licensed_artwork_images": 0,
+      "has_open_content": true,
+      "html_contains_object_links": false,
+      "probe_sample": "Home Page of Birmingham Museums Trust"
+    },
+    "te_papa": {
+      "museum_key": "te_papa",
+      "source_url": "https://data.tepapa.govt.nz/collection/search?q=landscape",
+      "source_host": "data.tepapa.govt.nz",
+      "kind": "tepapa_json",
+      "status": "HTTP_401",
+      "error": "Unauthorized",
+      "metadata_only": true,
+      "runtime_imported": 0,
+      "licensed_artwork_images": 0
     }
   },
   "artworks_verified": 0,
   "runtime_imported": 0,
-  "important": "No artworks imported; probe reports public endpoint accessibility only"
+  "important": "Source HTTP statuses verified across eight probes; metadata only; no artwork images authorized. Te Papa 401, Belvedere 403, no access bypass."
 }
