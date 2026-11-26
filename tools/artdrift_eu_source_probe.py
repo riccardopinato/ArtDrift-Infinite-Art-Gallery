@@ -14,7 +14,10 @@ SOURCES={
  "nationalmuseum_se":{"url":"https://commons.wikimedia.org/w/api.php?action=query&format=json&formatversion=2&generator=categorymembers&gcmtitle=Category%3AImages_from_the_Nationalmuseum_Stockholm&gcmtype=file&gcmlimit=20&prop=imageinfo&iiprop=extmetadata%7Curl%7Cmime&iiurlwidth=320","host":"commons.wikimedia.org","kind":"commons_json"},
  "belvedere":{"url":"https://sammlung.belvedere.at/opencontent/images","host":"sammlung.belvedere.at","kind":"open_content_html"},
  "staedel":{"url":"https://sammlung.staedelmuseum.de/api/oai?verb=Identify","host":"sammlung.staedelmuseum.de","kind":"oai_xml"},
- "paris_musees":{"url":"https://www.parismuseescollections.paris.fr/en","host":"www.parismuseescollections.paris.fr","kind":"portal_html"}
+ "paris_musees":{"url":"https://www.parismuseescollections.paris.fr/en","host":"www.parismuseescollections.paris.fr","kind":"portal_html"},
+ "finnish_national_gallery":{"url":"https://kokoelma.kansallisgalleria.fi/","host":"kokoelma.kansallisgalleria.fi","kind":"collection_portal_html"},
+ "birmingham":{"url":"https://dams.birminghammuseums.org.uk/","host":"dams.birminghammuseums.org.uk","kind":"image_portal_html"},
+ "te_papa":{"url":"https://data.tepapa.govt.nz/collection/search?q=landscape","host":"data.tepapa.govt.nz","kind":"tepapa_json"}
 }
 def get(source,timeout=18):
     d=SOURCES[source];p=urllib.parse.urlsplit(d["url"])
@@ -45,7 +48,11 @@ def analyze(name):
         try:
             j=json.loads(raw)
             summary["root_fields"]=sorted(j.keys())[:24]
-            if name=="rijks":
+            if name=="te_papa":
+                summary["preview_fields"]=list(j.keys())[:25]
+                summary["total_hits"]=j.get("total") or j.get("totalHits") or j.get("hits")
+                summary["sample_json_types"]={k:type(v).__name__ for k,v in list(j.items())[:8]}
+            elif name=="rijks":
                 summary["totalItems"]=(j.get("partOf") or {}).get("totalItems")
                 summary["returned_identifier_count"]=len(j.get("orderedItems") or [])
                 summary["example_identifier"]=(j.get("orderedItems") or [{}])[0].get("id")
