@@ -7,7 +7,7 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: artdrift-486-rights-\${{ github.ref }}
+  group: artdrift-486-rights-${{ github.ref }}
   cancel-in-progress: false
 jobs:
   tests:
@@ -50,11 +50,11 @@ jobs:
         run: |
           python -u tools/artdrift_486_rights_evidence.py \
             --inventory rights-source/queue.json --source rights-source/source.json \
-            --shard \${{ matrix.shard }} --shards 4 --output rights-evidence
+            --shard ${{ matrix.shard }} --shards 4 --output rights-evidence
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: artdrift-rights-shard-\${{ matrix.shard }}
+          name: artdrift-rights-shard-${{ matrix.shard }}
           path: rights-evidence/rights_*.json
           retention-days: 30
           if-no-files-found: error
