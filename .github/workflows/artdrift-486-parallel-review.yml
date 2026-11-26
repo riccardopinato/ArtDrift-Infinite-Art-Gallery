@@ -63,7 +63,8 @@ jobs:
           name: artist-review-shard-${{ matrix.shard }}
           path: .artist-results/*
           retention-days: 30
-          if-no-files-found: warn
+          include-hidden-files: true
+          if-no-files-found: error
 
   reconcile:
     if: always()
@@ -97,5 +98,6 @@ jobs:
           path: |
             .artist-aggregate/*
             .artist-results/contact_*.jpg
-          if-no-files-found: warn
+          if-no-files-found: error
+          include-hidden-files: true
           retention-days: 30
