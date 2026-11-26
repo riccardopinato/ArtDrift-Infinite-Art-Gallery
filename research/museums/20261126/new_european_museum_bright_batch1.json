@@ -3,44 +3,30 @@
   "as_of": "2026-11-26",
   "scope": "new museums in Europe; excludes four US catalogues and SMK",
   "us_museums_queried": 0,
-  "source_batch_reports_received": 9,
+  "source_batch_reports_received": 2,
   "sources": [
     {
       "provider": "rijks",
-      "shards_received": 3,
+      "shards_received": 1,
       "bright_images_before_dedup": 0,
       "status": "TECHNICAL_SAMPLE_ONLY"
     },
     {
       "provider": "nationalmuseum_se",
-      "shards_received": 3,
-      "bright_images_before_dedup": 5,
+      "shards_received": 1,
+      "bright_images_before_dedup": 2,
       "status": "TECHNICAL_SAMPLE_ONLY"
     },
     {
       "provider": "staedel",
-      "shards_received": 3,
+      "shards_received": 0,
       "bright_images_before_dedup": 0,
-      "status": "SOURCE_UNAVAILABLE_OR_PARTIAL"
+      "status": "TECHNICAL_SAMPLE_ONLY"
     }
   ],
-  "bright_images_after_preliminary_dedup": 5,
-  "source_access_incomplete": {
-    "staedel": 3
-  },
-  "source_access_errors_by_provider": {
-    "staedel": [
-      {
-        "reason": "STAEDEL_SOURCE_NO_ACTIVE_LIDO_RECORDS_NOT_ZERO_VALID_ARTWORKS"
-      },
-      {
-        "reason": "STAEDEL_SOURCE_NO_ACTIVE_LIDO_RECORDS_NOT_ZERO_VALID_ARTWORKS"
-      },
-      {
-        "reason": "STAEDEL_SOURCE_NO_ACTIVE_LIDO_RECORDS_NOT_ZERO_VALID_ARTWORKS"
-      }
-    ]
-  },
+  "bright_images_after_preliminary_dedup": 2,
+  "source_access_incomplete": {},
+  "source_access_errors_by_provider": {},
   "catalog_exhaustively_searched": false,
   "source_zero_artworks_proven": false,
   "zero_eligible_from_limited_sample_is_not_catalog_absence": true,
@@ -70,66 +56,6 @@
       "errors": []
     },
     {
-      "provider": "nationalmuseum_se",
-      "shard": 1,
-      "search_stats": {
-        "search_listed": 144,
-        "metadata_or_license_not_eligible": 110,
-        "metadata_eligible_before_image_sampling": 25,
-        "unprobed_metadata_eligible": 0,
-        "actual_images_requested": 25,
-        "unique_institution_files_search": 135
-      },
-      "bright": 1,
-      "errors": []
-    },
-    {
-      "provider": "nationalmuseum_se",
-      "shard": 2,
-      "search_stats": {
-        "search_listed": 207,
-        "metadata_or_license_not_eligible": 170,
-        "metadata_eligible_before_image_sampling": 23,
-        "unprobed_metadata_eligible": 0,
-        "actual_images_requested": 23,
-        "unique_institution_files_search": 193
-      },
-      "bright": 2,
-      "errors": []
-    },
-    {
-      "provider": "rijks",
-      "shard": 0,
-      "search_stats": {
-        "search_listed": 39,
-        "search_catalog_matches": 39,
-        "image_available_scenic_period_ids_discovered": 39,
-        "metadata_full_records_requested": 42,
-        "unprobed_source_candidate_ids": 0,
-        "metadata_not_modern_scenic_or_image": 22,
-        "metadata_modern_scenic_with_iiif": 20,
-        "pixels_sampled": 19,
-        "unique_source_identifiers": 39
-      },
-      "bright": 0,
-      "errors": []
-    },
-    {
-      "provider": "rijks",
-      "shard": 1,
-      "search_stats": {
-        "search_listed": 7,
-        "search_catalog_matches": 7,
-        "image_available_scenic_period_ids_discovered": 7,
-        "metadata_full_records_requested": 7,
-        "unprobed_source_candidate_ids": 0,
-        "metadata_not_modern_scenic_or_image": 7,
-        "unique_source_identifiers": 7
-      },
-      "bright": 0,
-      "errors": []
-    },
-    {
       "provider": "rijks",
       "shard": 2,
       "search_stats": {
@@ -146,100 +72,9 @@
       },
       "bright": 0,
       "errors": []
-    },
-    {
-      "provider": "staedel",
-      "shard": 0,
-      "search_stats": {},
-      "bright": 0,
-      "errors": [
-        {
-          "reason": "STAEDEL_SOURCE_NO_ACTIVE_LIDO_RECORDS_NOT_ZERO_VALID_ARTWORKS"
-        }
-      ]
-    },
-    {
-      "provider": "staedel",
-      "shard": 1,
-      "search_stats": {},
-      "bright": 0,
-      "errors": [
-        {
-          "reason": "STAEDEL_SOURCE_NO_ACTIVE_LIDO_RECORDS_NOT_ZERO_VALID_ARTWORKS"
-        }
-      ]
-    },
-    {
-      "provider": "staedel",
-      "shard": 2,
-      "search_stats": {},
-      "bright": 0,
-      "errors": [
-        {
-          "reason": "STAEDEL_SOURCE_NO_ACTIVE_LIDO_RECORDS_NOT_ZERO_VALID_ARTWORKS"
-        }
-      ]
     }
   ],
   "works": [
-    {
-      "source": "nationalmuseum_se",
-      "museum_native_id": "64092172",
-      "title": "Winter Landscape with Magpies",
-      "artist": "Karl Georg Arsenius",
-      "year": 1884,
-      "museum": "Nationalmuseum, Stockholm",
-      "museum_url": "https://commons.wikimedia.org/w/index.php?curid=64092172",
-      "remote_preview_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/ad/Winter_Landscape_with_Magpies_%28Georg_Arsenius%29_-_Nationalmuseum_-_20984.tif/lossy-page1-330px-Winter_Landscape_with_Magpies_%28Georg_Arsenius%29_-_Nationalmuseum_-_20984.tif.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
-      "remote_full_url": "https://upload.wikimedia.org/wikipedia/commons/a/ad/Winter_Landscape_with_Magpies_%28Georg_Arsenius%29_-_Nationalmuseum_-_20984.tif?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-      "rights_evidence_url": "https://www.nationalmuseum.se/en/explore-art-and-design/images",
-      "image_license_per_item": "public domain",
-      "rights_file_source": "Wikimedia Commons file PDM/CC0 in museum category/search",
-      "source_file_sha1": "95d379c3e0282a35749e5b4f620f4417430245d1",
-      "copyright_hold": "HOLD_ARTIST_DEATH_TERRITORY_AND_CROSS_PROVIDER",
-      "color_metrics": {
-        "luminance": 0.5949,
-        "saturation": 0.5086,
-        "dark_fraction": 0.0024,
-        "very_dark_fraction": 0.0004,
-        "vivid_fraction": 0.7801,
-        "bright_pass": true
-      },
-      "image_sha256": "7fa08b73c3e6d1e7f1d36a74c9a9083214c1a84b632e853987911c30b05e7bc1",
-      "color_tier": "PREFERRED_AT_MOST_15_PERCENT_DARK",
-      "curatorial_status": "HOLD_FURTHER_VISUAL_QA",
-      "runtime_visible": false,
-      "commercially_approved": false
-    },
-    {
-      "source": "nationalmuseum_se",
-      "museum_native_id": "103232914",
-      "title": "Gustaf Cederström - The Artist's Wife on the Beach at Noirmoutier - NM 5202 - Nationalmuseum.jpg",
-      "artist": "Gustaf Cederström",
-      "year": 1882,
-      "museum": "Nationalmuseum, Stockholm",
-      "museum_url": "https://commons.wikimedia.org/w/index.php?curid=103232914",
-      "remote_preview_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6f/Gustaf_Cederstr%C3%B6m_-_The_Artist%27s_Wife_on_the_Beach_at_Noirmoutier_-_NM_5202_-_Nationalmuseum.jpg/330px-Gustaf_Cederstr%C3%B6m_-_The_Artist%27s_Wife_on_the_Beach_at_Noirmoutier_-_NM_5202_-_Nationalmuseum.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
-      "remote_full_url": "https://upload.wikimedia.org/wikipedia/commons/6/6f/Gustaf_Cederstr%C3%B6m_-_The_Artist%27s_Wife_on_the_Beach_at_Noirmoutier_-_NM_5202_-_Nationalmuseum.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-      "rights_evidence_url": "https://www.nationalmuseum.se/en/explore-art-and-design/images",
-      "image_license_per_item": "public domain",
-      "rights_file_source": "Wikimedia Commons file PDM/CC0 in museum category/search",
-      "source_file_sha1": "ebb0afc816ea9c74bb33a93e7651b4408ecfb962",
-      "copyright_hold": "HOLD_ARTIST_DEATH_TERRITORY_AND_CROSS_PROVIDER",
-      "color_metrics": {
-        "luminance": 0.5876,
-        "saturation": 0.332,
-        "dark_fraction": 0.0173,
-        "very_dark_fraction": 0.0005,
-        "vivid_fraction": 0.519,
-        "bright_pass": true
-      },
-      "image_sha256": "98e37254c00b1a6c7d0c219460e1fd13bd72d7b9b45f1fe8e2539d43f7fb8954",
-      "color_tier": "PREFERRED_AT_MOST_15_PERCENT_DARK",
-      "curatorial_status": "HOLD_FURTHER_VISUAL_QA",
-      "runtime_visible": false,
-      "commercially_approved": false
-    },
     {
       "source": "nationalmuseum_se",
       "museum_native_id": "103263738",
@@ -293,35 +128,6 @@
         "bright_pass": true
       },
       "image_sha256": "1d87ae7260b9803e6de9348d0a254f2f5439783eef3a5afc0ee516ac273f939d",
-      "color_tier": "PREFERRED_AT_MOST_15_PERCENT_DARK",
-      "curatorial_status": "HOLD_FURTHER_VISUAL_QA",
-      "runtime_visible": false,
-      "commercially_approved": false
-    },
-    {
-      "source": "nationalmuseum_se",
-      "museum_native_id": "52118694",
-      "title": "Cows in a Meadow",
-      "artist": "Otto Carl Bentzon Haslund",
-      "year": 1872,
-      "museum": "Nationalmuseum, Stockholm",
-      "museum_url": "https://commons.wikimedia.org/w/index.php?curid=52118694",
-      "remote_preview_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a5/Cows_in_a_Meadow_%28Carl_Otto_Haslund%29_-_Nationalmuseum_-_20993.tif/lossy-page1-330px-Cows_in_a_Meadow_%28Carl_Otto_Haslund%29_-_Nationalmuseum_-_20993.tif.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
-      "remote_full_url": "https://upload.wikimedia.org/wikipedia/commons/a/a5/Cows_in_a_Meadow_%28Carl_Otto_Haslund%29_-_Nationalmuseum_-_20993.tif?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-      "rights_evidence_url": "https://www.nationalmuseum.se/en/explore-art-and-design/images",
-      "image_license_per_item": "public domain",
-      "rights_file_source": "Wikimedia Commons file PDM/CC0 in museum category/search",
-      "source_file_sha1": "3a19db1927de6b89b63c53af2a44ea285c2c2f94",
-      "copyright_hold": "HOLD_ARTIST_DEATH_TERRITORY_AND_CROSS_PROVIDER",
-      "color_metrics": {
-        "luminance": 0.5841,
-        "saturation": 0.3354,
-        "dark_fraction": 0.1066,
-        "very_dark_fraction": 0.0182,
-        "vivid_fraction": 0.4033,
-        "bright_pass": false
-      },
-      "image_sha256": "14f008ad7385252e23fe850fb189509a407a99b7777c7c6b4af4f1eac5d8205c",
       "color_tier": "PREFERRED_AT_MOST_15_PERCENT_DARK",
       "curatorial_status": "HOLD_FURTHER_VISUAL_QA",
       "runtime_visible": false,
