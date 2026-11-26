@@ -112,6 +112,37 @@ EXCLUDE = ("portrait", "self portrait", "self-portrait", "dolls",
            "battle", "black")
 OUT = ROOT / "research/museums/20261126/lanes/results"
 
+# Distinguish files merely returned by a full-text query from works whose
+# institutional origin can be grounded in a museum category or file record.
+PROVENANCE_NAMES = {
+    "nationalmuseum_se": ("nationalmuseum", "national museum stockholm"),
+    "finnish_national_gallery": ("ateneum", "finnish national gallery", "sinebrychoff",
+                                  "kansallisgalleria"),
+    "birmingham": ("birmingham museum and art gallery", "birmingham museums trust",
+                   "birmingham museums"),
+    "belvedere": ("österreichische galerie belvedere", "osterreichische galerie belvedere",
+                  "belvedere vienna", "belvedere wien"),
+    "paris_musees": ("petit palais", "musee carnavalet", "musée carnavalet",
+                    "paris musées", "paris musees"),
+    "te_papa": ("te papa", "museum of new zealand"),
+    "nasjonalmuseet": ("nasjonalmuseet", "nasjonalgalleriet",
+                       "national gallery of norway",
+                       "national museum of art architecture and design",
+                       "national museum of art, architecture and design"),
+}
+SUPPORTED_FILE_MIME = ("image/jpeg", "image/png", "image/webp", "image/tiff")
+
+
+def institutional_mention(provider: str, title: str, ext: dict) -> bool:
+    fields = [title]
+    for key in ("Credit", "Source", "Institution", "ObjectName", "ImageDescription"):
+        value = (ext.get(key) or {}).get("value", "") if isinstance(ext.get(key),dict) else ""
+        if value:
+            fields.append(strip_html(value))
+    text = " ".join(fields).casefold()
+    return any(s.casefold() in text for s in PROVENANCE_NAMES.get(provider, ()))
+
+
 
 def is_scenic(title: str) -> bool:
     norm = re.sub(r"[^a-z0-9 ]+", " ", title.lower())
@@ -167,8 +198,12 @@ def from_commons(p: dict, museum: str, origin: str, exact_category: bool) -> dic
     url = str(info.get("thumburl") or "")
     rights = str(lic.get("license_name") or "") if lic else ""
     safe_media = bool(safe_thumb(url))
+    mime_supported = str(info.get("mime") or "") in SUPPORTED_FILE_MIME
     subject = is_scenic(title)
-    provenance = "INSTITUTIONAL_CATEGORY" if exact_category else "SEARCH_RESULT_REVIEW"
+    trustworthy = exact_category or institutional_mention(museum, title, ext)
+    provenance = ("INSTITUTIONAL_CATEGORY" if exact_category else
+                  "SEARCH_RECORD_MUSEUM_MATCH" if trustworthy else
+                  "SEARCH_RESULT_INSTITUTION_UNCONFIRMED")
     return {
         "source": museum, "museum_native_id": str(p["pageid"]),
         "title": title[:240], "artist": artist, "creation_date_raw": date,
@@ -178,6 +213,9 @@ def from_commons(p: dict, museum: str, origin: str, exact_category: bool) -> dic
         "image_license_per_item": rights if license_ok else "UNVERIFIED_OR_RESTRICTED",
         "image_license_checked": bool(license_ok),
         "institutional_provenance": provenance,
+        "institutional_origin_confirmed": trustworthy,
+        "image_mime": str(info.get("mime") or ""),
+        "supported_image_format": mime_supported,
         "origin_query": origin, "file_sha1": str(info.get("sha1") or ""),
         "scenic_title_indicator": subject,
         "date_needs_verification": True,
@@ -216,7 +254,15 @@ def discover_commons(museum: str, bound: int):
     stats["unique_files_discovered"] = len(all_rows)
     stats["file_open_rights"] = sum(x["image_license_checked"] for x in all_rows)
     stats["scenic_title_matches"] = sum(x["scenic_title_indicator"] for x in all_rows)
+    stats["institutional_origin_confirmed"] = sum(
+        x["institutional_origin_confirmed"] for x in all_rows)
+    stats["supported_image_file_count"] = sum(
+        x["supported_image_format"] for x in all_rows)
+    stats["rejected_nonimage_or_pdf_hits"] = sum(
+        not x["supported_image_format"] for x in all_rows)
     all_rows.sort(key=lambda x: (
+        not x["institutional_origin_confirmed"],
+        not x["supported_image_format"],
         not x["scenic_title_indicator"],
         not x["image_license_checked"],
         x["institutional_provenance"] != "INSTITUTIONAL_CATEGORY",
@@ -307,7 +353,9 @@ def image_review(candidates: list[dict], checks: int, stats: Counter):
         if not url or checked >= checks or (
                 c["source"] not in ("rijks", "staedel") and
                 (not c.get("scenic_title_indicator", True) or
-                 not c.get("image_license_checked", False))):
+                 not c.get("image_license_checked", False) or
+                 not c.get("institutional_origin_confirmed", False) or
+                 not c.get("supported_image_format", False))):
             continue
         checked += 1
         try:
