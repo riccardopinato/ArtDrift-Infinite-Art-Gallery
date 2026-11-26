@@ -190,6 +190,19 @@ def query_wikitext(ids):
    failure=type(ex).__name__+":"+str(ex)[:100]
   if attempt<2:time.sleep(4+attempt*7)
  raise RuntimeError(failure)
+def layered_license_hints(wiki):
+ # Commons may describe PD for the underlying painting and CC for the photo.
+ names=re.findall(r"\{\{\s*([^\|\}\n]{2,85})",wiki,flags=re.I)
+ templates=sorted({x.strip() for x in names if re.match(
+  r"(?i)^(?:PD[- _]|CC[- _]|Cc[- _]|Licensed[- _]PD|Copyright|No[- _]known[- _]restrictions)",
+  x.strip())})[:24]
+ pd=bool(re.search(r"(?i)(?:PD[-_ ]Art|PD[-_ ]old|Public[-_ ]domain|PDM|Licensed[-_ ]PD)",wiki))
+ cc=bool(re.search(r"(?i)(?:CC[-_ ]?BY(?:[-_ ]?SA)?[-_ ]?[234](?:\.[0-9])?|creativecommons\.org/licenses/by)",wiki))
+ return {"license_template_hints":templates,
+         "pd_underlying_work_template_detected":pd,
+         "cc_digital_file_license_detected":cc,
+         "potential_layered_pd_plus_cc":bool(pd and cc)}
+
 def review_wiki(source,page=None,error=None):
  k=source["source_identity"]
  out={"source_identity":k,"file_url":source.get("source_file_page"),
@@ -221,6 +234,9 @@ def review_wiki(source,page=None,error=None):
  if not (fields.get("author") or fields.get("artist")):
   out["issues"].append("AUTHOR_NEEDS_COMPLEX_TEMPLATE_OR_MUSEUM_VERIFICATION")
  # Fields are self-reported by uploaders. Never infer primary source authenticity.
+ out.update(layered_license_hints(wiki))
+ if out["potential_layered_pd_plus_cc"]:
+  out["issues"].append("PD_PAINTING_AND_CC_DIGITAL_REPRODUCTION_REQUIRE_SEPARATE_CREDIT_CHECK")
  out["issues"].append("EXTRACTED_FILE_FIELDS_NOT_INDEPENDENT_PRIMARY_SOURCE_VERIFICATION")
  return out
 def wiki_shard(queue,shard,shards,out):

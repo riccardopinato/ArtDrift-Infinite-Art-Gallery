@@ -33,6 +33,15 @@ class Tests(unittest.TestCase):
   fields2=q.parse_fields("{{Artwork\n|source= \n|author=Claude Monet\n}}")
   self.assertFalse(fields2.get("source"))
   self.assertEqual(fields2.get("author"),"Claude Monet")
+ def test_two_layer_pd_painting_and_cc_photo_is_not_implicit_permission(self):
+  wiki="{{Licensed-PD-Art|PD-old-70|CC-BY-4.0}}"
+  hints=q.layered_license_hints(wiki)
+  self.assertTrue(hints["potential_layered_pd_plus_cc"])
+  self.assertTrue(hints["cc_digital_file_license_detected"])
+  r=q.review_wiki({"source_identity":"commons:3"},{
+    "ns":6,"revisions":[{"slots":{"main":{"content":wiki}}}]})
+  self.assertFalse(r["commercially_approved"])
+  self.assertIn("PD_PAINTING_AND_CC_DIGITAL_REPRODUCTION_REQUIRE_SEPARATE_CREDIT_CHECK",r["issues"])
  def test_no_truncated_collection(self):
   with tempfile.TemporaryDirectory() as d:
    p=Path(d)/"q";p.mkdir()
