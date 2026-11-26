@@ -1,0 +1,64 @@
+name: Art Drift — Städel broad LIDO metadata and pixel research
+on:
+  push:
+    branches:
+      - research/artdrift-harvest-staedel-20261126
+    paths:
+      - tools/artdrift_staedel_detail_sample.py
+      - tools/test_artdrift_staedel_detail_sample.py
+      - .github/workflows/artdrift-staedel-detail-sample.yml
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: artdrift-individual-staedel-detail-study
+  cancel-in-progress: false
+jobs:
+  sample:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --disable-pip-version-check Pillow==11.3.0
+      - name: Validate OAI ID selection and source restrictions
+        run: |
+          python -m py_compile tools/artdrift_staedel_detail_sample.py
+          python -m unittest discover -s tools -p 'test_artdrift_staedel_detail_sample.py' -v
+      - name: Stratified new record batch (90 maximum, serial, official OAI)
+        run: python -u tools/artdrift_staedel_detail_sample.py --max-records 90 --max-images 25
+      - name: Enforce nonpublishing source gate
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          o=json.loads(Path('research/museums/20261126/lanes/staedel_lido_detail_sample.json').read_text())
+          assert o['provider']=='staedel' and o['runtime_imported']==0
+          assert o['commercially_approved']==0 and o['catalog_exhaustively_searched'] is False
+          assert all(x.get('runtime_visible') is False and x.get('commercially_approved') is False for x in o['review_candidates'])
+          print('Records',o['total_new_metadata_processed'],
+                'candidates',o['candidates_in_report'])
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ArtDrift-Staedel-New-LIDO-Detail-Sample
+          path: research/museums/20261126/lanes/staedel_lido_detail_sample.json
+          retention-days: 30
+          if-no-files-found: warn
+      - name: Commit only Städel object research evidence
+        if: success()
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          cp research/museums/20261126/lanes/staedel_lido_detail_sample.json /tmp/staedel-detail.json
+          git fetch origin research/artdrift-harvest-staedel-20261126
+          git reset --hard FETCH_HEAD
+          cp /tmp/staedel-detail.json research/museums/20261126/lanes/staedel_lido_detail_sample.json
+          git add research/museums/20261126/lanes/staedel_lido_detail_sample.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'research(staedel): retain new LIDO object sample'
+            git push origin HEAD:research/artdrift-harvest-staedel-20261126
+          fi
