@@ -1,0 +1,91 @@
+name: Art Drift — dark-image thresholds A/B (10 vs 15 vs 20)
+on:
+  push:
+    branches: [research/artdrift-bright-megabatches-20261126]
+    paths:
+      - tools/artdrift_dark_threshold_ab.py
+      - tools/test_artdrift_dark_threshold_ab.py
+      - .github/workflows/artdrift-dark-threshold-ab.yml
+  workflow_dispatch:
+permissions:
+  actions: read
+  contents: write
+concurrency:
+  group: artdrift-dark-ab-replay
+  cancel-in-progress: false
+jobs:
+  historical-image-replay:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Run deterministic threshold tests
+        run: |
+          python -m py_compile tools/artdrift_dark_threshold_ab.py
+          python -m unittest discover -s tools -p test_artdrift_dark_threshold_ab.py -v
+      - name: Fetch Commons eight verified image-metric artifacts
+        uses: actions/download-artifact@v4
+        with:
+          repository: ${{ github.repository }}
+          run-id: 45815982003
+          github-token: ${{ github.token }}
+          pattern: Commons-PD-Bright-*
+          path: .artdrift_dark_ab_evidence/commons
+          merge-multiple: false
+      - name: Fetch SMK eight verified image-metric artifacts
+        uses: actions/download-artifact@v4
+        with:
+          repository: ${{ github.repository }}
+          run-id: 45814424944
+          github-token: ${{ github.token }}
+          pattern: SMK-Bright-Art-*
+          path: .artdrift_dark_ab_evidence/smk
+          merge-multiple: false
+      - name: Fetch Cleveland six verified image-metric artifacts
+        uses: actions/download-artifact@v4
+        with:
+          repository: ${{ github.repository }}
+          run-id: 45813706451
+          github-token: ${{ github.token }}
+          pattern: ArtDrift-BrightMass-cma-*
+          path: .artdrift_dark_ab_evidence/cma
+          merge-multiple: false
+      - name: Recalculate 10 15 and 20 percent from exact source metrics
+        run: python -u tools/artdrift_dark_threshold_ab.py
+      - name: Validate no invented Met metrics and no app publication
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('research/experiments/20261126/dark_threshold_10_15_20.json')
+          r=json.loads(p.read_text())
+          assert r['met_dark_15_20_delta']=='NOT_MEASURED'
+          assert r['runtime_imported']==0 and r['commercially_cleared']==0
+          assert r['new_policy']['preferred_dark_fraction_max']==.15
+          assert r['new_policy']['conditional_dark_fraction_max']==.20
+          for src,data in r['source_comparisons'].items():
+              vals=data['pixel_eligible_counts']
+              assert vals['10']<=vals['15']<=vals['20'],(src,vals)
+          print('ARTDRIFT_DARK_AB_SOURCE_EVIDENCE_VALID')
+          PY
+      - name: Archive exact audit result even if commit fails
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ArtDrift-Dark10-15-20-Source-Evidence
+          path: research/experiments/20261126/dark_threshold_10_15_20.json
+          if-no-files-found: warn
+      - name: Commit research manifest only, not original evidence or live app
+        if: success()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add research/experiments/20261126/dark_threshold_10_15_20.json
+          if ! git diff --cached --quiet; then
+            git commit -m "research(artdrift): replay source image metrics at 10 15 20 percent dark"
+            git pull --rebase origin research/artdrift-bright-megabatches-20261126
+            git push origin HEAD:research/artdrift-bright-megabatches-20261126
+          fi
