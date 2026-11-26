@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../models/artwork.dart';
+import '../ui/artwork_preview_image.dart';
 import '../search/gallery_search.dart';
 import '../search/museum_search.dart';
 import '../services/museum_cloud_catalog.dart';
@@ -262,15 +263,11 @@ class _SearchSheetState extends State<_SearchSheet> {
           child: Row(children: [
             ClipRRect(borderRadius: BorderRadius.circular(3),
               child: SizedBox(width: 49, height: 67,
-                child: art.hasBundledPreview
-                  ? Image.asset(art.bootstrapAsset, fit: BoxFit.cover,
-                      cacheWidth: 100)
-                  : Image.network(art.imageUrl(width: 200),
-                      fit: BoxFit.cover, cacheWidth: 100,
-                      errorBuilder: (_, __, ___) =>
-                        const ColoredBox(color: ArtPaper.faded,
-                          child: Icon(Icons.image_outlined,
-                            color: ArtPaper.gold))),
+                child: ArtworkPreviewImage(
+                  artwork: art,
+                  fit: BoxFit.cover,
+                  cacheWidth: 100,
+                ),
               )),
             const SizedBox(width: 13),
             Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start,

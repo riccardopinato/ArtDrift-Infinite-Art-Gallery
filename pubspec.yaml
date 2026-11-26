@@ -1,7 +1,7 @@
 name: artdrift
 description: An infinite canvas for discovering public-domain paintings.
 publish_to: none
-version: 0.3.5+8
+version: 0.3.6+9
 
 environment:
   sdk: '>=3.5.0 <4.0.0'
@@ -29,3 +29,5 @@ flutter:
     - assets/museums/catalog.json
     - assets/museums/catalog_global.json
     - assets/museums/thumbs/
+    # Reconciled source-identity-verified WebP pack shared by Android/Web.
+    - web/museum_thumbs/
