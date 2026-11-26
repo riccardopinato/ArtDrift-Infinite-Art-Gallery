@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "date_utc": "2026-11-26T16:05:33.440464+00:00",
+  "date_utc": "2026-11-26T16:28:50.034118+00:00",
   "provider": "finnish_national_gallery",
   "museum": "Finnish National Gallery / Ateneum",
   "source_approach": "WIKIMEDIA_COMMONS_INSTITUTIONAL_CATEGORIES_AND_SEARCH",
@@ -19,26 +19,28 @@
     "institutional_origin_confirmed": 438,
     "supported_image_file_count": 448,
     "rejected_nonimage_or_pdf_hits": 0,
-    "pixel_checked": 90,
+    "source_host_throttled": 1,
+    "pixel_checked": 103,
     "technical_color_pass": 8,
-    "image_requests_attempted": 90
+    "image_errors": 27,
+    "image_requests_attempted": 130
   },
   "errors": [
     {
       "source": "Ateneum flowers",
-      "error": "HTTP Error 429: Too Many Requests"
+      "error": "COMMONS_HOST_THROTTLED_STOP__HTTP Error 429: Too Many Requests"
     },
     {
       "source": "Finnish National Gallery painting landscape",
-      "error": "HTTP Error 429: Too Many Requests"
+      "error": "COMMONS_API_THROTTLED_NO_FURTHER_REQUESTS"
     },
     {
       "source": "Sinebrychoff landscape",
-      "error": "HTTP Error 429: Too Many Requests"
+      "error": "COMMONS_API_THROTTLED_NO_FURTHER_REQUESTS"
     },
     {
       "source": "Ateneum lake",
-      "error": "HTTP Error 429: Too Many Requests"
+      "error": "COMMONS_API_THROTTLED_NO_FURTHER_REQUESTS"
     }
   ],
   "source_identifier_sample": [
@@ -7305,7 +7307,17 @@
       "date_needs_verification": true,
       "commercially_approved": false,
       "runtime_visible": false,
-      "review_status": "HOLD_VISUAL_SOURCE_RIGHTS_TERRITORY"
+      "review_status": "HOLD_MUTED_OR_DARK",
+      "color_metrics": {
+        "luminance": 0.5968,
+        "saturation": 0.2304,
+        "dark_fraction": 0.1619,
+        "very_dark_fraction": 0.0771,
+        "vivid_fraction": 0.1392,
+        "bright_pass": false
+      },
+      "image_sha256": "7078e9d5e09a0a6d37e65697a787c6748db1f47fe4a3a9d1f2fd98d794e20890",
+      "color_tier": "HOLD_DARK_OR_MUTED"
     },
     {
       "source": "finnish_national_gallery",
@@ -7351,7 +7363,17 @@
       "date_needs_verification": true,
       "commercially_approved": false,
       "runtime_visible": false,
-      "review_status": "HOLD_VISUAL_SOURCE_RIGHTS_TERRITORY"
+      "review_status": "HOLD_MUTED_OR_DARK",
+      "color_metrics": {
+        "luminance": 0.413,
+        "saturation": 0.539,
+        "dark_fraction": 0.441,
+        "very_dark_fraction": 0.2618,
+        "vivid_fraction": 0.3851,
+        "bright_pass": false
+      },
+      "image_sha256": "d0cf6df5e41a0513b3cc1196cdde27b4fe242013c72bb9601078b0cbf4af6cd2",
+      "color_tier": "HOLD_DARK_OR_MUTED"
     },
     {
       "source": "finnish_national_gallery",
@@ -7414,7 +7436,17 @@
       "date_needs_verification": true,
       "commercially_approved": false,
       "runtime_visible": false,
-      "review_status": "HOLD_VISUAL_SOURCE_RIGHTS_TERRITORY"
+      "review_status": "HOLD_MUTED_OR_DARK",
+      "color_metrics": {
+        "luminance": 0.3912,
+        "saturation": 0.3022,
+        "dark_fraction": 0.5159,
+        "very_dark_fraction": 0.413,
+        "vivid_fraction": 0.1083,
+        "bright_pass": false
+      },
+      "image_sha256": "6b610a18cdac1b8554797979d7c5615d579615c79e335831eae43cc35dbc7f7d",
+      "color_tier": "HOLD_DARK_OR_MUTED"
     },
     {
       "source": "finnish_national_gallery",
@@ -7460,7 +7492,17 @@
       "date_needs_verification": true,
       "commercially_approved": false,
       "runtime_visible": false,
-      "review_status": "HOLD_VISUAL_SOURCE_RIGHTS_TERRITORY"
+      "review_status": "HOLD_MUTED_OR_DARK",
+      "color_metrics": {
+        "luminance": 0.4512,
+        "saturation": 0.271,
+        "dark_fraction": 0.1485,
+        "very_dark_fraction": 0.0596,
+        "vivid_fraction": 0.0663,
+        "bright_pass": false
+      },
+      "image_sha256": "e14286ddd0d856ab5762136fdab03e2171b22ce474e798144df19abc1110b943",
+      "color_tier": "HOLD_DARK_OR_MUTED"
     },
     {
       "source": "finnish_national_gallery",
@@ -7641,7 +7683,17 @@
       "date_needs_verification": true,
       "commercially_approved": false,
       "runtime_visible": false,
-      "review_status": "HOLD_VISUAL_SOURCE_RIGHTS_TERRITORY"
+      "review_status": "HOLD_MUTED_OR_DARK",
+      "color_metrics": {
+        "luminance": 0.3034,
+        "saturation": 0.1995,
+        "dark_fraction": 0.5536,
+        "very_dark_fraction": 0.3615,
+        "vivid_fraction": 0.0308,
+        "bright_pass": false
+      },
+      "image_sha256": "3665e344857e58b250c44705881cfe8606387a4710dadeb7d3f24bb8774a8de7",
+      "color_tier": "HOLD_DARK_OR_MUTED"
     },
     {
       "source": "finnish_national_gallery",
@@ -7710,7 +7762,17 @@
       "date_needs_verification": true,
       "commercially_approved": false,
       "runtime_visible": false,
-      "review_status": "HOLD_VISUAL_SOURCE_RIGHTS_TERRITORY"
+      "review_status": "HOLD_MUTED_OR_DARK",
+      "color_metrics": {
+        "luminance": 0.3376,
+        "saturation": 0.3548,
+        "dark_fraction": 0.5968,
+        "very_dark_fraction": 0.3209,
+        "vivid_fraction": 0.1822,
+        "bright_pass": false
+      },
+      "image_sha256": "f565479d4d3aeaf9f2f8b93b12a1a13f75c54c1caa1056ddb9c7b8076b720085",
+      "color_tier": "HOLD_DARK_OR_MUTED"
     },
     {
       "source": "finnish_national_gallery",
@@ -7733,7 +7795,17 @@
       "date_needs_verification": true,
       "commercially_approved": false,
       "runtime_visible": false,
-      "review_status": "HOLD_VISUAL_SOURCE_RIGHTS_TERRITORY"
+      "review_status": "HOLD_MUTED_OR_DARK",
+      "color_metrics": {
+        "luminance": 0.4203,
+        "saturation": 0.5559,
+        "dark_fraction": 0.4211,
+        "very_dark_fraction": 0.3279,
+        "vivid_fraction": 0.4603,
+        "bright_pass": false
+      },
+      "image_sha256": "85cce22ee1547ec2977105cbf468c1ee423da232183bfc6f334094349ba4e996",
+      "color_tier": "HOLD_DARK_OR_MUTED"
     },
     {
       "source": "finnish_national_gallery",
@@ -7756,7 +7828,17 @@
       "date_needs_verification": true,
       "commercially_approved": false,
       "runtime_visible": false,
-      "review_status": "HOLD_VISUAL_SOURCE_RIGHTS_TERRITORY"
+      "review_status": "HOLD_MUTED_OR_DARK",
+      "color_metrics": {
+        "luminance": 0.269,
+        "saturation": 0.5349,
+        "dark_fraction": 0.6856,
+        "very_dark_fraction": 0.3586,
+        "vivid_fraction": 0.0878,
+        "bright_pass": false
+      },
+      "image_sha256": "439cb0fcbf54941101f39f218d15c44eb541dd009038928160d440a7261d1c54",
+      "color_tier": "HOLD_DARK_OR_MUTED"
     },
     {
       "source": "finnish_national_gallery",
@@ -7825,7 +7907,17 @@
       "date_needs_verification": true,
       "commercially_approved": false,
       "runtime_visible": false,
-      "review_status": "HOLD_VISUAL_SOURCE_RIGHTS_TERRITORY"
+      "review_status": "HOLD_MUTED_OR_DARK",
+      "color_metrics": {
+        "luminance": 0.4508,
+        "saturation": 0.2832,
+        "dark_fraction": 0.2656,
+        "very_dark_fraction": 0.0415,
+        "vivid_fraction": 0.1669,
+        "bright_pass": false
+      },
+      "image_sha256": "2a4eb038653eff0736395fc3c072ed817c02560deaec9d3a173434ceb228a3da",
+      "color_tier": "HOLD_DARK_OR_MUTED"
     },
     {
       "source": "finnish_national_gallery",
@@ -7848,7 +7940,17 @@
       "date_needs_verification": true,
       "commercially_approved": false,
       "runtime_visible": false,
-      "review_status": "HOLD_VISUAL_SOURCE_RIGHTS_TERRITORY"
+      "review_status": "HOLD_HIGH_CHROMA_VISUAL",
+      "color_metrics": {
+        "luminance": 0.5093,
+        "saturation": 0.3894,
+        "dark_fraction": 0.1139,
+        "very_dark_fraction": 0.0164,
+        "vivid_fraction": 0.4056,
+        "bright_pass": false
+      },
+      "image_sha256": "f00beb3c6a346a06b5d1bdc14bf62a85c76c4a6e602769f9bb66e891de04b55c",
+      "color_tier": "HOLD_DARK_OR_MUTED"
     },
     {
       "source": "finnish_national_gallery",
@@ -8609,7 +8711,17 @@
       "date_needs_verification": true,
       "commercially_approved": false,
       "runtime_visible": false,
-      "review_status": "HOLD_VISUAL_SOURCE_RIGHTS_TERRITORY"
+      "review_status": "HOLD_MUTED_OR_DARK",
+      "color_metrics": {
+        "luminance": 0.288,
+        "saturation": 0.4215,
+        "dark_fraction": 0.6314,
+        "very_dark_fraction": 0.4138,
+        "vivid_fraction": 0.0743,
+        "bright_pass": false
+      },
+      "image_sha256": "bda4614741990ea383a7ab0b5066fdc6dd5746f9279e2294e24e6b1b4d82530c",
+      "color_tier": "HOLD_DARK_OR_MUTED"
     },
     {
       "source": "finnish_national_gallery",
@@ -9172,7 +9284,17 @@
       "date_needs_verification": true,
       "commercially_approved": false,
       "runtime_visible": false,
-      "review_status": "HOLD_VISUAL_SOURCE_RIGHTS_TERRITORY"
+      "review_status": "HOLD_MUTED_OR_DARK",
+      "color_metrics": {
+        "luminance": 0.3147,
+        "saturation": 0.4526,
+        "dark_fraction": 0.584,
+        "very_dark_fraction": 0.2558,
+        "vivid_fraction": 0.0874,
+        "bright_pass": false
+      },
+      "image_sha256": "e1b323baeb0f493b603b8810ead96fe53e2e1b62b3f276eee18c0291277c8286",
+      "color_tier": "HOLD_DARK_OR_MUTED"
     },
     {
       "source": "finnish_national_gallery",
@@ -9947,7 +10069,17 @@
       "date_needs_verification": true,
       "commercially_approved": false,
       "runtime_visible": false,
-      "review_status": "HOLD_VISUAL_SOURCE_RIGHTS_TERRITORY"
+      "review_status": "HOLD_MUTED_OR_DARK",
+      "color_metrics": {
+        "luminance": 0.4546,
+        "saturation": 0.2673,
+        "dark_fraction": 0.4425,
+        "very_dark_fraction": 0.2035,
+        "vivid_fraction": 0.0047,
+        "bright_pass": false
+      },
+      "image_sha256": "953d7d94d8df00f77ddc29fed20674accd5ef3ff9d395c733012e54840664b2a",
+      "color_tier": "HOLD_DARK_OR_MUTED"
     },
     {
       "source": "finnish_national_gallery",
@@ -14853,6 +14985,46 @@
   "per_image_commercial_rights": "HOLD",
   "runtime_imported": 0,
   "commercially_approved": 0,
+  "query_progress": {
+    "Category:Paintings in the Ateneum": {
+      "status": "exhausted",
+      "cursor": null,
+      "pages_in_this_run": 3
+    },
+    "Category:Paintings in the Finnish National Gallery": {
+      "status": "exhausted",
+      "cursor": null,
+      "pages_in_this_run": 4
+    },
+    "Ateneum landscape": {
+      "status": "partial",
+      "cursor": {
+        "gsroffset": 150,
+        "continue": "gsroffset||"
+      },
+      "pages_in_this_run": 3
+    },
+    "Ateneum flowers": {
+      "status": "partial",
+      "cursor": null,
+      "pages_in_this_run": 0
+    },
+    "Finnish National Gallery painting landscape": {
+      "status": "partial",
+      "cursor": null,
+      "pages_in_this_run": 0
+    },
+    "Sinebrychoff landscape": {
+      "status": "partial",
+      "cursor": null,
+      "pages_in_this_run": 0
+    },
+    "Ateneum lake": {
+      "status": "partial",
+      "cursor": null,
+      "pages_in_this_run": 0
+    }
+  },
   "latest_run_candidates_in_report": 448,
   "latest_run_metadata_identifiers_discovered_or_scanned": 448,
   "cumulative_distinct_candidate_records": 591,
@@ -14881,6 +15053,30 @@
         }
       ],
       "pixel_checked": 90
+    },
+    {
+      "date_utc": "2026-11-26T16:28:50.034118+00:00",
+      "candidate_count": 448,
+      "identifiers_discovered_or_scanned": 448,
+      "source_errors": [
+        {
+          "source": "Ateneum flowers",
+          "error": "COMMONS_HOST_THROTTLED_STOP__HTTP Error 429: Too Many Requests"
+        },
+        {
+          "source": "Finnish National Gallery painting landscape",
+          "error": "COMMONS_API_THROTTLED_NO_FURTHER_REQUESTS"
+        },
+        {
+          "source": "Sinebrychoff landscape",
+          "error": "COMMONS_API_THROTTLED_NO_FURTHER_REQUESTS"
+        },
+        {
+          "source": "Ateneum lake",
+          "error": "COMMONS_API_THROTTLED_NO_FURTHER_REQUESTS"
+        }
+      ],
+      "pixel_checked": 103
     }
   ],
   "union_not_exhaustive": true,
