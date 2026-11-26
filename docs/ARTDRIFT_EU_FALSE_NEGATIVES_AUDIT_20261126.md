@@ -54,3 +54,16 @@ the Work conception/creation event, never from acquisition. OAI image links
 are declared CC BY-SA 4.0 at feed level; per-image reuse and credit remain
 HOLD. No app runtime assets, release, or canonical artwork imports are changed.
 See https://sammlung.staedelmuseum.de/en/oai/guide .
+
+## P0 OAI runtime follow-up — avoid HTTP 429, artist birth date, doll false positive
+Two Städel source shards returned 56/58 active LIDO records; one visual-color
+PASS was Japanese Dolls with Apples, Eugenie Bandell. Official museum data
+puts production in 1915, not 1858: the earlier parser followed any earliestDate
+inside Work conception including the painter's birth date. Creation year is now
+read only inside eventDate. Dolls/puppets/toys in the artwork title are excluded
+from Art Drift's nature/landscape-first research shortlist. The color PASS was
+NOT a curatorial approval. Three simultaneous Städel shards also produced a
+429; the workflow now runs one Städel shard with one full bounded sample,
+GetRecord concurrency limited to two. Rijks and Nationalmuseum keep three
+independent shards each (7 batch jobs total). Prior 9-batch evidence retained.
+Source: https://sammlung.staedelmuseum.de/en/work/japanese-dolls-with-apples

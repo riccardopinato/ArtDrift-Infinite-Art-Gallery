@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "as_of": "2026-11-26",
+  "source": "staedel",
+  "id": "DE-MUS-048017/lido/sg377",
+  "title": "Japanese Dolls with Apples",
+  "artist": "Eugenie Bandell",
+  "creation_year_verified": 1915,
+  "previous_parser_year_incorrect": 1858,
+  "museum_url": "https://sammlung.staedelmuseum.de/en/work/japanese-dolls-with-apples",
+  "pixel_color_gate_on_previous_sample": "PASS",
+  "visual_review": "REJECT_TOY_AND_DOLLS_CENTERED__NOT_NATURE_LANDSCAPE",
+  "decision": "EXCLUDE_FROM_ARTDRIFT_SHORTLIST",
+  "license_release_status": "NOT_APPROVED_FOR_APP",
+  "runtime_imported": false,
+  "explanation": "Official Städel object page documents 1915 and a still life with Japanese dolls and apples. A fruit-related subject keyword made the color-pass artwork eligible despite its primarily toy-centred subject."
+}

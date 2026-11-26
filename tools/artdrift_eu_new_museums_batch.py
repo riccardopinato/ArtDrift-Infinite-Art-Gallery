@@ -501,7 +501,7 @@ def staedel_records():
         def retrieve(ident):
             root=request({"verb":"GetRecord","metadataPrefix":"lido","identifier":ident})
             return root.findall(".//oai:record",NS)
-        with ThreadPoolExecutor(max_workers=4) as exe:
+        with ThreadPoolExecutor(max_workers=2) as exe:
             futures={exe.submit(retrieve,ident):ident for ident in ids[:180]}
             for future in as_completed(futures):
                 try:
@@ -527,7 +527,7 @@ def staedel_parse(record):
             for x in values if x.text and x.text.strip()]
     title=next((v for v,lang in titles if lang.lower().startswith("en")),
                titles[0][0] if titles else "")
-    if not title or AVOID_RE.search(cleaned(title)):return None
+    if not title or AVOID_RE.search(cleaned(title)) or re.search(r"\b(?:dolls?|puppets?|toys?|puppen|spielzeug)\b",cleaned(title),re.I):return None
     subjects=[x.text.strip() for x in
               e.findall(".//lido:objectRelationWrap//lido:subjectConcept//lido:term",NS)
               if x.text and x.text.strip()]
@@ -541,7 +541,8 @@ def staedel_parse(record):
         if any(any(word in kind for word in
                    ("conception","creation","production","entstehung","herstellung"))
                for kind in kinds):
-            for date in event.findall(".//lido:earliestDate",NS):
+            for date in (event.findall(".//lido:eventDate//lido:earliestDate",NS)+
+                         event.findall(".//lido:eventDate//lido:displayDate",NS)):
                 year=date_year(date.text)
                 if year is not None:years.append(year)
     if not years:return None
@@ -588,7 +589,7 @@ def run_staedel(shard,max_images):
     recs=[x for x in recs if x]
     stats["modern_scenic_image_metadata"]=len(recs)
     keys,names=main_keys()
-    for rec in recs[shard::3][:max_images]:
+    for rec in recs[:max_images]:
         if (cleaned(rec["title"]),cleaned(rec["artist"])) in names:
             stats["duplicate_main"]+=1;continue
         try:c,sha,img=image_raster(rec["remote_preview_url"])

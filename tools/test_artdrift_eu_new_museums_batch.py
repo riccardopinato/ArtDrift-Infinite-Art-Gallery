@@ -160,4 +160,26 @@ class EuropeanMuseumSourceTests(unittest.TestCase):
         </lido:lido></metadata></record>"""
         self.assertIsNone(eu.staedel_parse(ET.fromstring(xml)))
 
+
+    def test_staedel_only_creation_event_date_and_no_doll_subject(self):
+        from xml.etree import ElementTree as ET
+        ns='http://www.openarchives.org/OAI/2.0/'
+        lido='http://www.lido-schema.org'
+        def make(title):
+            xml=f"""<record xmlns="{ns}" xmlns:lido="{lido}">
+            <header><identifier>oai:DE-MUS-048017:sg377</identifier></header>
+            <metadata><lido:lido><lido:lidoRecID>DE-MUS-048017/lido/sg377</lido:lidoRecID>
+            <lido:titleSet><lido:appellationValue>{title}</lido:appellationValue></lido:titleSet>
+            <lido:objectRelationWrap><lido:subjectConcept><lido:term>fruit</lido:term></lido:subjectConcept></lido:objectRelationWrap>
+            <lido:eventSet><lido:event><lido:eventType><lido:term>Work conception</lido:term></lido:eventType>
+            <lido:eventActor><lido:actorDate><lido:earliestDate>1858</lido:earliestDate></lido:actorDate></lido:eventActor>
+            <lido:eventDate><lido:date><lido:earliestDate>1915</lido:earliestDate></lido:date></lido:eventDate>
+            </lido:event></lido:eventSet>
+            <lido:resourceWrap><lido:linkResource>https://cdn.staedelmuseum.de/images/6a/b6/sg377/thumb-lg.jpg</lido:linkResource></lido:resourceWrap>
+            </lido:lido></metadata></record>"""
+            return ET.fromstring(xml)
+        self.assertIsNone(eu.staedel_parse(make('Japanese Dolls with Apples')))
+        valid=eu.staedel_parse(make('Still Life with Fruits'))
+        self.assertIsNotNone(valid)
+        self.assertEqual(valid['year'],1915)
 if __name__=="__main__":unittest.main()
