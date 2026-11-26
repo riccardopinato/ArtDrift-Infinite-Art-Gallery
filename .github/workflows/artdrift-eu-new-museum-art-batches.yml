@@ -1,0 +1,84 @@
+name: Art Drift — NEW European museum artworks 3 x 3 batches
+on:
+  push:
+    branches: [research/artdrift-new-european-museums-20261126]
+    paths:
+      - tools/artdrift_eu_new_museums_batch.py
+      - tools/test_artdrift_eu_new_museums_batch.py
+      - tools/artdrift_eu_new_museums_aggregate.py
+      - .github/workflows/artdrift-eu-new-museum-art-batches.yml
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: artdrift-eu-new-art-source
+  cancel-in-progress: false
+jobs:
+  collect:
+    name: ${{ matrix.provider }}-europe-batch-${{ matrix.shard }}
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix:
+        provider: [rijks, nationalmuseum_se, staedel]
+        shard: [0,1,2]
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --disable-pip-version-check Pillow==11.3.0
+      - name: Unit tests for new European museum safety and art parsing
+        run: |
+          python -m py_compile tools/artdrift_eu_new_museums_batch.py
+          python -m unittest discover -s tools -p test_artdrift_eu_new_museums_batch.py -v
+      - name: Independently verify new museum records and image color
+        run: python -u tools/artdrift_eu_new_museums_batch.py --provider ${{ matrix.provider }} --shard ${{ matrix.shard }} --max-images 34
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: European-Museum-Art-${{ matrix.provider }}-${{ matrix.shard }}
+          path: .artdrift_eu/batches/${{ matrix.provider }}/batch_*/
+          include-hidden-files: true
+          if-no-files-found: ignore
+          retention-days: 30
+  consolidate:
+    name: Combine only verified and licensed-per-image EU museum candidates
+    needs: [collect]
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --disable-pip-version-check Pillow==11.3.0
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: European-Museum-Art-*
+          path: .artdrift_eu/incoming
+          merge-multiple: false
+      - name: Merge independent museum source samples and checksums
+        run: python -u tools/artdrift_eu_new_museums_aggregate.py
+      - name: Preserve images for user review; never mutate artwork assets
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ArtDrift-New-Europe-Curated-Batch-One
+          path: research/museums/20261126/new_european_museum*
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Commit only verified evidence
+        if: success()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add research/museums/20261126/new_european_museum_bright_batch1.json
+          if ! git diff --cached --quiet; then
+            git commit -m "research(europe): first 9 non-US museum batches with real-pixel QA"
+            git pull --rebase origin research/artdrift-new-european-museums-20261126
+            git push origin HEAD:research/artdrift-new-european-museums-20261126
+          fi
