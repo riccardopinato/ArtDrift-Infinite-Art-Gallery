@@ -1,0 +1,668 @@
+{
+  "all_images_work_copyright_confirmed": false,
+  "as_of_utc": "2026-11-26T21:57:20.178117+00:00",
+  "byte_identical_image_hash_group_count": 2,
+  "byte_identical_image_hash_groups": [
+    {
+      "sha256": "75f48dd4a6025b3ac82affbb851db30541592aa01b110da56e21a4176d1135c8",
+      "source_ids": [
+        "cleveland:20117662",
+        "cleveland:20538547"
+      ]
+    },
+    {
+      "sha256": "2943678dfdeddbbf350fd3ca11c173f47dc82893d5a94493e7d158523b2d15b3",
+      "source_ids": [
+        "cleveland:20121867",
+        "cleveland:20121868"
+      ]
+    }
+  ],
+  "certificate": "TECHNICAL_PIXEL_INTEGRITY_ONLY_NOT_COMMERCIAL_IMAGE_RIGHTS",
+  "commercially_approved": 0,
+  "decoded_valid_webp_count": 4042,
+  "image_bytes_total": 18107502,
+  "invalid_decoded_images": [],
+  "manifest_count": 4042,
+  "mean_image_brightness": 0.4186,
+  "min_image_bytes": 266,
+  "physical_device_qa": "PENDING",
+  "runtime_imported_by_audit": 0,
+  "sample_images": [
+    {
+      "color_tier": "BRIGHT_IMAGE_TECHNICAL_CANDIDATE",
+      "pixels": {
+        "bytes": 8826,
+        "dark_fraction": 0.0043,
+        "height": 205,
+        "luminance": 0.5834,
+        "sha256": "d97c18e870fb46521eccb5dbccc7719911ea73d7352e249c49fb1da7ebb0d55b",
+        "vivid_fraction": 0.0498,
+        "width": 256
+      },
+      "sha256": "d97c18e870fb46521eccb5dbccc7719911ea73d7352e249c49fb1da7ebb0d55b",
+      "source_id": "cleveland:20074228",
+      "title": "Fishmarket"
+    },
+    {
+      "color_tier": "SATURATED_NEAR_MISS_CANDIDATE",
+      "pixels": {
+        "bytes": 7112,
+        "dark_fraction": 0.1676,
+        "height": 256,
+        "luminance": 0.3637,
+        "sha256": "a8c5fd7a55bf418acfcd9e91dfa5bd0793d589e2c1ade04c071788c865c22f3a",
+        "vivid_fraction": 0.2856,
+        "width": 210
+      },
+      "sha256": "a8c5fd7a55bf418acfcd9e91dfa5bd0793d589e2c1ade04c071788c865c22f3a",
+      "source_id": "cleveland:20075763",
+      "title": "Procession or Pardon at Perros-Guirec"
+    },
+    {
+      "color_tier": "OTHER_IMAGE_REVIEW",
+      "pixels": {
+        "bytes": 7618,
+        "dark_fraction": 0.3579,
+        "height": 256,
+        "luminance": 0.2799,
+        "sha256": "69f9b208d7ecb1ae5bd03ba9b95e55a04b74c21fedd215445c1b524004e11ab5",
+        "vivid_fraction": 0.1742,
+        "width": 193
+      },
+      "sha256": "69f9b208d7ecb1ae5bd03ba9b95e55a04b74c21fedd215445c1b524004e11ab5",
+      "source_id": "cleveland:20078982",
+      "title": "The Resurrection of Christ"
+    },
+    {
+      "color_tier": "SATURATED_NEAR_MISS_CANDIDATE",
+      "pixels": {
+        "bytes": 1290,
+        "dark_fraction": 0.0,
+        "height": 256,
+        "luminance": 0.453,
+        "sha256": "774fe3ffff30a0f2428068945ddf49b26a18e186efb3eeb148e9322beff21b14",
+        "vivid_fraction": 0.8962,
+        "width": 106
+      },
+      "sha256": "774fe3ffff30a0f2428068945ddf49b26a18e186efb3eeb148e9322beff21b14",
+      "source_id": "cleveland:20079573",
+      "title": "Reeds and Geese"
+    },
+    {
+      "color_tier": "SATURATED_NEAR_MISS_CANDIDATE",
+      "pixels": {
+        "bytes": 3878,
+        "dark_fraction": 0.0,
+        "height": 256,
+        "luminance": 0.4738,
+        "sha256": "a67514b7651dbbe78c1821401429e5d44e69d696bfe0706353c8bd55ea01bf92",
+        "vivid_fraction": 0.246,
+        "width": 189
+      },
+      "sha256": "a67514b7651dbbe78c1821401429e5d44e69d696bfe0706353c8bd55ea01bf92",
+      "source_id": "cleveland:20079588",
+      "title": "Chinese Literatus Traveling to a Mountain Temple"
+    },
+    {
+      "color_tier": "BRIGHT_IMAGE_TECHNICAL_CANDIDATE",
+      "pixels": {
+        "bytes": 2540,
+        "dark_fraction": 0.0078,
+        "height": 102,
+        "luminance": 0.568,
+        "sha256": "5f75d1d28c46323b9f108aa043ef0144c608d08c814ed42efc591c553ea16250",
+        "vivid_fraction": 0.0004,
+        "width": 256
+      },
+      "sha256": "5f75d1d28c46323b9f108aa043ef0144c608d08c814ed42efc591c553ea16250",
+      "source_id": "cleveland:20079590",
+      "title": "Landscape with Motifs from the Eight Views of Xiao-Xiang"
+    },
+    {
+      "color_tier": "SATURATED_NEAR_MISS_CANDIDATE",
+      "pixels": {
+        "bytes": 2692,
+        "dark_fraction": 0.0009,
+        "height": 256,
+        "luminance": 0.5148,
+        "sha256": "344065ca5b25a5fee296d85cb3f7c551002c354fb7c2ce910388cc7ca4657e17",
+        "vivid_fraction": 0.5718,
+        "width": 137
+      },
+      "sha256": "344065ca5b25a5fee296d85cb3f7c551002c354fb7c2ce910388cc7ca4657e17",
+      "source_id": "cleveland:20079600",
+      "title": "Portrait of Sugawara Michizane"
+    },
+    {
+      "color_tier": "SATURATED_NEAR_MISS_CANDIDATE",
+      "pixels": {
+        "bytes": 3420,
+        "dark_fraction": 0.0,
+        "height": 256,
+        "luminance": 0.4793,
+        "sha256": "a0ff0abdf874d1b96a7d0d93cef09b1948d0d73f59f266b5643edb5461c529e8",
+        "vivid_fraction": 0.5939,
+        "width": 120
+      },
+      "sha256": "a0ff0abdf874d1b96a7d0d93cef09b1948d0d73f59f266b5643edb5461c529e8",
+      "source_id": "cleveland:20079931",
+      "title": "Bamboo and Plum"
+    },
+    {
+      "color_tier": "OTHER_IMAGE_REVIEW",
+      "pixels": {
+        "bytes": 7750,
+        "dark_fraction": 0.0084,
+        "height": 238,
+        "luminance": 0.3684,
+        "sha256": "87164b3dc28d074c31938a66dc13f1d459090c17eea6933afcc2158314bfb015",
+        "vivid_fraction": 0.135,
+        "width": 256
+      },
+      "sha256": "87164b3dc28d074c31938a66dc13f1d459090c17eea6933afcc2158314bfb015",
+      "source_id": "cleveland:20080329",
+      "title": "Luncheon (Annette and Her Grandmother)"
+    },
+    {
+      "color_tier": "OTHER_IMAGE_REVIEW",
+      "pixels": {
+        "bytes": 3562,
+        "dark_fraction": 0.2416,
+        "height": 213,
+        "luminance": 0.4185,
+        "sha256": "478dd78f8ca9ceb543e191c873f044a892498bff854f20d5edfdf69f295e74f8",
+        "vivid_fraction": 0.1978,
+        "width": 256
+      },
+      "sha256": "478dd78f8ca9ceb543e191c873f044a892498bff854f20d5edfdf69f295e74f8",
+      "source_id": "cleveland:20083373",
+      "title": "Woman Ironing"
+    },
+    {
+      "color_tier": "SATURATED_NEAR_MISS_CANDIDATE",
+      "pixels": {
+        "bytes": 2664,
+        "dark_fraction": 0.0,
+        "height": 145,
+        "luminance": 0.5082,
+        "sha256": "6d94f06f5333cf9bfc53312eb5b76d635713381776dbaa57929032bcfea4332c",
+        "vivid_fraction": 0.6172,
+        "width": 256
+      },
+      "sha256": "6d94f06f5333cf9bfc53312eb5b76d635713381776dbaa57929032bcfea4332c",
+      "source_id": "cleveland:20083462",
+      "title": "Corn Fields"
+    },
+    {
+      "color_tier": "OTHER_IMAGE_REVIEW",
+      "pixels": {
+        "bytes": 4766,
+        "dark_fraction": 0.4558,
+        "height": 208,
+        "luminance": 0.2784,
+        "sha256": "c4640650036701f33bc59350b9d278632e5ff57e43edc55c0513e145877fe43c",
+        "vivid_fraction": 0.0498,
+        "width": 256
+      },
+      "sha256": "c4640650036701f33bc59350b9d278632e5ff57e43edc55c0513e145877fe43c",
+      "source_id": "cleveland:20084370",
+      "title": "The Bistro"
+    },
+    {
+      "color_tier": "OTHER_IMAGE_REVIEW",
+      "pixels": {
+        "bytes": 11810,
+        "dark_fraction": 0.0,
+        "height": 228,
+        "luminance": 0.5374,
+        "sha256": "adb2cfd6346477bb0ead62bb660f0fd0a7d46e6c2822d5c2276a74351e51c601",
+        "vivid_fraction": 0.1817,
+        "width": 256
+      },
+      "sha256": "adb2cfd6346477bb0ead62bb660f0fd0a7d46e6c2822d5c2276a74351e51c601",
+      "source_id": "cleveland:20084371",
+      "title": "The Pink Cloud"
+    },
+    {
+      "color_tier": "SATURATED_NEAR_MISS_CANDIDATE",
+      "pixels": {
+        "bytes": 5332,
+        "dark_fraction": 0.1185,
+        "height": 256,
+        "luminance": 0.3721,
+        "sha256": "d74220d27311918dc9f2fc369b307594b49b370e5354279ebfcffb898d9290f8",
+        "vivid_fraction": 0.4388,
+        "width": 207
+      },
+      "sha256": "d74220d27311918dc9f2fc369b307594b49b370e5354279ebfcffb898d9290f8",
+      "source_id": "cleveland:20084662",
+      "title": "The Orange Christ"
+    },
+    {
+      "color_tier": "OTHER_IMAGE_REVIEW",
+      "pixels": {
+        "bytes": 7412,
+        "dark_fraction": 0.1741,
+        "height": 213,
+        "luminance": 0.4018,
+        "sha256": "c696e0e1f1db6ed1966a9fca4ac1f79f40de89bc980cb8bd241c12f621ecb652",
+        "vivid_fraction": 0.0451,
+        "width": 256
+      },
+      "sha256": "c696e0e1f1db6ed1966a9fca4ac1f79f40de89bc980cb8bd241c12f621ecb652",
+      "source_id": "cleveland:20084731",
+      "title": "Women Meeting in the Shade"
+    },
+    {
+      "color_tier": "OTHER_IMAGE_REVIEW",
+      "pixels": {
+        "bytes": 4680,
+        "dark_fraction": 0.0,
+        "height": 256,
+        "luminance": 0.5017,
+        "sha256": "fed78f207d6ac969fc55fddb45e8bfcd5a9f8fa0225cde120206141e73ee3e86",
+        "vivid_fraction": 0.0217,
+        "width": 135
+      },
+      "sha256": "fed78f207d6ac969fc55fddb45e8bfcd5a9f8fa0225cde120206141e73ee3e86",
+      "source_id": "cleveland:20084732",
+      "title": "Woman in Profile"
+    },
+    {
+      "color_tier": "SATURATED_NEAR_MISS_CANDIDATE",
+      "pixels": {
+        "bytes": 6058,
+        "dark_fraction": 0.1968,
+        "height": 176,
+        "luminance": 0.4093,
+        "sha256": "2522d23e7d97773e7f8fb45881c39ab1f2a24191e78b3a4325754428c4261aa8",
+        "vivid_fraction": 0.3014,
+        "width": 256
+      },
+      "sha256": "2522d23e7d97773e7f8fb45881c39ab1f2a24191e78b3a4325754428c4261aa8",
+      "source_id": "cleveland:20084745",
+      "title": "Bridge at Poissy (Pêcheurs à ligne)"
+    },
+    {
+      "color_tier": "OTHER_IMAGE_REVIEW",
+      "pixels": {
+        "bytes": 3794,
+        "dark_fraction": 0.0015,
+        "height": 192,
+        "luminance": 0.4352,
+        "sha256": "2e67c5f7e8bdcb3dd7a985e2421ff961d7cc3d3c80cd1d16556c482e00450eeb",
+        "vivid_fraction": 0.176,
+        "width": 256
+      },
+      "sha256": "2e67c5f7e8bdcb3dd7a985e2421ff961d7cc3d3c80cd1d16556c482e00450eeb",
+      "source_id": "cleveland:20085861",
+      "title": "Orchard"
+    },
+    {
+      "color_tier": "BRIGHT_IMAGE_TECHNICAL_CANDIDATE",
+      "pixels": {
+        "bytes": 2520,
+        "dark_fraction": 0.0016,
+        "height": 256,
+        "luminance": 0.7874,
+        "sha256": "54bf62ea05a00191846c5385b21328e2ede221ad3b3cbe131789dfef58e33830",
+        "vivid_fraction": 0.1056,
+        "width": 98
+      },
+      "sha256": "54bf62ea05a00191846c5385b21328e2ede221ad3b3cbe131789dfef58e33830",
+      "source_id": "cleveland:20086106",
+      "title": "Egret and Reeds"
+    },
+    {
+      "color_tier": "BRIGHT_IMAGE_TECHNICAL_CANDIDATE",
+      "pixels": {
+        "bytes": 3796,
+        "dark_fraction": 0.0,
+        "height": 82,
+        "luminance": 0.6584,
+        "sha256": "81c6246d2aeca94521d58d2156635c242d766fd3697f8408edaf67f4ed1ca3fb",
+        "vivid_fraction": 0.6793,
+        "width": 256
+      },
+      "sha256": "81c6246d2aeca94521d58d2156635c242d766fd3697f8408edaf67f4ed1ca3fb",
+      "source_id": "cleveland:20086107",
+      "title": "Grapevine"
+    },
+    {
+      "color_tier": "SATURATED_NEAR_MISS_CANDIDATE",
+      "pixels": {
+        "bytes": 2060,
+        "dark_fraction": 0.0,
+        "height": 153,
+        "luminance": 0.3796,
+        "sha256": "359bb19f1dfda61a7989f2931c05b734a4b09066366e26bd9a290984b6ab3c6e",
+        "vivid_fraction": 0.55,
+        "width": 256
+      },
+      "sha256": "359bb19f1dfda61a7989f2931c05b734a4b09066366e26bd9a290984b6ab3c6e",
+      "source_id": "cleveland:20086109",
+      "title": "Landscape"
+    },
+    {
+      "color_tier": "SATURATED_NEAR_MISS_CANDIDATE",
+      "pixels": {
+        "bytes": 1862,
+        "dark_fraction": 0.0,
+        "height": 256,
+        "luminance": 0.3897,
+        "sha256": "8a44e7c1d5c1fdddc233594cb2866464bec8ef6b8f6204815a42562cb47af1dc",
+        "vivid_fraction": 0.5256,
+        "width": 131
+      },
+      "sha256": "8a44e7c1d5c1fdddc233594cb2866464bec8ef6b8f6204815a42562cb47af1dc",
+      "source_id": "cleveland:20086110",
+      "title": "Sunset Glow over a Fishing Village, from Eight Views of Xiao-Xiang"
+    },
+    {
+      "color_tier": "SATURATED_NEAR_MISS_CANDIDATE",
+      "pixels": {
+        "bytes": 1482,
+        "dark_fraction": 0.0,
+        "height": 256,
+        "luminance": 0.4147,
+        "sha256": "60999c9e589ea91eaf195f1a148bdeabb39ed262e4b15d39b9b839d2be9c92c9",
+        "vivid_fraction": 0.6442,
+        "width": 132
+      },
+      "sha256": "60999c9e589ea91eaf195f1a148bdeabb39ed262e4b15d39b9b839d2be9c92c9",
+      "source_id": "cleveland:20086111",
+      "title": "Returning Sails off a Distant Shore, from Eight Views of Xiao-Xiang"
+    },
+    {
+      "color_tier": "SATURATED_NEAR_MISS_CANDIDATE",
+      "pixels": {
+        "bytes": 5312,
+        "dark_fraction": 0.0,
+        "height": 256,
+        "luminance": 0.4772,
+        "sha256": "6b06a6279a611967ca11dc261b3ed0b90cf14a6c5060122b4d9c03a8d6ef4d53",
+        "vivid_fraction": 0.2815,
+        "width": 172
+      },
+      "sha256": "6b06a6279a611967ca11dc261b3ed0b90cf14a6c5060122b4d9c03a8d6ef4d53",
+      "source_id": "cleveland:20086115",
+      "title": "Chinese Literatus Viewing a Valley"
+    },
+    {
+      "color_tier": "BRIGHT_IMAGE_TECHNICAL_CANDIDATE",
+      "pixels": {
+        "bytes": 2692,
+        "dark_fraction": 0.0,
+        "height": 114,
+        "luminance": 0.6401,
+        "sha256": "e959c382d464f45d89c6565ee9f08af2692262fcbfd810abf5fdb74879af37a5",
+        "vivid_fraction": 0.4802,
+        "width": 256
+      },
+      "sha256": "e959c382d464f45d89c6565ee9f08af2692262fcbfd810abf5fdb74879af37a5",
+      "source_id": "cleveland:20086399",
+      "title": "Orchids and Rocks"
+    },
+    {
+      "color_tier": "OTHER_IMAGE_REVIEW",
+      "pixels": {
+        "bytes": 2978,
+        "dark_fraction": 0.4398,
+        "height": 227,
+        "luminance": 0.2537,
+        "sha256": "5b7be73521083069efcab2aed6a20cb9f1f059f96d9dea9026b86803f054cdfa",
+        "vivid_fraction": 0.0,
+        "width": 256
+      },
+      "sha256": "5b7be73521083069efcab2aed6a20cb9f1f059f96d9dea9026b86803f054cdfa",
+      "source_id": "cleveland:20087891",
+      "title": "Strandgade, Sunshine"
+    },
+    {
+      "color_tier": "BRIGHT_IMAGE_TECHNICAL_CANDIDATE",
+      "pixels": {
+        "bytes": 3270,
+        "dark_fraction": 0.0,
+        "height": 256,
+        "luminance": 0.636,
+        "sha256": "8d1b7733506a4d88a53223b0ae99cfcd6c3b35ecb4d1c1191ab1fa69fa01bf93",
+        "vivid_fraction": 0.0389,
+        "width": 220
+      },
+      "sha256": "8d1b7733506a4d88a53223b0ae99cfcd6c3b35ecb4d1c1191ab1fa69fa01bf93",
+      "source_id": "cleveland:20090080",
+      "title": "Figure Mooring a Boat"
+    },
+    {
+      "color_tier": "BRIGHT_IMAGE_TECHNICAL_CANDIDATE",
+      "pixels": {
+        "bytes": 2970,
+        "dark_fraction": 0.0,
+        "height": 256,
+        "luminance": 0.5537,
+        "sha256": "c8bec0da3ab35bc267ed52e1af42dbdfa657c782248316e4bfaf2cd04fb9cbb1",
+        "vivid_fraction": 0.6625,
+        "width": 88
+      },
+      "sha256": "c8bec0da3ab35bc267ed52e1af42dbdfa657c782248316e4bfaf2cd04fb9cbb1",
+      "source_id": "cleveland:20090151",
+      "title": "Calligraphy with Willow and Swallows"
+    },
+    {
+      "color_tier": "SATURATED_NEAR_MISS_CANDIDATE",
+      "pixels": {
+        "bytes": 2502,
+        "dark_fraction": 0.0,
+        "height": 256,
+        "luminance": 0.4746,
+        "sha256": "02e04949401b198a01ae381b3ab2d6808564c3a912cc198f19095d8fc0b7fb47",
+        "vivid_fraction": 0.9631,
+        "width": 135
+      },
+      "sha256": "02e04949401b198a01ae381b3ab2d6808564c3a912cc198f19095d8fc0b7fb47",
+      "source_id": "cleveland:20090249",
+      "title": "Mountain Market, Clear with Rising Mist"
+    },
+    {
+      "color_tier": "SATURATED_NEAR_MISS_CANDIDATE",
+      "pixels": {
+        "bytes": 3492,
+        "dark_fraction": 0.0,
+        "height": 256,
+        "luminance": 0.515,
+        "sha256": "25f5daa9c99352372a5113b7a1f06070bca3db56d657f151325b04c79d6d2771",
+        "vivid_fraction": 0.7177,
+        "width": 186
+      },
+      "sha256": "25f5daa9c99352372a5113b7a1f06070bca3db56d657f151325b04c79d6d2771",
+      "source_id": "cleveland:20090267",
+      "title": "Returning Home"
+    },
+    {
+      "color_tier": "OTHER_IMAGE_REVIEW",
+      "pixels": {
+        "bytes": 2576,
+        "dark_fraction": 0.0,
+        "height": 256,
+        "luminance": 0.447,
+        "sha256": "dbe133c3dcca1d33ee359d783de9d2c3876b161321b4f5b26e62e25e33986ac3",
+        "vivid_fraction": 0.0657,
+        "width": 113
+      },
+      "sha256": "dbe133c3dcca1d33ee359d783de9d2c3876b161321b4f5b26e62e25e33986ac3",
+      "source_id": "cleveland:20090269",
+      "title": "Shuyadō (Studio of Lofty Rusticity)"
+    },
+    {
+      "color_tier": "BRIGHT_IMAGE_TECHNICAL_CANDIDATE",
+      "pixels": {
+        "bytes": 7016,
+        "dark_fraction": 0.0373,
+        "height": 207,
+        "luminance": 0.5564,
+        "sha256": "e99a7437f8e7716c1e4d18e90b054936d636c4c2afd673c60a86e3c86a812f96",
+        "vivid_fraction": 0.0431,
+        "width": 256
+      },
+      "sha256": "e99a7437f8e7716c1e4d18e90b054936d636c4c2afd673c60a86e3c86a812f96",
+      "source_id": "cleveland:20091231",
+      "title": "Villas at Trouville"
+    },
+    {
+      "color_tier": "OTHER_IMAGE_REVIEW",
+      "pixels": {
+        "bytes": 7588,
+        "dark_fraction": 0.121,
+        "height": 240,
+        "luminance": 0.3701,
+        "sha256": "ed01986d3c84aec9b08d409485c4964bfe9a62e451a3de950aa3b6590115d768",
+        "vivid_fraction": 0.0147,
+        "width": 256
+      },
+      "sha256": "ed01986d3c84aec9b08d409485c4964bfe9a62e451a3de950aa3b6590115d768",
+      "source_id": "cleveland:20092844",
+      "title": "Blessing of a Yacht on the Belon River"
+    },
+    {
+      "color_tier": "OTHER_IMAGE_REVIEW",
+      "pixels": {
+        "bytes": 6456,
+        "dark_fraction": 0.1521,
+        "height": 256,
+        "luminance": 0.4238,
+        "sha256": "0d9894d62df533b23db15b0242ad42a3dd6d976f965bc117a36ac262b8f63b90",
+        "vivid_fraction": 0.0048,
+        "width": 151
+      },
+      "sha256": "0d9894d62df533b23db15b0242ad42a3dd6d976f965bc117a36ac262b8f63b90",
+      "source_id": "cleveland:20092951",
+      "title": "The Lovers"
+    },
+    {
+      "color_tier": "BRIGHT_IMAGE_TECHNICAL_CANDIDATE",
+      "pixels": {
+        "bytes": 6852,
+        "dark_fraction": 0.0119,
+        "height": 192,
+        "luminance": 0.6099,
+        "sha256": "f8061bc45a50d35b3df159345d2e44b2bf31454a60193540ed8a9ceae3e8f961",
+        "vivid_fraction": 0.005,
+        "width": 256
+      },
+      "sha256": "f8061bc45a50d35b3df159345d2e44b2bf31454a60193540ed8a9ceae3e8f961",
+      "source_id": "cleveland:20093015",
+      "title": "The Park-Winter"
+    },
+    {
+      "color_tier": "BRIGHT_IMAGE_TECHNICAL_CANDIDATE",
+      "pixels": {
+        "bytes": 9260,
+        "dark_fraction": 0.0,
+        "height": 256,
+        "luminance": 0.6747,
+        "sha256": "d53042ccfdc490326b046577803b16a26d190fbe418b754ed30ab4375ead14de",
+        "vivid_fraction": 0.2695,
+        "width": 206
+      },
+      "sha256": "d53042ccfdc490326b046577803b16a26d190fbe418b754ed30ab4375ead14de",
+      "source_id": "cleveland:20093017",
+      "title": "Rosa Mystica"
+    },
+    {
+      "color_tier": "BRIGHT_IMAGE_TECHNICAL_CANDIDATE",
+      "pixels": {
+        "bytes": 2866,
+        "dark_fraction": 0.0,
+        "height": 256,
+        "luminance": 0.7625,
+        "sha256": "6740908332f31889c9d8fc9122a56404ee08666e04fd42e7deff43a8a45ac7c8",
+        "vivid_fraction": 0.0,
+        "width": 84
+      },
+      "sha256": "6740908332f31889c9d8fc9122a56404ee08666e04fd42e7deff43a8a45ac7c8",
+      "source_id": "cleveland:20095097",
+      "title": "Wild Geese and Reeds"
+    },
+    {
+      "color_tier": "BRIGHT_IMAGE_TECHNICAL_CANDIDATE",
+      "pixels": {
+        "bytes": 1396,
+        "dark_fraction": 0.0187,
+        "height": 24,
+        "luminance": 0.5885,
+        "sha256": "4fb108d34087ff37ae719e171df4b2a36cb7532b9179fb7ca951b06dbf519fe5",
+        "vivid_fraction": 0.7516,
+        "width": 256
+      },
+      "sha256": "4fb108d34087ff37ae719e171df4b2a36cb7532b9179fb7ca951b06dbf519fe5",
+      "source_id": "cleveland:20097422",
+      "title": "People Fleeing from a Fire"
+    },
+    {
+      "color_tier": "BRIGHT_IMAGE_TECHNICAL_CANDIDATE",
+      "pixels": {
+        "bytes": 4024,
+        "dark_fraction": 0.0106,
+        "height": 165,
+        "luminance": 0.5685,
+        "sha256": "316ca151c08abaf9040ce24f0a910bc431b9088202e295ca92c045181f83e820",
+        "vivid_fraction": 0.0286,
+        "width": 256
+      },
+      "sha256": "316ca151c08abaf9040ce24f0a910bc431b9088202e295ca92c045181f83e820",
+      "source_id": "cleveland:20104793",
+      "title": "Wild Coast, Newport"
+    },
+    {
+      "color_tier": "BRIGHT_IMAGE_TECHNICAL_CANDIDATE",
+      "pixels": {
+        "bytes": 3156,
+        "dark_fraction": 0.0,
+        "height": 186,
+        "luminance": 0.8097,
+        "sha256": "12f422d858d113cf83d9b112f0d06fe8cb6052a2e460d5e0f98c002b9ec63921",
+        "vivid_fraction": 0.0718,
+        "width": 256
+      },
+      "sha256": "12f422d858d113cf83d9b112f0d06fe8cb6052a2e460d5e0f98c002b9ec63921",
+      "source_id": "cleveland:20107358",
+      "title": "Jai Singh III of Jaipur (r. 1818–1835) Riding"
+    },
+    {
+      "color_tier": "BRIGHT_IMAGE_TECHNICAL_CANDIDATE",
+      "pixels": {
+        "bytes": 6674,
+        "dark_fraction": 0.0018,
+        "height": 256,
+        "luminance": 0.6487,
+        "sha256": "102f8dcbaf375644e62d6a1cddd44a8c34bee208757d6408b4af387d22faa1ee",
+        "vivid_fraction": 0.1368,
+        "width": 182
+      },
+      "sha256": "102f8dcbaf375644e62d6a1cddd44a8c34bee208757d6408b4af387d22faa1ee",
+      "source_id": "cleveland:20107359",
+      "title": "Raja Gulab Singh (1792–1857) of Jammu and Kashmir"
+    }
+  ],
+  "schema_version": 1,
+  "source_counts": {
+    "cleveland": 1584,
+    "met": 135,
+    "nga": 739,
+    "rijks": 160,
+    "smithsonian": 924,
+    "smk": 500
+  },
+  "source_image_rights_final": "PENDING_ITEM_AND_TERRITORY",
+  "source_license_claim_distribution": {
+    "CC0": 2643,
+    "Public Domain": 739,
+    "Public Domain Mark": 660
+  },
+  "technical_color_tiers": {
+    "BRIGHT_IMAGE_TECHNICAL_CANDIDATE": 1044,
+    "OTHER_IMAGE_REVIEW": 2117,
+    "SATURATED_NEAR_MISS_CANDIDATE": 881
+  }
+}
