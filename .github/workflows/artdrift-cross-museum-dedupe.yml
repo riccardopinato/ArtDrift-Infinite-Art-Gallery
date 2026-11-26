@@ -1,4 +1,5 @@
 name: 'Art Drift — nine-museum source cross-dedup (no deploy)'
+# Stage-two refreshed audit: consume current retained branch reports without museum traffic.
 on:
   push:
     branches:
