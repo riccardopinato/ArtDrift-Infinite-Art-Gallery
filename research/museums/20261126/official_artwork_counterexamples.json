@@ -1,0 +1,114 @@
+{
+  "schema_version": 1,
+  "as_of": "2026-11-26",
+  "purpose": "Gold standard live-official counterexamples to art scarcity; prevent zero-result source classifiers from being accepted as exhaustive art audit",
+  "prior_wrong_claim": "One suitable painting across three whole museums",
+  "verified_by": "Official institution object pages, 2026-11-26",
+  "source_case_count": 9,
+  "do_not_count_as_color_pass": 8,
+  "commercially_cleared": 0,
+  "app_imported": 0,
+  "applicable_gates": {
+    "bright_preferred_dark_max": 0.15,
+    "bright_conditional_max": 0.2,
+    "real_image_required": true,
+    "individual_rights_required": true
+  },
+  "cases": [
+    {
+      "source": "staedel",
+      "title": "Bank of the Seine in Autumn",
+      "artist": "Alfred Sisley",
+      "url": "https://sammlung.staedelmuseum.de/en/work/bank-of-the-seine-in-autumn",
+      "style": "Impressionism, landscape",
+      "source_rights": "Picture Copyright Public Domain shown on museum page",
+      "gate": "SOURCE_OBJECT_CONFIRMED__IMAGE_PIXEL_NOT_YET_QA"
+    },
+    {
+      "source": "staedel",
+      "title": "View of the Côte Saint-Denis, Pontoise",
+      "artist": "Camille Pissarro",
+      "url": "https://sammlung.staedelmuseum.de/en/work/view-of-the-cote-saint-denis",
+      "style": "Impressionism, landscape",
+      "source_rights": "Check each item page before artwork import",
+      "gate": "SOURCE_OBJECT_CONFIRMED__IMAGE_PIXEL_NOT_YET_QA"
+    },
+    {
+      "source": "staedel",
+      "title": "Landscape. Road with Trees in Rocky Mountains",
+      "artist": "Paul Cézanne",
+      "url": "https://sammlung.staedelmuseum.de/en/work/landscape-road-with-trees-in-rocky-mountains",
+      "style": "Impressionism / early modern landscape",
+      "source_rights": "Picture Copyright Public Domain shown on museum page",
+      "gate": "SOURCE_OBJECT_CONFIRMED__IMAGE_PIXEL_NOT_YET_QA"
+    },
+    {
+      "source": "staedel",
+      "title": "Houses by the Bank of the River Zaan",
+      "artist": null,
+      "url": "https://sammlung.staedelmuseum.de/en/work/houses-by-the-bank-of-the-river-zaan",
+      "style": "Summer impressionist landscape",
+      "source_rights": "Check item-specific rights",
+      "gate": "SOURCE_OBJECT_CONFIRMED__IMAGE_PIXEL_NOT_YET_QA"
+    },
+    {
+      "source": "rijks",
+      "title": "Tulip Fields",
+      "artist": "Gerrit Willem Dijsselhof",
+      "year_interval": "1890-1922",
+      "id": "SK-A-2890",
+      "url": "https://www.rijksmuseum.nl/en/collection/object/Tulip-Fields--f77bb1bd614dd624846f1aaccaa91f73",
+      "style": "Floral landscape",
+      "source_rights": "Public domain on museum page",
+      "gate": "SOURCE_OBJECT_CONFIRMED__IMAGE_PIXEL_NOT_YET_QA"
+    },
+    {
+      "source": "rijks",
+      "title": "Landscape on the Oise",
+      "artist": "Charles-François Daubigny",
+      "year": 1872,
+      "id": "SK-A-2288",
+      "url": "https://www.rijksmuseum.nl/en/collection/object/Landscape-on-the-Oise--4b723c4f7f44f080e1ed03026e96a2dc",
+      "style": "Colorful river landscape",
+      "source_rights": "Public domain on museum page",
+      "gate": "PIXEL_REVIEW_EXPLICIT",
+      "technical_metrics": {
+        "dark_fraction": 0.1906,
+        "mean_luminance": 0.4935,
+        "mean_saturation": 0.5389,
+        "vivid_fraction": 0.5614
+      },
+      "false_negative": "Rejected by luminance>=.55 despite user's maximum dark area 20% and strong local chroma"
+    },
+    {
+      "source": "nationalmuseum_se",
+      "title": "Landscape Study from Barbizon",
+      "artist": "Carl Larsson",
+      "url": "https://collection.nationalmuseum.se/en/collection/item/19198/",
+      "style": "Landscape",
+      "source_rights": "Public domain according to museum item snippet",
+      "gate": "SOURCE_OBJECT_CONFIRMED__IMAGE_PIXEL_NOT_YET_QA"
+    },
+    {
+      "source": "nationalmuseum_se",
+      "title": "Evening in August",
+      "artist": "Nils Kreuger",
+      "year": 1906,
+      "url": "https://collection.nationalmuseum.se/en/collection/item/21178/",
+      "style": "Modern Nordic landscape",
+      "source_rights": "Check museum media specific rights",
+      "gate": "SOURCE_OBJECT_CONFIRMED__IMAGE_PIXEL_NOT_YET_QA"
+    },
+    {
+      "source": "rijks",
+      "title": "Still Life with Flowers",
+      "artist": "Kees van Dongen",
+      "year_interval": "1900-1926",
+      "id": "SK-A-3039",
+      "url": "https://www.rijksmuseum.nl/en/collection/object/Still-Life-with-Flowers--c13c2bf32d12dabc0ab6a4140aaccf88",
+      "style": "Flower still life",
+      "source_rights": "NOT OPEN ACCESS: copyright erven Kees van Dongen/Pictoright on museum page",
+      "gate": "RIGHTS_HOLD__DO_NOT_IMPORT"
+    }
+  ]
+}
