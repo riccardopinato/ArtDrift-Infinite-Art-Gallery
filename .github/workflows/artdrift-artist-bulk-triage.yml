@@ -1,0 +1,74 @@
+name: Art Drift — Full seven-artist offline QA and existing catalog checks
+on:
+  push:
+    branches:
+      - research/artdrift-user-palette-artists-20261126
+    paths:
+      - tools/artdrift_artist_bulk_triage.py
+      - tools/test_artdrift_artist_bulk_triage.py
+      - .github/workflows/artdrift-artist-bulk-triage.yml
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: artdrift-seven-artist-bulk-offline-qa
+  cancel-in-progress: false
+jobs:
+  all-artist-records:
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate losslessness, duplicate and licence gates offline
+        run: |
+          python -m py_compile tools/artdrift_artist_bulk_triage.py
+          python -m unittest discover -s tools -p 'test_artdrift_artist_bulk_triage.py' -v
+      - name: Read current main app catalog for potential already imported works
+        run: |
+          git fetch --quiet origin main
+          mkdir -p .artdrift-main-catalog/assets/gallery .artdrift-main-catalog/assets/museums
+          for file in assets/gallery/catalog.json assets/museums/catalog.json assets/museums/catalog_global.json assets/museums/catalog_modern_1950.json assets/museums/catalog_new_museums.json; do
+            git show "FETCH_HEAD:$file" > ".artdrift-main-catalog/$file"
+            test -s ".artdrift-main-catalog/$file"
+          done
+      - name: Triage every discovered artist candidate without another HTTP request
+        run: python -u tools/artdrift_artist_bulk_triage.py --runtime-root .artdrift-main-catalog
+      - name: Verify the entire queue survives and still cannot be released
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          o=json.loads(Path('research/artists/20261126/artist_bulk_486_triage.json').read_text(encoding='utf-8'))
+          n=json.loads(Path('research/artists/20261126/user_artist_visual_qa.json').read_text(encoding='utf-8'))
+          assert o['all_candidate_records_retained']==n['artist_matched_distinct_files']
+          assert o['all_candidate_records_retained']==len(o['complete_queue'])
+          assert len(o['runtime_catalog_row_counts'])==5
+          assert o['processed_without_new_museum_or_commons_requests'] is True
+          assert o['commercially_approved']==0 and o['runtime_imported']==0
+          assert all(x['commercially_approved'] is False and x['runtime_visible'] is False for x in o['complete_queue'])
+          print('VERIFIED',o['all_candidate_records_retained'],'artist references; review lanes:',o['review_lanes'])
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ArtDrift-Seven-Artists-Full-Offline-Triage
+          path: research/artists/20261126/artist_bulk_486_triage.json
+          retention-days: 30
+          if-no-files-found: warn
+      - name: Commit only research queue, no runtime changes
+        if: success()
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          cp research/artists/20261126/artist_bulk_486_triage.json /tmp/artist-bulk-qa.json
+          git fetch origin research/artdrift-user-palette-artists-20261126
+          git reset --hard FETCH_HEAD
+          cp /tmp/artist-bulk-qa.json research/artists/20261126/artist_bulk_486_triage.json
+          git add research/artists/20261126/artist_bulk_486_triage.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'research(artists): reconcile full artist review queue against current runtime'
+            git push origin HEAD:research/artdrift-user-palette-artists-20261126
+          fi
