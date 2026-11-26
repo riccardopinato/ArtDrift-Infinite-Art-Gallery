@@ -52,7 +52,12 @@ class DarknessPolicyTests(unittest.TestCase):
                               "color_metrics":colors(dark=.18)},
                              {"id":22,"reason":"HTTP_403"}]}
                 (p/"review.json").write_text(json.dumps(payload))
-            rec,shards=ab.observations(base)
+            prior=ab.EVIDENCE
+            ab.EVIDENCE=Path(d)
+            try:
+                rec,shards=ab.observations(base)
+            finally:
+                ab.EVIDENCE=prior
             self.assertEqual(len(rec),2)
             self.assertEqual(ab.eligible_count(rec,.10),1)
             self.assertEqual(ab.eligible_count(rec,.15),1)
