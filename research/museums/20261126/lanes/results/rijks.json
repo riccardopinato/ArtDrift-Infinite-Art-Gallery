@@ -1,27 +1,27 @@
 {
   "schema_version": 2,
-  "date_utc": "2026-11-26T16:06:21.420015+00:00",
+  "date_utc": "2026-11-26T16:31:22.307606+00:00",
   "provider": "rijks",
   "museum": "Rijksmuseum",
   "source_approach": "OFFICIAL_LINKED_ART",
   "catalog_exhaustively_searched": false,
   "source_zero_artworks_proven": false,
   "metadata_identifiers_discovered_or_scanned": 343,
-  "candidates_in_report": 46,
+  "candidates_in_report": 53,
   "stats": {
     "sum_query_matches_nonunique": 61,
     "id_links_returned_nonunique": 61,
     "era_search_matches_nonunique": 318,
     "era_identifier_links_returned": 318,
     "unique_search_ids": 343,
-    "uninspected_metadata_count": 83,
-    "full_records_filtered_or_without_iiif": 212,
-    "full_records_scenic_with_media": 46,
+    "uninspected_metadata_count": 0,
+    "full_records_filtered_or_without_iiif": 288,
+    "full_records_scenic_with_media": 53,
     "object_errors": 2,
-    "full_records_attempted": 260,
-    "pixel_checked": 46,
+    "full_records_attempted": 343,
+    "pixel_checked": 53,
     "technical_color_pass": 2,
-    "image_requests_attempted": 46
+    "image_requests_attempted": 53
   },
   "errors": [
     {
@@ -1246,6 +1246,38 @@
     },
     {
       "source": "rijks",
+      "museum_native_id": "SK-A-2464",
+      "title": "Oud buurtje aan het water",
+      "artist": "Jacob Maris",
+      "year": 1883,
+      "museum": "Rijksmuseum, Amsterdam",
+      "museum_url": "https://www.rijksmuseum.nl/en/collection/SK-A-2464",
+      "record_api_url": "https://data.rijksmuseum.nl/20027560",
+      "remote_preview_url": "https://iiif.micr.io/jDeTw/full/280,/0/default.jpg",
+      "remote_full_url": "https://iiif.micr.io/jDeTw/full/max/0/default.jpg",
+      "rights_evidence_url": "https://data.rijksmuseum.nl/about/",
+      "image_license_per_item": "UNVERIFIED__CHECK_PD_CC0_ON_OBJECT",
+      "source_data_model": "Linked Art 2026 3-hop IIIF",
+      "copyright_hold": "HOLD_PER_OBJECT_LICENSE_AND_COUNTRY",
+      "source_queries": [
+        "188?"
+      ],
+      "runtime_visible": false,
+      "commercially_approved": false,
+      "review_status": "HOLD_MUTED_OR_DARK",
+      "color_metrics": {
+        "luminance": 0.5953,
+        "saturation": 0.276,
+        "dark_fraction": 0.0893,
+        "very_dark_fraction": 0.0012,
+        "vivid_fraction": 0.1229,
+        "bright_pass": false
+      },
+      "image_sha256": "22b3b7cb6c020b9b05d2fb73ca6e9bec7d5ebfd111fc33b8c989dc11a3b6e343",
+      "color_tier": "HOLD_DARK_OR_MUTED"
+    },
+    {
+      "source": "rijks",
       "museum_native_id": "SK-A-2468",
       "title": "Landschap in de omgeving van Den Haag",
       "artist": "Jacob Maris",
@@ -1310,6 +1342,102 @@
     },
     {
       "source": "rijks",
+      "museum_native_id": "SK-A-2701",
+      "title": "The Forest of Fontainebleau",
+      "artist": "Narcisse Virgile Diaz de la Peña",
+      "year": 1871,
+      "museum": "Rijksmuseum, Amsterdam",
+      "museum_url": "https://www.rijksmuseum.nl/en/collection/SK-A-2701",
+      "record_api_url": "https://data.rijksmuseum.nl/20027613",
+      "remote_preview_url": "https://iiif.micr.io/smcAr/full/280,/0/default.jpg",
+      "remote_full_url": "https://iiif.micr.io/smcAr/full/max/0/default.jpg",
+      "rights_evidence_url": "https://data.rijksmuseum.nl/about/",
+      "image_license_per_item": "UNVERIFIED__CHECK_PD_CC0_ON_OBJECT",
+      "source_data_model": "Linked Art 2026 3-hop IIIF",
+      "copyright_hold": "HOLD_PER_OBJECT_LICENSE_AND_COUNTRY",
+      "source_queries": [
+        "187?"
+      ],
+      "runtime_visible": false,
+      "commercially_approved": false,
+      "review_status": "HOLD_MUTED_OR_DARK",
+      "color_metrics": {
+        "luminance": 0.2207,
+        "saturation": 0.348,
+        "dark_fraction": 0.8935,
+        "very_dark_fraction": 0.451,
+        "vivid_fraction": 0.012,
+        "bright_pass": false
+      },
+      "image_sha256": "a993ae5875d44a4d2eadf2c94fd71c4fe3c15df655119a4613640111dcabe9be",
+      "color_tier": "HOLD_DARK_OR_MUTED"
+    },
+    {
+      "source": "rijks",
+      "museum_native_id": "SK-A-2703",
+      "title": "A Bleaching Field",
+      "artist": "Jacob Maris",
+      "year": 1870,
+      "museum": "Rijksmuseum, Amsterdam",
+      "museum_url": "https://www.rijksmuseum.nl/en/collection/SK-A-2703",
+      "record_api_url": "https://data.rijksmuseum.nl/20027615",
+      "remote_preview_url": "https://iiif.micr.io/OwteJ/full/280,/0/default.jpg",
+      "remote_full_url": "https://iiif.micr.io/OwteJ/full/max/0/default.jpg",
+      "rights_evidence_url": "https://data.rijksmuseum.nl/about/",
+      "image_license_per_item": "UNVERIFIED__CHECK_PD_CC0_ON_OBJECT",
+      "source_data_model": "Linked Art 2026 3-hop IIIF",
+      "copyright_hold": "HOLD_PER_OBJECT_LICENSE_AND_COUNTRY",
+      "source_queries": [
+        "187?"
+      ],
+      "runtime_visible": false,
+      "commercially_approved": false,
+      "review_status": "HOLD_MUTED_OR_DARK",
+      "color_metrics": {
+        "luminance": 0.2874,
+        "saturation": 0.5839,
+        "dark_fraction": 0.6999,
+        "very_dark_fraction": 0.4302,
+        "vivid_fraction": 0.2634,
+        "bright_pass": false
+      },
+      "image_sha256": "464772f56dabb26f538c58508e54287cef05a4d14730e4e4c9110f4bf3dd795d",
+      "color_tier": "HOLD_DARK_OR_MUTED"
+    },
+    {
+      "source": "rijks",
+      "museum_native_id": "SK-A-2884",
+      "title": "Seascape",
+      "artist": "Charles-François Daubigny",
+      "year": 1876,
+      "museum": "Rijksmuseum, Amsterdam",
+      "museum_url": "https://www.rijksmuseum.nl/en/collection/SK-A-2884",
+      "record_api_url": "https://data.rijksmuseum.nl/20028453",
+      "remote_preview_url": "https://iiif.micr.io/MFZUL/full/280,/0/default.jpg",
+      "remote_full_url": "https://iiif.micr.io/MFZUL/full/max/0/default.jpg",
+      "rights_evidence_url": "https://data.rijksmuseum.nl/about/",
+      "image_license_per_item": "UNVERIFIED__CHECK_PD_CC0_ON_OBJECT",
+      "source_data_model": "Linked Art 2026 3-hop IIIF",
+      "copyright_hold": "HOLD_PER_OBJECT_LICENSE_AND_COUNTRY",
+      "source_queries": [
+        "187?"
+      ],
+      "runtime_visible": false,
+      "commercially_approved": false,
+      "review_status": "HOLD_MUTED_OR_DARK",
+      "color_metrics": {
+        "luminance": 0.7019,
+        "saturation": 0.0651,
+        "dark_fraction": 0.0,
+        "very_dark_fraction": 0.0,
+        "vivid_fraction": 0.0,
+        "bright_pass": false
+      },
+      "image_sha256": "c79d6befcb0d3c89a555226e26f88d7c10d3e1c660fe868a0f9fa47ca16928cd",
+      "color_tier": "HOLD_DARK_OR_MUTED"
+    },
+    {
+      "source": "rijks",
       "museum_native_id": "SK-A-2941",
       "title": "Still Life with Zinnias in a green Jar",
       "artist": "Floris Verster",
@@ -1342,6 +1470,38 @@
     },
     {
       "source": "rijks",
+      "museum_native_id": "SK-A-3176",
+      "title": "Ships in Dull Weather",
+      "artist": "Jacob Maris (mentioned on object)",
+      "year": 1877,
+      "museum": "Rijksmuseum, Amsterdam",
+      "museum_url": "https://www.rijksmuseum.nl/en/collection/SK-A-3176",
+      "record_api_url": "https://data.rijksmuseum.nl/20028250",
+      "remote_preview_url": "https://iiif.micr.io/XjXcy/full/280,/0/default.jpg",
+      "remote_full_url": "https://iiif.micr.io/XjXcy/full/max/0/default.jpg",
+      "rights_evidence_url": "https://data.rijksmuseum.nl/about/",
+      "image_license_per_item": "UNVERIFIED__CHECK_PD_CC0_ON_OBJECT",
+      "source_data_model": "Linked Art 2026 3-hop IIIF",
+      "copyright_hold": "HOLD_PER_OBJECT_LICENSE_AND_COUNTRY",
+      "source_queries": [
+        "187?"
+      ],
+      "runtime_visible": false,
+      "commercially_approved": false,
+      "review_status": "HOLD_HIGH_CHROMA_VISUAL",
+      "color_metrics": {
+        "luminance": 0.5312,
+        "saturation": 0.3358,
+        "dark_fraction": 0.1553,
+        "very_dark_fraction": 0.0445,
+        "vivid_fraction": 0.6043,
+        "bright_pass": false
+      },
+      "image_sha256": "3cc5bcc2c6cd6f986ecba5bde5b169138bb44f27723e677c2a602a8c1863523f",
+      "color_tier": "HOLD_DARK_OR_MUTED"
+    },
+    {
+      "source": "rijks",
       "museum_native_id": "SK-A-3307",
       "title": "Farming Village at Twilight",
       "artist": "Vincent van Gogh",
@@ -1370,6 +1530,38 @@
         "bright_pass": false
       },
       "image_sha256": "92041832d2b693177f3711866845913648385dc79b4704630d0948475443bf14",
+      "color_tier": "HOLD_DARK_OR_MUTED"
+    },
+    {
+      "source": "rijks",
+      "museum_native_id": "SK-A-3456",
+      "title": "Stilleven met kan van steengoed",
+      "artist": "Maria Vos (mentioned on object)",
+      "year": 1878,
+      "museum": "Rijksmuseum, Amsterdam",
+      "museum_url": "https://www.rijksmuseum.nl/en/collection/SK-A-3456",
+      "record_api_url": "https://data.rijksmuseum.nl/20028547",
+      "remote_preview_url": "https://iiif.micr.io/DnuJv/full/280,/0/default.jpg",
+      "remote_full_url": "https://iiif.micr.io/DnuJv/full/max/0/default.jpg",
+      "rights_evidence_url": "https://data.rijksmuseum.nl/about/",
+      "image_license_per_item": "UNVERIFIED__CHECK_PD_CC0_ON_OBJECT",
+      "source_data_model": "Linked Art 2026 3-hop IIIF",
+      "copyright_hold": "HOLD_PER_OBJECT_LICENSE_AND_COUNTRY",
+      "source_queries": [
+        "187?"
+      ],
+      "runtime_visible": false,
+      "commercially_approved": false,
+      "review_status": "HOLD_MUTED_OR_DARK",
+      "color_metrics": {
+        "luminance": 0.311,
+        "saturation": 0.483,
+        "dark_fraction": 0.6194,
+        "very_dark_fraction": 0.2261,
+        "vivid_fraction": 0.1822,
+        "bright_pass": false
+      },
+      "image_sha256": "5d5b86c8c25d7743087c8ac54d6d963e2c3d484ce2e155ae48eaa571166b98b6",
       "color_tier": "HOLD_DARK_OR_MUTED"
     },
     {
@@ -1791,6 +1983,38 @@
     },
     {
       "source": "rijks",
+      "museum_native_id": "SK-C-1561",
+      "title": "Still Life",
+      "artist": "J. de Clercq (schilder)",
+      "year": 1860,
+      "museum": "Rijksmuseum, Amsterdam",
+      "museum_url": "https://www.rijksmuseum.nl/en/collection/SK-C-1561",
+      "record_api_url": "https://data.rijksmuseum.nl/20029259",
+      "remote_preview_url": "https://iiif.micr.io/xqwrl/full/280,/0/default.jpg",
+      "remote_full_url": "https://iiif.micr.io/xqwrl/full/max/0/default.jpg",
+      "rights_evidence_url": "https://data.rijksmuseum.nl/about/",
+      "image_license_per_item": "UNVERIFIED__CHECK_PD_CC0_ON_OBJECT",
+      "source_data_model": "Linked Art 2026 3-hop IIIF",
+      "copyright_hold": "HOLD_PER_OBJECT_LICENSE_AND_COUNTRY",
+      "source_queries": [
+        "186?"
+      ],
+      "runtime_visible": false,
+      "commercially_approved": false,
+      "review_status": "HOLD_MUTED_OR_DARK",
+      "color_metrics": {
+        "luminance": 0.2963,
+        "saturation": 0.3672,
+        "dark_fraction": 0.5765,
+        "very_dark_fraction": 0.4337,
+        "vivid_fraction": 0.0728,
+        "bright_pass": false
+      },
+      "image_sha256": "869354093c6acb38162893514f19bcc228f83b475b11e6277c3f31cbf6b94e65",
+      "color_tier": "HOLD_DARK_OR_MUTED"
+    },
+    {
+      "source": "rijks",
       "museum_native_id": "SK-C-1726",
       "title": "Misty Sea",
       "artist": "Jan Toorop",
@@ -1858,9 +2082,9 @@
   "per_image_commercial_rights": "HOLD",
   "runtime_imported": 0,
   "commercially_approved": 0,
-  "latest_run_candidates_in_report": 46,
+  "latest_run_candidates_in_report": 53,
   "latest_run_metadata_identifiers_discovered_or_scanned": 343,
-  "cumulative_distinct_candidate_records": 46,
+  "cumulative_distinct_candidate_records": 53,
   "cumulative_retained_source_identifiers": 343,
   "run_history": [
     {
@@ -1878,6 +2102,22 @@
         }
       ],
       "pixel_checked": 46
+    },
+    {
+      "date_utc": "2026-11-26T16:31:22.307606+00:00",
+      "candidate_count": 53,
+      "identifiers_discovered_or_scanned": 343,
+      "source_errors": [
+        {
+          "id": "https://id.rijksmuseum.nl/200108317",
+          "error": "'list' object has no attribute 'get'"
+        },
+        {
+          "id": "https://id.rijksmuseum.nl/20025850",
+          "error": "'list' object has no attribute 'get'"
+        }
+      ],
+      "pixel_checked": 53
     }
   ],
   "union_not_exhaustive": true,
