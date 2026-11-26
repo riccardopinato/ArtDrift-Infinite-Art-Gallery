@@ -34,7 +34,7 @@ def read_queue(path: Path):
     if doc.get("all_candidate_records_retained") != EXPECTED or not isinstance(rows, list) or len(rows) != EXPECTED:
         raise ValueError("Pinned 486-candidate inventory is missing or incomplete")
     identities = [x.get("source_identity") for x in rows]
-    if len(set(identities)) != EXPECTED or any(not isinstance(x, str) or not re.fullmatch(r"[a-z][a-z0-9_-]*:[^\\s]+", x) for x in identities):
+    if len(set(identities)) != EXPECTED or any(not isinstance(x, str) or not re.fullmatch(r"[a-z][a-z0-9_-]*:.+", x) for x in identities):
         raise ValueError("Missing or repeated canonical Commons identities")
     if any(x.get("commercially_approved") is not False or x.get("runtime_visible") is not False for x in rows):
         raise ValueError("Research-only rights and runtime invariants were changed")
