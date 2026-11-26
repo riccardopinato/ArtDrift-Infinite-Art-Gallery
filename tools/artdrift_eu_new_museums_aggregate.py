@@ -18,6 +18,8 @@ def run():
     files=sorted(INPUT.rglob("review.json"))
     if not files:raise SystemExit("Missing per-museum evidence; no fabricated results")
     counted=Counter();stats=[];staged=[];held=[];seen_ids=set();seen_work=set()
+    provider_source_errors=Counter()
+    source_error_details={}
     for path in files:
         obj=json.loads(path.read_text(encoding="utf-8"))
         source=obj.get("provider")
@@ -25,6 +27,10 @@ def run():
         if obj.get("runtime_imported")!=0 or obj.get("commercially_cleared")!=0:
             raise ValueError("Non-publishing European art research gate violated")
         counted[source+"_batch_count"]+=1
+        errs=obj.get("source_errors") or []
+        if errs:
+            provider_source_errors[source]+=1
+            source_error_details.setdefault(source,[]).extend(errs[:5])
         counted[source+"_image_bright_raw"]+=obj.get("verified_images_bright",0)
         stats.append({"provider":source,"shard":obj.get("shard"),
                       "search_stats":obj.get("search_stats"),
@@ -56,9 +62,16 @@ def run():
         "us_museums_queried":0,
         "source_batch_reports_received":len(files),
         "sources":[{"provider":p,"shards_received":counted[p+"_batch_count"],
-                    "bright_images_before_dedup":counted[p+"_image_bright_raw"]}
+                    "bright_images_before_dedup":counted[p+"_image_bright_raw"],
+                    "status":"SOURCE_UNAVAILABLE_OR_PARTIAL" if provider_source_errors[p]
+                    else "TECHNICAL_SAMPLE_ONLY"}
                    for p in PROVIDERS],
         "bright_images_after_preliminary_dedup":len(staged),
+        "source_access_incomplete":dict(provider_source_errors),
+        "source_access_errors_by_provider":source_error_details,
+        "catalog_exhaustively_searched":False,
+        "source_zero_artworks_proven":False,
+        "zero_eligible_from_limited_sample_is_not_catalog_absence":True,
         "cross_source_possible_duplicates_held":held,
         "thresholds":{"preferred_dark_max":.15,"conditional_dark_max":.20,
                       "conditional_min_vivid_fraction":.30,
