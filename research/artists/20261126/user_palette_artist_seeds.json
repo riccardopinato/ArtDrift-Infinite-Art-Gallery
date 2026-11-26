@@ -1,0 +1,248 @@
+{
+  "schema_version": 1,
+  "as_of": "2026-11-26",
+  "source": "USER_REQUEST_DIRECT",
+  "scope": "Art Drift art-only preference and source research; no runtime import",
+  "editorial_policy": {
+    "color_preference": "luminous, fresh color, visible painterly texture, rivers/boating/bridges/gardens/landscape or strongly-colored interior",
+    "preferred_creation_years": [
+      1850,
+      1960
+    ],
+    "priority_order": [
+      "explicit_work_match",
+      "named_artist_palette",
+      "other_museum_candidates"
+    ],
+    "user_work_not_exempt_from_copyright": true,
+    "artist_match_not_license_approval": true,
+    "exact_work_not_evidence_of_specific_reproduction": true,
+    "museum_api_exclusions_preserved": [
+      "nga",
+      "met",
+      "cma",
+      "aic",
+      "smk"
+    ],
+    "rights_final_gate": "HOLD_PER_FILE_AND_TERRITORY",
+    "runtime_imported": 0,
+    "commercially_approved": 0
+  },
+  "artists": [
+    {
+      "id": "serhii_vasylkivskyi",
+      "name": "Serhii Vasylkivskyi",
+      "aliases": [
+        "Serhii Vasylkivskyi",
+        "Serhii Vasylkivsky",
+        "Sergey Vasilkovsky",
+        "Sergei Vasilkovsky",
+        "Сергій Васильківський",
+        "Vasylkivskyj"
+      ],
+      "preferred_style": [
+        "open-air Ukrainian landscapes",
+        "sunlit roads",
+        "fields and sky"
+      ],
+      "commons_categories": [
+        "Category:Paintings by Serhii Vasylkivskyi",
+        "Category:Paintings of Ukraine by Serhii Vasylkivskyi"
+      ],
+      "reference_urls": [
+        "https://museum.mincult.gov.ua/en/collections/bilya-sela",
+        "https://commons.wikimedia.org/wiki/Category:Paintings_by_Serhii_Vasylkivskyi"
+      ]
+    },
+    {
+      "id": "otto_modersohn",
+      "name": "Otto Modersohn",
+      "aliases": [
+        "Otto Modersohn",
+        "Otto Friedrich Wilhelm Modersohn"
+      ],
+      "preferred_style": [
+        "moorlands",
+        "birch trees",
+        "bright autumn landscape",
+        "water reflections"
+      ],
+      "commons_categories": [
+        "Category:Paintings by Otto Modersohn"
+      ],
+      "reference_urls": [
+        "https://commons.wikimedia.org/wiki/Category:Paintings_by_Otto_Modersohn"
+      ]
+    },
+    {
+      "id": "claude_monet",
+      "name": "Claude Monet",
+      "aliases": [
+        "Claude Monet",
+        "Oscar Claude Monet"
+      ],
+      "preferred_style": [
+        "water lilies",
+        "bridges",
+        "sunlight on water",
+        "gardens"
+      ],
+      "commons_categories": [
+        "Category:Paintings by Claude Monet"
+      ],
+      "reference_urls": [
+        "https://www.nga.gov/artists/1726-claude-monet/artworks"
+      ],
+      "reference_only_outside_scope_note": "Existing US-museum harvesting exclusion remains in force; artist category discovery does not call NGA APIs"
+    },
+    {
+      "id": "gustave_caillebotte",
+      "name": "Gustave Caillebotte",
+      "aliases": [
+        "Gustave Caillebotte"
+      ],
+      "preferred_style": [
+        "river Yerres",
+        "boats",
+        "water reflections",
+        "diagonal compositional movement"
+      ],
+      "commons_categories": [
+        "Category:Paintings by Gustave Caillebotte"
+      ],
+      "reference_urls": [
+        "https://en.maisoncaillebotte.fr/le-domaine/gustave-caillebotte-519.html",
+        "https://www.nga.gov/artworks/66404-skiffs"
+      ]
+    },
+    {
+      "id": "ludvig_karsten",
+      "name": "Ludvig Karsten",
+      "aliases": [
+        "Ludvig Karsten"
+      ],
+      "preferred_style": [
+        "bold illuminated interiors",
+        "color-dominant room scenes"
+      ],
+      "commons_categories": [
+        "Category:Paintings by Ludvig Karsten"
+      ],
+      "reference_urls": [
+        "https://commons.wikimedia.org/wiki/File:Ludvig_Karsten_-_The_Blue_Kitchen_-_NG.M.01507_-_National_Museum_of_Art%2C_Architecture_and_Design.jpg"
+      ]
+    },
+    {
+      "id": "alfred_sisley",
+      "name": "Alfred Sisley",
+      "aliases": [
+        "Alfred Sisley"
+      ],
+      "preferred_style": [
+        "sunlit bridges",
+        "riverbanks",
+        "bright impressionist scenery"
+      ],
+      "commons_categories": [
+        "Category:Paintings by Alfred Sisley"
+      ],
+      "reference_urls": [
+        "https://www.metmuseum.org/art/collection/search/437680"
+      ],
+      "reference_only_outside_scope_note": "Met-specific image is a user-selected artistic reference, not authorization to re-open excluded Met bulk harvesting"
+    },
+    {
+      "id": "harald_sohlberg",
+      "name": "Harald Sohlberg",
+      "aliases": [
+        "Harald Sohlberg"
+      ],
+      "preferred_style": [
+        "symbolist mountain landscapes",
+        "clear atmospheric color",
+        "Norwegian scenery"
+      ],
+      "commons_categories": [
+        "Category:Paintings by Harald Sohlberg in the Nasjonalmuseet for kunst, arkitektur og design",
+        "Category:Paintings by Harald Sohlberg"
+      ],
+      "reference_urls": [
+        "https://commons.wikimedia.org/wiki/Category:Paintings_by_Harald_Sohlberg_in_the_Nasjonalmuseet_for_kunst%2C_arkitektur_og_design"
+      ],
+      "specific_caution": "Dark-night scenes must not auto-pass a bright Art Drift feed despite artist preference"
+    }
+  ],
+  "explicit_works": [
+    {
+      "id": "caillebotte_yerres_skiffs",
+      "artist_id": "gustave_caillebotte",
+      "user_label": "Barche a remi sul fiume Yerres",
+      "canonical_family": "Périssoires sur l'Yerres",
+      "title_aliases": [
+        "Périssoires sur l’Yerres",
+        "Périssoires sur l'Yerres",
+        "Skiffs",
+        "Boating on the Yerres",
+        "Flat-Bottomed Canoes on the Yerres"
+      ],
+      "work_reference_ids": [
+        "NGA 66404"
+      ],
+      "reference_urls": [
+        "https://www.nga.gov/artworks/66404-skiffs",
+        "https://en.maisoncaillebotte.fr/le-domaine/gustave-caillebotte-519.html"
+      ],
+      "ambiguity": "Family of several distinct versions and preparatory works; must identify the exact image by catalog number. No blanket asset rights.",
+      "subject_exception": "Boaters can appear if not dominant; human scene needs independent curator review"
+    },
+    {
+      "id": "karsten_blue_kitchen",
+      "artist_id": "ludvig_karsten",
+      "user_label": "La Cucina Blu",
+      "canonical_title": "The Blue Kitchen",
+      "title_aliases": [
+        "The Blue Kitchen",
+        "The blue Kitchen",
+        "Det blå kjøkken",
+        "Det blå kjøkkenet",
+        "La cucina blu"
+      ],
+      "work_reference_ids": [
+        "NG.M.01507"
+      ],
+      "reference_urls": [
+        "https://commons.wikimedia.org/wiki/File:Ludvig_Karsten_-_The_Blue_Kitchen_-_NG.M.01507_-_National_Museum_of_Art%2C_Architecture_and_Design.jpg",
+        "https://artsandculture.google.com/asset/the-blue-kitchen/OwG-PyJ-5pbf8A"
+      ],
+      "museum_evidence": "Nasjonalmuseet Oslo, NG.M.01507",
+      "subject_exception": "Artistically vivid interior is intentionally eligible for user-specific human review; no landscape keyword required"
+    },
+    {
+      "id": "sisley_villeneuve_bridge",
+      "artist_id": "alfred_sisley",
+      "user_label": "Il ponte di Villeneuve-la-Garenne",
+      "canonical_title": "The Bridge at Villeneuve-la-Garenne",
+      "title_aliases": [
+        "The Bridge at Villeneuve-la-Garenne",
+        "Le Pont à Villeneuve-la-Garenne",
+        "Le pont de Villeneuve-la-Garenne",
+        "Il ponte di Villeneuve-la-Garenne"
+      ],
+      "work_reference_ids": [
+        "Met 64.287"
+      ],
+      "reference_urls": [
+        "https://www.metmuseum.org/art/collection/search/437680",
+        "https://museeduluxembourg.fr/fr/collection/objet/le-pont-villeneuve-la-garenne"
+      ],
+      "museum_evidence": "Metropolitan Museum of Art, 64.287; referential lookup only under excluded museum harvest"
+    }
+  ],
+  "provenance": [
+    "Official museum pages and identified public Commons categories checked on 2026-11-26; user taste directly supplied. Open-license per item must be verified separately."
+  ],
+  "source_baseline": {
+    "factory_sha": "842dfa073451ec247308ccb4afb8ead5349bcbd4",
+    "app_core_pr": 74
+  }
+}
