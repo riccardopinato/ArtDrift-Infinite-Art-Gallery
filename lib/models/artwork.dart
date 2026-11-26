@@ -311,7 +311,8 @@ class Artwork {
 
   /// The separate copyright term of the painting does not grant a right to
   /// publish this file. No current 486-candidate row has these approvals.
-  bool get curatedCommonsReleaseReady {
+  /// Independent evidence check: never enough to make it publicly visible.
+  bool get curatedCommonsRightsEvidenceComplete {
     if (!isCuratedCommons || !publicDomain ||
         artworkType.toLowerCase() != 'painting' ||
         !commerciallyApproved || !provenanceVerified ||
@@ -330,6 +331,13 @@ class Artwork {
         officialCommonsFilePage(remoteMuseumUrl) &&
         officialCommonsFilePage(rightsEvidenceUrl);
   }
+
+  /// Hard-disabled in every current production/review build. A future release
+  /// requires a deliberate --dart-define in addition to signed-off file rights.
+  bool get curatedCommonsReleaseReady =>
+      const bool.fromEnvironment(
+          'ARTDRIFT_ENABLE_CURATED_COMMONS', defaultValue: false) &&
+      curatedCommonsRightsEvidenceComplete;
 
   static bool officialCommonsFilePage(String url) {
     final uri = Uri.tryParse(url);

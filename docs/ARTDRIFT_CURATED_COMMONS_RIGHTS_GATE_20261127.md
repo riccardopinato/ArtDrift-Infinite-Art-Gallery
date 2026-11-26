@@ -28,3 +28,10 @@ For legacy museum works without `rights_license`, the detail screen now displays
 Flutter unit tests simulate both a fully signed-off *synthetic test record* (which does not appear in the app) and unapproved source files. A separate QA gate confirms the local curated Commons catalog remains empty. Android and web Flutter build/test are required before merge. No automatic production release/deploy or Play Store publication.
 
 **This PR is a code-only prerequisite, not legal clearance for any of the 486 images.**
+
+An additional **build-time** gate is disabled by default:
+`ARTDRIFT_ENABLE_CURATED_COMMONS`. Even a synthetically complete image record
+cannot appear in current builds; a future approved release must explicitly use
+`--dart-define=ARTDRIFT_ENABLE_CURATED_COMMONS=true` after completing each
+separate per-image review. Current tests validate the completeness predicate,
+but confirm that actual rendering is blocked in the default build.

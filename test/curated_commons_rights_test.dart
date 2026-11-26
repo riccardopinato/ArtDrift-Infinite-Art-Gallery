@@ -48,8 +48,10 @@ void main() {
 
   test('synthetic fully signed-off record passes structural validation', () {
     final work = Artwork.fromJson(candidate());
-    expect(work.curatedCommonsReleaseReady, isTrue);
-    expect(work.displayable, isTrue);
+    expect(work.curatedCommonsRightsEvidenceComplete, isTrue);
+    // All current Android/web builds leave this feature flag disabled.
+    expect(work.curatedCommonsReleaseReady, isFalse);
+    expect(work.displayable, isFalse);
     expect(work.imageLicenseRequiresAttribution, isTrue);
     expect(work.validImageLicenseLink, isTrue);
     expect(work.wallpaperAllowed, isFalse);
@@ -58,7 +60,8 @@ void main() {
     expect(restored.sourceIdentity, work.sourceIdentity);
     expect(restored.imageAttribution, work.imageAttribution);
     expect(restored.imageLicenseUrl, license);
-    expect(restored.displayable, isTrue);
+    expect(restored.curatedCommonsRightsEvidenceComplete, isTrue);
+    expect(restored.displayable, isFalse);
   });
 
   test('missing independent gates, attribution or valid proof blocks import', () {
