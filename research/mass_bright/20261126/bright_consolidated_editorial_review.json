@@ -1,0 +1,649 @@
+{
+  "schema_version": 1,
+  "as_of": "2026-11-26",
+  "goal": "Very large source search; choose landscape/flower/modern vibrant bright only, no dark-heavy, fewer portraits",
+  "bounds": "Technical image verified != final editorial approval or worldwide rights",
+  "nga_aesthetic_shortlist": 27,
+  "nga_dark_held": 2,
+  "met_metadata_queue": 278,
+  "met_current_image_checked": 278,
+  "met_machine_bright": 21,
+  "cma_and_met_initial_machine_bright": 13,
+  "cma_initial_bright": 8,
+  "smk_machine_bright": 7,
+  "machine_bright_unique_new_vs_nga": 36,
+  "top_tier_count": 11,
+  "second_tier_count": 7,
+  "new_editorial_candidates": 18,
+  "editorial_hold_exclusions": 18,
+  "unreviewed_commons_sources": "not included until image checks completed; user requested truly many but requires verified evidence",
+  "nga_candidates": [
+    {
+      "nga_id": "52200",
+      "title": "Flowers in a Vase",
+      "dark_fraction": 0.0861
+    },
+    {
+      "nga_id": "52178",
+      "title": "Farmhouse in Provence",
+      "dark_fraction": 0.0052
+    },
+    {
+      "nga_id": "89684",
+      "title": "Breton Village",
+      "dark_fraction": 0.0158
+    },
+    {
+      "nga_id": "157928",
+      "title": "Village by the Sea in Brittany",
+      "dark_fraction": 0.0004
+    },
+    {
+      "nga_id": "163323",
+      "title": "Green Wheat Fields, Auvers",
+      "dark_fraction": 0.0054
+    },
+    {
+      "nga_id": "66406",
+      "title": "The Bend in the Road",
+      "dark_fraction": 0.0097
+    },
+    {
+      "nga_id": "52189",
+      "title": "The Artist's Garden at Vétheuil",
+      "dark_fraction": 0.0057
+    },
+    {
+      "nga_id": "52190",
+      "title": "The Island of Raguenez, Brittany",
+      "dark_fraction": 0.0084
+    },
+    {
+      "nga_id": "53139",
+      "title": "Seascape at Port-en-Bessin, Normandy",
+      "dark_fraction": 0.0061
+    },
+    {
+      "nga_id": "46578",
+      "title": "Landscape near Paris",
+      "dark_fraction": 0.0085
+    },
+    {
+      "nga_id": "92999",
+      "title": "Landscape of the Ile-de-France",
+      "dark_fraction": 0.0273
+    },
+    {
+      "nga_id": "52227",
+      "title": "Meadow",
+      "dark_fraction": 0.0323
+    },
+    {
+      "nga_id": "157922",
+      "title": "Gathering Autumn Flowers",
+      "dark_fraction": 0.0117
+    },
+    {
+      "nga_id": "71556",
+      "title": "Large Vase with Flowers",
+      "dark_fraction": 0.0424
+    },
+    {
+      "nga_id": "54129",
+      "title": "Houses in Provence: The Riaux Valley near L'Estaque",
+      "dark_fraction": 0.0249
+    },
+    {
+      "nga_id": "93047",
+      "title": "Village at the Water's Edge",
+      "dark_fraction": 0.0946
+    },
+    {
+      "nga_id": "46627",
+      "title": "The Olive Orchard",
+      "dark_fraction": 0.0012
+    },
+    {
+      "nga_id": "166468",
+      "title": "The Valley of the Seine, from the Hills of Giverny",
+      "dark_fraction": 0.0039
+    },
+    {
+      "nga_id": "52219",
+      "title": "The Blue River",
+      "dark_fraction": 0.0126
+    },
+    {
+      "nga_id": "52165",
+      "title": "Banks of the Seine at Médan",
+      "dark_fraction": 0.0274
+    },
+    {
+      "nga_id": "46677",
+      "title": "Spring Woods",
+      "artist": "Henry Ward Ranger",
+      "year": 1910,
+      "dark_fraction": 0.0565,
+      "luminance": 0.5581,
+      "image_sha256": "9414650839fa14a6d88e2d4300cf33d484250c1a38e953be607f4976fa786b33"
+    },
+    {
+      "nga_id": "52957",
+      "title": "Southern Resort Town",
+      "artist": "Dana Smith",
+      "year": 1880,
+      "dark_fraction": 0.0013,
+      "luminance": 0.6912,
+      "image_sha256": "5651dafe772727634fd8a5992473aac0814546e7bbb46b24edc3cc4baeb979ea"
+    },
+    {
+      "nga_id": "56574",
+      "title": "Beach at Beverly",
+      "artist": "John Frederick Kensett",
+      "year": 1869,
+      "dark_fraction": 0.0625,
+      "luminance": 0.6545,
+      "image_sha256": "8d2a09c9dc41bd8ac9a0fa4a358a437b3c06e96d1877597cad9962cb37b6c577"
+    },
+    {
+      "nga_id": "46523",
+      "title": "The Houses of Parliament, Sunset",
+      "artist": "Claude Monet",
+      "year": 1903,
+      "dark_fraction": 0,
+      "luminance": 0.5859,
+      "image_sha256": "3ef4d8fc7d97a0a6293e57d7a0e33f29f4672e84d5b78ae067c99e51d6f44e75"
+    },
+    {
+      "nga_id": "59886",
+      "title": "Bucks County Farm Outside Doylestown, Pennsylvania",
+      "artist": "American 19th Century",
+      "year": 1890,
+      "dark_fraction": 0.0973,
+      "luminance": 0.5597,
+      "image_sha256": "55c1c04d2936be8132afbe098cfa1e34f5fe594ee8bd4c1a73657f7420697d90"
+    },
+    {
+      "nga_id": "72328",
+      "title": "Roses",
+      "artist": "Vincent van Gogh",
+      "year": 1890,
+      "dark_fraction": 0.0266,
+      "luminance": 0.67,
+      "image_sha256": "11c17f0c32f9402f087e3bbbdd2c5072e67e07a09c0269a19b28541afab8b27b"
+    },
+    {
+      "nga_id": "51139",
+      "title": "Composite Harbor Scene with Castle",
+      "artist": "Jurgan Frederick Huge",
+      "year": 1875,
+      "dark_fraction": 0.0962,
+      "luminance": 0.6244,
+      "image_sha256": "52f0726b777f2ed215e5bff0c2a2568d8dd48e224b9e4ccf2724747639571c6f"
+    }
+  ],
+  "new_candidates": [
+    {
+      "source": "met",
+      "native_id": "437382",
+      "title": "Vase of Flowers (Pink Background)",
+      "artist": "Odilon Redon",
+      "year": 1901,
+      "tier": "PRIORITY_BRIGHT",
+      "source_url": "https://www.metmuseum.org/art/collection/search/437382",
+      "sha256": "2608554981dfcbccecf6e76798459b90f36bc55d65ce0939bcde79fb99c245d4",
+      "color": {
+        "luminance": 0.6264,
+        "saturation": 0.377,
+        "dark_fraction": 0.0442,
+        "very_dark_fraction": 0.0044,
+        "vivid_fraction": 0.7126,
+        "bright_pass": true
+      },
+      "draft_status": "HOLD_FINAL_RIGHTS"
+    },
+    {
+      "source": "met",
+      "native_id": "12122",
+      "title": "Landscape with Goatherd",
+      "artist": "John Singer Sargent",
+      "year": 1890,
+      "tier": "LIGHT_BUT_SOFT",
+      "source_url": "https://www.metmuseum.org/art/collection/search/12122",
+      "sha256": "66c46c1070a9c668380ae0bae3d056a23e163dd2cc0cf1e8a5a90818747bb4dc",
+      "color": {
+        "luminance": 0.5865,
+        "saturation": 0.3185,
+        "dark_fraction": 0.0199,
+        "very_dark_fraction": 0.0001,
+        "vivid_fraction": 0.5267,
+        "bright_pass": true
+      },
+      "draft_status": "HOLD_FINAL_RIGHTS"
+    },
+    {
+      "source": "met",
+      "native_id": "437313",
+      "title": "The Garden of the Tuileries on a Spring Morning",
+      "artist": "Camille Pissarro",
+      "year": 1899,
+      "tier": "PRIORITY_BRIGHT",
+      "source_url": "https://www.metmuseum.org/art/collection/search/437313",
+      "sha256": "6fd28654d78da2e18a767a3dadb11b780751070cf18592d1e7a08337f5cb8863",
+      "color": {
+        "luminance": 0.6731,
+        "saturation": 0.2209,
+        "dark_fraction": 0.0175,
+        "very_dark_fraction": 0.0038,
+        "vivid_fraction": 0.4125,
+        "bright_pass": true
+      },
+      "draft_status": "HOLD_FINAL_RIGHTS"
+    },
+    {
+      "source": "met",
+      "native_id": "437300",
+      "title": "A Cowherd at Valhermeil, Auvers-sur-Oise",
+      "artist": "Camille Pissarro",
+      "year": 1874,
+      "tier": "PRIORITY_BRIGHT",
+      "source_url": "https://www.metmuseum.org/art/collection/search/437300",
+      "sha256": "a5cf79f7a6d909dcccb7ceadbc4446fe291ae52373b3d796e45787a89f303161",
+      "color": {
+        "luminance": 0.5997,
+        "saturation": 0.2417,
+        "dark_fraction": 0.0026,
+        "very_dark_fraction": 0,
+        "vivid_fraction": 0.4199,
+        "bright_pass": true
+      },
+      "draft_status": "HOLD_FINAL_RIGHTS"
+    },
+    {
+      "source": "met",
+      "native_id": "459111",
+      "title": "Sea and Cliffs",
+      "artist": "Auguste Renoir",
+      "year": 1880,
+      "tier": "PRIORITY_BRIGHT",
+      "source_url": "https://www.metmuseum.org/art/collection/search/459111",
+      "sha256": "ddd195cc16f9f69c71be20af5009b10e4fc0745a9eabe947a6e8a9b060904376",
+      "color": {
+        "luminance": 0.5832,
+        "saturation": 0.2925,
+        "dark_fraction": 0.0434,
+        "very_dark_fraction": 0.0147,
+        "vivid_fraction": 0.3633,
+        "bright_pass": true
+      },
+      "draft_status": "HOLD_FINAL_RIGHTS"
+    },
+    {
+      "source": "met",
+      "native_id": "437314",
+      "title": "The Garden of the Tuileries on a Winter Afternoon",
+      "artist": "Camille Pissarro",
+      "year": 1899,
+      "tier": "LIGHT_BUT_SOFT",
+      "source_url": "https://www.metmuseum.org/art/collection/search/437314",
+      "sha256": "b4a678774ed00a127022ec6b1906093564f2fc03a4f4f00a37c6592c60fc7124",
+      "color": {
+        "luminance": 0.6411,
+        "saturation": 0.2139,
+        "dark_fraction": 0.0173,
+        "very_dark_fraction": 0,
+        "vivid_fraction": 0.2797,
+        "bright_pass": true
+      },
+      "draft_status": "HOLD_FINAL_RIGHTS"
+    },
+    {
+      "source": "met",
+      "native_id": "437428",
+      "title": "Still Life with Peaches and Grapes",
+      "artist": "Auguste Renoir",
+      "year": 1881,
+      "tier": "PRIORITY_BRIGHT",
+      "source_url": "https://www.metmuseum.org/art/collection/search/437428",
+      "sha256": "f94662231b50b4a469d2bcd6a3a181e06e12da270fdc84b5002c23960dbf67b8",
+      "color": {
+        "luminance": 0.5942,
+        "saturation": 0.2391,
+        "dark_fraction": 0.0246,
+        "very_dark_fraction": 0.0022,
+        "vivid_fraction": 0.281,
+        "bright_pass": true
+      },
+      "draft_status": "HOLD_FINAL_RIGHTS"
+    },
+    {
+      "source": "met",
+      "native_id": "10858",
+      "title": "The Tow Boat Conqueror",
+      "artist": "James Guy Evans",
+      "year": 1852,
+      "tier": "PRIORITY_BRIGHT",
+      "source_url": "https://www.metmuseum.org/art/collection/search/10858",
+      "sha256": "cebbe0e3645e2945b2f9f8ebf9a8fda74e9343e46c9965da6ddca92776e955a8",
+      "color": {
+        "luminance": 0.5632,
+        "saturation": 0.2371,
+        "dark_fraction": 0.0665,
+        "very_dark_fraction": 0.0213,
+        "vivid_fraction": 0.3438,
+        "bright_pass": true
+      },
+      "draft_status": "HOLD_FINAL_RIGHTS"
+    },
+    {
+      "source": "met",
+      "native_id": "10586",
+      "title": "The Valley of Wyoming",
+      "artist": "Jasper Francis Cropsey",
+      "year": 1865,
+      "tier": "LIGHT_BUT_SOFT",
+      "source_url": "https://www.metmuseum.org/art/collection/search/10586",
+      "sha256": "c45602bef487441dfb87225c16e4d83fb2b6fbcd4942ca8875e887851394d904",
+      "color": {
+        "luminance": 0.6016,
+        "saturation": 0.2909,
+        "dark_fraction": 0.0638,
+        "very_dark_fraction": 0.0079,
+        "vivid_fraction": 0.2198,
+        "bright_pass": true
+      },
+      "draft_status": "HOLD_FINAL_RIGHTS"
+    },
+    {
+      "source": "cma",
+      "native_id": "155624",
+      "title": "Vase of Flowers with Grasshopper, Marine Life, and Garden Rock",
+      "artist": "Okabe Ko (Japanese)",
+      "year": 1880,
+      "tier": "LIGHT_BUT_SOFT",
+      "source_url": "https://clevelandart.org/art/1990.68",
+      "sha256": "f186b285d87de5129a75d8a40bf11eca983d086ac958c01cb819cc575977119b",
+      "color": {
+        "luminance": 0.6441,
+        "saturation": 0.2916,
+        "dark_fraction": 0,
+        "very_dark_fraction": 0,
+        "vivid_fraction": 0.7841,
+        "bright_pass": true
+      },
+      "draft_status": "HOLD_FINAL_RIGHTS"
+    },
+    {
+      "source": "cma",
+      "native_id": "117758",
+      "title": "Carmel Hills",
+      "artist": "Guy Rose (American, 1867–1925)",
+      "year": 1918,
+      "tier": "PRIORITY_BRIGHT",
+      "source_url": "https://clevelandart.org/art/1938.38",
+      "sha256": "09a80df223ab2b7e4f5b6b59301112a16745f02174f224b640238c07ba8a7923",
+      "color": {
+        "luminance": 0.655,
+        "saturation": 0.203,
+        "dark_fraction": 0.0077,
+        "very_dark_fraction": 0,
+        "vivid_fraction": 0.2067,
+        "bright_pass": true
+      },
+      "draft_status": "HOLD_FINAL_RIGHTS"
+    },
+    {
+      "source": "smk",
+      "native_id": "KMS6449",
+      "title": "En rugmark ved landsbyen Ring",
+      "artist": "L.A. Ring",
+      "year": 1887,
+      "tier": "LIGHT_BUT_SOFT",
+      "source_url": "https://open.smk.dk/en/artwork/image/KMS6449",
+      "sha256": "08b6bdfd567f3f2b410dee484acee82cb9a9214d868399efb8f8ea62c306c9b7",
+      "color": {
+        "luminance": 0.6514,
+        "saturation": 0.2513,
+        "dark_fraction": 0,
+        "very_dark_fraction": 0,
+        "vivid_fraction": 0.6038,
+        "bright_pass": true
+      },
+      "draft_status": "HOLD_FINAL_RIGHTS"
+    },
+    {
+      "source": "smk",
+      "native_id": "KMS4318",
+      "title": "Vid udsigt. Mols",
+      "artist": "Charles Godtfredsen",
+      "year": 1936,
+      "tier": "PRIORITY_BRIGHT",
+      "source_url": "https://open.smk.dk/en/artwork/image/KMS4318",
+      "sha256": "4f9062336b931ddee600287d169b7c3816ea37726b4316f9d8daca0f4b80c397",
+      "color": {
+        "luminance": 0.6333,
+        "saturation": 0.2929,
+        "dark_fraction": 0.0007,
+        "very_dark_fraction": 0,
+        "vivid_fraction": 0.5415,
+        "bright_pass": true
+      },
+      "draft_status": "HOLD_FINAL_RIGHTS"
+    },
+    {
+      "source": "smk",
+      "native_id": "KMS3097",
+      "title": "Marklandskab med en bro",
+      "artist": "Vilhelm Kyhn",
+      "year": 1858,
+      "tier": "PRIORITY_BRIGHT",
+      "source_url": "https://open.smk.dk/en/artwork/image/KMS3097",
+      "sha256": "87ca984a8553d2f3e9b24d06124d025b9bab071dbc34704195a436fa4ef5d5be",
+      "color": {
+        "luminance": 0.6766,
+        "saturation": 0.3457,
+        "dark_fraction": 0.0092,
+        "very_dark_fraction": 0,
+        "vivid_fraction": 0.4146,
+        "bright_pass": true
+      },
+      "draft_status": "HOLD_FINAL_RIGHTS"
+    },
+    {
+      "source": "smk",
+      "native_id": "KMS4012",
+      "title": "Jysk hedelandskab med kunstnerens vindskærm",
+      "artist": "Hans Smidth",
+      "year": 1908,
+      "tier": "LIGHT_BUT_SOFT",
+      "source_url": "https://open.smk.dk/en/artwork/image/KMS4012",
+      "sha256": "56bc16dfc22ad8cbbd4b7728c12c877d077b89fdf91e2b0d47ff62c82c09c3e5",
+      "color": {
+        "luminance": 0.6037,
+        "saturation": 0.2874,
+        "dark_fraction": 0.0026,
+        "very_dark_fraction": 0,
+        "vivid_fraction": 0.3211,
+        "bright_pass": true
+      },
+      "draft_status": "HOLD_FINAL_RIGHTS"
+    },
+    {
+      "source": "smk",
+      "native_id": "KMS4222",
+      "title": "Stendysse i udkanten af skoven. Dyrnæs",
+      "artist": "Poul S. Christiansen",
+      "year": 1919,
+      "tier": "LIGHT_BUT_SOFT",
+      "source_url": "https://open.smk.dk/en/artwork/image/KMS4222",
+      "sha256": "67def5711126e4ba083590f996a24bec311068568d70a87c46934ccceeeb117d",
+      "color": {
+        "luminance": 0.5667,
+        "saturation": 0.2757,
+        "dark_fraction": 0.0488,
+        "very_dark_fraction": 0,
+        "vivid_fraction": 0.3791,
+        "bright_pass": true
+      },
+      "draft_status": "HOLD_FINAL_RIGHTS"
+    },
+    {
+      "source": "smk",
+      "native_id": "KMS7057",
+      "title": "Udsigt fra Slotspladsen, Cagnes",
+      "artist": "Niels Larsen Stevns",
+      "year": 1923,
+      "tier": "PRIORITY_BRIGHT",
+      "source_url": "https://open.smk.dk/en/artwork/image/KMS7057",
+      "sha256": "b0b191fed65e6bd829b7ad7d0e2f608022df95b645e084a0d68b4b020f2bbb9c",
+      "color": {
+        "luminance": 0.6702,
+        "saturation": 0.2029,
+        "dark_fraction": 0.0133,
+        "very_dark_fraction": 0,
+        "vivid_fraction": 0.2512,
+        "bright_pass": true
+      },
+      "draft_status": "HOLD_FINAL_RIGHTS"
+    },
+    {
+      "source": "smk",
+      "native_id": "KMS4776",
+      "title": "En allé. Kastrup",
+      "artist": "Theodor Philipsen",
+      "year": 1891,
+      "tier": "PRIORITY_BRIGHT",
+      "source_url": "https://open.smk.dk/en/artwork/image/KMS4776",
+      "sha256": "c2753b4ee3f44cd363a8b62820d05f0871ea234979239c3760f7a525072ca228",
+      "color": {
+        "luminance": 0.5983,
+        "saturation": 0.1932,
+        "dark_fraction": 0.001,
+        "very_dark_fraction": 0,
+        "vivid_fraction": 0.2424,
+        "bright_pass": true
+      },
+      "draft_status": "HOLD_FINAL_RIGHTS"
+    }
+  ],
+  "rejected_machine_candidates": [
+    {
+      "source": "met",
+      "native_id": "897148",
+      "title": "Landscape in Blue and Green",
+      "reason": "PAPER_INK_OR_MUTED_NON_PRIORITY"
+    },
+    {
+      "source": "met",
+      "native_id": "845165",
+      "title": "“The Deep Green of Summer Mountains”",
+      "reason": "PAPER_INK_OR_MUTED_NON_PRIORITY"
+    },
+    {
+      "source": "met",
+      "native_id": "916607",
+      "title": "Life of Reclusion in the Mountains",
+      "reason": "PAPER_INK_OR_MUTED_NON_PRIORITY"
+    },
+    {
+      "source": "met",
+      "native_id": "41909",
+      "title": "Landscape",
+      "reason": "PAPER_INK_OR_MUTED_NON_PRIORITY"
+    },
+    {
+      "source": "met",
+      "native_id": "897139",
+      "title": "Snow on Mountain and River",
+      "reason": "PAPER_INK_OR_MUTED_NON_PRIORITY"
+    },
+    {
+      "source": "met",
+      "native_id": "41910",
+      "title": "Landscape",
+      "reason": "PAPER_INK_OR_MUTED_NON_PRIORITY"
+    },
+    {
+      "source": "met",
+      "native_id": "36181",
+      "title": "Landscape",
+      "reason": "PAPER_INK_OR_MUTED_NON_PRIORITY"
+    },
+    {
+      "source": "met",
+      "native_id": "916594",
+      "title": "Mountain Village in Spring",
+      "reason": "PAPER_INK_OR_MUTED_NON_PRIORITY"
+    },
+    {
+      "source": "met",
+      "native_id": "829411",
+      "title": "Spring Sunrise at Mount Penglai",
+      "reason": "PAPER_INK_OR_MUTED_NON_PRIORITY"
+    },
+    {
+      "source": "met",
+      "native_id": "11326",
+      "title": "Sunset Sky",
+      "reason": "PAPER_INK_OR_MUTED_NON_PRIORITY"
+    },
+    {
+      "source": "met",
+      "native_id": "904732",
+      "title": "Landscape",
+      "reason": "PAPER_INK_OR_MUTED_NON_PRIORITY"
+    },
+    {
+      "source": "met",
+      "native_id": "11324",
+      "title": "Sunset",
+      "reason": "PAPER_INK_OR_MUTED_NON_PRIORITY"
+    },
+    {
+      "source": "cma",
+      "native_id": "162473",
+      "title": "Krishna Ferrying Radha Across the Yamuna River",
+      "reason": "NOT_MODERN_BRIGHT_PAINTING_OR_RELIGIOUS_FIGURES"
+    },
+    {
+      "source": "cma",
+      "native_id": "95206",
+      "title": "Landscape",
+      "reason": "NOT_MODERN_BRIGHT_PAINTING_OR_RELIGIOUS_FIGURES"
+    },
+    {
+      "source": "cma",
+      "native_id": "156787",
+      "title": "Landscape with a Pavilion",
+      "reason": "NOT_MODERN_BRIGHT_PAINTING_OR_RELIGIOUS_FIGURES"
+    },
+    {
+      "source": "cma",
+      "native_id": "162470",
+      "title": "Krishna Ferrying Radha Across the Yamuna River (recto)",
+      "reason": "NOT_MODERN_BRIGHT_PAINTING_OR_RELIGIOUS_FIGURES"
+    },
+    {
+      "source": "cma",
+      "native_id": "95205",
+      "title": "Landscapes",
+      "reason": "NOT_MODERN_BRIGHT_PAINTING_OR_RELIGIOUS_FIGURES"
+    },
+    {
+      "source": "cma",
+      "native_id": "106780",
+      "title": "Waterfall",
+      "reason": "NOT_MODERN_BRIGHT_PAINTING_OR_RELIGIOUS_FIGURES"
+    }
+  ],
+  "source_files": [
+    "research/nga/20261126/nga_bright_combined_shortlist.json",
+    "research/mass_bright/20261126/bright_mass_combined.json",
+    "research/mass_bright/20261126/smk_megabatch_verified.json",
+    "research/mass_bright/20261126/met_full_csv_verified_bright.json",
+    "research/mass_bright/20261126/met_full_csv_scenic_queue.json"
+  ],
+  "publication_status": "RESEARCH_ONLY_HOLD",
+  "runtime_imported": 0,
+  "worldwide_rights_cleared": 0
+}
