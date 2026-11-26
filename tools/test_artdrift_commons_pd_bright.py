@@ -18,6 +18,8 @@ class CommonsColorTests(unittest.TestCase):
         self.assertFalse(m.licenses({"LicenseShortName":{"value":"Public domain"},"Copyrighted":{"value":"True"}})[0])
     def test_media_trusted_host(self):
         self.assertTrue(m.safe_thumb("https://upload.wikimedia.org/wikipedia/commons/thumb/1/a/test.jpg"))
+        self.assertTrue(m.safe_thumb("https://thumb.wikimedia.org/wikipedia/commons/thumb/1/a/test.jpg/330px-test.jpg?utm_source=commons.wikimedia.org"))
+        self.assertFalse(m.safe_thumb("https://thumb.wikimedia.org.bad.example/wikipedia/commons/x.jpg"))
         self.assertFalse(m.safe_thumb("https://upload.wikimedia.org.evil.test/wikipedia/commons/thumb/1/a.jpg"))
         self.assertFalse(m.safe_thumb("http://upload.wikimedia.org/wikipedia/commons/thumb/1/a.jpg"))
     def test_search_attribution(self):
