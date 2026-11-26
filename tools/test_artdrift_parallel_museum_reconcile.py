@@ -84,5 +84,17 @@ class ReconcileTests(unittest.TestCase):
         self.assertEqual(r["ready_to_import"],0)
 
 
+
+    def test_human_centered_stadel_candidates_are_not_priority(self):
+        for title in ("Adam and Eve","Two Girls","Violinist in the Belfry Window",
+                      "Postcard invitation to a lantern festival",
+                      "Arabs Resting by a Marble Fountain","Untitled"):
+            record=item("S1")
+            record["title"]=title
+            self.assertEqual(m.review_priority(record)[0],3,title)
+        valid=item("S2")
+        valid["title"]="Avenue of Chestnut Trees at the Jas de Bouffan"
+        self.assertNotEqual(m.review_priority(valid)[0],3)
+
 if __name__=="__main__":
     unittest.main()
