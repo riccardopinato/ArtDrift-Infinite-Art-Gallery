@@ -1,0 +1,83 @@
+name: 'Art Drift — nine-museum source cross-dedup (no deploy)'
+on:
+  push:
+    branches:
+      - research/artdrift-parallel-harvest-core-20261126
+    paths:
+      - tools/artdrift_cross_museum_dedupe.py
+      - tools/test_artdrift_cross_museum_dedupe.py
+      - .github/workflows/artdrift-cross-museum-dedupe.yml
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: artdrift-cross-museum-source-audit
+  cancel-in-progress: false
+jobs:
+  deduplicate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate dedup rules against synthetic data
+        run: |
+          python -m py_compile tools/artdrift_cross_museum_dedupe.py
+          python -m unittest discover -s tools -p 'test_artdrift_cross_museum_dedupe.py' -v
+      - name: Load all nine retained source inventories from dedicated branches
+        run: |
+          mkdir -p research/museums/20261126/lanes/imports
+          git fetch --quiet origin research/artdrift-harvest-rijks-20261126
+          git show FETCH_HEAD:research/museums/20261126/lanes/results/rijks.json > research/museums/20261126/lanes/imports/rijks.json
+          git fetch --quiet origin research/artdrift-harvest-nationalmuseum_se-20261126
+          git show FETCH_HEAD:research/museums/20261126/lanes/results/nationalmuseum_se.json > research/museums/20261126/lanes/imports/nationalmuseum_se.json
+          git fetch --quiet origin research/artdrift-harvest-staedel-20261126
+          git show FETCH_HEAD:research/museums/20261126/lanes/results/staedel.json > research/museums/20261126/lanes/imports/staedel.json
+          git fetch --quiet origin research/artdrift-harvest-finnish_national_gallery-20261126
+          git show FETCH_HEAD:research/museums/20261126/lanes/results/finnish_national_gallery.json > research/museums/20261126/lanes/imports/finnish_national_gallery.json
+          git fetch --quiet origin research/artdrift-harvest-birmingham-20261126
+          git show FETCH_HEAD:research/museums/20261126/lanes/results/birmingham.json > research/museums/20261126/lanes/imports/birmingham.json
+          git fetch --quiet origin research/artdrift-harvest-belvedere-20261126
+          git show FETCH_HEAD:research/museums/20261126/lanes/results/belvedere.json > research/museums/20261126/lanes/imports/belvedere.json
+          git fetch --quiet origin research/artdrift-harvest-paris_musees-20261126
+          git show FETCH_HEAD:research/museums/20261126/lanes/results/paris_musees.json > research/museums/20261126/lanes/imports/paris_musees.json
+          git fetch --quiet origin research/artdrift-harvest-te_papa-20261126
+          git show FETCH_HEAD:research/museums/20261126/lanes/results/te_papa.json > research/museums/20261126/lanes/imports/te_papa.json
+          git fetch --quiet origin research/artdrift-harvest-nasjonalmuseet-20261126
+          git show FETCH_HEAD:research/museums/20261126/lanes/results/nasjonalmuseet.json > research/museums/20261126/lanes/imports/nasjonalmuseet.json
+      - name: Exact file SHA, Commons ID and semantic duplicate report
+        run: python -u tools/artdrift_cross_museum_dedupe.py
+      - name: Verify the output cannot authorize a runtime import
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          x=json.loads(Path('research/museums/20261126/lanes/global_cross_museum_dedupe.json').read_text(encoding='utf-8'))
+          assert x['source_count']==9
+          assert x['commercially_approved']==0 and x['runtime_imported']==0
+          assert x['unique_paintings_proven'] is False
+          print('PASS: cross-source file conflicts=',x['cross_museum_exact_file_clusters'])
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ArtDrift-Cross-Museum-Source-Dedupe
+          path: research/museums/20261126/lanes/global_cross_museum_dedupe.json
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Commit only the global cross-source audit
+        if: success()
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          cp research/museums/20261126/lanes/global_cross_museum_dedupe.json /tmp/artdrift-global-dedupe.json
+          git fetch origin research/artdrift-parallel-harvest-core-20261126
+          git reset --hard FETCH_HEAD
+          cp /tmp/artdrift-global-dedupe.json research/museums/20261126/lanes/global_cross_museum_dedupe.json
+          git add research/museums/20261126/lanes/global_cross_museum_dedupe.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'research: cross-museum exact file and semantic duplicate evidence'
+            git push origin HEAD:research/artdrift-parallel-harvest-core-20261126
+          fi
