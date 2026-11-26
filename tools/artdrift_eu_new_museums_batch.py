@@ -351,8 +351,8 @@ def staedel_records():
         records.extend(root.findall(".//oai:record",NS))
         token=root.find(".//oai:resumptionToken",NS)
         if token is None or not token.text:break
-        url="https://sammlung.staedelmuseum.de/api/oai?"+
-            urllib.parse.urlencode({"verb":"ListRecords","resumptionToken":token.text})
+        url=("https://sammlung.staedelmuseum.de/api/oai?"+
+             urllib.parse.urlencode({"verb":"ListRecords","resumptionToken":token.text}))
         time.sleep(.2)
     return records
 
