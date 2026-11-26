@@ -1,0 +1,80 @@
+name: ArtDrift — Met 278 official paintings color QA, 8 parallel batches
+on:
+  push:
+    branches: [research/artdrift-bright-megabatches-20261126]
+    paths:
+      - tools/artdrift_met_csv_verify.py
+      - tools/test_artdrift_met_csv_verify.py
+      - tools/artdrift_met_csv_verify_aggregate.py
+      - .github/workflows/artdrift-met-full-verify.yml
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: artdrift-met-full-verified-20261126
+  cancel-in-progress: false
+jobs:
+  check:
+    name: met-csv-img-${{ matrix.shard }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      max-parallel: 3
+      matrix:
+        shard: [0,1,2,3,4,5,6,7]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install raster decoder
+        run: python -m pip install --disable-pip-version-check Pillow==11.3.0
+      - run: |
+          python -m py_compile tools/artdrift_met_csv_verify.py
+          python -m unittest discover -s tools -p test_artdrift_met_csv_verify.py -v
+      - name: Verify each official painting metadata and actual pixel colors
+        run: python -u tools/artdrift_met_csv_verify.py --shard "${{ matrix.shard }}" --shards 8 --max-per-shard 130 --workers 2
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Met-CSV-Color-Checked-${{ matrix.shard }}
+          path: .artdrift_research/met_csv_verify/batch_*/
+          include-hidden-files: true
+          if-no-files-found: ignore
+          retention-days: 30
+  aggregate:
+    name: Aggregate 278 image-checked artwork candidates without publication
+    if: always()
+    needs: [check]
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --disable-pip-version-check Pillow==11.3.0
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: Met-CSV-Color-Checked-*
+          path: .artdrift_research/met_verify_incoming
+          merge-multiple: false
+      - run: python -u tools/artdrift_met_csv_verify_aggregate.py
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ArtDrift-Met-Full-CSV-Verified-Bright
+          path: research/mass_bright/20261126/met_full_csv_verified_*
+          if-no-files-found: warn
+      - name: Archive item-level image evidence in research branch only
+        if: success()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add research/mass_bright/20261126/met_full_csv_verified_bright.json
+          if ! git diff --cached --quiet; then
+            git commit -m "research(met): large official CSV batch checked against image pixels"
+            git pull --rebase origin research/artdrift-bright-megabatches-20261126
+            git push origin HEAD:research/artdrift-bright-megabatches-20261126
+          fi
