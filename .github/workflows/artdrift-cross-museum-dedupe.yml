@@ -1,5 +1,5 @@
 name: 'Art Drift — nine-museum source cross-dedup (no deploy)'
-# Stage-two refreshed audit: consume current retained branch reports without museum traffic.
+# Stage-three refresh: include Städel stage-two HOLD union and all nine retained branch inventories.
 on:
   push:
     branches:
