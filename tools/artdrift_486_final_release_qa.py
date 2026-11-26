@@ -8,7 +8,10 @@ This program never grants commercial publication permission.
 from __future__ import annotations
 import argparse,collections,html,itertools,json,re,time,urllib.error,urllib.parse,urllib.request
 from pathlib import Path
-from rapidfuzz.fuzz import ratio
+from difflib import SequenceMatcher
+
+def ratio(a,b):
+ return 100*SequenceMatcher(None,a,b).ratio()
 
 PIN="b82a4574db3d504141b6d2e95e403aa743c771e3"
 N=486
