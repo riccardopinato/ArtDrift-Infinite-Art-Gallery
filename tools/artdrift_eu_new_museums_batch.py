@@ -317,17 +317,30 @@ def run_sweden(shard,max_images):
     old=ROOT/"research/mass_bright/20261126/commons_pd_bright_verified.json"
     prior=json.loads(old.read_text(encoding="utf-8"))
     prior_commons_ids={str(x["file_pageid"]) for x in prior["works"]}
+    # CRITICAL: qualify metadata across the full provider result set BEFORE
+    # taking a bounded image sample. The old implementation shuffled all
+    # results by hash, took 34, and only then filtered: false negative rate
+    # dominated by portraits, missing dates and ancient/other media.
     pool=list(pages.values())
     pool.sort(key=lambda p:hashlib.sha256(str(p["pageid"]).encode()).hexdigest())
-    accepted=[];holds=[];thumbs={}
-    for page in pool[:max_images]:
+    eligible=[]
+    for page in pool:
         rec=sweden_object(page)
         if rec is None:
-            stats["metadata_or_license_not_eligible"]+=1;continue
+            stats["metadata_or_license_not_eligible"]+=1
+            continue
         if rec["museum_native_id"] in prior_commons_ids:
-            stats["prior_commons_duplicate"]+=1;continue
+            stats["prior_commons_duplicate"]+=1
+            continue
         if (cleaned(rec["title"]),cleaned(rec["artist"])) in names:
-            stats["runtime_title_artist_duplicate"]+=1;continue
+            stats["runtime_title_artist_duplicate"]+=1
+            continue
+        eligible.append(rec)
+    stats["metadata_eligible_before_image_sampling"]=len(eligible)
+    stats["unprobed_metadata_eligible"]=max(0,len(eligible)-max_images)
+    accepted=[];holds=[];thumbs={}
+    for rec in eligible[:max_images]:
+        stats["actual_images_requested"]+=1
         try:c,sha,picture=image_raster(rec["remote_preview_url"])
         except Exception as ex:
             holds.append({"id":rec["museum_native_id"],"reason":"NO_IMAGE_"+str(ex)[:110]});continue
