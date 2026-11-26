@@ -1,0 +1,160 @@
+{
+  "schema_version": 1,
+  "date": "2026-11-26",
+  "review_type": "PRELIMINARY_CURATORIAL_EVIDENCE_AFTER_WEB_IMAGE_VIEW",
+  "scope": "Fourteen actual-pixel thumbnails inspected with user-specified artist palette; source data retained independently; no image reproduction approval",
+  "decision_criteria": {
+    "main": "landscape/garden/boat/bridge predominant, bright/vivid and painterly",
+    "accent": "user-picked Karsten interior and Caillebotte boats may be retained as manual aesthetic exceptions despite color tier",
+    "do_not_auto_approve": "people-centered, reproduction print, framed image, dark titles, unknown rights",
+    "subject_rejection_does_not_delete_source": true,
+    "per_object_commercial_license_required": true,
+    "cross_museum_dedupe_required": true
+  },
+  "works": [
+    {
+      "identity": "commons:57672559",
+      "decision": "PRIORITY_MAIN_LUMINOUS",
+      "rationale": "The Bridge at Villeneuve-la-Garenne, no-frame MET reproduction. Very low dark fraction and official Met object PD.",
+      "reference_url": "https://www.metmuseum.org/art/collection/search/437680",
+      "required_next_step": "CHECK_FILE_AND_WORK_MATCH_BEFORE_IMPORT",
+      "human_user_acceptance": false,
+      "commercially_approved": false,
+      "runtime_visible": false
+    },
+    {
+      "identity": "commons:116315579",
+      "decision": "PRIORITY_MAIN_NEAR_MISS",
+      "rationale": "Sunset over the Lake: luminous pink sky, dark 5.84%; luminance 0.5318 misses threshold 0.55 slightly; user artist palette strongly matches.",
+      "reference_url": "https://commons.wikimedia.org/wiki/File:Serhii_Vasylkivsky_-_Sunset_over_the_Lake.jpg",
+      "required_next_step": "CURATORIAL_EXCEPTION_COLOR_ONLY",
+      "human_user_acceptance": false,
+      "commercially_approved": false,
+      "runtime_visible": false
+    },
+    {
+      "identity": "commons:98004214",
+      "decision": "PRIORITY_ACCENT_INTERIOR_USER_CHOICE",
+      "rationale": "User-specified The Blue Kitchen, Nasjonalmuseet NG.M.01507, is a blue/green interior; intentionally exempt from scenic-only subject and bright-only promotion, not rights gate.",
+      "reference_url": "https://digitaltmuseum.no/0210414978651/det-bla-kjokken-maleri",
+      "required_next_step": "SEPARATE_ACCENT_INTERIOR_SERIES",
+      "human_user_acceptance": false,
+      "commercially_approved": false,
+      "runtime_visible": false
+    },
+    {
+      "identity": "commons:7801071",
+      "decision": "REVIEW_NAMED_ARTWORK_VARIANT",
+      "rationale": "Caillebotte boating scene on Yerres corresponds to a user-requested family; exact version/inventory requires identification. Dark fraction 25.68%, outside main bright criterion.",
+      "reference_url": "https://en.maisoncaillebotte.fr/le-domaine/gustave-caillebotte-519.html",
+      "required_next_step": "VERIFY_EXACT_VERSION_NO_AUTOMERGE",
+      "human_user_acceptance": false,
+      "commercially_approved": false,
+      "runtime_visible": false
+    },
+    {
+      "identity": "commons:127400389",
+      "decision": "REJECT_SAMPLE_FRAMED_REPRODUCTION",
+      "rationale": "Framed Sisley photograph artificially raises dark fraction to 32.86%; prefer unframed MET DT1040 instead.",
+      "reference_url": "https://commons.wikimedia.org/wiki/File:Sisley_-_The_Bridge_at_Villeneuve-la-Garenne_-_with_frame.jpg",
+      "required_next_step": "KEEP_SOURCE_RECORD",
+      "human_user_acceptance": false,
+      "commercially_approved": false,
+      "runtime_visible": false
+    },
+    {
+      "identity": "commons:105249653",
+      "decision": "REJECT_SUBJECT_PEOPLE_CENTRED",
+      "rationale": "Serhii Vasylkivsky Ukrainian peasant is bright but character-centered, not landscape priority; do not treat technical PASS as visually approved.",
+      "reference_url": null,
+      "required_next_step": "KEEP_SOURCE_RECORD",
+      "human_user_acceptance": false,
+      "commercially_approved": false,
+      "runtime_visible": false
+    },
+    {
+      "identity": "commons:102431560",
+      "decision": "REJECT_SOURCE_IS_PRINT_REPRODUCTION",
+      "rationale": "Otto Modersohn Trichromogravure is an image of a printed reproduction, not preferred original painting photography; also 77.94% dark.",
+      "reference_url": null,
+      "required_next_step": "KEEP_SOURCE_RECORD",
+      "human_user_acceptance": false,
+      "commercially_approved": false,
+      "runtime_visible": false
+    },
+    {
+      "identity": "commons:29673094",
+      "decision": "HOLD_TOO_DARK",
+      "rationale": "Monet Waterlilies chosen sample has 82.61% dark pixels; find other Monet water/flower paintings, not an artist-wide rejection.",
+      "reference_url": null,
+      "required_next_step": "NEW_MONET_BRIGHT_VARIANT_SEARCH",
+      "human_user_acceptance": false,
+      "commercially_approved": false,
+      "runtime_visible": false
+    },
+    {
+      "identity": "commons:12534043",
+      "decision": "HOLD_TOO_DARK_OR_MUTED",
+      "rationale": "Sohlberg Flower Meadow northern painting has 47.04% dark and near-zero vivid ratio; find brighter Sohlberg works.",
+      "reference_url": null,
+      "required_next_step": "NEW_SOHBERG_DAYLIGHT_SEARCH",
+      "human_user_acceptance": false,
+      "commercially_approved": false,
+      "runtime_visible": false
+    },
+    {
+      "identity": "commons:17150611",
+      "decision": "HOLD_SEMANTIC_DUPLICATE_AND_DARK",
+      "rationale": "Alternate Sohlberg Flower Meadow in the North photograph appears to represent the same artwork as 12534043; separate file bytes do not imply a new painting.",
+      "reference_url": null,
+      "required_next_step": "WORK_LEVEL_DEDUP_NEEDED",
+      "human_user_acceptance": false,
+      "commercially_approved": false,
+      "runtime_visible": false
+    },
+    {
+      "identity": "commons:66278856",
+      "decision": "HOLD_TOO_DARK",
+      "rationale": "Monet Pluie, Étretat sampled thumbnail 54.24% dark, not bright-canvas candidate.",
+      "reference_url": null,
+      "required_next_step": "NEW_MONET_BRIGHT_VARIANT_SEARCH",
+      "human_user_acceptance": false,
+      "commercially_approved": false,
+      "runtime_visible": false
+    },
+    {
+      "identity": "commons:126729781",
+      "decision": "HOLD_TOO_DARK",
+      "rationale": "Caillebotte sunflowers garden sample dark 53.89%; avoid gallery auto-approval.",
+      "reference_url": null,
+      "required_next_step": "KEEP_SOURCE_RECORD",
+      "human_user_acceptance": false,
+      "commercially_approved": false,
+      "runtime_visible": false
+    },
+    {
+      "identity": "commons:80538945",
+      "decision": "HOLD_TOO_DARK_AND_PROVENANCE",
+      "rationale": "Karsten Decorative Landscape has 30.88% dark; museum attribution in inherited search report is unconfirmed.",
+      "reference_url": null,
+      "required_next_step": "VERIFY_SOURCE_BEFORE_REVIEW",
+      "human_user_acceptance": false,
+      "commercially_approved": false,
+      "runtime_visible": false
+    },
+    {
+      "identity": "commons:126254860",
+      "decision": "HOLD_DIM_MOORLAND_STUDY",
+      "rationale": "Modersohn Weg nach Surheide Abendsonne has 35.31% dark pixels; painter merits continued lighter landscape search.",
+      "reference_url": null,
+      "required_next_step": "SEARCH_BRIGHT_MOOR_VARIANTS",
+      "human_user_acceptance": false,
+      "commercially_approved": false,
+      "runtime_visible": false
+    }
+  ],
+  "reviewed_sample_count": 14,
+  "commercially_approved": 0,
+  "runtime_imported": 0,
+  "main_branch_mutated": false
+}
