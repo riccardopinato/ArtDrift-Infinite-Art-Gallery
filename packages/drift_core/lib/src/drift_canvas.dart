@@ -61,6 +61,26 @@ class _DriftCanvasState<T> extends State<DriftCanvas<T>>
   bool _controlsDimmed = false;
   int _autoSpeed = 25;
   Size _viewport = Size.zero;
+  // Hit-testing is observational; the original pinch/pan recognizer owns gestures.
+  String? _focusedTileKey;
+  final Set<int> _pressedPointers = <int>{};
+  List<({String key, Rect bounds})> _tileHitZones = [];
+
+  void _focusAt(Offset? localPosition) {
+    String? next;
+    if (localPosition != null) {
+      for (final zone in _tileHitZones.reversed) {
+        if (zone.bounds.contains(localPosition)) {
+          next = zone.key;
+          break;
+        }
+      }
+    }
+    if (next != _focusedTileKey && mounted) {
+      setState(() => _focusedTileKey = next);
+    }
+  }
+
 
   static const int _prefetchBatchSize = 8;
   static const int _warmHistoryLimit = 256;
@@ -277,6 +297,7 @@ class _DriftCanvasState<T> extends State<DriftCanvas<T>>
   void didUpdateWidget(covariant DriftCanvas<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (!identical(oldWidget.items, widget.items)) {
+      _focusedTileKey = null;
       _warmKeys.clear();
       _warmOrder.clear();
       _previousPrefetchCenter = null;
@@ -365,9 +386,45 @@ class _DriftCanvasState<T> extends State<DriftCanvas<T>>
       );
       final tiles = _world.visible(bounds, widget.items.length,
           priorityViewport: actualViewport);
+      _tileHitZones = [
+        for (final tile in tiles)
+          (key: tile.key, bounds: Rect.fromLTWH(
+            tile.rect.left * _zoom + _offset.dx,
+            tile.rect.top * _zoom + _offset.dy,
+            tile.rect.width * _zoom,
+            tile.rect.height * _zoom))
+      ];
+      final reducedMotion = MediaQuery.maybeOf(context)?.disableAnimations ?? false;
       _queuePrefetch(actualViewport);
       return Stack(fit: StackFit.expand, children: [
-        GestureDetector(
+        MouseRegion(
+          onHover: (event) {
+            if (_pressedPointers.isEmpty) _focusAt(event.localPosition);
+          },
+          onExit: (_) {
+            if (_pressedPointers.isEmpty) _focusAt(null);
+          },
+          child: Listener(
+            onPointerDown: (event) {
+              _pressedPointers.add(event.pointer);
+              _focusAt(_pressedPointers.length == 1
+                  ? event.localPosition : null);
+            },
+            onPointerMove: (event) {
+              if (_pressedPointers.length == 1 &&
+                  _pressedPointers.contains(event.pointer)) {
+                _focusAt(event.localPosition);
+              }
+            },
+            onPointerUp: (event) {
+              _pressedPointers.remove(event.pointer);
+              _focusAt(null);
+            },
+            onPointerCancel: (event) {
+              _pressedPointers.remove(event.pointer);
+              _focusAt(null);
+            },
+            child: GestureDetector(
           behavior: HitTestBehavior.opaque,
           onScaleStart: _start,
           onScaleUpdate: _update,
@@ -388,12 +445,24 @@ class _DriftCanvasState<T> extends State<DriftCanvas<T>>
                     },
                     child: ColoredBox(
                       color: const Color(0xFF24232A),
-                      child: widget.tileBuilder(context,
-                          widget.items[tile.artworkIndex], _zoom),
+                      child: ClipRect(
+                        child: AnimatedScale(
+                          key: ValueKey('drift-motion-${tile.key}'),
+                          scale: !reducedMotion && _focusedTileKey == tile.key
+                              ? 1.12 : 1.0,
+                          duration: reducedMotion ? Duration.zero :
+                              const Duration(milliseconds: 220),
+                          curve: Curves.easeOutCubic,
+                          child: widget.tileBuilder(context,
+                              widget.items[tile.artworkIndex], _zoom),
+                        ),
+                      ),
                     ),
                   ),
                 ),
             ]),
+          ),
+        ),
           ),
         ),
         Positioned(
