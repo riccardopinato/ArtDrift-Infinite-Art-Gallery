@@ -1,13 +1,13 @@
-name: "Art Drift — Nationalmuseum Stockholm independent acquisition"
+name: "Art Drift — nationalmuseum_se independent acquisition and lossless inventory"
 on:
   push:
     branches:
       - research/artdrift-harvest-nationalmuseum_se-20261126
     paths:
       - .github/workflows/artdrift-harvest-nationalmuseum_se.yml
-      - research/museums/20261126/lanes/nationalmuseum_se.json
       - tools/artdrift_parallel_museum_harvest.py
-      - tools/test_artdrift_parallel_museum_harvest.py
+      - tools/artdrift_parallel_museum_reconcile.py
+      - tools/test_artdrift_parallel_museum_reconcile.py
   workflow_dispatch:
 permissions:
   contents: write
@@ -15,60 +15,70 @@ concurrency:
   group: artdrift-individual-museum-nationalmuseum_se
   cancel-in-progress: false
 jobs:
-  discover:
+  inventory:
     runs-on: ubuntu-latest
     timeout-minutes: 40
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: '3.12'
       - name: Install image decoder
         run: python -m pip install --disable-pip-version-check Pillow==11.3.0
-      - name: Independent source and safety tests
+      - name: Offline safety and idempotent-merge tests
         run: |
-          python -m py_compile tools/artdrift_parallel_museum_harvest.py
+          python -m py_compile tools/artdrift_parallel_museum_harvest.py tools/artdrift_parallel_museum_reconcile.py
           python -m unittest discover -s tools -p 'test_artdrift_parallel_museum_harvest.py' -v
-      - name: Museum-specific metadata-first harvest
+          python -m unittest discover -s tools -p 'test_artdrift_parallel_museum_reconcile.py' -v
+      - name: Preserve prior run before harvesting
         run: |
-          python -u tools/artdrift_parallel_museum_harvest.py --provider nationalmuseum_se --max-records 900 --max-image-checks 120
-      - name: Validate no runtime import or unverified rights approval
+          mkdir -p .artdrift_eu/previous
+          if test -f research/museums/20261126/lanes/results/nationalmuseum_se.json; then cp research/museums/20261126/lanes/results/nationalmuseum_se.json .artdrift_eu/previous/nationalmuseum_se.json; fi
+      - name: Fresh museum search only on explicit source-run event
+        if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[harvest:nationalmuseum_se]')
+        run: python -u tools/artdrift_parallel_museum_harvest.py --provider nationalmuseum_se --max-records 900 --max-image-checks 120
+      - name: Preserve union and create human-only visual shortlist (no API calls)
+        run: |
+          python -u tools/artdrift_parallel_museum_reconcile.py --provider nationalmuseum_se --prior .artdrift_eu/previous/nationalmuseum_se.json --snapshot research/museums/20261126/lanes/snapshots/nationalmuseum_se_first_discovery.json --max-review 120
+      - name: Enforce nonpublishing evidence gate
         run: |
           python - <<'PY'
           import json
           from pathlib import Path
-          p=Path("research/museums/20261126/lanes/results/nationalmuseum_se.json")
-          doc=json.loads(p.read_text(encoding="utf-8"))
-          assert doc["provider"]=="nationalmuseum_se"
-          assert doc["runtime_imported"]==0 and doc["commercially_approved"]==0
-          assert doc["catalog_exhaustively_searched"] is False
-          assert all(not x.get("commercially_approved",False) and x.get("runtime_visible") is False
-                     for x in doc["review_candidates"])
-          print("PASS:",doc["provider"],doc["stats"],"candidate_records",doc["candidates_in_report"])
+          a=json.loads(Path('research/museums/20261126/lanes/results/nationalmuseum_se.json').read_text(encoding='utf-8'))
+          b=json.loads(Path('research/museums/20261126/lanes/reviews/nationalmuseum_se_visual_shortlist.json').read_text(encoding='utf-8'))
+          assert a['provider']=='nationalmuseum_se' and b['provider']=='nationalmuseum_se'
+          assert a['runtime_imported']==0 and a['commercially_approved']==0
+          assert a['catalog_exhaustively_searched'] is False
+          assert all(x.get('runtime_visible') is False and x.get('commercially_approved') is False for x in a['review_candidates'])
+          assert b['runtime_imported']==0 and b['ready_to_import']==0
+          print('PASS',a['provider'],'cumulative',a['cumulative_distinct_candidate_records'],'review',len(b['items_for_review']))
           PY
-      - name: Preserve machine-readable report and contact sheet
+      - name: Preserve this museum's evidence and visual shortlist
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: ArtDrift-Harvest-nationalmuseum_se
+          name: ArtDrift-Cumulative-nationalmuseum_se
           path: |
             research/museums/20261126/lanes/results/nationalmuseum_se.json
+            research/museums/20261126/lanes/reviews/nationalmuseum_se_visual_shortlist.json
             research/museums/20261126/lanes/results/nationalmuseum_se_contact_sheet.jpg
           if-no-files-found: warn
           retention-days: 30
-      - name: Commit only this museum's research report
+      - name: Commit only this museum's two research JSON files
         if: success()
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          # Reconcile a report generated from a prior runner SHA with the
-          # latest independent branch tip; no add/add rebase conflicts.
-          cp research/museums/20261126/lanes/results/nationalmuseum_se.json /tmp/artdrift-nationalmuseum_se-latest.json
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          cp research/museums/20261126/lanes/results/nationalmuseum_se.json /tmp/nationalmuseum_se-inventory.json
+          cp research/museums/20261126/lanes/reviews/nationalmuseum_se_visual_shortlist.json /tmp/nationalmuseum_se-visual.json
           git fetch origin research/artdrift-harvest-nationalmuseum_se-20261126
           git reset --hard FETCH_HEAD
-          cp /tmp/artdrift-nationalmuseum_se-latest.json research/museums/20261126/lanes/results/nationalmuseum_se.json
-          git add research/museums/20261126/lanes/results/nationalmuseum_se.json
+          mkdir -p research/museums/20261126/lanes/results research/museums/20261126/lanes/reviews
+          cp /tmp/nationalmuseum_se-inventory.json research/museums/20261126/lanes/results/nationalmuseum_se.json
+          cp /tmp/nationalmuseum_se-visual.json research/museums/20261126/lanes/reviews/nationalmuseum_se_visual_shortlist.json
+          git add research/museums/20261126/lanes/results/nationalmuseum_se.json research/museums/20261126/lanes/reviews/nationalmuseum_se_visual_shortlist.json
           if ! git diff --cached --quiet; then
-            git commit -m "research(nationalmuseum_se): isolated source inventory and image QA"
+            git commit -m 'research(nationalmuseum_se): reconcile retained museum IDs and visual HOLD queue'
             git push origin HEAD:research/artdrift-harvest-nationalmuseum_se-20261126
           fi
