@@ -1,0 +1,211 @@
+{
+  "schema_version": 1,
+  "as_of": "2026-11-26",
+  "source_commit": "2470472572fdca2a24a741bb50eaba7301c47fa9",
+  "purpose": "ArtDrift aesthetic RESEARCH SHORTLIST only (no runtime publication)",
+  "style_rule": "Reject if >10% of inspected image interior is very dark (pixel luminance <0.31). For NEW wave also require mean luminance>=0.55, vivid_fraction>=0.18, mean_saturation>=0.18.",
+  "baseline_wave1_count": 22,
+  "original_wave1_keep_count": 20,
+  "original_wave1_hold_dark_count": 2,
+  "new_wave2_keep_count": 7,
+  "total_aesthetically_eligible_candidates": 27,
+  "original_wave1_preserved": true,
+  "wave1_keep": [
+    {
+      "nga_id": "52200",
+      "title": "Flowers in a Vase",
+      "dark_fraction": 0.0861
+    },
+    {
+      "nga_id": "52178",
+      "title": "Farmhouse in Provence",
+      "dark_fraction": 0.0052
+    },
+    {
+      "nga_id": "89684",
+      "title": "Breton Village",
+      "dark_fraction": 0.0158
+    },
+    {
+      "nga_id": "157928",
+      "title": "Village by the Sea in Brittany",
+      "dark_fraction": 0.0004
+    },
+    {
+      "nga_id": "163323",
+      "title": "Green Wheat Fields, Auvers",
+      "dark_fraction": 0.0054
+    },
+    {
+      "nga_id": "66406",
+      "title": "The Bend in the Road",
+      "dark_fraction": 0.0097
+    },
+    {
+      "nga_id": "52189",
+      "title": "The Artist's Garden at Vétheuil",
+      "dark_fraction": 0.0057
+    },
+    {
+      "nga_id": "52190",
+      "title": "The Island of Raguenez, Brittany",
+      "dark_fraction": 0.0084
+    },
+    {
+      "nga_id": "53139",
+      "title": "Seascape at Port-en-Bessin, Normandy",
+      "dark_fraction": 0.0061
+    },
+    {
+      "nga_id": "46578",
+      "title": "Landscape near Paris",
+      "dark_fraction": 0.0085
+    },
+    {
+      "nga_id": "92999",
+      "title": "Landscape of the Ile-de-France",
+      "dark_fraction": 0.0273
+    },
+    {
+      "nga_id": "52227",
+      "title": "Meadow",
+      "dark_fraction": 0.0323
+    },
+    {
+      "nga_id": "157922",
+      "title": "Gathering Autumn Flowers",
+      "dark_fraction": 0.0117
+    },
+    {
+      "nga_id": "71556",
+      "title": "Large Vase with Flowers",
+      "dark_fraction": 0.0424
+    },
+    {
+      "nga_id": "54129",
+      "title": "Houses in Provence: The Riaux Valley near L'Estaque",
+      "dark_fraction": 0.0249
+    },
+    {
+      "nga_id": "93047",
+      "title": "Village at the Water's Edge",
+      "dark_fraction": 0.0946
+    },
+    {
+      "nga_id": "46627",
+      "title": "The Olive Orchard",
+      "dark_fraction": 0.0012
+    },
+    {
+      "nga_id": "166468",
+      "title": "The Valley of the Seine, from the Hills of Giverny",
+      "dark_fraction": 0.0039
+    },
+    {
+      "nga_id": "52219",
+      "title": "The Blue River",
+      "dark_fraction": 0.0126
+    },
+    {
+      "nga_id": "52165",
+      "title": "Banks of the Seine at Médan",
+      "dark_fraction": 0.0274
+    }
+  ],
+  "wave1_hold_dark": [
+    {
+      "nga_id": "157929",
+      "title": "Seascape (Gravelines)",
+      "dark_fraction": 0.1173,
+      "reason": "HOLD_DARK_AREA_ABOVE_10_PERCENT",
+      "runtime_visible": false
+    },
+    {
+      "nga_id": "72138",
+      "title": "The Artist's Garden in Argenteuil (A Corner of the Garden with Dahlias)",
+      "dark_fraction": 0.1086,
+      "reason": "HOLD_DARK_AREA_ABOVE_10_PERCENT",
+      "runtime_visible": false
+    }
+  ],
+  "wave2_keep": [
+    {
+      "nga_id": "46677",
+      "title": "Spring Woods",
+      "artist": "Henry Ward Ranger",
+      "year": 1910,
+      "dark_fraction": 0.0565,
+      "luminance": 0.5581,
+      "image_sha256": "9414650839fa14a6d88e2d4300cf33d484250c1a38e953be607f4976fa786b33"
+    },
+    {
+      "nga_id": "52957",
+      "title": "Southern Resort Town",
+      "artist": "Dana Smith",
+      "year": 1880,
+      "dark_fraction": 0.0013,
+      "luminance": 0.6912,
+      "image_sha256": "5651dafe772727634fd8a5992473aac0814546e7bbb46b24edc3cc4baeb979ea"
+    },
+    {
+      "nga_id": "56574",
+      "title": "Beach at Beverly",
+      "artist": "John Frederick Kensett",
+      "year": 1869,
+      "dark_fraction": 0.0625,
+      "luminance": 0.6545,
+      "image_sha256": "8d2a09c9dc41bd8ac9a0fa4a358a437b3c06e96d1877597cad9962cb37b6c577"
+    },
+    {
+      "nga_id": "46523",
+      "title": "The Houses of Parliament, Sunset",
+      "artist": "Claude Monet",
+      "year": 1903,
+      "dark_fraction": 0,
+      "luminance": 0.5859,
+      "image_sha256": "3ef4d8fc7d97a0a6293e57d7a0e33f29f4672e84d5b78ae067c99e51d6f44e75"
+    },
+    {
+      "nga_id": "59886",
+      "title": "Bucks County Farm Outside Doylestown, Pennsylvania",
+      "artist": "American 19th Century",
+      "year": 1890,
+      "dark_fraction": 0.0973,
+      "luminance": 0.5597,
+      "image_sha256": "55c1c04d2936be8132afbe098cfa1e34f5fe594ee8bd4c1a73657f7420697d90"
+    },
+    {
+      "nga_id": "72328",
+      "title": "Roses",
+      "artist": "Vincent van Gogh",
+      "year": 1890,
+      "dark_fraction": 0.0266,
+      "luminance": 0.67,
+      "image_sha256": "11c17f0c32f9402f087e3bbbdd2c5072e67e07a09c0269a19b28541afab8b27b"
+    },
+    {
+      "nga_id": "51139",
+      "title": "Composite Harbor Scene with Castle",
+      "artist": "Jurgan Frederick Huge",
+      "year": 1875,
+      "dark_fraction": 0.0962,
+      "luminance": 0.6244,
+      "image_sha256": "52f0726b777f2ed215e5bff0c2a2568d8dd48e224b9e4ccf2724747639571c6f"
+    }
+  ],
+  "wave2_visual_reject_ids": [
+    "46481",
+    "157923",
+    "61364",
+    "89681",
+    "195170"
+  ],
+  "source_evidence": [
+    "research/nga/20261125/nga_bright_review.json",
+    "research/nga/20261126/nga_bright_wave2_review.json"
+  ],
+  "legal_status": "HOLD_FINAL_RIGHTS_AND_VISUAL_QA",
+  "territorial_and_commercial_publication_approved": 0,
+  "runtime_imported": 0,
+  "no_image_mutation": true
+}
