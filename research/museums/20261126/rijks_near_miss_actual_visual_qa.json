@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "as_of": "2026-11-26",
+  "source": "Rijksmuseum Linked Art/IIIF verified 2-item contact sheet from GitHub Actions run 45830107494 artifact European-Museum-Art-rijks-0",
+  "pipeline_status": "HOLD_HIGH_CHROMA_VISUAL_REVIEW",
+  "visual_checks_done": 2,
+  "editorially_admitted": 0,
+  "why": "Both raster images passed an overly simple HSV saturation-based exception but are beige/olive/brown and not vivid in the intended Art Drift taste; pixel chroma does not imply a colorful painting",
+  "review": [
+    {
+      "museum_native_id": "AK-MAK-1435",
+      "title": "Lente landschap",
+      "year": 1890,
+      "source_url": "https://www.rijksmuseum.nl/nl/collectie/object/Lente-landschap--c87c057a9751d9cbed76fc1be6b51dd6",
+      "dark_fraction": 0.0475,
+      "mean_luminance": 0.5447,
+      "vivid_fraction": 0.7052,
+      "final_visual_status": "REJECT_ARTDRIFT_COLORFUL_STYLE",
+      "reason": "Monochrome-looking ink on paper in yellow/brown/grey with ornamental frame; does not satisfy lively landscape taste despite algorithmic saturation"
+    },
+    {
+      "museum_native_id": "SK-A-2288",
+      "title": "Landscape on the Oise",
+      "year": 1872,
+      "source_url": "https://www.rijksmuseum.nl/en/collection/object/Landscape-on-the-Oise--4b723c4f7f44f080e1ed03026e96a2dc",
+      "dark_fraction": 0.1906,
+      "mean_luminance": 0.4935,
+      "vivid_fraction": 0.5614,
+      "final_visual_status": "HOLD_OPTIONAL_BUT_NOT_TOP_PRIORITY",
+      "reason": "19% dark fits user's numeric 20% limit but olive/brown/sepia palette much less vivid than preferred; not automatically include"
+    }
+  ],
+  "audit_rule": "Retain potential false negatives for inspection, never equate HSV saturation with perceived vibrant palette",
+  "runtime_imported": 0,
+  "worldwide_commercial_approved": 0
+}
