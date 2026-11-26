@@ -7,6 +7,7 @@ import 'screens/settings_sheet.dart';
 import 'screens/favorites_sheet.dart';
 import 'ui/gallery_toolbar.dart';
 import 'ui/localization.dart';
+import 'ui/museum_portal.dart';
 import 'models/artwork.dart';
 import 'screens/artwork_detail.dart';
 import 'services/catalog_service.dart';
@@ -117,36 +118,9 @@ class _GalleryHomeState extends State<GalleryHome> {
 
   @override
   Widget build(BuildContext context) {
-    if (_loading) return const Scaffold(body: Center(child: Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text('artdrift ∞', style: TextStyle(
-          fontSize: 31, color: Colors.white, fontWeight: FontWeight.w600)),
-        SizedBox(height: 24),
-        CircularProgressIndicator(color: Color(0xFFD2BB9C)),
-        SizedBox(height: 20),
-        Text('Carichiamo le opere del tuo museo…',
-          style: TextStyle(color: Colors.white54)),
-      ],
-    )));
+    if (_loading) return const MuseumPortal.loading();
     if (_error != null || _artworks.isEmpty) {
-      return Scaffold(body: Center(child: Padding(
-        padding: const EdgeInsets.all(32),
-        child: Column(mainAxisSize: MainAxisSize.min, children: [
-          const Icon(Icons.wifi_off_rounded, size: 44, color: Colors.white54),
-          const SizedBox(height: 20),
-          const Text('La galleria non è disponibile',
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 20, color: Colors.white)),
-          const SizedBox(height: 10),
-          const Text('Serve una connessione per scaricare la prima selezione. '
-            'Dopo il primo caricamento potrai riaprire il catalogo salvato.',
-            textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.white60, height: 1.4)),
-          const SizedBox(height: 20),
-          FilledButton(onPressed: _initialize, child: const Text('Riprova')),
-        ]),
-      )));
+      return MuseumPortal.unavailable(onRetry: _initialize);
     }
     return Scaffold(body: Stack(fit: StackFit.expand, children: [
       InfiniteGallery(artworks: _artworks, onOpen: _open),
