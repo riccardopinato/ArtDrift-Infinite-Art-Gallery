@@ -44,6 +44,8 @@ AVOID=(
  "portrait","self-portrait","woman","women","man","men","boy","boys",
  "girl","girls","person","people","child","children","figures",
  "family","mother","father","daughter","lady","peasant","bather",
+ "washerwomen","washerman","couple","couples","dancing","horse","horses",
+ "dogs","dog","cattle","cows",
  "nude","seated","standing","head","face","profile","dancers",
  "sleeping","in bed","costume","worker","workers","fishermen",
  "fisherwoman","horseman","saints","madonna","crucifix",
@@ -56,10 +58,10 @@ POS_RE=re.compile(r"\b(?:"+"|".join(re.escape(s) for s in sorted(set(SCENIC),key
 AVOID_RE=re.compile(r"\b(?:"+"|".join(re.escape(s) for s in sorted(set(AVOID),key=len,reverse=True))+r")\b")
 
 # Tight enough to exclude large dark areas even if the subject looks colorful.
-MIN_LUMINANCE=.595
-MAX_DARK_FRAC=.095
-MIN_VIVID_FRAC=.255
-MIN_SATURATION=.235
+MIN_LUMINANCE=.55
+MAX_DARK_FRAC=.10
+MIN_VIVID_FRAC=.18
+MIN_SATURATION=.18
 MIN_YEAR=1850
 MAX_YEAR=1965
 
