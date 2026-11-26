@@ -1,0 +1,1242 @@
+{
+  "schema_version": 1,
+  "as_of": "2026-11-26",
+  "source_schema_probe_only": true,
+  "runtime_imported": 0,
+  "sample_results": {
+    "rijks": {
+      "source": "rijks",
+      "list_total": 246,
+      "object_samples": [
+        {
+          "url": "https://data.rijksmuseum.nl/200106038",
+          "root_keys": [
+            "@context",
+            "id",
+            "type",
+            "assigned_by",
+            "attributed_by",
+            "classified_as",
+            "current_location",
+            "dimension",
+            "equivalent",
+            "identified_by",
+            "made_of",
+            "member_of",
+            "produced_by",
+            "referred_to_by",
+            "shows",
+            "subject_of"
+          ],
+          "identified_by": [
+            {
+              "type": "Identifier",
+              "classified_as": [
+                {
+                  "id": "http://vocab.getty.edu/aat/300312355",
+                  "type": "Type"
+                },
+                {
+                  "id": "https://id.rijksmuseum.nl/22015218",
+                  "type": "Type",
+                  "notation": [
+                    {
+                      "@language": "en",
+                      "@value": "object number"
+                    },
+                    {
+                      "@language": "nl",
+                      "@value": "objectnummer"
+                    }
+                  ]
+                }
+              ],
+              "content": "SK-A-1935"
+            },
+            {
+              "id": "_:bnode0",
+              "type": "Name",
+              "classified_as": [
+                {
+                  "id": "http://vocab.getty.edu/aat/300404670",
+                  "type": "Type",
+                  "classified_as": [
+                    {
+                      "id": "http://vocab.getty.edu/aat/300418049",
+                      "type": "Type",
+                      "_label": "brief text"
+                    }
+                  ]
+                },
+                {
+                  "id": "http://vocab.getty.edu/aat/300417207",
+                  "type": "Type"
+                }
+              ],
+              "content": "Landscape with a Stone Bridge",
+              "language": [
+                {
+                  "id": "http://vocab.getty.edu/aat/300388277",
+                  "type": "Language"
+                }
+              ]
+            },
+            {
+              "id": "_:bnode1",
+              "type": "Name",
+              "classified_as": [
+                {
+                  "id": "http://vocab.getty.edu/aat/300404670",
+                  "type": "Type",
+                  "classified_as": [
+                    {
+                      "id": "http://vocab.getty.edu/aat/300418049",
+                      "type": "Type",
+                      "_label": "brief text"
+                    }
+                  ]
+                },
+                {
+                  "id": "http://vocab.getty.edu/aat/300417207",
+                  "type": "Type"
+                }
+              ],
+              "content": "Landschap met stenen brug",
+              "language": [
+                {
+                  "id": "http://vocab.getty.edu/aat/300388256",
+                  "type": "Language"
+                }
+              ]
+            },
+            {
+              "type": "Name",
+              "classified_as": [
+                {
+                  "id": "http://vocab.getty.edu/aat/300417200",
+                  "type": "Type"
+                }
+              ],
+              "content": "Landscape with Stone Bridge",
+              "identified_by": [
+                {
+                  "type": "Identifier",
+                  "classified_as": [
+                    {
+                      "id": "http://vocab.getty.edu/aat/300456575",
+                      "type": "Type"
+                    }
+                  ],
+                  "content": "1"
+                }
+              ],
+              "language": [
+                {
+                  "id": "http://vocab.getty.edu/aat/300388277",
+                  "type": "Language"
+                }
+              ],
+              "translation_of": [
+                {
+                  "id": "_:bnode2",
+                  "type": "Name",
+                  "classified_as": [
+                    {
+                      "id": "http://vocab.getty.edu/aat/300417200",
+                      "type": "Type"
+                    }
+                  ],
+                  "content": "Landschap met stenen brug",
+                  "identified_by": [
+                    {
+                      "id": "_:bnode3",
+                      "type": "Identifier",
+                      "classified_as": [
+                        {
+                          "id": "http://vocab.getty.edu/aat/300456575",
+                          "type": "Type"
+                        }
+                      ],
+                      "content": "1"
+                    }
+                  ],
+                  "language": [
+                    {
+                      "id": "http://vocab.getty.edu/aat/300388256",
+                      "type": "Language"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "_:bnode2",
+              "type": "Name",
+              "classified_as": [
+                {
+                  "id": "http://vocab.getty.edu/aat/300417200",
+                  "type": "Type"
+                }
+              ],
+              "content": "Landschap met stenen brug",
+              "identified_by": [
+                {
+                  "id": "_:bnode3",
+                  "type": "Identifier",
+                  "classified_as": [
+                    {
+                      "id": "http://vocab.getty.edu/aat/300456575",
+                      "type": "Type"
+                    }
+                  ],
+                  "content": "1"
+                }
+              ],
+              "language": [
+                {
+                  "id": "http://vocab.getty.edu/aat/300388256",
+                  "type": "Language"
+                }
+              ]
+            }
+          ],
+          "produced_by": {
+            "type": "Production",
+            "part": [
+              {
+                "type": "Production",
+                "carried_out_by": [
+                  {
+                    "id": "https://id.rijksmuseum.nl/2103429",
+                    "type": "Person",
+                    "equivalent": [
+                      {
+                        "id": "http://viaf.org/viaf/64013650",
+                        "type": "Person"
+                      },
+                      {
+                        "id": "http://vocab.getty.edu/ulan/500011051",
+                        "type": "Person"
+                      },
+                      {
+                        "id": "http://www.wikidata.org/entity/Q5598",
+                        "type": "Person"
+                      },
+                      {
+                        "id": "https://rkd.nl/artists/66219",
+                        "type": "Person"
+                      }
+                    ],
+                    "notation": [
+                      {
+                        "@language": "en",
+                        "@value": "Rembrandt van Rijn"
+                      },
+                      {
+                        "@language": "nl",
+                        "@value": "Rembrandt van Rijn"
+                      }
+                    ]
+                  }
+                ],
+                "classified_as": [
+                  {
+                    "id": "http://vocab.getty.edu/aat/300404450",
+                    "type": "Type"
+                  }
+                ],
+                "identified_by": [
+                  {
+                    "type": "Identifier",
+                    "classified_as": [
+                      {
+                        "id": "http://vocab.getty.edu/aat/300456575",
+                        "type": "Type"
+                      }
+                    ],
+                    "content": "1"
+                  }
+                ],
+                "referred_to_by": [
+                  {
+                    "type": "LinguisticObject",
+                    "classified_as": [
+                      {
+                        "id": "http://vocab.getty.edu/aat/300435416",
+                        "type": "Type"
+                      }
+                    ],
+                    "content": "painter: Rembrandt van Rijn",
+                    "language": [
+                      {
+                        "id": "http://vocab.getty.edu/aat/300388277",
+                        "type": "Language"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "LinguisticObject",
+                    "classified_as": [
+                      {
+                        "id": "http://vocab.getty.edu/aat/300435416",
+                        "type": "Type"
+                      }
+                    ],
+                    "content": "schilder: Rembrandt van Rijn",
+                    "language": [
+                      {
+                        "id": "http://vocab.getty.edu/aat/300388256",
+                        "type": "Language"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "LinguisticObject",
+                    "classified_as": [
+                      {
+                        "id": "http://vocab.getty.edu/aat/300435417",
+                        "type": "Type"
+                      }
+                    ],
+                    "content": "Rembrandt van Rijn",
+                    "language": [
+                      {
+                        "id": "http://vocab.getty.edu/aat/300388256",
+                        "type": "Language"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "LinguisticObject",
+                    "classified_as": [
+                      {
+                        "id": "http://vocab.getty.edu/aat/300435417",
+                        "type": "Type"
+                      }
+                    ],
+                    "content": "Rembrandt van Rijn",
+                    "language": [
+                      {
+                        "id": "http://vocab.getty.edu/aat/300388277",
+                        "type": "Language"
+                      }
+                    ]
+                  }
+                ],
+                "technique": [
+                  {
+                    "id": "https://id.rijksmuseum.nl/2202217",
+                    "type": "Type",
+                    "equivalent": [
+                      {
+                        "id": "http://vocab.getty.edu/aat/300025136",
+                        "type": "Type"
+                      }
+                    ],
+                    "notation": [
+                      {
+                        "@language": "en",
+                        "@value": "painter"
+                      },
+                      {
+                        "@language": "nl",
+                        "@value": "schilder"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "referred_to_by": [
+              {
+                "type": "LinguisticObject",
+                "classified_as": [
+                  {
+                    "id": "http://vocab.getty.edu/aat/300435416",
+                    "type": "Type"
+                  }
+                ],
+                "content": "Rembrandt van Rijn",
+                "language": [
+                  {
+                    "id": "http://vocab.getty.edu/aat/300388256",
+                    "type": "Language"
+                  }
+                ]
+              },
+              {
+                "type": "LinguisticObject",
+                "classified_as": [
+                  {
+                    "id": "http://vocab.getty.edu/aat/300435416",
+                    "type": "Type"
+                  }
+                ],
+                "content": "Rembrandt van Rijn",
+                "language": [
+                  {
+                    "id": "http://vocab.getty.edu/aat/300388277",
+                    "type": "Language"
+                  }
+                ]
+              }
+            ],
+            "technique": [
+              {
+                "id": "https://id.rijksmuseum.nl/2204040",
+                "type": "Type",
+                "equivalent": [
+                  {
+                    "id": "http://vocab.getty.edu/aat/300054216",
+                    "type": "Type"
+                  }
+                ],
+                "identified_by": [
+                  {
+                    "type": "Identifier",
+                    "assigned_by": [
+                      {
+                        "type": "AttributeAssignment",
+                        "assigned": [
+                          "https://id.rijksmuseum.nl/200106038"
+                        ],
+                        "assigned_property": "influenced_by"
+                      }
+                    ],
+                    "classified_as": [
+                      {
+                        "id": "http://vocab.getty.edu/aat/300456575",
+                        "type": "Type"
+                      }
+                    ],
+                    "content": "1"
+                  }
+                ],
+                "notation": [
+                  {
+                    "@language": "en",
+                    "@value": "paint"
+                  },
+                  {
+                    "@language": "nl",
+                    "@value": "schilderen"
+                  }
+                ]
+              }
+            ],
+            "timespan": {
+              "type": "TimeSpan",
+              "begin_of_the_begin": "1638-01-01T00:00:00Z",
+              "end_of_the_end": "1638-12-31T23:59:59Z",
+              "identified_by": [
+                {
+                  "type": "Name",
+                  "content": "c. 1638",
+                  "language": [
+                    {
+                      "id": "http://vocab.getty.edu/aat/300388277",
+                      "type": "Language"
+                    }
+                  ]
+                },
+                {
+                  "type": "Name",
+                  "content": "ca. 1638",
+                  "language": [
+                    {
+                      "id": "http://vocab.getty.edu/aat/300388256",
+                      "type": "Language"
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "shows": [
+            {
+              "id": "https://id.rijksmuseum.nl/202106038",
+              "type": "VisualItem"
+            }
+          ],
+          "classified_as": [
+            {
+              "id": "https://id.rijksmuseum.nl/2208",
+              "type": "Type",
+              "classified_as": [
+                {
+                  "id": "http://vocab.getty.edu/aat/300435443",
+                  "type": "Type",
+                  "_label": "Type of Work"
+                }
+              ],
+              "equivalent": [
+                {
+                  "id": "http://vocab.getty.edu/aat/300033618",
+                  "type": "Type"
+                },
+                {
+                  "id": "http://www.wikidata.org/entity/Q3305213",
+                  "type": "Type"
+                }
+              ],
+              "notation": [
+                {
+                  "@language": "en",
+                  "@value": "painting"
+                },
+                {
+                  "@language": "nl",
+                  "@value": "schilderij"
+                }
+              ]
+            }
+          ],
+          "rights_keys": [],
+          "referred_to_by": [
+            {
+              "type": "LinguisticObject",
+              "classified_as": [
+                {
+                  "id": "http://vocab.getty.edu/aat/300026687",
+                  "type": "Type",
+                  "classified_as": [
+                    {
+                      "id": "http://vocab.getty.edu/aat/300418049",
+                      "type": "Type",
+                      "_label": "brief text"
+                    }
+                  ]
+                }
+              ],
+              "content": "Aankoop met steun van de Vereniging Rembrandt en de heer A. Bredius, Amsterdam",
+              "language": [
+                {
+                  "id": "http://vocab.getty.edu/aat/300388256",
+                  "type": "Language"
+                }
+              ]
+            },
+            {
+              "type": "LinguisticObject",
+              "classified_as": [
+                {
+                  "id": "http://vocab.getty.edu/aat/300026687",
+                  "type": "Type",
+                  "classified_as": [
+                    {
+                      "id": "http://vocab.getty.edu/aat/300418049",
+                      "type": "Type",
+                      "_label": "brief text"
+                    }
+                  ]
+                }
+              ],
+              "content": "Purchased with the support of the Vereniging Rembrandt and A. Bredius, Amsterdam",
+              "language": [
+                {
+                  "id": "http://vocab.getty.edu/aat/300388277",
+                  "type": "Language"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "url": "https://data.rijksmuseum.nl/200107886",
+          "root_keys": [
+            "@context",
+            "id",
+            "type",
+            "assigned_by",
+            "attributed_by",
+            "classified_as",
+            "current_location",
+            "dimension",
+            "equivalent",
+            "identified_by",
+            "made_of",
+            "member_of",
+            "produced_by",
+            "referred_to_by",
+            "shows",
+            "subject_of"
+          ],
+          "identified_by": [
+            {
+              "type": "Identifier",
+              "classified_as": [
+                {
+                  "id": "http://vocab.getty.edu/aat/300312355",
+                  "type": "Type"
+                },
+                {
+                  "id": "https://id.rijksmuseum.nl/22015218",
+                  "type": "Type",
+                  "notation": [
+                    {
+                      "@language": "en",
+                      "@value": "object number"
+                    },
+                    {
+                      "@language": "nl",
+                      "@value": "objectnummer"
+                    }
+                  ]
+                }
+              ],
+              "content": "SK-A-2333"
+            },
+            {
+              "id": "_:bnode0",
+              "type": "Name",
+              "classified_as": [
+                {
+                  "id": "http://vocab.getty.edu/aat/300404670",
+                  "type": "Type",
+                  "classified_as": [
+                    {
+                      "id": "http://vocab.getty.edu/aat/300418049",
+                      "type": "Type",
+                      "_label": "brief text"
+                    }
+                  ]
+                },
+                {
+                  "id": "http://vocab.getty.edu/aat/300417207",
+                  "type": "Type"
+                }
+              ],
+              "content": "Braziliaans landschap",
+              "language": [
+                {
+                  "id": "http://vocab.getty.edu/aat/300388256",
+                  "type": "Language"
+                }
+              ]
+            },
+            {
+              "id": "_:bnode1",
+              "type": "Name",
+              "classified_as": [
+                {
+                  "id": "http://vocab.getty.edu/aat/300404670",
+                  "type": "Type",
+                  "classified_as": [
+                    {
+                      "id": "http://vocab.getty.edu/aat/300418049",
+                      "type": "Type",
+                      "_label": "brief text"
+                    }
+                  ]
+                },
+                {
+                  "id": "http://vocab.getty.edu/aat/300417207",
+                  "type": "Type"
+                }
+              ],
+              "content": "Brazilian Landscape",
+              "language": [
+                {
+                  "id": "http://vocab.getty.edu/aat/300388277",
+                  "type": "Language"
+                }
+              ]
+            },
+            {
+              "id": "_:bnode2",
+              "type": "Name",
+              "classified_as": [
+                {
+                  "id": "http://vocab.getty.edu/aat/300417200",
+                  "type": "Type"
+                }
+              ],
+              "content": "Braziliaans landschap",
+              "identified_by": [
+                {
+                  "id": "_:bnode3",
+                  "type": "Identifier",
+                  "classified_as": [
+                    {
+                      "id": "http://vocab.getty.edu/aat/300456575",
+                      "type": "Type"
+                    }
+                  ],
+                  "content": "1"
+                }
+              ],
+              "language": [
+                {
+                  "id": "http://vocab.getty.edu/aat/300388256",
+                  "type": "Language"
+                }
+              ]
+            },
+            {
+              "type": "Name",
+              "classified_as": [
+                {
+                  "id": "http://vocab.getty.edu/aat/300417200",
+                  "type": "Type"
+                }
+              ],
+              "content": "Brazilian landscape",
+              "identified_by": [
+                {
+                  "type": "Identifier",
+                  "classified_as": [
+                    {
+                      "id": "http://vocab.getty.edu/aat/300456575",
+                      "type": "Type"
+                    }
+                  ],
+                  "content": "1"
+                }
+              ],
+              "language": [
+                {
+                  "id": "http://vocab.getty.edu/aat/300388277",
+                  "type": "Language"
+                }
+              ],
+              "translation_of": [
+                {
+                  "id": "_:bnode2",
+                  "type": "Name",
+                  "classified_as": [
+                    {
+                      "id": "http://vocab.getty.edu/aat/300417200",
+                      "type": "Type"
+                    }
+                  ],
+                  "content": "Braziliaans landschap",
+                  "identified_by": [
+                    {
+                      "id": "_:bnode3",
+                      "type": "Identifier",
+                      "classified_as": [
+                        {
+                          "id": "http://vocab.getty.edu/aat/300456575",
+                          "type": "Type"
+                        }
+                      ],
+                      "content": "1"
+                    }
+                  ],
+                  "language": [
+                    {
+                      "id": "http://vocab.getty.edu/aat/300388256",
+                      "type": "Language"
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "produced_by": {
+            "type": "Production",
+            "part": [
+              {
+                "type": "Production",
+                "assigned_by": [
+                  {
+                    "type": "AttributeAssignment",
+                    "assigned": [
+                      {
+                        "id": "https://id.rijksmuseum.nl/2101266",
+                        "type": "Person"
+                      }
+                    ],
+                    "assigned_property": "carried_out_by",
+                    "motivated_by": [
+                      {
+                        "type": "LinguisticObject",
+                        "carried_by": [
+                          "https://id.rijksmuseum.nl/200107886"
+                        ],
+                        "classified_as": [
+                          {
+                            "id": "http://vocab.getty.edu/aat/300028702",
+                            "type": "Type"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ],
+                "classified_as": [
+                  {
+                    "id": "http://vocab.getty.edu/aat/300404450",
+                    "type": "Type"
+                  }
+                ],
+                "identified_by": [
+                  {
+                    "type": "Identifier",
+                    "classified_as": [
+                      {
+                        "id": "http://vocab.getty.edu/aat/300456575",
+                        "type": "Type"
+                      }
+                    ],
+                    "content": "1"
+                  }
+                ],
+                "referred_to_by": [
+                  {
+                    "type": "LinguisticObject",
+                    "classified_as": [
+                      {
+                        "id": "http://vocab.getty.edu/aat/300435416",
+                        "type": "Type"
+                      }
+                    ],
+                    "content": "painter: Frans Jansz Post (mentioned on object)",
+                    "language": [
+                      {
+                        "id": "http://vocab.getty.edu/aat/300388277",
+                        "type": "Language"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "LinguisticObject",
+                    "classified_as": [
+                      {
+                        "id": "http://vocab.getty.edu/aat/300435416",
+                        "type": "Type"
+                      }
+                    ],
+                    "content": "schilder: Frans Jansz. Post (vermeld op object)",
+                    "language": [
+                      {
+                        "id": "http://vocab.getty.edu/aat/300388256",
+                        "type": "Language"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "LinguisticObject",
+                    "classified_as": [
+                      {
+                        "id": "http://vocab.getty.edu/aat/300435417",
+                        "type": "Type"
+                      }
+                    ],
+                    "content": "Frans Jansz Post (mentioned on object)",
+                    "language": [
+                      {
+                        "id": "http://vocab.getty.edu/aat/300388277",
+                        "type": "Language"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "LinguisticObject",
+                    "classified_as": [
+                      {
+                        "id": "http://vocab.getty.edu/aat/300435417",
+                        "type": "Type"
+                      }
+                    ],
+                    "content": "Frans Jansz. Post (vermeld op object)",
+                    "language": [
+                      {
+                        "id": "http://vocab.getty.edu/aat/300388256",
+                        "type": "Language"
+                      }
+                    ]
+                  }
+                ],
+                "technique": [
+                  {
+                    "id": "https://id.rijksmuseum.nl/2202217",
+                    "type": "Type",
+                    "equivalent": [
+                      {
+                        "id": "http://vocab.getty.edu/aat/300025136",
+                        "type": "Type"
+                      }
+                    ],
+                    "notation": [
+                      {
+                        "@language": "en",
+                        "@value": "painter"
+                      },
+                      {
+                        "@language": "nl",
+                        "@value": "schilder"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "referred_to_by": [
+              {
+                "type": "LinguisticObject",
+                "classified_as": [
+                  {
+                    "id": "http://vocab.getty.edu/aat/300435416",
+                    "type": "Type"
+                  }
+                ],
+                "content": "Frans Jansz Post (mentioned on object)",
+                "language": [
+                  {
+                    "id": "http://vocab.getty.edu/aat/300388277",
+                    "type": "Language"
+                  }
+                ]
+              },
+              {
+                "type": "LinguisticObject",
+                "classified_as": [
+                  {
+                    "id": "http://vocab.getty.edu/aat/300435416",
+                    "type": "Type"
+                  }
+                ],
+                "content": "Frans Jansz. Post (vermeld op object)",
+                "language": [
+                  {
+                    "id": "http://vocab.getty.edu/aat/300388256",
+                    "type": "Language"
+                  }
+                ]
+              }
+            ],
+            "timespan": {
+              "type": "TimeSpan",
+              "begin_of_the_begin": "1670-01-01T00:00:00Z",
+              "end_of_the_end": "1680-12-31T23:59:59Z",
+              "identified_by": [
+                {
+                  "type": "Name",
+                  "content": "1670 - 1680",
+                  "language": [
+                    {
+                      "id": "http://vocab.getty.edu/aat/300388256",
+                      "type": "Language"
+                    }
+                  ]
+                },
+                {
+                  "type": "Name",
+                  "content": "1670 - 1680",
+                  "language": [
+                    {
+                      "id": "http://vocab.getty.edu/aat/300388277",
+                      "type": "Language"
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "shows": [
+            {
+              "id": "https://id.rijksmuseum.nl/202107886",
+              "type": "VisualItem"
+            }
+          ],
+          "classified_as": [
+            {
+              "id": "https://id.rijksmuseum.nl/2208",
+              "type": "Type",
+              "classified_as": [
+                {
+                  "id": "http://vocab.getty.edu/aat/300435443",
+                  "type": "Type",
+                  "_label": "Type of Work"
+                }
+              ],
+              "equivalent": [
+                {
+                  "id": "http://vocab.getty.edu/aat/300033618",
+                  "type": "Type"
+                },
+                {
+                  "id": "http://www.wikidata.org/entity/Q3305213",
+                  "type": "Type"
+                }
+              ],
+              "notation": [
+                {
+                  "@language": "en",
+                  "@value": "painting"
+                },
+                {
+                  "@language": "nl",
+                  "@value": "schilderij"
+                }
+              ]
+            }
+          ],
+          "rights_keys": [],
+          "referred_to_by": [
+            {
+              "type": "LinguisticObject",
+              "classified_as": [
+                {
+                  "id": "http://vocab.getty.edu/aat/300026687",
+                  "type": "Type",
+                  "classified_as": [
+                    {
+                      "id": "http://vocab.getty.edu/aat/300418049",
+                      "type": "Type",
+                      "_label": "brief text"
+                    }
+                  ]
+                }
+              ],
+              "content": "Aankoop met steun van de Vereniging Rembrandt",
+              "language": [
+                {
+                  "id": "http://vocab.getty.edu/aat/300388256",
+                  "type": "Language"
+                }
+              ]
+            },
+            {
+              "type": "LinguisticObject",
+              "classified_as": [
+                {
+                  "id": "http://vocab.getty.edu/aat/300026687",
+                  "type": "Type",
+                  "classified_as": [
+                    {
+                      "id": "http://vocab.getty.edu/aat/300418049",
+                      "type": "Type",
+                      "_label": "brief text"
+                    }
+                  ]
+                }
+              ],
+              "content": "Purchased with the support of the Vereniging Rembrandt",
+              "language": [
+                {
+                  "id": "http://vocab.getty.edu/aat/300388277",
+                  "type": "Language"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "visual_samples": [
+        {
+          "root_keys": [
+            "@context",
+            "id",
+            "type",
+            "attributed_by",
+            "digitally_shown_by",
+            "represents_instance_of_type",
+            "shown_by",
+            "subject_of",
+            "subject_to"
+          ],
+          "digitally_shown_by": [
+            {
+              "id": "https://id.rijksmuseum.nl/500691108150747650111",
+              "type": "DigitalObject"
+            }
+          ]
+        },
+        {
+          "root_keys": [
+            "@context",
+            "id",
+            "type",
+            "attributed_by",
+            "digitally_shown_by",
+            "represents",
+            "represents_instance_of_type",
+            "shown_by",
+            "subject_of",
+            "subject_to"
+          ],
+          "digitally_shown_by": [
+            {
+              "id": "https://id.rijksmuseum.nl/500837812082111688073",
+              "type": "DigitalObject"
+            }
+          ]
+        }
+      ],
+      "digital_samples": [
+        {
+          "root_keys": [
+            "@context",
+            "id",
+            "type",
+            "access_point",
+            "digitally_shows",
+            "referred_to_by"
+          ],
+          "access_point": [
+            {
+              "id": "https://iiif.micr.io/hodeb/full/max/0/default.jpg",
+              "type": "DigitalObject"
+            }
+          ],
+          "rights": null,
+          "referred_to_by": [
+            {
+              "type": "LinguisticObject",
+              "classified_as": [
+                {
+                  "id": "http://vocab.getty.edu/aat/300435434",
+                  "type": "Type"
+                }
+              ],
+              "content": "downloadbaar"
+            },
+            {
+              "type": "LinguisticObject",
+              "classified_as": [
+                {
+                  "id": "http://vocab.getty.edu/aat/300435434",
+                  "type": "Type"
+                }
+              ],
+              "content": "zichtbaar"
+            }
+          ]
+        },
+        {
+          "root_keys": [
+            "@context",
+            "id",
+            "type",
+            "access_point",
+            "digitally_shows",
+            "referred_to_by"
+          ],
+          "access_point": [
+            {
+              "id": "https://iiif.micr.io/nykBz/full/max/0/default.jpg",
+              "type": "DigitalObject"
+            }
+          ],
+          "rights": null,
+          "referred_to_by": [
+            {
+              "type": "LinguisticObject",
+              "classified_as": [
+                {
+                  "id": "http://vocab.getty.edu/aat/300435434",
+                  "type": "Type"
+                }
+              ],
+              "content": "downloadbaar"
+            },
+            {
+              "type": "LinguisticObject",
+              "classified_as": [
+                {
+                  "id": "http://vocab.getty.edu/aat/300435434",
+                  "type": "Type"
+                }
+              ],
+              "content": "zichtbaar"
+            }
+          ]
+        }
+      ]
+    },
+    "nationalmuseum_se": {
+      "source": "nationalmuseum_se",
+      "samples": [
+        {
+          "id": 52108539,
+          "title": "File:30th November. Sketch (Gustaf Cederström) - Nationalmuseum - 22259.tif",
+          "mime": "image/tiff",
+          "thumburl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/15/30th_November._Sketch_%28Gustaf_Cederstr%C3%B6m%29_-_Nationalmuseum_-_22259.tif/lossy-page1-330px-30th_November._Sketch_%28Gustaf_Cederstr%C3%B6m%29_-_Nationalmuseum_-_22259.tif.jpg?utm_source=commons.wikimedia.org&utm_campaign=image",
+          "url": "https://upload.wikimedia.org/wikipedia/commons/1/15/30th_November._Sketch_%28Gustaf_Cederstr%C3%B6m%29_-_Nationalmuseum_-_22259.tif?utm_sour",
+          "right_fields": {
+            "LicenseShortName": "Public domain",
+            "LicenseUrl": "",
+            "Copyrighted": "False",
+            "AttributionRequired": "false",
+            "DateTimeOriginal": "1896 <span class=\"mw-valign-text-top noprint\" typeof=\"mw:File/Frameless\"><a href=\"https://www.wikidata.org/wiki/Q18600875#P571\" title=\"Edit this at Wikidata\"><img alt=\"Ed",
+            "Artist": "<bdi><a href=\"https://en.wikipedia.org/wiki/en:Gustaf_Cederstr%C3%B6m\" class=\"extiw\" title=\"w:en:Gustaf Cederström\"><span title=\"Swedish painter (1845-1933)\">Gustaf Ceder",
+            "ObjectName": "<div class=\"fn\">\n<div style=\"font-size:0.9em;display:inline-block;\">Swedish:  <div style=\"display:inline-block\" dir=\"ltr\" lang=\"sv\"><i>30 november. Skiss <span class=\"mw-"
+          }
+        },
+        {
+          "id": 52111243,
+          "title": "File:A Card Game (Gabriel Metsu) - Nationalmuseum - 17513.tif",
+          "mime": "image/tiff",
+          "thumburl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5c/A_Card_Game_%28Gabriel_Metsu%29_-_Nationalmuseum_-_17513.tif/lossy-page1-330px-A_Card_Game_%28Gabriel_Metsu%29_-_Nationalmuseum_-_17513.tif.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+          "url": "https://upload.wikimedia.org/wikipedia/commons/5/5c/A_Card_Game_%28Gabriel_Metsu%29_-_Nationalmuseum_-_17513.tif?utm_source=commons.wikimedi",
+          "right_fields": {
+            "LicenseShortName": "Public domain",
+            "LicenseUrl": "",
+            "Copyrighted": "False",
+            "AttributionRequired": "false",
+            "DateTimeOriginal": "late 1650s<div style=\"display: none;\">date QS:P571,+1650-00-00T00:00:00Z/8</div>",
+            "Artist": "<bdi><a href=\"https://en.wikipedia.org/wiki/en:Gabri%C3%ABl_Metsu\" class=\"extiw\" title=\"w:en:Gabriël Metsu\"><span title=\"Dutch painter (1629-1667)\">Gabriel Metsu</span></",
+            "ObjectName": "<div class=\"fn\">\n<div style=\"font-size:0.9em;display:inline-block;\">Swedish:  <div style=\"display:inline-block\" dir=\"ltr\" lang=\"sv\"><i>Spelparti <span class=\"mw-valign-te"
+          }
+        },
+        {
+          "id": 52111264,
+          "title": "File:A Cat and a Chaffinch. Five animal studies in one frame, NM 2223-2227 (Bruno Liljefors) - Nationalmuseum - 19285.tif",
+          "mime": "image/tiff",
+          "thumburl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5c/A_Cat_and_a_Chaffinch._Five_animal_studies_in_one_frame%2C_NM_2223-2227_%28Bruno_Liljefors%29_-_Nationalmuseum_-_19285.tif/lossy-page1-330px-A_Cat_and_a_Chaffinch._Five_animal_studies_in_one_frame%2C_NM_2223-2227_%28Bruno_Liljefors%2",
+          "url": "https://upload.wikimedia.org/wikipedia/commons/5/5c/A_Cat_and_a_Chaffinch._Five_animal_studies_in_one_frame%2C_NM_2223-2227_%28Bruno_Liljefo",
+          "right_fields": {
+            "LicenseShortName": "Public domain",
+            "LicenseUrl": "",
+            "Copyrighted": "False",
+            "AttributionRequired": "false",
+            "DateTimeOriginal": "1885<div style=\"display: none;\">date QS:P571,+1885-00-00T00:00:00Z/9</div>",
+            "Artist": "<bdi><a href=\"https://en.wikipedia.org/wiki/en:Bruno_Liljefors\" class=\"extiw\" title=\"w:en:Bruno Liljefors\"><span title=\"Swedish artist (1860–1939)\">Bruno Liljefors</span>",
+            "ObjectName": "A Cat and a Chaffinch. Five animal studies in one frame, NM 2223-2227"
+          }
+        },
+        {
+          "id": 52111277,
+          "title": "File:A Cat with a Young Bird in its Mouth. Five studies in one frame NM 2223-2227 (Bruno Liljefors) - Nationalmuseum - 19287.tif",
+          "mime": "image/tiff",
+          "thumburl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/38/A_Cat_with_a_Young_Bird_in_its_Mouth._Five_studies_in_one_frame_NM_2223-2227_%28Bruno_Liljefors%29_-_Nationalmuseum_-_19287.tif/lossy-page1-330px-A_Cat_with_a_Young_Bird_in_its_Mouth._Five_studies_in_one_frame_NM_2223-2227_%28Bruno_L",
+          "url": "https://upload.wikimedia.org/wikipedia/commons/3/38/A_Cat_with_a_Young_Bird_in_its_Mouth._Five_studies_in_one_frame_NM_2223-2227_%28Bruno_Li",
+          "right_fields": {
+            "LicenseShortName": "Public domain",
+            "LicenseUrl": "",
+            "Copyrighted": "False",
+            "AttributionRequired": "false",
+            "DateTimeOriginal": "1885<div style=\"display: none;\">date QS:P571,+1885-00-00T00:00:00Z/9</div>",
+            "Artist": "<bdi><a href=\"https://en.wikipedia.org/wiki/en:Bruno_Liljefors\" class=\"extiw\" title=\"w:en:Bruno Liljefors\"><span title=\"Swedish artist (1860–1939)\">Bruno Liljefors</span>",
+            "ObjectName": "A Cat with a Young Bird in its Mouth. Five studies in one frame NM 2223-2227"
+          }
+        }
+      ]
+    },
+    "staedel": {
+      "source": "staedel",
+      "oai_dc": {
+        "root_tag": "{http://www.openarchives.org/OAI/2.0/}OAI-PMH",
+        "error_tags": [],
+        "record_count_in_response": 500,
+        "title_examples": [],
+        "license_links": [],
+        "resumption_tokens": [
+          "{\"format\":\"oai_dc\",\"from\":\"2020-01-24T15:45:21Z\",\"until\":\"2026-11-21T03:02:10Z\","
+        ]
+      },
+      "lido": {
+        "root_tag": "{http://www.openarchives.org/OAI/2.0/}OAI-PMH",
+        "error_tags": [],
+        "record_count_in_response": 100,
+        "title_examples": [],
+        "license_links": [],
+        "resumption_tokens": [
+          "{\"format\":\"lido\",\"from\":\"2020-01-24T15:45:21Z\",\"until\":\"2026-11-21T03:02:10Z\",\"o"
+        ]
+      }
+    }
+  }
+}
