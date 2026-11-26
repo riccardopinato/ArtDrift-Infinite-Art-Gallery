@@ -201,51 +201,111 @@ def rijks_object(ident):
             "source_data_model":"Linked Art 2026 3-hop IIIF",
             "copyright_hold":"HOLD_PER_OBJECT_LICENSE_AND_COUNTRY"}
 
-def search_rijks(q):
+# Official Rijksmuseum Linked Art source-backed canaries from museum object pages.
+# These are test IDs, NOT editorial or commercial approval.
+RIJKS_VERIFIED_SOURCE_IDS=(
+    "https://id.rijksmuseum.nl/20015956",  # Tulip Fields (Dijsselhof)
+    "https://id.rijksmuseum.nl/20028474",  # Bloemen (Flowers)
+    "https://id.rijksmuseum.nl/200109683", # Flowers from Normandy
+    "https://id.rijksmuseum.nl/200108665", # Still Life with Flowers
+)
+
+def search_rijks(q,periods=("18??","19??"),max_pages=3):
+    """Use museum-supported creationDate wildcards, not one unfiltered page.
+
+    https://data.rijksmuseum.nl/tutorials/search/ documents next.id pagination,
+    creationDate=18??/19??, AND semantics and Dutch title coverage.
+    """
     from urllib.parse import urlencode
-    param={"type":"painting","imageAvailable":"true"}
-    if q in ("Monet","Toorop","Mondrian","Gestel","Jongkind","Sluijters"):
-        param["creator"]=q
-    else:param["title"]=q
-    uri="https://data.rijksmuseum.nl/search/collection?"+urlencode(param)
-    result=jget(uri)
-    return [x.get("id") for x in result.get("orderedItems") or []
-            if isinstance(x,dict) and x.get("id")],int((result.get("partOf") or {}).get("totalItems") or 0)
+    out=[];seen=set();count=0
+    for era in periods:
+        param={"type":"painting","imageAvailable":"true","creationDate":era}
+        if q in ("Monet","Toorop","Mondrian","Gestel","Jongkind","Sluijters"):
+            param["creator"]=q
+        else:param["title"]=q
+        uri="https://data.rijksmuseum.nl/search/collection?"+urlencode(param)
+        for page in range(max_pages):
+            obj=jget(uri)
+            if page==0:count+=int((obj.get("partOf") or {}).get("totalItems") or 0)
+            for entry in obj.get("orderedItems") or []:
+                ident=entry.get("id") if isinstance(entry,dict) else None
+                if ident and ident not in seen:
+                    seen.add(ident);out.append(ident)
+            nxt=obj.get("next")
+            uri=nxt.get("id") if isinstance(nxt,dict) else None
+            if not uri or not allow(uri,{"data.rijksmuseum.nl"}):break
+            time.sleep(.07)
+    return out,count
 
 def run_rijks(shard,max_images):
-    search_terms=RIJKS_QUERIES[shard]
-    ids={};stats=Counter();failed=[]
-    for term in search_terms:
+    terms=RIJKS_QUERIES[shard]
+    ids={}
+    stats=Counter();failed=[]
+    # Distinct candidate source IDs are distributed across terms. Otherwise
+    # hundreds of older works with the same title keyword monopolize the cap.
+    buckets=[]
+    for term in terms:
         try:
             arr,total=search_rijks(term)
             stats["search_listed"]+=len(arr)
             stats["search_catalog_matches"]+=total
+            buckets.append((term,arr))
             for k in arr:
                 if k:ids.setdefault(k,[]).append(term)
-        except Exception as ex:failed.append({"query":term,"reason":str(ex)[:130]})
-        time.sleep(.1)
+        except Exception as ex:
+            failed.append({"query":term,"reason":str(ex)[:130]})
+        time.sleep(.12)
+
     keys,names=main_keys()
-    distinct=sorted(ids,key=lambda s:hashlib.sha256(s.encode()).hexdigest())
-    selected=distinct[:max_images]
+    priority=list(RIJKS_VERIFIED_SOURCE_IDS) if shard==0 else []
+    selected=[];selected_set=set()
+    def take(ident):
+        if not re.fullmatch(r"https://id.rijksmuseum.nl/\d+",str(ident)):return
+        if ident not in selected_set:
+            selected_set.add(ident);selected.append(ident)
+    for ident in priority:take(ident)
+    # Round-robin across thematic search buckets, avoiding random sample of
+    # pre-1850 artists; creationDate already restricts source search.
+    positions=[0]*len(buckets)
+    while len(selected)<max_images:
+        advanced=False
+        for i,(_,arr) in enumerate(buckets):
+            if positions[i]>=len(arr):continue
+            take(arr[positions[i]])
+            positions[i]+=1
+            advanced=True
+            if len(selected)>=max_images:break
+        if not advanced:break
     result=[];holds=[];thumbs={}
-    # Linked Art calls fan out to three downstream API requests per work.
-    with ThreadPoolExecutor(max_workers=3) as exe:
+    stats["image_available_scenic_period_ids_discovered"]=len(ids)
+    stats["metadata_full_records_requested"]=len(selected)
+    stats["unprobed_source_candidate_ids"]=max(0,len(ids)-len(selected))
+    with ThreadPoolExecutor(max_workers=4) as exe:
         futures={exe.submit(rijks_object,item):item for item in selected}
         for fut in as_completed(futures):
             ident=futures[fut]
             try:
                 rec=fut.result()
-                if rec is None:stats["metadata_not_modern_scenic_or_image"]+=1;continue
+                if rec is None:
+                    stats["metadata_not_modern_scenic_or_image"]+=1
+                    continue
+                stats["metadata_modern_scenic_with_iiif"]+=1
                 if ("rijks",rec["museum_native_id"]) in keys or (
                     cleaned(rec["title"]),cleaned(rec["artist"])) in names:
-                    stats["duplicates_existing_artdrift"]+=1;continue
+                    stats["duplicates_existing_artdrift"]+=1
+                    continue
                 try:c,sha,img=image_raster(rec["remote_preview_url"])
                 except Exception as ex:
-                    holds.append({"id":rec["museum_native_id"],"reason":"IMAGE_UNAVAILABLE_"+str(ex)[:130]});continue
+                    holds.append({"id":rec["museum_native_id"],
+                                  "reason":"IMAGE_UNAVAILABLE_"+str(ex)[:130]})
+                    continue
+                stats["pixels_sampled"]+=1
                 rec["image_sha256"]=sha;rec["color_metrics"]=c
                 tier=color_tier(c)
                 if tier.startswith("HOLD"):
-                    holds.append({"id":rec["museum_native_id"],"reason":tier,"title":rec["title"],"metrics":c});continue
+                    holds.append({"id":rec["museum_native_id"],"reason":tier,
+                                  "title":rec["title"],"metrics":c})
+                    continue
                 rec["color_tier"]=tier
                 rec["curatorial_status"]="HOLD_VISUAL_CHECK"
                 rec["runtime_visible"]=False
@@ -254,7 +314,7 @@ def run_rijks(shard,max_images):
             except Exception as ex:
                 holds.append({"id":ident.rsplit("/",1)[-1],
                               "reason":"API_"+str(ex)[:160]})
-    stats["unique_source_identifiers"]=len(distinct)
+    stats["unique_source_identifiers"]=len(ids)
     return result,holds,stats,thumbs,failed
 
 def commons_search(term,limit=50):
