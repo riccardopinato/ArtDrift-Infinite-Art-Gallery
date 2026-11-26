@@ -48,7 +48,7 @@
     ]
   ],
   "cross_museum_exact_file_clusters": 11,
-  "exact_file_cluster_count": 4252,
+  "exact_file_cluster_count": 4260,
   "exact_match_evidence": [
     {
       "fingerprint": "10765320",
@@ -402,10 +402,10 @@
     {
       "catalog_exhaustively_searched": false,
       "commercially_approved": 0,
-      "latest_run_records": 5,
-      "records_retained": 5,
+      "latest_run_records": 8,
+      "records_retained": 13,
       "source": "staedel",
-      "source_identifiers_tracked": 58,
+      "source_identifiers_tracked": 118,
       "technical_color_pass": 0
     },
     {
@@ -464,7 +464,7 @@
     }
   ],
   "purpose": "RESEARCH_ONLY__CROSS_SOURCE_FILE_DUPLICATES_AND_PROVENANCE",
-  "records_retained_across_museums": 4263,
+  "records_retained_across_museums": 4271,
   "runtime_imported": 0,
   "schema_version": 1,
   "semantic_match_evidence": [],
@@ -478,7 +478,7 @@
     "nationalmuseum_se": "63e8ce58e3946b37364cdbf5303af5ac01d47b9b5b81ebc64c82456cce250fb7",
     "paris_musees": "227eb476a6d088514cedc29fd09ad2d8bc74e1d6d77129b688220714ac33eea7",
     "rijks": "032f942ae36239883f8d920a20dfc87fe9bb94bc11e10db47ad01922ed493ca4",
-    "staedel": "7f570d32fad41d701660bdc3796ad959d208f82a56b3ea6002777d0d9b0293bf",
+    "staedel": "9b30a43fbb25b8f80bee91647a16a406dc359572c2b0d005d99841dcaa523ffc",
     "te_papa": "1c1529db1e360a9bf542fe39bf93b95db95e04385fef574e066e38d1fe1997ce"
   },
   "unique_paintings_proven": false
