@@ -1,0 +1,68 @@
+name: Art Drift — Full 4042 WebP pixel and license-source QA (internal)
+on:
+  push:
+    branches:
+      - qa/artdrift-4042-pixel-certification-20261126
+    paths:
+      - tools/artdrift_webp_full_pixel_qa.py
+      - tools/test_artdrift_webp_full_pixel_qa.py
+      - .github/workflows/artdrift-full-4042-pixel-qa.yml
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: artdrift-webp-full-pixel-certification
+  cancel-in-progress: false
+jobs:
+  all-images:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --disable-pip-version-check Pillow==11.3.0
+      - name: Unit tests and verified manifest-asset correspondence
+        run: |
+          python -m unittest discover -s tools -p 'test_artdrift_webp_full_pixel_qa.py' -v
+          python scripts/verify_mobile_thumbnail_pack.py
+      - name: Decode every WebP pixel and measure source image color
+        run: python -u tools/artdrift_webp_full_pixel_qa.py --expected 4042
+      - name: Enforce actual image integrity only; do not certify publication
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          o=json.loads(Path('docs/generated/ARTDRIFT_4042_WEBP_PIXEL_QA.json').read_text())
+          assert o['manifest_count']==4042
+          assert o['decoded_valid_webp_count']==4042
+          assert len(o['invalid_decoded_images'])==0
+          assert o['commercially_approved']==0
+          assert o['runtime_imported_by_audit']==0
+          assert o['physical_device_qa']=='PENDING'
+          assert o['source_image_rights_final']=='PENDING_ITEM_AND_TERRITORY'
+          print('VERIFIED',o['decoded_valid_webp_count'],'real WebP images,',o['technical_color_tiers'])
+          PY
+      - name: Preserve integrity evidence with source hashes
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ArtDrift-4042-Technical-Pixel-QA-Report
+          path: docs/generated/ARTDRIFT_4042_WEBP_PIXEL_QA.json
+          retention-days: 30
+          if-no-files-found: warn
+      - name: Commit only evidence report, never new image bytes
+        if: success()
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          cp docs/generated/ARTDRIFT_4042_WEBP_PIXEL_QA.json /tmp/webp-qa.json
+          git fetch origin qa/artdrift-4042-pixel-certification-20261126
+          git reset --hard FETCH_HEAD
+          cp /tmp/webp-qa.json docs/generated/ARTDRIFT_4042_WEBP_PIXEL_QA.json
+          git add docs/generated/ARTDRIFT_4042_WEBP_PIXEL_QA.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'qa: 4042 source-mapped WebP raster technical certificate (not legal)'
+            git push origin HEAD:qa/artdrift-4042-pixel-certification-20261126
+          fi
