@@ -424,14 +424,15 @@ def staedel_records():
     """
     base="https://sammlung.staedelmuseum.de/api/oai?"
     kept=[]
-    for from_date in ("2025-01-01","2023-01-01","2020-01-24"):
+    for from_date in ("2025-01-01T00:00:00Z","2023-01-01T00:00:00Z","2020-01-24T15:45:21Z"):
         uri=base+urllib.parse.urlencode({"verb":"ListRecords",
             "metadataPrefix":"lido","from":from_date})
         for page in range(16):
             raw=fetch(uri,limit=3_000_000,timeout=30)
             root=ET.fromstring(raw)
             errors=[(x.attrib.get("code"),x.text) for x in root.findall(".//oai:error",NS)]
-            if errors:break
+            if errors:
+                raise ValueError("OAI source response error: "+str(errors[:2]))
             records=root.findall(".//oai:record",NS)
             for record in records:
                 head=record.find("./oai:header",NS)
@@ -448,6 +449,8 @@ def staedel_records():
                 {"verb":"ListRecords","resumptionToken":token.text})
             time.sleep(.15)
         if kept:break
+    if not kept:
+        raise ValueError("STAEDEL_SOURCE_NO_ACTIVE_LIDO_RECORDS_NOT_ZERO_VALID_ARTWORKS")
     return kept[:450]
 
 def staedel_parse(record):
