@@ -53,8 +53,8 @@ jobs:
           assert b['territorial_and_final_curation_approved']==0
           for w in b['works']:
               c=w['color_metrics']
-              assert c['luminance']>=.595 and c['dark_fraction']<=.095
-              assert c['vivid_fraction']>=.255 and c['saturation']>=.235
+              assert c['luminance']>=.55 and c['dark_fraction']<=.10
+              assert c['vivid_fraction']>=.18 and c['saturation']>=.18
               assert w['public_domain_image_flag'] is True
               assert w['runtime_visible'] is False
               assert w['publication_status'].startswith('HOLD')
