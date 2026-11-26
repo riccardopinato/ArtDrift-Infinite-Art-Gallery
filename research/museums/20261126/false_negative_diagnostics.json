@@ -1,0 +1,295 @@
+{
+  "schema_version": 1,
+  "as_of": "2026-11-26",
+  "audit_kind": "FALSE_NEGATIVE_ROOT_CAUSE",
+  "source": "actual official Rijks/Sweden/Städel API endpoints",
+  "rijks": {
+    "groups": [
+      {
+        "term": "landschap",
+        "listed_page_1": 100,
+        "catalog_total": 246,
+        "unread_matches_due_to_pagination": 146
+      },
+      {
+        "term": "bloemen",
+        "listed_page_1": 51,
+        "catalog_total": 51,
+        "unread_matches_due_to_pagination": 0
+      },
+      {
+        "term": "tuin",
+        "listed_page_1": 5,
+        "catalog_total": 5,
+        "unread_matches_due_to_pagination": 0
+      },
+      {
+        "term": "zee",
+        "listed_page_1": 28,
+        "catalog_total": 28,
+        "unread_matches_due_to_pagination": 0
+      },
+      {
+        "term": "strand",
+        "listed_page_1": 13,
+        "catalog_total": 13,
+        "unread_matches_due_to_pagination": 0
+      },
+      {
+        "term": "bomen",
+        "listed_page_1": 2,
+        "catalog_total": 2,
+        "unread_matches_due_to_pagination": 0
+      },
+      {
+        "term": "zomer",
+        "listed_page_1": 5,
+        "catalog_total": 5,
+        "unread_matches_due_to_pagination": 0
+      },
+      {
+        "term": "park",
+        "listed_page_1": 9,
+        "catalog_total": 9,
+        "unread_matches_due_to_pagination": 0
+      },
+      {
+        "term": "veld",
+        "listed_page_1": 1,
+        "catalog_total": 1,
+        "unread_matches_due_to_pagination": 0
+      },
+      {
+        "term": "rivier",
+        "listed_page_1": 19,
+        "catalog_total": 19,
+        "unread_matches_due_to_pagination": 0
+      },
+      {
+        "term": "kust",
+        "listed_page_1": 22,
+        "catalog_total": 22,
+        "unread_matches_due_to_pagination": 0
+      },
+      {
+        "term": "natuur",
+        "listed_page_1": 1,
+        "catalog_total": 1,
+        "unread_matches_due_to_pagination": 0
+      },
+      {
+        "term": "Monet",
+        "listed_page_1": 2,
+        "catalog_total": 2,
+        "unread_matches_due_to_pagination": 0
+      },
+      {
+        "term": "Toorop",
+        "listed_page_1": 6,
+        "catalog_total": 6,
+        "unread_matches_due_to_pagination": 0
+      },
+      {
+        "term": "Mondrian",
+        "listed_page_1": 0,
+        "catalog_total": 0,
+        "unread_matches_due_to_pagination": 0
+      },
+      {
+        "term": "Gestel",
+        "listed_page_1": 0,
+        "catalog_total": 0,
+        "unread_matches_due_to_pagination": 0
+      },
+      {
+        "term": "Jongkind",
+        "listed_page_1": 6,
+        "catalog_total": 6,
+        "unread_matches_due_to_pagination": 0
+      },
+      {
+        "term": "Sluijters",
+        "listed_page_1": 0,
+        "catalog_total": 0,
+        "unread_matches_due_to_pagination": 0
+      }
+    ]
+  },
+  "nationalmuseum_se": {
+    "raw_searches": {
+      "landscape": {
+        "pages": 50
+      },
+      "summer": {
+        "pages": 50
+      },
+      "blom": {
+        "pages": 50
+      },
+      "sea": {
+        "pages": 50
+      }
+    },
+    "sample_first_200_rejection_reasons": {
+      "no_original_creation_year": 12,
+      "title_mismatch": 11,
+      "license": 2,
+      "wrong_institution": 1
+    },
+    "examples": [
+      {
+        "title": "File:Landscape with Water - Nationalmuseum - 17110.tif",
+        "part": "File:Landscape with Water - Nationalmuseum - 17110.tif",
+        "reasons": [
+          "no_original_creation_year"
+        ],
+        "year_raw": "Unknown date",
+        "license": "Public domain",
+        "mime": "image/tiff"
+      },
+      {
+        "title": "File:Sea Landscape off Honfleur (Richard Bergh) - Nationalmuseum - 23843.tif",
+        "part": "File:Sea Landscape off Honfleur",
+        "reasons": [],
+        "year_raw": "1881<div style=\"display: none;\">date QS:P571,+1881-00-00T00:00:00Z/9</div>",
+        "license": "Public domain",
+        "mime": "image/tiff"
+      },
+      {
+        "title": "File:Autumn Landscape with Partridges (Bruno Liljefors) - Nationalmuseum - 23794.tif",
+        "part": "File:Autumn Landscape with Partridges",
+        "reasons": [],
+        "year_raw": "1913<div style=\"display: none;\">date QS:P571,+1913-00-00T00:00:00Z/9</div>",
+        "license": "Public domain",
+        "mime": "image/tiff"
+      },
+      {
+        "title": "File:Summer Landscape (Edvard Bergh) - Nationalmuseum - 20138.tif",
+        "part": "File:Summer Landscape",
+        "reasons": [],
+        "year_raw": "1873<div style=\"display: none;\">date QS:P571,+1873-00-00T00:00:00Z/9</div>",
+        "license": "Public domain",
+        "mime": "image/tiff"
+      },
+      {
+        "title": "File:Fiord Landscape (Sofie Werenskiold) - Nationalmuseum - 31080.tif",
+        "part": "File:Fiord Landscape",
+        "reasons": [],
+        "year_raw": "1882<div style=\"display: none;\">date QS:P571,+1882-00-00T00:00:00Z/9</div>",
+        "license": "Public domain",
+        "mime": "image/tiff"
+      },
+      {
+        "title": "File:Fox in Winter Landscape (Bruno Liljefors) - Nationalmuseum - 23703.tif",
+        "part": "File:Fox in Winter Landscape",
+        "reasons": [],
+        "year_raw": "1938<div style=\"display: none;\">date QS:P571,+1938-00-00T00:00:00Z/9</div>",
+        "license": "Public domain",
+        "mime": "image/tiff"
+      },
+      {
+        "title": "File:Moonlit Landscape (Herman Norrman) - Nationalmuseum - 18894.tif",
+        "part": "File:Moonlit Landscape",
+        "reasons": [],
+        "year_raw": "1901<div style=\"display: none;\">date QS:P571,+1901-00-00T00:00:00Z/9</div>",
+        "license": "Public domain",
+        "mime": "image/tiff"
+      },
+      {
+        "title": "File:Decorative Landscape II (Jan Verkade) - Nationalmuseum - 19109.tif",
+        "part": "File:Decorative Landscape II",
+        "reasons": [],
+        "year_raw": "1891<div style=\"display: none;\">date QS:P571,+1891-00-00T00:00:00Z/9</div>",
+        "license": "Public domain",
+        "mime": "image/tiff"
+      },
+      {
+        "title": "File:Nestorbecher Mykene (Nationalmuseum Athen).JPG",
+        "part": "File:Nestorbecher Mykene",
+        "reasons": [
+          "title_mismatch",
+          "license",
+          "no_original_creation_year"
+        ],
+        "year_raw": "Summer 2006<div style=\"display: none;\">date QS:P,+2006-00-00T00:00:00Z/9,P4241,Q40720564</div>",
+        "license": "CC BY-SA 3.0",
+        "mime": "image/jpeg"
+      },
+      {
+        "title": "File:Helmer Osslund - A Summer Evening by Kallsjön - Google Art Project.jpg",
+        "part": "File:Helmer Osslund - A Summer Evening by Kallsjön - Google Art Project.jpg",
+        "reasons": [
+          "wrong_institution",
+          "no_original_creation_year"
+        ],
+        "year_raw": "Unknown date",
+        "license": "Public domain",
+        "mime": "image/jpeg"
+      },
+      {
+        "title": "File:Pano Grand-Hotel Nationalmuseum Stockholm DSC 0003w.jpg",
+        "part": "File:Pano Grand-Hotel Nationalmuseum Stockholm DSC 0003w.jpg",
+        "reasons": [
+          "title_mismatch",
+          "license",
+          "no_original_creation_year"
+        ],
+        "year_raw": "2011-07-08",
+        "license": "CC BY-SA 3.0",
+        "mime": "image/jpeg"
+      },
+      {
+        "title": "File:Midsummer Dance (Anders Zorn) - Nationalmuseum - 18607.tif",
+        "part": "File:Midsummer Dance",
+        "reasons": [
+          "title_mismatch"
+        ],
+        "year_raw": "1897<div style=\"display: none;\">date QS:P571,+1897-00-00T00:00:00Z/9</div>",
+        "license": "Public domain",
+        "mime": "image/tiff"
+      },
+      {
+        "title": "File:The Artist's Sister (Carl Wilhelmson) - Nationalmuseum - 18722.tif",
+        "part": "File:The Artist's Sister",
+        "reasons": [
+          "title_mismatch"
+        ],
+        "year_raw": "1899<div style=\"display: none;\">date QS:P571,+1899-00-00T00:00:00Z/9</div>",
+        "license": "Public domain",
+        "mime": "image/tiff"
+      },
+      {
+        "title": "File:Selfportrait (Eugène Jansson) - Nationalmuseum - 19161.tif",
+        "part": "File:Selfportrait",
+        "reasons": [
+          "title_mismatch"
+        ],
+        "year_raw": "1910<div style=\"display: none;\">date QS:P571,+1910-00-00T00:00:00Z/9</div>",
+        "license": "Public domain",
+        "mime": "image/tiff"
+      },
+      {
+        "title": "File:A Fox Family (Bruno Liljefors) - Nationalmuseum - 18379.tif",
+        "part": "File:A Fox Family",
+        "reasons": [
+          "title_mismatch"
+        ],
+        "year_raw": "1886<div style=\"display: none;\">date QS:P571,+1886-00-00T00:00:00Z/9</div>",
+        "license": "Public domain",
+        "mime": "image/tiff"
+      }
+    ]
+  },
+  "staedel": {
+    "inspected_record_count": 200,
+    "lido_nodes_found": 0,
+    "recid_looks_like": [],
+    "lido_first_record_child_tags": [],
+    "field_count": {},
+    "element_local_name_counts": {},
+    "image_resource_host_counts": {},
+    "example_titles": [],
+    "current_st_idx_parsed": 0
+  },
+  "runtime_imported": 0
+}
