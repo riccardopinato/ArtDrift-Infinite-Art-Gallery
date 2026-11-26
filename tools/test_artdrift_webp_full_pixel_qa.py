@@ -25,8 +25,12 @@ def setup(root,license="CC0",count=2):
                       "artwork_type_title":"Painting",
                       "is_public_domain":True,"rights_license":license,
                       "rights_evidence_url":"https://www.metmuseum.org/about-the-met/policies-and-documents/open-access"})
-        Image.new("RGB",(300,200),(130+i*12,140,170)).save(
-            pack/f"met_{i}.webp","WEBP",quality=80)
+        painting=Image.new("RGB",(300,200))
+        painting.putdata([((x*3+y*2+i*11)%256,
+                           (x*2+y*5+i*19)%256,
+                           (x*7+y*3+i*23)%256)
+                          for y in range(200) for x in range(300)])
+        painting.save(pack/f"met_{i}.webp","WEBP",quality=65)
     (pack/"manifest.json").write_text(json.dumps({"schema_version":1,"keys":keys}))
     (catalog/"catalog_global.json").write_text(json.dumps(items))
 
