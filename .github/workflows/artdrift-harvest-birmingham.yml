@@ -61,9 +61,14 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          # CI source runs may overlap a previous report-only push: re-anchor
+          # onto the current exact branch tip, then apply only this JSON.
+          cp research/museums/20261126/lanes/results/birmingham.json /tmp/artdrift-birmingham-latest.json
+          git fetch origin research/artdrift-harvest-birmingham-20261126
+          git reset --hard FETCH_HEAD
+          cp /tmp/artdrift-birmingham-latest.json research/museums/20261126/lanes/results/birmingham.json
           git add research/museums/20261126/lanes/results/birmingham.json
           if ! git diff --cached --quiet; then
-            git commit -m "research(birmingham): independent source inventory and image evidence"
-            git pull --rebase origin research/artdrift-harvest-birmingham-20261126
+            git commit -m "research(birmingham): isolated source inventory and image QA"
             git push origin HEAD:research/artdrift-harvest-birmingham-20261126
           fi
