@@ -39,3 +39,12 @@ Il report QA estetico `research/mass_bright/20261126/bright_consolidated_editori
 7. Priority: use user-approved aesthetics, not filling quantity quotas with dark paintings.
 
 **Status at checkpoint:** Source research and technical validations performed, editorial shortlist saved; no legal final import or deployment.
+
+## Wave Wikimedia Commons: otto batch CONCLUSI (26 novembre)
+- Workflow https://github.com/riccardopinato/ArtDrift-Infinite-Art-Gallery/actions/runs/45815982003: **8/8 shard PASS + aggregazione PASS**. Scaricate immagini reali dal CDN ufficiale `thumb.wikimedia.org`, senza bypassare rate limit; la versione prima del fix non era valida per questo conteggio.
+- **2.703** possibili file ricerca nel metadata sweep, **880** raster scaricati/verificati, **113** file Open Access PD/CC0 con luminosità e pixel vivaci sopra i limiti; **1.823** file non ancora verificati pixel per ragioni di limite batch. I 113 hanno ID file Commons distinti, **non sono garantiti opere uniche** (copie fotografiche diverse della stessa tela possibili).
+- Secondo filtro più severo di vivacità: saturazione media >= 0,24, quota pixel vivaci >= 0,30, con 17 esclusioni editoriali esplicite di duplicati sospetti, disegni beige, ritratti o opere già rappresentate; **58 file Commons in shortlist cromatica forte**, **55 in HOLD** per soggetto, palette o possibile duplicato. Altre verifiche su stessa opera fra musei, provenienza, paese di diffusione e dispositivi restano obbligatorie.
+- Nuovo manifest `research/mass_bright/20261126/commons_pd_color_stronger_editorial_queue.json`, raw verified `research/mass_bright/20261126/commons_pd_bright_verified.json`.
+- Contando le registrazioni per fonte (senza pretendere di aver risolto tutte le duplicazioni inter-museo): **27 NGA + 18 museo extra + 58 Commons = 103 candidature stilistiche di partenza**. Zero opere di queste wave importate nella app.
+
+Per una crescita ulteriore del catalogo non bisogna scambiare i 2.703 metadati Commons con immagini effettivamente approvate; serviranno batch separati per i rimanenti 1.823 media e collaudi individuali.
