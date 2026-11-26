@@ -1,0 +1,115 @@
+{
+  "schema_version": 1,
+  "as_of": "2026-11-26",
+  "scope": "European museum expansion: no US museum searches and no already-explored SMK",
+  "excluded_sources": [
+    "nga",
+    "met",
+    "cma",
+    "aic",
+    "smk"
+  ],
+  "style": {
+    "preferred_dark_fraction_max": 0.15,
+    "conditional_dark_fraction_max": 0.2,
+    "conditional_vivid_fraction_min": 0.3,
+    "conditional_saturation_min": 0.24,
+    "luminance_min": 0.55,
+    "vivid_fraction_min": 0.18,
+    "saturation_min": 0.18,
+    "avoid_subjects": [
+      "portrait",
+      "night",
+      "black",
+      "dark",
+      "prominent people"
+    ]
+  },
+  "sources": [
+    {
+      "key": "rijks",
+      "name": "Rijksmuseum",
+      "country": "Netherlands",
+      "city": "Amsterdam",
+      "priority": "P1",
+      "data_access": "Official public Linked Art Search API, no API key",
+      "image_access": "Official micr.io IIIF 3-hop visual item to digital object",
+      "image_license": "Individual object PD or CC0, not assumed for every image",
+      "policy": "https://data.rijksmuseum.nl/about/",
+      "endpoint": "https://data.rijksmuseum.nl/search/collection",
+      "mode": "AUTOMATED_IMAGE_PROBE",
+      "notes": "Paintings 1850-1960, landscapes; many old masters unsuitable dark"
+    },
+    {
+      "key": "nationalmuseum_se",
+      "name": "Nationalmuseum Sweden",
+      "country": "Sweden",
+      "city": "Stockholm",
+      "priority": "P1",
+      "data_access": "Official Museum-linked Wikimedia Commons institutional category",
+      "image_access": "Wikimedia Commons official file thumbnail CDN",
+      "image_license": "PD on selected Commons museum donated files, per-file rights confirmation",
+      "policy": "https://www.nationalmuseum.se/en/explore-art-and-design/images",
+      "endpoint": "https://commons.wikimedia.org/wiki/Category:Images_from_the_Nationalmuseum_Stockholm",
+      "mode": "AUTOMATED_IMAGE_PROBE",
+      "notes": "Never count author-search Commons pool again as new museum source unless dedup by source file ID, title/artist and image sha"
+    },
+    {
+      "key": "belvedere",
+      "name": "Belvedere Museum",
+      "country": "Austria",
+      "city": "Vienna",
+      "priority": "P1",
+      "data_access": "Public official collection web Open Content pages",
+      "image_access": "Official collection item with CC0 badge / IIIF if available",
+      "image_license": "CC0 only for individual post-copyright works, not blanket for all",
+      "policy": "https://sammlung.belvedere.at/opencontent/images",
+      "endpoint": "https://sammlung.belvedere.at/opencontent/images",
+      "mode": "METADATA_PROBE_NO_SCRAPING_GUESS",
+      "notes": "Austrian modern landscape and vivid floral paintings; require official item evidence before images"
+    },
+    {
+      "key": "staedel",
+      "name": "Städel Museum",
+      "country": "Germany",
+      "city": "Frankfurt am Main",
+      "priority": "P2",
+      "data_access": "Official OAI-PMH documentation and export; may require free access activation",
+      "image_access": "Images in LIDO linkResource",
+      "image_license": "CC BY-SA 4.0; credit and share-alike requirements, may affect delivery",
+      "policy": "https://sammlung.staedelmuseum.de/en/oai/guide",
+      "endpoint": "https://sammlung.staedelmuseum.de/api/oai",
+      "mode": "OAI_ACCESS_PROBE_ONLY",
+      "notes": "If sign-in/account needed STOP and do not bypass"
+    },
+    {
+      "key": "paris_musees",
+      "name": "Paris Musées / Petit Palais / Musée d'Art Moderne de Paris",
+      "country": "France",
+      "city": "Paris",
+      "priority": "P2",
+      "data_access": "Official Paris Musées collection portal",
+      "image_access": "Only individually public-domain images tagged unrestricted / CC0",
+      "image_license": "Public-domain CC0 subset only, modern works often protected",
+      "policy": "https://www.parismusees.paris.fr/",
+      "endpoint": "https://www.parismuseescollections.paris.fr/en",
+      "mode": "SOURCE_LICENSE_RESEARCH",
+      "notes": "14 Paris civic museums; do not confuse Musée d'Orsay/Orangerie with Paris Musées civic network"
+    },
+    {
+      "key": "national_gallery_london",
+      "name": "National Gallery London",
+      "country": "United Kingdom",
+      "city": "London",
+      "priority": "EXCLUDED_COMMERCIAL",
+      "data_access": "Structured data CC0",
+      "image_access": "Images CC BY-NC-ND 4.0",
+      "image_license": "CC BY-NC-ND prohibited for commercial/derivative integration without permissions",
+      "policy": "https://www.nationalgallery.org.uk/documentation/ngacuk/licences",
+      "mode": "NO_IMAGE_IMPORT"
+    }
+  ],
+  "publication_mode": "RESEARCH_ONLY",
+  "runtime_imported": 0,
+  "commercial_approved_count": 0
+}
