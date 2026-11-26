@@ -24,3 +24,13 @@ Original main: `7b46ee8d2ec4c060eb235e11c9aba875ae7171de`; review branch merges 
 - [Flutter Web Chromium screenshots (GitHub Actions)](https://github.com/riccardopinato/ArtDrift-Infinite-Art-Gallery/actions/runs/45308145630), exact screen artifact ID `14882655461`, PNG 390×844 SHA256 `79dc14d85e3cdde4631eefaaf32ba10cb3b39b9ef48d56dca5fd39bb1e3cdbdf`, PNG 820×1180 SHA256 `330aa013504eade1045982db79cc7b911b1c1c632027a9644c67ab9161368147`.
 - Inspected both raster captures: top-center search pill, dark mosaic and basic actions rendered; several wide dark tiles present **museum glyph/text instead of imagery**; noticeable clusters of portraits and low-resolution historic source photos. The UI has not incorporated all ten approved G2 mockups. These deficiencies are **visual review findings**, not CI failures and not a license to silently remap existing camera/tile IDs.
 - **Visual state:** `SCREENSHOT_CAPTURED / REVIEW_REQUIRED` (neither `VISUAL_APPROVED` nor `PHYSICAL_ACCEPTED`). Correct by a future artwork-ID-stable visual source/thumbnail plan rather than by shuffling tile indices.
+
+## Doppleganger
+
+Art Drift only. The gallery opens a short portrait quiz with three names and
+an optional reveal. The reveal shows the chosen pairing, the editorial note,
+and image credits. The bundled WebP previews make rounds playable offline.
+Only complete pairs marked verified are drawn as rounds. The remaining
+editorial candidates can be reviewed in the research gallery. Interface
+strings follow the six existing app locales. Editorial notes use the
+original Italian text.
