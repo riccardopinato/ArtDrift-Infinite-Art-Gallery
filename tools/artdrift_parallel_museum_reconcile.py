@@ -17,7 +17,9 @@ OUTROOT = Path(__file__).resolve().parents[1] / "research/museums/20261126/lanes
 EMPTY = (None, "", [], {})
 EXCLUDES = re.compile(r"\b(?:portrait|self.portrait|dolls?|puppets?|toys?|"
                       r"battles?|nocturne|book|catalogue|catalog|"
-                      r"gardeners.? chronicle)\b", re.I)
+                      r"gardeners.? chronicle|girls?|boys?|woman|women|"
+                      r"men|violinist|adam and eve|arabs resting|"
+                      r"postcards?|invitation|untitled)\b", re.I)
 
 
 def load(path: Path | None) -> dict | None:
