@@ -1,0 +1,126 @@
+name: Art Drift — Retry only 39 Wikimedia rate-limited images
+on:
+  push:
+    branches:
+      - qa/artdrift-429-retry-20261126
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: artdrift-39-image-retry-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  source-and-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --disable-pip-version-check Pillow==11.3.0
+      - run: python -m unittest tools/test_artdrift_retry_429.py -v
+      - name: Fetch pinned source candidate set
+        run: |
+          git fetch --no-tags --depth=1 origin b82a4574db3d504141b6d2e95e403aa743c771e3
+          mkdir -p .artist-inventory
+          git show FETCH_HEAD:research/artists/20261126/artist_bulk_486_triage.json > .artist-inventory/queue.json
+      - uses: actions/download-artifact@v4
+        with:
+          name: ARTDRIFT-486-REVIEW-QUEUE-AND-EVIDENCE
+          path: .initial-qa
+          repository: ${{ github.repository }}
+          run-id: '45905782588'
+          github-token: ${{ github.token }}
+      - name: Assert exactly 486 initial images and 39 HTTP 429 failures
+        run: |
+          python - <<'PY'
+          import sys
+          sys.path.insert(0, "tools")
+          from pathlib import Path
+          import artdrift_486_parallel_gate as g
+          import artdrift_retry_429 as r
+          x=g.read_queue(Path(".artist-inventory/queue.json"))
+          q=r.read_initial(Path(".initial-qa/.artist-aggregate/review_queue.csv"))
+          print("SOURCE_COUNT",len(x),"FIRST_PASS_ROWS",len(q),"RETRY_IDENTITIES",len(r.pending_ids(q)))
+          PY
+
+  retry-429:
+    needs: source-and-tests
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        worker: [0, 1]
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --disable-pip-version-check Pillow==11.3.0
+      - name: Source pin
+        run: |
+          git fetch --no-tags --depth=1 origin b82a4574db3d504141b6d2e95e403aa743c771e3
+          mkdir -p .artist-inventory
+          git show FETCH_HEAD:research/artists/20261126/artist_bulk_486_triage.json > .artist-inventory/queue.json
+      - uses: actions/download-artifact@v4
+        with:
+          name: ARTDRIFT-486-REVIEW-QUEUE-AND-EVIDENCE
+          path: .initial-qa
+          repository: ${{ github.repository }}
+          run-id: '45905782588'
+          github-token: ${{ github.token }}
+      - name: Retry only selected 39 previously rate-limited items
+        run: |
+          python -u tools/artdrift_retry_429.py --inventory .artist-inventory/queue.json --initial-csv .initial-qa/.artist-aggregate/review_queue.csv --worker ${{ matrix.worker }} --out retry-results
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: artist-429-retry-worker-${{ matrix.worker }}
+          path: retry-results/retry_*.json
+          retention-days: 30
+          if-no-files-found: warn
+
+  reconcile:
+    if: always()
+    needs: [source-and-tests, retry-429]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --disable-pip-version-check Pillow==11.3.0
+      - run: |
+          git fetch --no-tags --depth=1 origin b82a4574db3d504141b6d2e95e403aa743c771e3
+          mkdir -p .artist-inventory
+          git show FETCH_HEAD:research/artists/20261126/artist_bulk_486_triage.json > .artist-inventory/queue.json
+      - uses: actions/download-artifact@v4
+        with:
+          name: ARTDRIFT-486-REVIEW-QUEUE-AND-EVIDENCE
+          path: .initial-qa
+          repository: ${{ github.repository }}
+          run-id: '45905782588'
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: artist-429-retry-worker-*
+          merge-multiple: true
+          path: retry-results
+      - name: Reconcile all 486, preserve 447 prior passes and rights HOLD
+        run: |
+          python tools/artdrift_retry_429.py --inventory .artist-inventory/queue.json --initial-csv .initial-qa/.artist-aggregate/review_queue.csv --merge-from retry-results --out retry-aggregate
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ARTDRIFT-429-RATE-LIMIT-RETRY-RECONCILED
+          path: retry-aggregate/*
+          if-no-files-found: warn
+          retention-days: 30
