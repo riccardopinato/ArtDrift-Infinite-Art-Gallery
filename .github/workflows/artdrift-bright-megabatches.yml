@@ -1,0 +1,89 @@
+name: ArtDrift — Bright Art Mega Batch, 3 museums × 6 parallel shards
+on:
+  push:
+    branches: [research/artdrift-bright-megabatches-20261126]
+    paths:
+      - tools/artdrift_bright_mass.py
+      - tools/test_artdrift_bright_mass.py
+      - tools/artdrift_bright_mass_aggregate.py
+      - .github/workflows/artdrift-bright-megabatches.yml
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: artdrift-bright-megabatches-20261126
+  cancel-in-progress: false
+jobs:
+  discover:
+    name: ${{ matrix.provider }}-batch-${{ matrix.shard }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 27
+    strategy:
+      fail-fast: false
+      max-parallel: 6
+      matrix:
+        provider: [aic, cma, met]
+        shard: [0, 1, 2, 3, 4, 5]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install image decoder
+        run: python -m pip install --disable-pip-version-check Pillow==11.3.0
+      - name: Unit tests and local runtime catalogs
+        run: |
+          python -m py_compile tools/artdrift_bright_mass.py
+          python -m unittest discover -s tools -p test_artdrift_bright_mass.py -v
+      - name: Search museum OA data and inspect up to 175 new images
+        run: |
+          python -u tools/artdrift_bright_mass.py --provider "${{ matrix.provider }}" --shard "${{ matrix.shard }}" --max-images 175 --workers 5
+      - name: Archive batch evidence even on partial failures
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ArtDrift-BrightMass-${{ matrix.provider }}-${{ matrix.shard }}
+          path: .artdrift_research/bright_mass/${{ matrix.provider }}/batch_*/
+          include-hidden-files: true
+          if-no-files-found: ignore
+          retention-days: 30
+  combine:
+    name: Combine source verified results — never auto-publish
+    needs: [discover]
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install image decoder
+        run: python -m pip install --disable-pip-version-check Pillow==11.3.0
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: ArtDrift-BrightMass-*
+          path: .artdrift_research/incoming
+          merge-multiple: false
+      - name: Combine and verify bright images, IDs and HOLD statuses
+        run: |
+          python -u tools/artdrift_bright_mass_aggregate.py
+      - name: Preserve combined contact sheet and reports for review
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ArtDrift-BrightMass-Combined
+          path: research/mass_bright/20261126/
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Commit verified research only, no runtime / assets
+        if: success()
+        run: |
+          test -f research/mass_bright/20261126/bright_mass_combined.json
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add research/mass_bright/20261126/
+          if ! git diff --cached --quiet; then
+            git commit -m "research(artdrift): 18 parallel color-verified OA art batches"
+            git push origin HEAD:research/artdrift-bright-megabatches-20261126
+          fi
