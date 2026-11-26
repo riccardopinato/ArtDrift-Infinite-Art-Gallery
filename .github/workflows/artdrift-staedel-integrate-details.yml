@@ -1,0 +1,68 @@
+name: Art Drift — Integrate Städel LIDO stage-two HOLD evidence
+on:
+  push:
+    branches:
+      - research/artdrift-harvest-staedel-20261126
+    paths:
+      - tools/artdrift_staedel_integrate_details.py
+      - tools/test_artdrift_staedel_integrate_details.py
+      - .github/workflows/artdrift-staedel-integrate-details.yml
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: artdrift-staedel-offline-integration
+  cancel-in-progress: false
+jobs:
+  integrate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate merging logic offline
+        run: |
+          python -m py_compile tools/artdrift_staedel_integrate_details.py
+          python -m unittest discover -s tools -p 'test_artdrift_staedel_integrate_details.py' -v
+      - name: Preserve older + newer Städel research records
+        run: python -u tools/artdrift_staedel_integrate_details.py
+      - name: Verify the two output documents contain no import instructions
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          base=Path('research/museums/20261126/lanes')
+          a=json.loads((base/'results/staedel.json').read_text())
+          b=json.loads((base/'reviews/staedel_visual_shortlist.json').read_text())
+          assert a['commercially_approved']==0 and a['runtime_imported']==0
+          assert a['cumulative_distinct_candidate_records']>=8
+          assert b['ready_to_import']==0 and b['runtime_imported']==0
+          assert all(x['runtime_visible'] is False for x in a['review_candidates'])
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ArtDrift-Staedel-Updated-Research-HOLD
+          path: |
+            research/museums/20261126/lanes/results/staedel.json
+            research/museums/20261126/lanes/reviews/staedel_visual_shortlist.json
+          retention-days: 30
+          if-no-files-found: warn
+      - name: Commit only Städel research HOLD evidence
+        if: success()
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          cp research/museums/20261126/lanes/results/staedel.json /tmp/staedel-union.json
+          cp research/museums/20261126/lanes/reviews/staedel_visual_shortlist.json /tmp/staedel-queue.json
+          git fetch origin research/artdrift-harvest-staedel-20261126
+          git reset --hard FETCH_HEAD
+          cp /tmp/staedel-union.json research/museums/20261126/lanes/results/staedel.json
+          cp /tmp/staedel-queue.json research/museums/20261126/lanes/reviews/staedel_visual_shortlist.json
+          git add research/museums/20261126/lanes/results/staedel.json research/museums/20261126/lanes/reviews/staedel_visual_shortlist.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'research(staedel): merge new official LIDO findings as HOLD'
+            git push origin HEAD:research/artdrift-harvest-staedel-20261126
+          fi
