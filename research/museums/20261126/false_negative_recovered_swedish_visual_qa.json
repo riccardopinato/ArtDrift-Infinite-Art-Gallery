@@ -1,0 +1,75 @@
+{
+  "schema_version": 1,
+  "as_of": "2026-11-26",
+  "purpose": "Visual QA corrective on 5 recovered technical bright Nationalmuseum images",
+  "input": "research/museums/20261126/new_european_museum_bright_batch1.json",
+  "total_recovered_pixel_pass": 5,
+  "preferred": 2,
+  "optional": 2,
+  "rejected": 1,
+  "editorial_approval_final": 0,
+  "worldwide_commercial_approval": 0,
+  "runtime_imported": 0,
+  "review": [
+    {
+      "id": "64092172",
+      "title": "Winter Landscape with Magpies",
+      "artist": "Karl Georg Arsenius",
+      "source_url": "https://commons.wikimedia.org/w/index.php?curid=64092172",
+      "dark_fraction": 0.0024,
+      "image_verified": true,
+      "license_verified_name": "public domain",
+      "app_imported": false,
+      "decision": "OPTIONAL_VISUAL_REVIEW",
+      "note": "Snow landscape with magpies; pale palette and substantial reproduction framing"
+    },
+    {
+      "id": "103232914",
+      "title": "Gustaf Cederström - The Artist's Wife on the Beach at Noirmoutier - NM 5202 - Nationalmuseum.jpg",
+      "artist": "Gustaf Cederström",
+      "source_url": "https://commons.wikimedia.org/w/index.php?curid=103232914",
+      "dark_fraction": 0.0173,
+      "image_verified": true,
+      "license_verified_name": "public domain",
+      "app_imported": false,
+      "decision": "REJECT_HUMAN_CENTERED",
+      "note": "The Artist's Wife is clearly a people-centred beach scene; false positive of title heuristic"
+    },
+    {
+      "id": "103263738",
+      "title": "Oscar Björck - Summer Evening, Skagen - NM 7342 - Nationalmuseum.jpg",
+      "artist": "Oscar Björck",
+      "source_url": "https://commons.wikimedia.org/w/index.php?curid=103263738",
+      "dark_fraction": 0.0324,
+      "image_verified": true,
+      "license_verified_name": "public domain",
+      "app_imported": false,
+      "decision": "OPTIONAL_VISUAL_REVIEW",
+      "note": "Summer evening; foreground person may be too prominent for strict no-people aesthetic"
+    },
+    {
+      "id": "52134275",
+      "title": "Landskap",
+      "artist": "Carl Trägårdh",
+      "source_url": "https://commons.wikimedia.org/w/index.php?curid=52134275",
+      "dark_fraction": 0.0447,
+      "image_verified": true,
+      "license_verified_name": "public domain",
+      "app_imported": false,
+      "decision": "PREFERRED_VISUAL_REVIEW",
+      "note": "Landscape with greenery, no conspicuous human subject"
+    },
+    {
+      "id": "52118694",
+      "title": "Cows in a Meadow",
+      "artist": "Otto Carl Bentzon Haslund",
+      "source_url": "https://commons.wikimedia.org/w/index.php?curid=52118694",
+      "dark_fraction": 0.1066,
+      "image_verified": true,
+      "license_verified_name": "public domain",
+      "app_imported": false,
+      "decision": "PREFERRED_VISUAL_REVIEW",
+      "note": "Pastoral meadow; verify frame cropping and differentiation from other cattle pictures"
+    }
+  ]
+}
