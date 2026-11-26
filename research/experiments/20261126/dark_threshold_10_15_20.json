@@ -1,0 +1,641 @@
+{
+  "schema_version": 1,
+  "date": "2026-11-26",
+  "repository": "riccardopinato/ArtDrift-Infinite-Art-Gallery",
+  "comparison": "10% baseline vs 15% preferred vs 20% experimental",
+  "pixel_dark_definition": "Fraction of sampled inner image with luminance < 0.31",
+  "other_filters_unchanged": {
+    "luminance_min": 0.55,
+    "saturation_min": 0.18,
+    "vivid_fraction_min": 0.18
+  },
+  "new_policy": {
+    "preferred_dark_fraction_max": 0.15,
+    "conditional_dark_fraction_max": 0.2,
+    "conditional_saturation_min": 0.24,
+    "conditional_vivid_fraction_min": 0.3,
+    "dark_above_20_percent": "REJECT",
+    "all_new_candidates": "HOLD_DUPLICATES_ATTRIBUTION_VISUAL_AND_TERRITORY_RIGHTS"
+  },
+  "source_evidence": {
+    "commons": {
+      "workflow_run_id": 45815982003,
+      "artifact_pattern": "Commons-PD-Bright-*",
+      "historical_10_percent_unique_pass": 113
+    },
+    "cma": {
+      "workflow_run_id": 45813706451,
+      "artifact_pattern": "ArtDrift-BrightMass-cma-*",
+      "historical_10_percent_unique_pass": 8
+    },
+    "smk": {
+      "workflow_run_id": 45814424944,
+      "artifact_pattern": "SMK-Bright-Art-*",
+      "historical_10_percent_unique_pass": 7
+    },
+    "nga": {
+      "manifest": "research/nga/20261126/nga_bright_combined_shortlist.json",
+      "historical_10_percent_editorial_candidates": 27
+    },
+    "met": {
+      "artifact_limitation": "Most 257 rejected images have no stored numeric metrics",
+      "status": "NOT_RECOMPUTABLE_OFFLINE"
+    }
+  },
+  "source_comparisons": {
+    "commons": {
+      "source": "commons",
+      "batch_shards_available": 8,
+      "unique_image_ids_with_pixels": 874,
+      "old_total_pixel_verified_pass_from_published_summary": null,
+      "pixel_eligible_counts": {
+        "10": 113,
+        "15": 120,
+        "20": 127
+      },
+      "measurable_new_at_15_vs_10": [
+        {
+          "id": "65410135",
+          "title": null,
+          "dark_fraction": 0.1032,
+          "luminance": 0.6274,
+          "saturation": 0.4083,
+          "vivid_fraction": 0.2929,
+          "tier": "PREFERRED_AT_MOST_15_PERCENT_DARK",
+          "source_file": "/home/runner/work/ArtDrift-Infinite-Art-Gallery/ArtDrift-Infinite-Art-Gallery/.artdrift_dark_ab_evidence/commons/Commons-PD-Bright-3/batch_03/review.json",
+          "metadata_not_carried_in_rejected_shard": true
+        },
+        {
+          "id": "78815151",
+          "title": null,
+          "dark_fraction": 0.1177,
+          "luminance": 0.587,
+          "saturation": 0.2965,
+          "vivid_fraction": 0.2677,
+          "tier": "PREFERRED_AT_MOST_15_PERCENT_DARK",
+          "source_file": "/home/runner/work/ArtDrift-Infinite-Art-Gallery/ArtDrift-Infinite-Art-Gallery/.artdrift_dark_ab_evidence/commons/Commons-PD-Bright-5/batch_05/review.json",
+          "metadata_not_carried_in_rejected_shard": true
+        },
+        {
+          "id": "17898413",
+          "title": null,
+          "dark_fraction": 0.1204,
+          "luminance": 0.6984,
+          "saturation": 0.2437,
+          "vivid_fraction": 0.2552,
+          "tier": "PREFERRED_AT_MOST_15_PERCENT_DARK",
+          "source_file": "/home/runner/work/ArtDrift-Infinite-Art-Gallery/ArtDrift-Infinite-Art-Gallery/.artdrift_dark_ab_evidence/commons/Commons-PD-Bright-4/batch_04/review.json",
+          "metadata_not_carried_in_rejected_shard": true
+        },
+        {
+          "id": "86729446",
+          "title": null,
+          "dark_fraction": 0.1242,
+          "luminance": 0.5761,
+          "saturation": 0.288,
+          "vivid_fraction": 0.3581,
+          "tier": "PREFERRED_AT_MOST_15_PERCENT_DARK",
+          "source_file": "/home/runner/work/ArtDrift-Infinite-Art-Gallery/ArtDrift-Infinite-Art-Gallery/.artdrift_dark_ab_evidence/commons/Commons-PD-Bright-6/batch_06/review.json",
+          "metadata_not_carried_in_rejected_shard": true
+        },
+        {
+          "id": "50273959",
+          "title": null,
+          "dark_fraction": 0.1248,
+          "luminance": 0.5568,
+          "saturation": 0.3779,
+          "vivid_fraction": 0.5956,
+          "tier": "PREFERRED_AT_MOST_15_PERCENT_DARK",
+          "source_file": "/home/runner/work/ArtDrift-Infinite-Art-Gallery/ArtDrift-Infinite-Art-Gallery/.artdrift_dark_ab_evidence/commons/Commons-PD-Bright-1/batch_01/review.json",
+          "metadata_not_carried_in_rejected_shard": true
+        },
+        {
+          "id": "157263359",
+          "title": null,
+          "dark_fraction": 0.1272,
+          "luminance": 0.5647,
+          "saturation": 0.328,
+          "vivid_fraction": 0.2688,
+          "tier": "PREFERRED_AT_MOST_15_PERCENT_DARK",
+          "source_file": "/home/runner/work/ArtDrift-Infinite-Art-Gallery/ArtDrift-Infinite-Art-Gallery/.artdrift_dark_ab_evidence/commons/Commons-PD-Bright-3/batch_03/review.json",
+          "metadata_not_carried_in_rejected_shard": true
+        },
+        {
+          "id": "202099799",
+          "title": null,
+          "dark_fraction": 0.128,
+          "luminance": 0.5862,
+          "saturation": 0.3046,
+          "vivid_fraction": 0.3917,
+          "tier": "PREFERRED_AT_MOST_15_PERCENT_DARK",
+          "source_file": "/home/runner/work/ArtDrift-Infinite-Art-Gallery/ArtDrift-Infinite-Art-Gallery/.artdrift_dark_ab_evidence/commons/Commons-PD-Bright-6/batch_06/review.json",
+          "metadata_not_carried_in_rejected_shard": true
+        }
+      ],
+      "measurable_new_at_20_vs_10": [
+        {
+          "id": "65410135",
+          "title": null,
+          "dark_fraction": 0.1032,
+          "luminance": 0.6274,
+          "saturation": 0.4083,
+          "vivid_fraction": 0.2929,
+          "tier": "PREFERRED_AT_MOST_15_PERCENT_DARK",
+          "source_file": "/home/runner/work/ArtDrift-Infinite-Art-Gallery/ArtDrift-Infinite-Art-Gallery/.artdrift_dark_ab_evidence/commons/Commons-PD-Bright-3/batch_03/review.json",
+          "metadata_not_carried_in_rejected_shard": true
+        },
+        {
+          "id": "78815151",
+          "title": null,
+          "dark_fraction": 0.1177,
+          "luminance": 0.587,
+          "saturation": 0.2965,
+          "vivid_fraction": 0.2677,
+          "tier": "PREFERRED_AT_MOST_15_PERCENT_DARK",
+          "source_file": "/home/runner/work/ArtDrift-Infinite-Art-Gallery/ArtDrift-Infinite-Art-Gallery/.artdrift_dark_ab_evidence/commons/Commons-PD-Bright-5/batch_05/review.json",
+          "metadata_not_carried_in_rejected_shard": true
+        },
+        {
+          "id": "17898413",
+          "title": null,
+          "dark_fraction": 0.1204,
+          "luminance": 0.6984,
+          "saturation": 0.2437,
+          "vivid_fraction": 0.2552,
+          "tier": "PREFERRED_AT_MOST_15_PERCENT_DARK",
+          "source_file": "/home/runner/work/ArtDrift-Infinite-Art-Gallery/ArtDrift-Infinite-Art-Gallery/.artdrift_dark_ab_evidence/commons/Commons-PD-Bright-4/batch_04/review.json",
+          "metadata_not_carried_in_rejected_shard": true
+        },
+        {
+          "id": "86729446",
+          "title": null,
+          "dark_fraction": 0.1242,
+          "luminance": 0.5761,
+          "saturation": 0.288,
+          "vivid_fraction": 0.3581,
+          "tier": "PREFERRED_AT_MOST_15_PERCENT_DARK",
+          "source_file": "/home/runner/work/ArtDrift-Infinite-Art-Gallery/ArtDrift-Infinite-Art-Gallery/.artdrift_dark_ab_evidence/commons/Commons-PD-Bright-6/batch_06/review.json",
+          "metadata_not_carried_in_rejected_shard": true
+        },
+        {
+          "id": "50273959",
+          "title": null,
+          "dark_fraction": 0.1248,
+          "luminance": 0.5568,
+          "saturation": 0.3779,
+          "vivid_fraction": 0.5956,
+          "tier": "PREFERRED_AT_MOST_15_PERCENT_DARK",
+          "source_file": "/home/runner/work/ArtDrift-Infinite-Art-Gallery/ArtDrift-Infinite-Art-Gallery/.artdrift_dark_ab_evidence/commons/Commons-PD-Bright-1/batch_01/review.json",
+          "metadata_not_carried_in_rejected_shard": true
+        },
+        {
+          "id": "157263359",
+          "title": null,
+          "dark_fraction": 0.1272,
+          "luminance": 0.5647,
+          "saturation": 0.328,
+          "vivid_fraction": 0.2688,
+          "tier": "PREFERRED_AT_MOST_15_PERCENT_DARK",
+          "source_file": "/home/runner/work/ArtDrift-Infinite-Art-Gallery/ArtDrift-Infinite-Art-Gallery/.artdrift_dark_ab_evidence/commons/Commons-PD-Bright-3/batch_03/review.json",
+          "metadata_not_carried_in_rejected_shard": true
+        },
+        {
+          "id": "202099799",
+          "title": null,
+          "dark_fraction": 0.128,
+          "luminance": 0.5862,
+          "saturation": 0.3046,
+          "vivid_fraction": 0.3917,
+          "tier": "PREFERRED_AT_MOST_15_PERCENT_DARK",
+          "source_file": "/home/runner/work/ArtDrift-Infinite-Art-Gallery/ArtDrift-Infinite-Art-Gallery/.artdrift_dark_ab_evidence/commons/Commons-PD-Bright-6/batch_06/review.json",
+          "metadata_not_carried_in_rejected_shard": true
+        },
+        {
+          "id": "200748471",
+          "title": null,
+          "dark_fraction": 0.1516,
+          "luminance": 0.5561,
+          "saturation": 0.2664,
+          "vivid_fraction": 0.2641,
+          "tier": "HOLD_15_TO_20_PERCENT__NOT_VIVID_ENOUGH",
+          "source_file": "/home/runner/work/ArtDrift-Infinite-Art-Gallery/ArtDrift-Infinite-Art-Gallery/.artdrift_dark_ab_evidence/commons/Commons-PD-Bright-0/batch_00/review.json",
+          "metadata_not_carried_in_rejected_shard": true
+        },
+        {
+          "id": "860",
+          "title": null,
+          "dark_fraction": 0.1566,
+          "luminance": 0.5714,
+          "saturation": 0.7339,
+          "vivid_fraction": 0.6123,
+          "tier": "CONDITIONAL_15_TO_20_PERCENT__HIGH_CHROMA",
+          "source_file": "/home/runner/work/ArtDrift-Infinite-Art-Gallery/ArtDrift-Infinite-Art-Gallery/.artdrift_dark_ab_evidence/commons/Commons-PD-Bright-5/batch_05/review.json",
+          "metadata_not_carried_in_rejected_shard": true
+        },
+        {
+          "id": "157484883",
+          "title": null,
+          "dark_fraction": 0.1641,
+          "luminance": 0.6124,
+          "saturation": 0.3304,
+          "vivid_fraction": 0.3452,
+          "tier": "CONDITIONAL_15_TO_20_PERCENT__HIGH_CHROMA",
+          "source_file": "/home/runner/work/ArtDrift-Infinite-Art-Gallery/ArtDrift-Infinite-Art-Gallery/.artdrift_dark_ab_evidence/commons/Commons-PD-Bright-3/batch_03/review.json",
+          "metadata_not_carried_in_rejected_shard": true
+        },
+        {
+          "id": "23598389",
+          "title": null,
+          "dark_fraction": 0.1669,
+          "luminance": 0.5705,
+          "saturation": 0.2492,
+          "vivid_fraction": 0.1932,
+          "tier": "HOLD_15_TO_20_PERCENT__NOT_VIVID_ENOUGH",
+          "source_file": "/home/runner/work/ArtDrift-Infinite-Art-Gallery/ArtDrift-Infinite-Art-Gallery/.artdrift_dark_ab_evidence/commons/Commons-PD-Bright-1/batch_01/review.json",
+          "metadata_not_carried_in_rejected_shard": true
+        },
+        {
+          "id": "68782750",
+          "title": null,
+          "dark_fraction": 0.1699,
+          "luminance": 0.6499,
+          "saturation": 0.3062,
+          "vivid_fraction": 0.1831,
+          "tier": "HOLD_15_TO_20_PERCENT__NOT_VIVID_ENOUGH",
+          "source_file": "/home/runner/work/ArtDrift-Infinite-Art-Gallery/ArtDrift-Infinite-Art-Gallery/.artdrift_dark_ab_evidence/commons/Commons-PD-Bright-5/batch_05/review.json",
+          "metadata_not_carried_in_rejected_shard": true
+        },
+        {
+          "id": "65173988",
+          "title": null,
+          "dark_fraction": 0.1735,
+          "luminance": 0.5702,
+          "saturation": 0.2283,
+          "vivid_fraction": 0.2086,
+          "tier": "HOLD_15_TO_20_PERCENT__NOT_VIVID_ENOUGH",
+          "source_file": "/home/runner/work/ArtDrift-Infinite-Art-Gallery/ArtDrift-Infinite-Art-Gallery/.artdrift_dark_ab_evidence/commons/Commons-PD-Bright-3/batch_03/review.json",
+          "metadata_not_carried_in_rejected_shard": true
+        },
+        {
+          "id": "115037611",
+          "title": null,
+          "dark_fraction": 0.1836,
+          "luminance": 0.5781,
+          "saturation": 0.2026,
+          "vivid_fraction": 0.2248,
+          "tier": "HOLD_15_TO_20_PERCENT__NOT_VIVID_ENOUGH",
+          "source_file": "/home/runner/work/ArtDrift-Infinite-Art-Gallery/ArtDrift-Infinite-Art-Gallery/.artdrift_dark_ab_evidence/commons/Commons-PD-Bright-7/batch_07/review.json",
+          "metadata_not_carried_in_rejected_shard": true
+        }
+      ],
+      "measurable_new_only_between_15_and_20": [
+        {
+          "id": "200748471",
+          "title": null,
+          "dark_fraction": 0.1516,
+          "luminance": 0.5561,
+          "saturation": 0.2664,
+          "vivid_fraction": 0.2641,
+          "tier": "HOLD_15_TO_20_PERCENT__NOT_VIVID_ENOUGH",
+          "source_file": "/home/runner/work/ArtDrift-Infinite-Art-Gallery/ArtDrift-Infinite-Art-Gallery/.artdrift_dark_ab_evidence/commons/Commons-PD-Bright-0/batch_00/review.json",
+          "metadata_not_carried_in_rejected_shard": true
+        },
+        {
+          "id": "860",
+          "title": null,
+          "dark_fraction": 0.1566,
+          "luminance": 0.5714,
+          "saturation": 0.7339,
+          "vivid_fraction": 0.6123,
+          "tier": "CONDITIONAL_15_TO_20_PERCENT__HIGH_CHROMA",
+          "source_file": "/home/runner/work/ArtDrift-Infinite-Art-Gallery/ArtDrift-Infinite-Art-Gallery/.artdrift_dark_ab_evidence/commons/Commons-PD-Bright-5/batch_05/review.json",
+          "metadata_not_carried_in_rejected_shard": true
+        },
+        {
+          "id": "157484883",
+          "title": null,
+          "dark_fraction": 0.1641,
+          "luminance": 0.6124,
+          "saturation": 0.3304,
+          "vivid_fraction": 0.3452,
+          "tier": "CONDITIONAL_15_TO_20_PERCENT__HIGH_CHROMA",
+          "source_file": "/home/runner/work/ArtDrift-Infinite-Art-Gallery/ArtDrift-Infinite-Art-Gallery/.artdrift_dark_ab_evidence/commons/Commons-PD-Bright-3/batch_03/review.json",
+          "metadata_not_carried_in_rejected_shard": true
+        },
+        {
+          "id": "23598389",
+          "title": null,
+          "dark_fraction": 0.1669,
+          "luminance": 0.5705,
+          "saturation": 0.2492,
+          "vivid_fraction": 0.1932,
+          "tier": "HOLD_15_TO_20_PERCENT__NOT_VIVID_ENOUGH",
+          "source_file": "/home/runner/work/ArtDrift-Infinite-Art-Gallery/ArtDrift-Infinite-Art-Gallery/.artdrift_dark_ab_evidence/commons/Commons-PD-Bright-1/batch_01/review.json",
+          "metadata_not_carried_in_rejected_shard": true
+        },
+        {
+          "id": "68782750",
+          "title": null,
+          "dark_fraction": 0.1699,
+          "luminance": 0.6499,
+          "saturation": 0.3062,
+          "vivid_fraction": 0.1831,
+          "tier": "HOLD_15_TO_20_PERCENT__NOT_VIVID_ENOUGH",
+          "source_file": "/home/runner/work/ArtDrift-Infinite-Art-Gallery/ArtDrift-Infinite-Art-Gallery/.artdrift_dark_ab_evidence/commons/Commons-PD-Bright-5/batch_05/review.json",
+          "metadata_not_carried_in_rejected_shard": true
+        },
+        {
+          "id": "65173988",
+          "title": null,
+          "dark_fraction": 0.1735,
+          "luminance": 0.5702,
+          "saturation": 0.2283,
+          "vivid_fraction": 0.2086,
+          "tier": "HOLD_15_TO_20_PERCENT__NOT_VIVID_ENOUGH",
+          "source_file": "/home/runner/work/ArtDrift-Infinite-Art-Gallery/ArtDrift-Infinite-Art-Gallery/.artdrift_dark_ab_evidence/commons/Commons-PD-Bright-3/batch_03/review.json",
+          "metadata_not_carried_in_rejected_shard": true
+        },
+        {
+          "id": "115037611",
+          "title": null,
+          "dark_fraction": 0.1836,
+          "luminance": 0.5781,
+          "saturation": 0.2026,
+          "vivid_fraction": 0.2248,
+          "tier": "HOLD_15_TO_20_PERCENT__NOT_VIVID_ENOUGH",
+          "source_file": "/home/runner/work/ArtDrift-Infinite-Art-Gallery/ArtDrift-Infinite-Art-Gallery/.artdrift_dark_ab_evidence/commons/Commons-PD-Bright-7/batch_07/review.json",
+          "metadata_not_carried_in_rejected_shard": true
+        }
+      ],
+      "strong_color_between_15_and_20": [
+        {
+          "id": "860",
+          "title": null,
+          "dark_fraction": 0.1566,
+          "luminance": 0.5714,
+          "saturation": 0.7339,
+          "vivid_fraction": 0.6123,
+          "tier": "CONDITIONAL_15_TO_20_PERCENT__HIGH_CHROMA",
+          "source_file": "/home/runner/work/ArtDrift-Infinite-Art-Gallery/ArtDrift-Infinite-Art-Gallery/.artdrift_dark_ab_evidence/commons/Commons-PD-Bright-5/batch_05/review.json",
+          "metadata_not_carried_in_rejected_shard": true
+        },
+        {
+          "id": "157484883",
+          "title": null,
+          "dark_fraction": 0.1641,
+          "luminance": 0.6124,
+          "saturation": 0.3304,
+          "vivid_fraction": 0.3452,
+          "tier": "CONDITIONAL_15_TO_20_PERCENT__HIGH_CHROMA",
+          "source_file": "/home/runner/work/ArtDrift-Infinite-Art-Gallery/ArtDrift-Infinite-Art-Gallery/.artdrift_dark_ab_evidence/commons/Commons-PD-Bright-3/batch_03/review.json",
+          "metadata_not_carried_in_rejected_shard": true
+        }
+      ],
+      "batch_evidence": [
+        {
+          "path": "commons/Commons-PD-Bright-0/batch_00/review.json",
+          "probed": 110,
+          "held_reported": 97,
+          "held_metrics_available": 97,
+          "works": 13
+        },
+        {
+          "path": "commons/Commons-PD-Bright-1/batch_01/review.json",
+          "probed": 110,
+          "held_reported": 96,
+          "held_metrics_available": 96,
+          "works": 14
+        },
+        {
+          "path": "commons/Commons-PD-Bright-2/batch_02/review.json",
+          "probed": 110,
+          "held_reported": 90,
+          "held_metrics_available": 90,
+          "works": 20
+        },
+        {
+          "path": "commons/Commons-PD-Bright-3/batch_03/review.json",
+          "probed": 110,
+          "held_reported": 104,
+          "held_metrics_available": 100,
+          "works": 6
+        },
+        {
+          "path": "commons/Commons-PD-Bright-4/batch_04/review.json",
+          "probed": 110,
+          "held_reported": 87,
+          "held_metrics_available": 87,
+          "works": 23
+        },
+        {
+          "path": "commons/Commons-PD-Bright-5/batch_05/review.json",
+          "probed": 110,
+          "held_reported": 102,
+          "held_metrics_available": 100,
+          "works": 8
+        },
+        {
+          "path": "commons/Commons-PD-Bright-6/batch_06/review.json",
+          "probed": 110,
+          "held_reported": 96,
+          "held_metrics_available": 96,
+          "works": 14
+        },
+        {
+          "path": "commons/Commons-PD-Bright-7/batch_07/review.json",
+          "probed": 110,
+          "held_reported": 95,
+          "held_metrics_available": 95,
+          "works": 15
+        }
+      ]
+    },
+    "smk": {
+      "source": "smk",
+      "batch_shards_available": 8,
+      "unique_image_ids_with_pixels": 68,
+      "old_total_pixel_verified_pass_from_published_summary": null,
+      "pixel_eligible_counts": {
+        "10": 7,
+        "15": 8,
+        "20": 8
+      },
+      "measurable_new_at_15_vs_10": [
+        {
+          "id": "KMS7625",
+          "title": null,
+          "dark_fraction": 0.1444,
+          "luminance": 0.5569,
+          "saturation": 0.2852,
+          "vivid_fraction": 0.4241,
+          "tier": "PREFERRED_AT_MOST_15_PERCENT_DARK",
+          "source_file": "/home/runner/work/ArtDrift-Infinite-Art-Gallery/ArtDrift-Infinite-Art-Gallery/.artdrift_dark_ab_evidence/smk/SMK-Bright-Art-6/batch_06/review.json",
+          "metadata_not_carried_in_rejected_shard": true
+        }
+      ],
+      "measurable_new_at_20_vs_10": [
+        {
+          "id": "KMS7625",
+          "title": null,
+          "dark_fraction": 0.1444,
+          "luminance": 0.5569,
+          "saturation": 0.2852,
+          "vivid_fraction": 0.4241,
+          "tier": "PREFERRED_AT_MOST_15_PERCENT_DARK",
+          "source_file": "/home/runner/work/ArtDrift-Infinite-Art-Gallery/ArtDrift-Infinite-Art-Gallery/.artdrift_dark_ab_evidence/smk/SMK-Bright-Art-6/batch_06/review.json",
+          "metadata_not_carried_in_rejected_shard": true
+        }
+      ],
+      "measurable_new_only_between_15_and_20": [],
+      "strong_color_between_15_and_20": [],
+      "batch_evidence": [
+        {
+          "path": "smk/SMK-Bright-Art-0/batch_00/review.json",
+          "probed": 34,
+          "held_reported": 33,
+          "held_metrics_available": 33,
+          "works": 1
+        },
+        {
+          "path": "smk/SMK-Bright-Art-1/batch_01/review.json",
+          "probed": 7,
+          "held_reported": 7,
+          "held_metrics_available": 7,
+          "works": 0
+        },
+        {
+          "path": "smk/SMK-Bright-Art-2/batch_02/review.json",
+          "probed": 0,
+          "held_reported": 0,
+          "held_metrics_available": 0,
+          "works": 0
+        },
+        {
+          "path": "smk/SMK-Bright-Art-3/batch_03/review.json",
+          "probed": 23,
+          "held_reported": 19,
+          "held_metrics_available": 18,
+          "works": 4
+        },
+        {
+          "path": "smk/SMK-Bright-Art-4/batch_04/review.json",
+          "probed": 2,
+          "held_reported": 2,
+          "held_metrics_available": 2,
+          "works": 0
+        },
+        {
+          "path": "smk/SMK-Bright-Art-5/batch_05/review.json",
+          "probed": 0,
+          "held_reported": 0,
+          "held_metrics_available": 0,
+          "works": 0
+        },
+        {
+          "path": "smk/SMK-Bright-Art-6/batch_06/review.json",
+          "probed": 15,
+          "held_reported": 12,
+          "held_metrics_available": 11,
+          "works": 3
+        },
+        {
+          "path": "smk/SMK-Bright-Art-7/batch_07/review.json",
+          "probed": 1,
+          "held_reported": 1,
+          "held_metrics_available": 1,
+          "works": 0
+        }
+      ]
+    },
+    "cma": {
+      "source": "cma",
+      "batch_shards_available": 6,
+      "unique_image_ids_with_pixels": 42,
+      "old_total_pixel_verified_pass_from_published_summary": null,
+      "pixel_eligible_counts": {
+        "10": 10,
+        "15": 10,
+        "20": 10
+      },
+      "measurable_new_at_15_vs_10": [],
+      "measurable_new_at_20_vs_10": [],
+      "measurable_new_only_between_15_and_20": [],
+      "strong_color_between_15_and_20": [],
+      "batch_evidence": [
+        {
+          "path": "cma/ArtDrift-BrightMass-cma-0/batch_00/review.json",
+          "probed": 0,
+          "held_reported": 0,
+          "held_metrics_available": 0,
+          "works": 0
+        },
+        {
+          "path": "cma/ArtDrift-BrightMass-cma-1/batch_01/review.json",
+          "probed": 2,
+          "held_reported": 2,
+          "held_metrics_available": 2,
+          "works": 0
+        },
+        {
+          "path": "cma/ArtDrift-BrightMass-cma-2/batch_02/review.json",
+          "probed": 25,
+          "held_reported": 18,
+          "held_metrics_available": 18,
+          "works": 7
+        },
+        {
+          "path": "cma/ArtDrift-BrightMass-cma-3/batch_03/review.json",
+          "probed": 11,
+          "held_reported": 8,
+          "held_metrics_available": 8,
+          "works": 3
+        },
+        {
+          "path": "cma/ArtDrift-BrightMass-cma-4/batch_04/review.json",
+          "probed": 4,
+          "held_reported": 4,
+          "held_metrics_available": 4,
+          "works": 0
+        },
+        {
+          "path": "cma/ArtDrift-BrightMass-cma-5/batch_05/review.json",
+          "probed": 0,
+          "held_reported": 0,
+          "held_metrics_available": 0,
+          "works": 0
+        }
+      ]
+    }
+  },
+  "nga_dark_held": {
+    "baseline_preferred_10_percent": 27,
+    "previously_held_only_for_dark_area": [
+      {
+        "nga_id": "157929",
+        "title": "Seascape (Gravelines)",
+        "dark_fraction": 0.1173,
+        "reason": "HOLD_DARK_AREA_ABOVE_10_PERCENT",
+        "runtime_visible": false,
+        "reinstated_at_15_percent": true,
+        "reinstated_at_20_percent": true
+      },
+      {
+        "nga_id": "72138",
+        "title": "The Artist's Garden in Argenteuil (A Corner of the Garden with Dahlias)",
+        "dark_fraction": 0.1086,
+        "reason": "HOLD_DARK_AREA_ABOVE_10_PERCENT",
+        "runtime_visible": false,
+        "reinstated_at_15_percent": true,
+        "reinstated_at_20_percent": true
+      }
+    ],
+    "reinstated_at_15": 2,
+    "reinstated_at_20": 2,
+    "not_a_global_recalculation": true
+  },
+  "met_rejected_without_metrics_count": 257,
+  "met_dark_15_20_delta": "NOT_MEASURED",
+  "user_visible_warning": "Measured lower bounds for Commons due to capped held records; pixel-eligible does not mean a new distinct painting or cleared copyright.",
+  "runtime_imported": 0,
+  "commercially_cleared": 0
+}
