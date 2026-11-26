@@ -1,0 +1,80 @@
+name: ArtDrift — SMK 8 large color-verified art batches
+on:
+  push:
+    branches: [research/artdrift-bright-megabatches-20261126]
+    paths:
+      - tools/artdrift_smk_megabatch.py
+      - tools/test_artdrift_smk_megabatch.py
+      - tools/artdrift_smk_mass_aggregate.py
+      - .github/workflows/artdrift-smk-megabatches.yml
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: artdrift-smk-modern-color-batches
+  cancel-in-progress: false
+jobs:
+  collect:
+    name: smk-modern-bright-${{ matrix.shard }}
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix:
+        shard: [0,1,2,3,4,5,6,7]
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --disable-pip-version-check Pillow==11.3.0
+      - name: Color source contract and pending PR dedup tests
+        run: |
+          python -m py_compile tools/artdrift_smk_megabatch.py
+          python -m unittest discover -s tools -p test_artdrift_smk_megabatch.py -v
+      - name: Independent SMK modern color scan and up to 230 image checks
+        run: python -u tools/artdrift_smk_megabatch.py --shard "${{ matrix.shard }}" --max-images 230 --workers 4
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: SMK-Bright-Art-${{ matrix.shard }}
+          path: .artdrift_research/smk_mass/batch_*/
+          include-hidden-files: true
+          if-no-files-found: ignore
+          retention-days: 30
+  aggregate:
+    name: Merge eight source verified SMK batches
+    if: always()
+    needs: [collect]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --disable-pip-version-check Pillow==11.3.0
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: SMK-Bright-Art-*
+          path: .artdrift_research/smk_incoming
+          merge-multiple: false
+      - run: python -u tools/artdrift_smk_mass_aggregate.py
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ArtDrift-SMK-Bright-Verified-Combined
+          path: research/mass_bright/20261126/smk_*
+          if-no-files-found: warn
+      - name: Commit evidence safely on SMK research branch, do not publish
+        if: success()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add research/mass_bright/20261126/smk_megabatch_verified.json
+          if ! git diff --cached --quiet; then
+            git commit -m "research(smk): eight checked colorful paintings batches"
+            git pull --rebase origin research/artdrift-bright-megabatches-20261126
+            git push origin HEAD:research/artdrift-bright-megabatches-20261126
+          fi
