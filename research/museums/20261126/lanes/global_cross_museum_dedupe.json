@@ -48,7 +48,7 @@
     ]
   ],
   "cross_museum_exact_file_clusters": 11,
-  "exact_file_cluster_count": 4245,
+  "exact_file_cluster_count": 4252,
   "exact_match_evidence": [
     {
       "fingerprint": "10765320",
@@ -337,6 +337,19 @@
       "review_status": "HOLD_CROSS_SOURCE_DUPLICATE_OR_PROVENANCE"
     },
     {
+      "fingerprint": "2a4eb038653eff0736395fc3c072ed817c02560deaec9d3a173434ceb228a3da",
+      "match_type": "raster_sha256",
+      "museum_sources": [
+        "finnish_national_gallery",
+        "nasjonalmuseet"
+      ],
+      "record_keys": [
+        "finnish_national_gallery:66317188",
+        "nasjonalmuseet:66317188"
+      ],
+      "review_status": "HOLD_CROSS_SOURCE_DUPLICATE_OR_PROVENANCE"
+    },
+    {
       "fingerprint": "2c4dd4be7b0daec861d016e0cf87a803d5fd7d5065fc85e2ab4d87b9096cb951",
       "match_type": "raster_sha256",
       "museum_sources": [
@@ -363,7 +376,7 @@
       "review_status": "HOLD_CROSS_SOURCE_DUPLICATE_OR_PROVENANCE"
     }
   ],
-  "exact_match_evidence_count": 24,
+  "exact_match_evidence_count": 25,
   "license_per_object_review": "REQUIRED",
   "museum_custody_confirmed": false,
   "next_step": "Human visual audit and institutional source/licensing verification of shortlisted candidates",
@@ -371,8 +384,8 @@
     {
       "catalog_exhaustively_searched": false,
       "commercially_approved": 0,
-      "latest_run_records": 46,
-      "records_retained": 46,
+      "latest_run_records": 53,
+      "records_retained": 53,
       "source": "rijks",
       "source_identifiers_tracked": 343,
       "technical_color_pass": 2
@@ -451,7 +464,7 @@
     }
   ],
   "purpose": "RESEARCH_ONLY__CROSS_SOURCE_FILE_DUPLICATES_AND_PROVENANCE",
-  "records_retained_across_museums": 4256,
+  "records_retained_across_museums": 4263,
   "runtime_imported": 0,
   "schema_version": 1,
   "semantic_match_evidence": [],
@@ -460,11 +473,11 @@
   "source_report_sha256": {
     "belvedere": "e602be88f97f3411a8ec6e491c8f437fc11efc2ca13b25440d8f11053fea3d70",
     "birmingham": "d0c6a84442fd6909a632c4305c7bf9b9b045ca2740ba66a1887e248442613e6d",
-    "finnish_national_gallery": "449a9b5fa768a973365516a0512bb91836aca46e32fd95a73100fe971e9dc09d",
+    "finnish_national_gallery": "952a80dcc7bf87ed8b644c00c37f0f567c2c4e3322d851ef31fc88e0f2376b46",
     "nasjonalmuseet": "5a3ad6808d8da9704f0725bd8cfe1bafacab9afe55dcbdbc313852173def9f5c",
     "nationalmuseum_se": "63e8ce58e3946b37364cdbf5303af5ac01d47b9b5b81ebc64c82456cce250fb7",
     "paris_musees": "227eb476a6d088514cedc29fd09ad2d8bc74e1d6d77129b688220714ac33eea7",
-    "rijks": "4d78453224e18d4864dca73d397cd23346e74a9689c6320380e933ed52985a91",
+    "rijks": "032f942ae36239883f8d920a20dfc87fe9bb94bc11e10db47ad01922ed493ca4",
     "staedel": "7f570d32fad41d701660bdc3796ad959d208f82a56b3ea6002777d0d9b0293bf",
     "te_papa": "1c1529db1e360a9bf542fe39bf93b95db95e04385fef574e066e38d1fe1997ce"
   },
