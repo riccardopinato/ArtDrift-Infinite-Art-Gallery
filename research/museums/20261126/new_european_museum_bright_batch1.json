@@ -118,8 +118,8 @@
         "unprobed_source_candidate_ids": 0,
         "metadata_not_modern_scenic_or_image": 9,
         "metadata_modern_scenic_with_iiif": 3,
-        "pixels_sampled": 2,
         "duplicates_existing_artdrift": 1,
+        "pixels_sampled": 2,
         "unique_source_identifiers": 12
       },
       "bright": 0,
@@ -128,32 +128,35 @@
     {
       "provider": "staedel",
       "shard": 0,
-      "search_stats": {
-        "oai_records_read": 0,
-        "modern_scenic_image_metadata": 0
-      },
+      "search_stats": {},
       "bright": 0,
-      "errors": []
+      "errors": [
+        {
+          "reason": "STAEDEL_SOURCE_NO_ACTIVE_LIDO_RECORDS_NOT_ZERO_VALID_ARTWORKS"
+        }
+      ]
     },
     {
       "provider": "staedel",
       "shard": 1,
-      "search_stats": {
-        "oai_records_read": 0,
-        "modern_scenic_image_metadata": 0
-      },
+      "search_stats": {},
       "bright": 0,
-      "errors": []
+      "errors": [
+        {
+          "reason": "STAEDEL_SOURCE_NO_ACTIVE_LIDO_RECORDS_NOT_ZERO_VALID_ARTWORKS"
+        }
+      ]
     },
     {
       "provider": "staedel",
       "shard": 2,
-      "search_stats": {
-        "oai_records_read": 0,
-        "modern_scenic_image_metadata": 0
-      },
+      "search_stats": {},
       "bright": 0,
-      "errors": []
+      "errors": [
+        {
+          "reason": "STAEDEL_SOURCE_NO_ACTIVE_LIDO_RECORDS_NOT_ZERO_VALID_ARTWORKS"
+        }
+      ]
     }
   ],
   "works": [
