@@ -25,6 +25,14 @@ class Tests(unittest.TestCase):
   self.assertEqual(len(pairs),1)
   self.assertFalse(pairs[0]["identity_verified"])
   self.assertEqual(links[a["source_identity"]],["commons:2"])
+ def test_blank_wiki_fields_never_capture_next_key(self):
+  fields=q.parse_fields("{{Artwork\n|source= \n|author= \n|title= Boats on a river\n|description= River scenery\n}}")
+  self.assertFalse(fields.get("source"))
+  self.assertFalse(fields.get("author"))
+  self.assertEqual(fields.get("description"),"River scenery")
+  fields2=q.parse_fields("{{Artwork\n|source= \n|author=Claude Monet\n}}")
+  self.assertFalse(fields2.get("source"))
+  self.assertEqual(fields2.get("author"),"Claude Monet")
  def test_no_truncated_collection(self):
   with tempfile.TemporaryDirectory() as d:
    p=Path(d)/"q";p.mkdir()
