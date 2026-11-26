@@ -27,7 +27,7 @@ class Wave2PolicyTest(unittest.TestCase):
     def test_new_titles(self):
         self.assertGreater(w.scenery_score("Haystacks","Claude Monet",1890),0)
         self.assertGreater(w.scenery_score("Cypress Grove","Vincent van Gogh",1890),0)
-        self.assertGreater(w.scenery_score("Houses under Summer Sky","Unknown 1",1930),0)
+        self.assertGreater(w.scenery_score("Houses under Summer Sky","Georgia O Keeffe",1930),0)
     def test_no_lifespan_fallback(self):
         self.assertIsNone(w.new_year({"displaydate":"20th century","beginyear":"1880"}))
         self.assertEqual(w.new_year({"displaydate":"1897–1902"}),1897)
