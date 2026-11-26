@@ -13,6 +13,7 @@ import hashlib
 import io
 import json
 import math
+import re
 import time
 import urllib.error
 import urllib.parse
@@ -22,7 +23,7 @@ from PIL import Image, ImageDraw, ImageOps, UnidentifiedImageError
 
 Image.MAX_IMAGE_PIXELS = 25_000_000
 IMAGE_MAX_BYTES = 8 * 1024 * 1024
-HOSTS = {"upload.wikimedia.org", "thumb.wikimedia.org"}
+HOSTS = {"upload.wikimedia.org", "thumb.wikimedia.org", "cdn.staedelmuseum.de"}
 EXPECTED = 486
 SHARDS = 18
 
@@ -33,7 +34,7 @@ def read_queue(path: Path):
     if doc.get("all_candidate_records_retained") != EXPECTED or not isinstance(rows, list) or len(rows) != EXPECTED:
         raise ValueError("Pinned 486-candidate inventory is missing or incomplete")
     identities = [x.get("source_identity") for x in rows]
-    if len(set(identities)) != EXPECTED or any(not isinstance(x, str) or not x.startswith("commons:") for x in identities):
+    if len(set(identities)) != EXPECTED or any(not isinstance(x, str) or not re.fullmatch(r"[a-z][a-z0-9_-]*:[^\\s]+", x) for x in identities):
         raise ValueError("Missing or repeated canonical Commons identities")
     if any(x.get("commercially_approved") is not False or x.get("runtime_visible") is not False for x in rows):
         raise ValueError("Research-only rights and runtime invariants were changed")

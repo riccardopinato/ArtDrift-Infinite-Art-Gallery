@@ -36,6 +36,7 @@ class ParallelArtistGateTests(unittest.TestCase):
         self.assertFalse(m.url_safe("https://evil.example/"))
         self.assertFalse(m.url_safe("file:///etc/passwd"))
         self.assertTrue(m.url_safe("https://thumb.wikimedia.org/wikipedia/commons/thumb/a.jpg"))
+        self.assertTrue(m.url_safe("https://cdn.staedelmuseum.de/images/20/88/1350/thumb-lg.jpg"))
 
     def test_pixel_evidence_does_not_clear_rights(self):
         im = Image.new("RGB", (120, 80), "white")
@@ -60,6 +61,7 @@ class ParallelArtistGateTests(unittest.TestCase):
 
     def test_source_data_cannot_supply_approvals(self):
         rows = [self.row("commons:" + str(i)) for i in range(486)]
+        rows[0]["source_identity"] = "staedel:DE-MUS-048017/lido/1350"
         with tempfile.TemporaryDirectory() as tmp:
             p = Path(tmp) / "inventory.json"
             p.write_text(json.dumps({"all_candidate_records_retained": 486,
