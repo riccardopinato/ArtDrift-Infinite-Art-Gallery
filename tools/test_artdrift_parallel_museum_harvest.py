@@ -32,5 +32,48 @@ class MuseumLaneTests(unittest.TestCase):
         self.assertTrue(all(c.get("museum") for c in m.LANES.values()))
         self.assertTrue(m.OUT.name=="results")
 
+
+    def test_commons_continuation_is_reused_and_host_429_stops_requests(self):
+        from unittest.mock import patch
+        from urllib.error import HTTPError
+        from urllib.parse import parse_qs,urlsplit
+        seen=[]
+        def mock_get(url):
+            q=parse_qs(urlsplit(url).query)
+            seen.append(q)
+            if len(seen)==1:
+                return {"query":{"pages":[{"pageid":101,"title":"File:Garden.jpg"}]},
+                        "continue":{"continue":"-||","gcmcontinue":"page-B"}}
+            raise HTTPError(url,429,"Too Many Requests",{},None)
+        with patch.object(m,"COMMONS_THROTTLED",False):
+            with patch.object(m,"jget",side_effect=mock_get),patch.object(m.time,"sleep"):
+                rows,pages,errs,cursor,done=m.get_image_pages(
+                    {"generator":"categorymembers","gcmtitle":"Category:Painting",
+                     "gcmtype":"file","gcmlimit":50},3)
+                self.assertEqual(len(rows),1)
+                self.assertFalse(done)
+                self.assertEqual(pages,1)
+                self.assertEqual(cursor["gcmcontinue"],"page-B")
+                self.assertTrue(any("429" in x or "THROTTLED" in x for x in errs))
+                rows2,pages2,errs2,_,done2=m.get_image_pages(
+                    {"generator":"search","gsrsearch":"museum","gsrlimit":50},3)
+                self.assertEqual((len(rows2),pages2,done2),(0,0,False))
+                self.assertEqual(len(seen),2)
+                self.assertTrue(errs2)
+        with patch.object(m,"COMMONS_THROTTLED",False):
+            seen.clear()
+            def resume_only(url):
+                q=parse_qs(urlsplit(url).query)
+                self.assertEqual(q["gcmcontinue"],["page-B"])
+                return {"query":{"pages":[{"pageid":102,"title":"File:Sunshine.jpg"}]}}
+            with patch.object(m,"jget",side_effect=resume_only):
+                rows,pages,errs,cursor,done=m.get_image_pages(
+                    {"generator":"categorymembers","gcmtitle":"Category:Painting",
+                     "gcmtype":"file","gcmlimit":50},3,
+                    resume={"continue":"-||","gcmcontinue":"page-B"})
+                self.assertTrue(done)
+                self.assertIsNone(cursor)
+                self.assertEqual(rows[0]["pageid"],102)
+
 if __name__=="__main__":
     unittest.main()
