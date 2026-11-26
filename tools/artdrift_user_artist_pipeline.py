@@ -359,7 +359,7 @@ def build(seed, museum_reports, sourced):
         "matches_by_artist":dict(matched),
         "exact_work_family_matches":dict(explicit),
         "duplicate_source_file_links":len(set(duplicates)),
-        "priority_shortlist":matches[:180],
+        "priority_shortlist":matches[:600],
         "not_all_catalogs_exhaustively_searched":True,
         "rights_review_required":True,
         "visual_review_required":True,
