@@ -100,7 +100,7 @@ def scene_title(title):
     t=cleaned(title)
     if not t or AVOID_RE.search(t):return False
     return bool(SCENE_RE.search(t) or any(w in t for w in (
-         "sommerlandskap","herfstlandschap","fruhlingslandschaft",
+         "sommerlandskap","sommarlandskap","zomerlandschap","herfstlandschap","fruhlingslandschaft",
          "berglandschap","blomster","bloemen","landschaf","sommarlandskap")))
 
 def author_year_from_doc(text):
