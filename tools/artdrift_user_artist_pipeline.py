@@ -37,6 +37,10 @@ MAX_BODY = 4_000_000
 
 def norm(value):
     clean = unicodedata.normalize("NFKD", str(value or "")).casefold()
+    clean = clean.translate(str.maketrans({
+        "ø":"o","æ":"ae","œ":"oe","ł":"l","đ":"d","ð":"d",
+        "þ":"th","ß":"ss","ı":"i","ŋ":"n",
+    }))
     clean = "".join(c for c in clean if not unicodedata.combining(c))
     return re.sub(r"[^a-z0-9]+", " ", clean).strip()
 
