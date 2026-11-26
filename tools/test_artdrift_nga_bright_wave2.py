@@ -34,6 +34,11 @@ class Wave2PolicyTest(unittest.TestCase):
         self.assertIsNone(w.new_year({"displaydate":"20th century","beginyear":"1880"}))
         self.assertEqual(w.new_year({"displaydate":"1897–1902"}),1897)
         self.assertIsNone(w.new_year({"displaydate":"1973"}))
+    def test_visual_inspection_gates(self):
+        self.assertEqual(len(w.WAVE2_VISUAL_QA_EXCLUDED),5)
+        for ident in ("46481","157923","61364","89681","195170"):
+            self.assertIn(ident,w.WAVE2_VISUAL_QA_EXCLUDED)
+
     def test_prior_wave_dedup(self):
         ids=w.previous()
         self.assertEqual(len(ids),22)
