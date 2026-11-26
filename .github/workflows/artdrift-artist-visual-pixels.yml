@@ -1,0 +1,71 @@
+name: Art Drift — Seven artists visual pixel QA (contact sheet, no import)
+on:
+  push:
+    branches:
+      - research/artdrift-user-palette-artists-20261126
+    paths:
+      - tools/artdrift_user_artist_visual_pixels.py
+      - tools/test_artdrift_user_artist_visual_pixels.py
+      - .github/workflows/artdrift-artist-visual-pixels.yml
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: artdrift-user-artist-pixel-qa
+  cancel-in-progress: false
+jobs:
+  raster-review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 22
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --disable-pip-version-check Pillow==11.3.0
+      - name: Validate artist image host, fair distribution, no-import gates
+        run: |
+          python -m py_compile tools/artdrift_user_artist_visual_pixels.py
+          python -m unittest discover -s tools -p 'test_artdrift_user_artist_visual_pixels.py' -v
+      - name: Raster pixel review of Commons images and visual contact sheet
+        run: python -u tools/artdrift_user_artist_visual_pixels.py --max-images 35
+      - name: Gate: visual QA assets are NOT artist publication approvals
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          o=json.loads(Path('research/artists/20261126/artist_pixel_visual_evidence.json').read_text())
+          assert o['commercially_approved']==0 and o['runtime_imported']==0
+          assert o['visually_curated_and_approved']==0
+          assert o['sample_size']<=35
+          assert all(x['runtime_visible'] is False and x['commercially_approved'] is False
+                     for x in o['records'])
+          print('VERIFIED',o['decoded_images'],'image raster measurements,',
+                o['technical_color_pass'],'technical color tier passes',
+                o['painter_image_counts'])
+          PY
+      - name: Preserve image contact sheet and actual QA measurements for review
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ArtDrift-Seven-Painters-Actual-Visual-Contact-Sheet
+          path: |
+            research/artists/20261126/artist_pixel_visual_evidence.json
+            research/artists/20261126/artist_contact_sheet_research.jpg
+            research/artists/20261126/artist_contact_sheet_research.html
+          retention-days: 30
+          if-no-files-found: warn
+      - name: Commit only QA metrics; not reproduced artwork images
+        if: success()
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          cp research/artists/20261126/artist_pixel_visual_evidence.json /tmp/artist-pixels.json
+          git fetch origin research/artdrift-user-palette-artists-20261126
+          git reset --hard FETCH_HEAD
+          cp /tmp/artist-pixels.json research/artists/20261126/artist_pixel_visual_evidence.json
+          git add research/artists/20261126/artist_pixel_visual_evidence.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'research(artists): publish measurement-only seven-painter visual evidence'
+            git push origin HEAD:research/artdrift-user-palette-artists-20261126
+          fi
