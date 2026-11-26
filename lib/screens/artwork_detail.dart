@@ -225,7 +225,9 @@ class _Caption extends StatelessWidget {
               style: TextButton.styleFrom(foregroundColor: Colors.white)),
           TextButton.icon(onPressed: onMuseum,
             icon: const Icon(Icons.open_in_new, size: 17),
-            label: const Text('Scheda originale del museo'),
+            label: Text(artwork.isCuratedCommons
+                ? 'Scheda originale su Wikimedia Commons'
+                : 'Scheda originale del museo'),
             style: TextButton.styleFrom(foregroundColor: Colors.white70)),
           if (onRights != null)
             TextButton.icon(
@@ -242,7 +244,8 @@ class _Caption extends StatelessWidget {
               label: const Text('Condizioni della licenza'),
               style: TextButton.styleFrom(foregroundColor: Colors.white70)),
           const SizedBox(height: 10),
-          Text('Museo: ' + artwork.displayedMuseum,
+          Text((artwork.isCuratedCommons ? 'Archivio digitale: ' : 'Museo: ') +
+              artwork.displayedMuseum,
             style: const TextStyle(color: Colors.white70, fontSize: 11)),
           if (artwork.medium.isNotEmpty || artwork.technique.isNotEmpty)
             Text('Tecnica: ' +

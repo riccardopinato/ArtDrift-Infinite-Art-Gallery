@@ -208,7 +208,7 @@ class Artwork {
     final how = method.isEmpty ? '' : ' Tecnica e materiali: $method.';
     final scale = dimensions.isEmpty ? '' : ' Dimensioni: $dimensions.';
     final where = origin.isEmpty ? '' : ' Origine: $origin.';
-    final museum = museumSource == 'aic' ? '' :
+    final museum = (museumSource == 'aic' || isCuratedCommons) ? '' :
         ' Conservata presso $displayedMuseum.';
     return '«$title» è un’opera attribuita a $creator$when.$how$scale$where$museum';
   }
