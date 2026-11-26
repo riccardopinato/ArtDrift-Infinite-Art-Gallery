@@ -58,6 +58,16 @@ POS_RE=re.compile(r"\b(?:"+"|".join(re.escape(s) for s in sorted(set(SCENIC),key
 AVOID_RE=re.compile(r"\b(?:"+"|".join(re.escape(s) for s in sorted(set(AVOID),key=len,reverse=True))+r")\b")
 
 # Tight enough to exclude large dark areas even if the subject looks colorful.
+# Individually inspected on the 12-image contact sheet (2026-11-26).
+# Exclude human-centred beach scenes and low-chroma beige/gray works,
+# even if their averaged pixel metrics meet the numerical thresholds.
+WAVE2_VISUAL_QA_EXCLUDED={
+    "46481": "On the Beach — multiple people are the primary subject",
+    "157923": "East Hampton Beach — prominent foreground people",
+    "61364": "Beach Scene at Trouville — figures dominate the painting",
+    "89681": "View of the Louvre — dull gray-beige palette",
+    "195170": "On the Coast of New Jersey — mostly gray-beige and muted",
+}
 MIN_LUMINANCE=.55
 MAX_DARK_FRAC=.10
 MIN_VIVID_FRAC=.18
@@ -99,6 +109,7 @@ def candidate_objects(exclude):
     found=base.catalog_keys()
     found|=exclude
     found|=set(base.VISUAL_QA_EXCLUSIONS)
+    found|=set(WAVE2_VISUAL_QA_EXCLUDED)
     stream,rows=base.stream_csv("objects.csv")
     all_count=0;scenic={}
     try:
