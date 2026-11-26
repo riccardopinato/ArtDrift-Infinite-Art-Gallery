@@ -1,0 +1,69 @@
+name: "Art Drift — Birmingham Museums Trust independent acquisition"
+on:
+  push:
+    branches:
+      - research/artdrift-harvest-birmingham-20261126
+    paths:
+      - .github/workflows/artdrift-harvest-birmingham.yml
+      - research/museums/20261126/lanes/birmingham.json
+      - tools/artdrift_parallel_museum_harvest.py
+      - tools/test_artdrift_parallel_museum_harvest.py
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: artdrift-individual-museum-birmingham
+  cancel-in-progress: false
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install image decoder
+        run: python -m pip install --disable-pip-version-check Pillow==11.3.0
+      - name: Independent source and safety tests
+        run: |
+          python -m py_compile tools/artdrift_parallel_museum_harvest.py
+          python -m unittest discover -s tools -p 'test_artdrift_parallel_museum_harvest.py' -v
+      - name: Museum-specific metadata-first harvest
+        run: |
+          python -u tools/artdrift_parallel_museum_harvest.py --provider birmingham --max-records 600 --max-image-checks 90
+      - name: Validate no runtime import or unverified rights approval
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path("research/museums/20261126/lanes/results/birmingham.json")
+          doc=json.loads(p.read_text(encoding="utf-8"))
+          assert doc["provider"]=="birmingham"
+          assert doc["runtime_imported"]==0 and doc["commercially_approved"]==0
+          assert doc["catalog_exhaustively_searched"] is False
+          assert all(not x.get("commercially_approved",False) and x.get("runtime_visible") is False
+                     for x in doc["review_candidates"])
+          print("PASS:",doc["provider"],doc["stats"],"candidate_records",doc["candidates_in_report"])
+          PY
+      - name: Preserve machine-readable report and contact sheet
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ArtDrift-Harvest-birmingham
+          path: |
+            research/museums/20261126/lanes/results/birmingham.json
+            research/museums/20261126/lanes/results/birmingham_contact_sheet.jpg
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Commit only this museum's research report
+        if: success()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add research/museums/20261126/lanes/results/birmingham.json
+          if ! git diff --cached --quiet; then
+            git commit -m "research(birmingham): independent source inventory and image evidence"
+            git pull --rebase origin research/artdrift-harvest-birmingham-20261126
+            git push origin HEAD:research/artdrift-harvest-birmingham-20261126
+          fi
