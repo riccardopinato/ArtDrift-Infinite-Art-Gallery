@@ -71,6 +71,17 @@ class _ArtworkDetailState extends State<ArtworkDetail> {
     }
   }
 
+  Future<void> _openRights(String source) async {
+    final uri = Uri.tryParse(source);
+    if (uri == null || uri.scheme != 'https' || uri.userInfo.isNotEmpty ||
+        (uri.hasPort && uri.port != 443)) return;
+    if (!await launchUrl(uri, mode: LaunchMode.externalApplication) &&
+        mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('Impossibile aprire il riferimento ai diritti')));
+    }
+  }
+
   Future<void> _favorite() async {
     await widget.onToggleFavorite(art);
     if (mounted) setState(() {});
@@ -94,7 +105,14 @@ class _ArtworkDetailState extends State<ArtworkDetail> {
         final caption = _Caption(
           artwork: current,
           onMuseum: _openMuseum,
-          onWallpaper: _busy || kIsWeb ? null : _setWallpaper,
+          onRights: current.rightsEvidenceUrl.isEmpty
+              ? null : () => _openRights(current.rightsEvidenceUrl),
+          onLicense: current.imageLicenseRequiresAttribution &&
+              current.validImageLicenseLink
+              ? () => _openRights(current.imageLicenseUrl)
+              : null,
+          onWallpaper: _busy || kIsWeb || !current.wallpaperAllowed
+              ? null : _setWallpaper,
         );
         final painting = GestureDetector(
           behavior: HitTestBehavior.translucent,
@@ -165,9 +183,12 @@ class _ArtworkDetailState extends State<ArtworkDetail> {
 
 class _Caption extends StatelessWidget {
   const _Caption({required this.artwork, required this.onMuseum,
+    required this.onRights, required this.onLicense,
     required this.onWallpaper});
   final Artwork artwork;
   final VoidCallback onMuseum;
+  final VoidCallback? onRights;
+  final VoidCallback? onLicense;
   final VoidCallback? onWallpaper;
 
   @override
@@ -197,7 +218,7 @@ class _Caption extends StatelessWidget {
               color: Colors.white54, fontSize: 11, height: 1.4)),
           ],
           const SizedBox(height: 18),
-          if (!kIsWeb)
+          if (!kIsWeb && artwork.wallpaperAllowed)
             TextButton.icon(onPressed: onWallpaper,
               icon: const Icon(Icons.wallpaper_outlined, size: 17),
               label: const Text('Imposta come sfondo'),
@@ -206,6 +227,20 @@ class _Caption extends StatelessWidget {
             icon: const Icon(Icons.open_in_new, size: 17),
             label: const Text('Scheda originale del museo'),
             style: TextButton.styleFrom(foregroundColor: Colors.white70)),
+          if (onRights != null)
+            TextButton.icon(
+              key: const Key('artdrift-image-rights-evidence'),
+              onPressed: onRights,
+              icon: const Icon(Icons.gavel_outlined, size: 17),
+              label: const Text('Fonte e diritti dell’immagine'),
+              style: TextButton.styleFrom(foregroundColor: Colors.white70)),
+          if (onLicense != null)
+            TextButton.icon(
+              key: const Key('artdrift-image-license-terms'),
+              onPressed: onLicense,
+              icon: const Icon(Icons.open_in_new, size: 17),
+              label: const Text('Condizioni della licenza'),
+              style: TextButton.styleFrom(foregroundColor: Colors.white70)),
           const SizedBox(height: 10),
           Text('Museo: ' + artwork.displayedMuseum,
             style: const TextStyle(color: Colors.white70, fontSize: 11)),
@@ -217,8 +252,21 @@ class _Caption extends StatelessWidget {
             Text('Dimensioni: ' + artwork.dimensions,
               style: const TextStyle(color: Colors.white54, fontSize: 11)),
           const SizedBox(height: 8),
-          Text('Immagine: ' + artwork.displayedLicense +
-              ' · Fonte: ' + artwork.displayedMuseum,
+          Text('Licenza immagine: ${artwork.displayedLicense}',
+            key: const Key('artdrift-image-license-label'),
+            style: const TextStyle(color: Colors.white70, fontSize: 11)),
+          if (artwork.imageCreator.isNotEmpty)
+            Text('Riproduzione digitale: ${artwork.imageCreator}',
+              style: const TextStyle(color: Colors.white54, fontSize: 11)),
+          if (artwork.imageAttribution.isNotEmpty)
+            Text(artwork.imageAttribution,
+              key: const Key('artdrift-image-attribution'),
+              style: const TextStyle(color: Colors.white54, fontSize: 11)),
+          if (artwork.imageModifications.isNotEmpty)
+            Text('Modifiche all’immagine: ${artwork.imageModifications}',
+              style: const TextStyle(color: Colors.white54, fontSize: 11)),
+          const SizedBox(height: 6),
+          Text('Fonte: ${artwork.displayedMuseum}',
             style: const TextStyle(color: Colors.white38, fontSize: 10)),
         ],
       )),
