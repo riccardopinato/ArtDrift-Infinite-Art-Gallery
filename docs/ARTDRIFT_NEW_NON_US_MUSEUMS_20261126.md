@@ -14,7 +14,7 @@ Filtri approvati: pittura e paesaggi/giardini/marine/fiori, modernità prevalent
 | P1 | Belvedere, Vienna | Austria | Public Open Content con circa 5.900 oggetti elencati al momento | solo opere PD realmente rilasciate CC0; non tutti i 5.900 | Programma verificato; HTTPS 403 alla richiesta automatica |
 | P1 | Finnish National Gallery / Ateneum, Helsinki (con Kiasma/Sinebrychoff) | Finlandia | archivio pubblico, API da verificare e possibile credenziale | più di 36.000 immagini ufficialmente CC0; **non** tutte le opere in catalogo | Nuova fonte prioritaria, probe accesso |
 | P1 | Birmingham Museums Trust | Regno Unito | portale immagini istituzionale | scaricamento CC0 degli oggetti fuori copyright, non di tutti | Nuova fonte prioritaria, probe accesso |
-| P1 | Te Papa, Wellington | Nuova Zelanda | GET collections API disponibile, POST avanzato con chiave | metadata CC BY; **immagini eterogenee**, licenza per file obbligatoria | Nuova fonte prioritaria, probe accesso |
+| P1 | Te Papa, Wellington | Nuova Zelanda | GET collection search in documentazione ma endpoint concreto ha restituito HTTP 401; POST avanzato con chiave | metadata CC BY; **immagini eterogenee**, licenza per file obbligatoria | Nuova fonte prioritaria, probe accesso |
 | P2 | Städel Museum, Francoforte | Germania | OAI LIDO/DC live, 100 record LIDO per richiesta | immagini **CC BY-SA 4.0**, richiedono crediti e gestione share-alike | Implementato, campione iniziale 200 record |
 | P2 | Paris Musées (Petit Palais, Musée d'Art Moderne de Paris e altri) | Francia | public portal attivo; API JSON richiede token e registrazione | CC0 solo per opere effettivamente PD | Via portale; non aggirare token API |
 | P2 | Nasjonalmuseet, Oslo | Norvegia | DigitaltMuseum API; verifica chiave | licenze file eterogenee | Fonte da integrare separatamente |
@@ -39,6 +39,19 @@ Filtri approvati: pittura e paesaggi/giardini/marine/fiori, modernità prevalent
 - `tools/artdrift_eu_new_museums_batch.py` + test: batch su Rijksmuseum, Nationalmuseum e Städel con controllo del file immagine, SHA, colori ed esclusione ritratti.
 - `research/museums/20261126/new_european_museum_bright_batch1.json`: 9 batch iniziali, **1 dipinto** Rijksmuseum ha superato il filtro raster nel primo campione; non è ancora liberato per uso commerciale. Il basso tasso di passaggio non va nascosto.
 - `tools/artdrift_eu_source_probe.py` aggiornato con tre ulteriori fonti (Finlandia, Birmingham, Nuova Zelanda), 8 probe automatici indipendenti.
+
+## Verifica addizionale completata: 8 musei/federazioni (26 novembre 2026)
+
+Il secondo workflow ha completato **8/8 controlli di rete**, ciascuno con status salvato in `research/museums/20261126/non_us_source_access_results.json`:
+- **HTTP 200:** Rijksmuseum (API Linked Art), Nationalmuseum Sweden (Wikimedia), Städel (OAI), Paris Musées (portale), Finnish National Gallery (portale pubblico), Birmingham Museums (portale collezione).
+- **HTTP 403:** Belvedere, accesso automatico alle immagini non consentito nella sessione tecnica; non eseguire workaround.
+- **HTTP 401:** Te Papa Collections API sulla chiamata GET di ricerca specifica: la risposta reale dell'endpoint in GitHub Actions richiede autorizzazione, anche se la documentazione generale suggerisce GET senza token. Restano da valutare le credenziali/API terms, senza bypass.
+
+Gli otto job di controllo source erano **PASS**, mentre la fase di push del report incontrava un conflitto tra due workflow attivi sulla stessa branch. Il report aggregato è stato recuperato dagli artifact ufficiali e riconciliato con un commit singolo; nessun test di accesso è stato alterato per dichiarare successo.
+
+Il primo lotto immagini dei 3 musei (Rijks/Sweden/Städel) ha **9/9 shard PASS e consolidamento PASS**, ma una sola immagine raster ha soddisfatto i gate in questo campione: Rijks SK-C-429, `Our Pioneers: Seventeenth-Century Ships at Sea`, 1880, circa 4,05% di area scura. La **licenza immagine specifica resta HOLD**, perciò la cifra è **1 candidato tecnico**, **0 certificati commerciali**.
+
+La distanza tra centinaia di schede trovate e un candidato con immagine verificata conferma che va prima ampliato l'accesso ai media, non abbassare la qualità. Per le prossime ricerche dare priorità a Finnish National Gallery e Birmingham (portali accessibili e programma CC0), a Nationalmuseum Commons con paginazione per collezione, e a Rijks con paginazione e deduplica per opera.
 
 ## Limiti e prossimo ordine d'intervento
 Non attribuire a Art Drift migliaia di opere perché il museo possiede migliaia di riproduzioni. Una sorgente è **attiva** quando almeno un object ha dati completi, ID stabile, immagine realmente scaricabile, per-image rights, soggetto coerente, SHA e misure raster. I controlli legali devono tener conto della commercializzazione app e del territorio; CC BY-SA non è CC0. Autore, titolo e opera devono essere deduplicati tra musei (non soltanto gli URL).
