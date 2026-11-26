@@ -286,6 +286,44 @@
     "recid_looks_like": [],
     "lido_first_record_child_tags": [],
     "field_count": {},
+    "first_record_children": [
+      {
+        "tag": "{http://www.openarchives.org/OAI/2.0/}header",
+        "attrs": {
+          "status": "deleted"
+        }
+      }
+    ],
+    "first_record_nested_tags": [
+      {
+        "tag": "{http://www.openarchives.org/OAI/2.0/}record",
+        "text": "",
+        "attrs": {}
+      },
+      {
+        "tag": "{http://www.openarchives.org/OAI/2.0/}header",
+        "text": "",
+        "attrs": {
+          "status": "deleted"
+        }
+      },
+      {
+        "tag": "{http://www.openarchives.org/OAI/2.0/}identifier",
+        "text": "oai:DE-MUS-048017:lgp6",
+        "attrs": {}
+      },
+      {
+        "tag": "{http://www.openarchives.org/OAI/2.0/}datestamp",
+        "text": "2020-01-24T15:45:21Z",
+        "attrs": {}
+      },
+      {
+        "tag": "{http://www.openarchives.org/OAI/2.0/}setSpec",
+        "text": "scope:major",
+        "attrs": {}
+      }
+    ],
+    "metadata_child_tag": [],
     "element_local_name_counts": {},
     "image_resource_host_counts": {},
     "example_titles": [],
