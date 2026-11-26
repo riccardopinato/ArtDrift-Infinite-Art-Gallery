@@ -1,0 +1,83 @@
+name: Art Drift — five NEW European museum source checks
+on:
+  push:
+    branches: [research/artdrift-new-european-museums-20261126]
+    paths:
+      - tools/artdrift_eu_source_probe.py
+      - .github/workflows/artdrift-eu-new-museums.yml
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: artdrift-eu-museums-probe
+  cancel-in-progress: false
+jobs:
+  museum:
+    name: museum-${{ matrix.museum }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    strategy:
+      fail-fast: false
+      max-parallel: 3
+      matrix:
+        museum: [rijks, nationalmuseum_se, belvedere, staedel, paris_musees]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check source host only, never app runtime
+        run: python -u tools/artdrift_eu_source_probe.py --museum ${{ matrix.museum }}
+      - name: Source access diagnostic artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: EU-New-Museum-${{ matrix.museum }}
+          path: .artdrift_eu/probes/*.json
+          include-hidden-files: true
+          if-no-files-found: warn
+          retention-days: 30
+  combine:
+    name: Merge source diagnostic evidence only
+    needs: [museum]
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: EU-New-Museum-*
+          path: .artdrift_eu/probe_incoming
+      - name: Record only actual accessible API and source statuses
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          files=sorted(Path('.artdrift_eu/probe_incoming').rglob('*.json'))
+          if not files:raise SystemExit('no actual source response')
+          d={}
+          for f in files:
+            x=json.loads(f.read_text());d[x['museum_key']]=x
+          out={'schema_version':1,'as_of':'2026-11-26','non_us_museums_checked':sorted(d),
+               'source_diagnostics':d,'artworks_verified':0,'runtime_imported':0,
+               'important':'No artworks imported; probe reports public endpoint accessibility only'}
+          path=Path('research/museums/20261126/non_us_source_access_results.json')
+          path.parent.mkdir(parents=True,exist_ok=True)
+          path.write_text(json.dumps(out,ensure_ascii=False,indent=2)+'\n')
+          print(json.dumps({k:v.get('status') for k,v in d.items()},sort_keys=True))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: EU-New-Museums-Access-Combined
+          path: research/museums/20261126/non_us_source_access_results.json
+          if-no-files-found: warn
+      - name: Persist only research evidence
+        if: success()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add research/museums/20261126/non_us_source_access_results.json
+          if ! git diff --cached --quiet; then
+            git commit -m "research(artdrift): verify five new European museum source access"
+            git pull --rebase origin research/artdrift-new-european-museums-20261126
+            git push origin HEAD:research/artdrift-new-european-museums-20261126
+          fi
