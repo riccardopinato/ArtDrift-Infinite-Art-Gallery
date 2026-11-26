@@ -1,0 +1,89 @@
+name: Art Drift — Full 486-file copyright evidence audit
+on:
+  push:
+    branches:
+      - qa/artdrift-486-rights-20261126
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: artdrift-486-rights-\${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - run: python -m unittest tools/test_artdrift_486_rights_evidence.py -v
+      - name: Validate exact 486-image historical source
+        run: |
+          git fetch --no-tags --depth=1 origin b82a4574db3d504141b6d2e95e403aa743c771e3
+          test "$(git rev-parse FETCH_HEAD)" = b82a4574db3d504141b6d2e95e403aa743c771e3
+          mkdir -p rights-source
+          git show FETCH_HEAD:research/artists/20261126/artist_bulk_486_triage.json > rights-source/queue.json
+          git show FETCH_HEAD:research/artists/20261126/user_artist_visual_qa.json > rights-source/source.json
+          python - <<'PY'
+          from tools.artdrift_486_rights_evidence import inputs
+          from pathlib import Path
+          a,b=inputs(Path("rights-source/queue.json"),Path("rights-source/source.json"))
+          print("REAL_DATA_PASS",len(a),len(b))
+          PY
+  source-rights:
+    needs: tests
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        shard: [0,1,2,3]
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Retrieve exact original candidate set
+        run: |
+          git fetch --no-tags --depth=1 origin b82a4574db3d504141b6d2e95e403aa743c771e3
+          mkdir -p rights-source
+          git show FETCH_HEAD:research/artists/20261126/artist_bulk_486_triage.json > rights-source/queue.json
+          git show FETCH_HEAD:research/artists/20261126/user_artist_visual_qa.json > rights-source/source.json
+      - name: Verify live Wikimedia Commons file-page metadata
+        run: |
+          python -u tools/artdrift_486_rights_evidence.py \
+            --inventory rights-source/queue.json --source rights-source/source.json \
+            --shard \${{ matrix.shard }} --shards 4 --output rights-evidence
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: artdrift-rights-shard-\${{ matrix.shard }}
+          path: rights-evidence/rights_*.json
+          retention-days: 30
+          if-no-files-found: error
+  reconcile:
+    if: always()
+    needs: [tests,source-rights]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          git fetch --no-tags --depth=1 origin b82a4574db3d504141b6d2e95e403aa743c771e3
+          mkdir -p rights-source
+          git show FETCH_HEAD:research/artists/20261126/artist_bulk_486_triage.json > rights-source/queue.json
+          git show FETCH_HEAD:research/artists/20261126/user_artist_visual_qa.json > rights-source/source.json
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: artdrift-rights-shard-*
+          merge-multiple: true
+          path: rights-evidence
+      - name: Ensure 486 unique rights records and no premature clearance
+        run: |
+          python tools/artdrift_486_rights_evidence.py \
+            --inventory rights-source/queue.json --source rights-source/source.json \
+            --aggregate --output rights-evidence
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ARTDRIFT-486-LICENSE-RIGHTS-EVIDENCE-REPORT
+          path: rights-evidence/aggregate/*
+          if-no-files-found: error
+          retention-days: 60
