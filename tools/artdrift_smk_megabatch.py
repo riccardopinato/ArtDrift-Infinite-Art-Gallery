@@ -78,7 +78,16 @@ def date_year(raw):
 def title_valid(name):
     t=cleaned(name)
     if not t or AVOID_RE.search(t):return False
-    return bool(GOOD_RE.search(t))
+    # Danish compounds such as "Sommerlandskab" or "Kystlandskab" have no
+    # word boundaries inside the joined noun; keep them without opening
+    # the gate for portraits or other human-centric morphology.
+    if any(bad in t for bad in ("portraet","portra","portrait","kvind",
+         "piger","dreng","figurer","nogen","mork","nocturne")):
+        return False
+    return bool(GOOD_RE.search(t)) or any(
+        good in t for good in
+        ("landskab","blomster","strand","skov","sommer","have","kyst","roser",
+         "meadow","landscape","garden","orchard"))
 
 def prior_ids():
     ids=set()
