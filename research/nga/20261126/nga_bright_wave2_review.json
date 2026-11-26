@@ -1,0 +1,1690 @@
+{
+  "schema_version": 2,
+  "as_of": "2026-11-26",
+  "source": "National Gallery of Art official open data",
+  "dataset_commit": "2470472572fdca2a24a741bb50eaba7301c47fa9",
+  "wave1_original_preserved": 22,
+  "existing_or_explicitly_blocked": 824,
+  "objects_scanned": 146592,
+  "modern_scenic_candidates": 208,
+  "scenic_with_primary_openaccess_image": 115,
+  "images_probed": 115,
+  "strict_bright_image_pass": 12,
+  "wave2_selected_count": 12,
+  "color_or_image_holds": 103,
+  "unprobed_remaining": 0,
+  "rights_counts": {
+    "restricted": 73
+  },
+  "thresholds": {
+    "luminance_min": 0.55,
+    "dark_fraction_max": 0.1,
+    "vivid_fraction_min": 0.18,
+    "saturation_min": 0.18,
+    "year_min": 1850,
+    "year_max": 1965
+  },
+  "portrait_count": 0,
+  "runtime_imported": 0,
+  "territorial_and_final_curation_approved": 0,
+  "works": [
+    {
+      "native_id": "46677",
+      "title": "Spring Woods",
+      "artist": "Henry Ward Ranger",
+      "year": 1910,
+      "date": "c. 1910",
+      "classification": "Painting",
+      "medium": "oil on canvas",
+      "metadata_score": 11,
+      "nga_url": "https://www.nga.gov/artworks/46677",
+      "id": 4000046677,
+      "museum_source": "nga",
+      "museum_native_id": "46677",
+      "museum_name": "National Gallery of Art, Washington",
+      "rights_license": "Public Domain / NGA Open Access",
+      "rights_evidence_url": "https://www.nga.gov/artworks/free-images-and-open-access",
+      "source_dataset_sha": "2470472572fdca2a24a741bb50eaba7301c47fa9",
+      "source_image_uuid": "79cb3eba-4af9-4197-87a3-d61ca03ed227",
+      "remote_preview_url": "https://api.nga.gov/iiif/79cb3eba-4af9-4197-87a3-d61ca03ed227/full/256,/0/default.jpg",
+      "remote_full_url": "https://api.nga.gov/iiif/79cb3eba-4af9-4197-87a3-d61ca03ed227/full/1000,/0/default.jpg",
+      "image_sha256": "9414650839fa14a6d88e2d4300cf33d484250c1a38e953be607f4976fa786b33",
+      "color_metrics": {
+        "luminance": 0.5581,
+        "saturation": 0.4819,
+        "dark_fraction": 0.0565,
+        "vivid_fraction": 0.8012,
+        "bright_color_pass": true,
+        "wave2_strict_bright_pass": true
+      },
+      "portrait_subject_candidate": false,
+      "public_domain_image_flag": true,
+      "publication_status": "HOLD_FINAL_RIGHTS_AND_VISUAL_QA",
+      "runtime_visible": false,
+      "curation_score": 0.6556
+    },
+    {
+      "native_id": "52957",
+      "title": "Southern Resort Town",
+      "artist": "Dana Smith",
+      "year": 1880,
+      "date": "c. 1880",
+      "classification": "Painting",
+      "medium": "oil on canvas",
+      "metadata_score": 9,
+      "nga_url": "https://www.nga.gov/artworks/52957",
+      "id": 4000052957,
+      "museum_source": "nga",
+      "museum_native_id": "52957",
+      "museum_name": "National Gallery of Art, Washington",
+      "rights_license": "Public Domain / NGA Open Access",
+      "rights_evidence_url": "https://www.nga.gov/artworks/free-images-and-open-access",
+      "source_dataset_sha": "2470472572fdca2a24a741bb50eaba7301c47fa9",
+      "source_image_uuid": "ec8bb271-e62c-4c85-bd8c-99ba9b38e79c",
+      "remote_preview_url": "https://api.nga.gov/iiif/ec8bb271-e62c-4c85-bd8c-99ba9b38e79c/full/256,/0/default.jpg",
+      "remote_full_url": "https://api.nga.gov/iiif/ec8bb271-e62c-4c85-bd8c-99ba9b38e79c/full/1000,/0/default.jpg",
+      "image_sha256": "5651dafe772727634fd8a5992473aac0814546e7bbb46b24edc3cc4baeb979ea",
+      "color_metrics": {
+        "luminance": 0.6912,
+        "saturation": 0.2884,
+        "dark_fraction": 0.0013,
+        "vivid_fraction": 0.4417,
+        "bright_color_pass": true,
+        "wave2_strict_bright_pass": true
+      },
+      "portrait_subject_candidate": false,
+      "public_domain_image_flag": true,
+      "publication_status": "HOLD_FINAL_RIGHTS_AND_VISUAL_QA",
+      "runtime_visible": false,
+      "curation_score": 0.5345
+    },
+    {
+      "native_id": "56574",
+      "title": "Beach at Beverly",
+      "artist": "John Frederick Kensett",
+      "year": 1869,
+      "date": "c. 1869/1872",
+      "classification": "Painting",
+      "medium": "oil on canvas",
+      "metadata_score": 10,
+      "nga_url": "https://www.nga.gov/artworks/56574",
+      "id": 4000056574,
+      "museum_source": "nga",
+      "museum_native_id": "56574",
+      "museum_name": "National Gallery of Art, Washington",
+      "rights_license": "Public Domain / NGA Open Access",
+      "rights_evidence_url": "https://www.nga.gov/artworks/free-images-and-open-access",
+      "source_dataset_sha": "2470472572fdca2a24a741bb50eaba7301c47fa9",
+      "source_image_uuid": "e36f10fe-8366-4753-a447-a9467fb4de32",
+      "remote_preview_url": "https://api.nga.gov/iiif/e36f10fe-8366-4753-a447-a9467fb4de32/full/256,/0/default.jpg",
+      "remote_full_url": "https://api.nga.gov/iiif/e36f10fe-8366-4753-a447-a9467fb4de32/full/1000,/0/default.jpg",
+      "image_sha256": "8d2a09c9dc41bd8ac9a0fa4a358a437b3c06e96d1877597cad9962cb37b6c577",
+      "color_metrics": {
+        "luminance": 0.6545,
+        "saturation": 0.3391,
+        "dark_fraction": 0.0625,
+        "vivid_fraction": 0.4705,
+        "bright_color_pass": true,
+        "wave2_strict_bright_pass": true
+      },
+      "portrait_subject_candidate": false,
+      "public_domain_image_flag": true,
+      "publication_status": "HOLD_FINAL_RIGHTS_AND_VISUAL_QA",
+      "runtime_visible": false,
+      "curation_score": 0.5044
+    },
+    {
+      "native_id": "46523",
+      "title": "The Houses of Parliament, Sunset",
+      "artist": "Claude Monet",
+      "year": 1903,
+      "date": "1903",
+      "classification": "Painting",
+      "medium": "oil on canvas",
+      "metadata_score": 15,
+      "nga_url": "https://www.nga.gov/artworks/46523",
+      "id": 4000046523,
+      "museum_source": "nga",
+      "museum_native_id": "46523",
+      "museum_name": "National Gallery of Art, Washington",
+      "rights_license": "Public Domain / NGA Open Access",
+      "rights_evidence_url": "https://www.nga.gov/artworks/free-images-and-open-access",
+      "source_dataset_sha": "2470472572fdca2a24a741bb50eaba7301c47fa9",
+      "source_image_uuid": "9eae6258-ec1c-442f-b353-a89cff510113",
+      "remote_preview_url": "https://api.nga.gov/iiif/9eae6258-ec1c-442f-b353-a89cff510113/full/256,/0/default.jpg",
+      "remote_full_url": "https://api.nga.gov/iiif/9eae6258-ec1c-442f-b353-a89cff510113/full/1000,/0/default.jpg",
+      "image_sha256": "3ef4d8fc7d97a0a6293e57d7a0e33f29f4672e84d5b78ae067c99e51d6f44e75",
+      "color_metrics": {
+        "luminance": 0.5859,
+        "saturation": 0.2536,
+        "dark_fraction": 0.0,
+        "vivid_fraction": 0.3847,
+        "bright_color_pass": true,
+        "wave2_strict_bright_pass": true
+      },
+      "portrait_subject_candidate": false,
+      "public_domain_image_flag": true,
+      "publication_status": "HOLD_FINAL_RIGHTS_AND_VISUAL_QA",
+      "runtime_visible": false,
+      "curation_score": 0.4956
+    },
+    {
+      "native_id": "59886",
+      "title": "Bucks County Farm Outside Doylestown, Pennsylvania",
+      "artist": "American 19th Century",
+      "year": 1890,
+      "date": "c. 1890",
+      "classification": "Painting",
+      "medium": "oil on canvas",
+      "metadata_score": 9,
+      "nga_url": "https://www.nga.gov/artworks/59886",
+      "id": 4000059886,
+      "museum_source": "nga",
+      "museum_native_id": "59886",
+      "museum_name": "National Gallery of Art, Washington",
+      "rights_license": "Public Domain / NGA Open Access",
+      "rights_evidence_url": "https://www.nga.gov/artworks/free-images-and-open-access",
+      "source_dataset_sha": "2470472572fdca2a24a741bb50eaba7301c47fa9",
+      "source_image_uuid": "a0e57e06-45d6-4e92-826d-e15ddd0ee968",
+      "remote_preview_url": "https://api.nga.gov/iiif/a0e57e06-45d6-4e92-826d-e15ddd0ee968/full/256,/0/default.jpg",
+      "remote_full_url": "https://api.nga.gov/iiif/a0e57e06-45d6-4e92-826d-e15ddd0ee968/full/1000,/0/default.jpg",
+      "image_sha256": "55c1c04d2936be8132afbe098cfa1e34f5fe594ee8bd4c1a73657f7420697d90",
+      "color_metrics": {
+        "luminance": 0.5597,
+        "saturation": 0.4191,
+        "dark_fraction": 0.0973,
+        "vivid_fraction": 0.4672,
+        "bright_color_pass": true,
+        "wave2_strict_bright_pass": true
+      },
+      "portrait_subject_candidate": false,
+      "public_domain_image_flag": true,
+      "publication_status": "HOLD_FINAL_RIGHTS_AND_VISUAL_QA",
+      "runtime_visible": false,
+      "curation_score": 0.4592
+    },
+    {
+      "native_id": "157923",
+      "title": "East Hampton Beach, Long Island",
+      "artist": "Winslow Homer",
+      "year": 1874,
+      "date": "1874",
+      "classification": "Painting",
+      "medium": "oil on canvas",
+      "metadata_score": 15,
+      "nga_url": "https://www.nga.gov/artworks/157923",
+      "id": 4000157923,
+      "museum_source": "nga",
+      "museum_native_id": "157923",
+      "museum_name": "National Gallery of Art, Washington",
+      "rights_license": "Public Domain / NGA Open Access",
+      "rights_evidence_url": "https://www.nga.gov/artworks/free-images-and-open-access",
+      "source_dataset_sha": "2470472572fdca2a24a741bb50eaba7301c47fa9",
+      "source_image_uuid": "e448a88b-b7c1-486e-9995-9c96d611faff",
+      "remote_preview_url": "https://api.nga.gov/iiif/e448a88b-b7c1-486e-9995-9c96d611faff/full/256,/0/default.jpg",
+      "remote_full_url": "https://api.nga.gov/iiif/e448a88b-b7c1-486e-9995-9c96d611faff/full/1000,/0/default.jpg",
+      "image_sha256": "f35f0ff6bd3119a6f8458acb7cda6706e9ddd40675e621d5b588b7c9b0d6de5b",
+      "color_metrics": {
+        "luminance": 0.5857,
+        "saturation": 0.2602,
+        "dark_fraction": 0.0578,
+        "vivid_fraction": 0.3785,
+        "bright_color_pass": true,
+        "wave2_strict_bright_pass": true
+      },
+      "portrait_subject_candidate": false,
+      "public_domain_image_flag": true,
+      "publication_status": "HOLD_FINAL_RIGHTS_AND_VISUAL_QA",
+      "runtime_visible": false,
+      "curation_score": 0.4501
+    },
+    {
+      "native_id": "72328",
+      "title": "Roses",
+      "artist": "Vincent van Gogh",
+      "year": 1890,
+      "date": "1890",
+      "classification": "Painting",
+      "medium": "oil on canvas",
+      "metadata_score": 14,
+      "nga_url": "https://www.nga.gov/artworks/72328",
+      "id": 4000072328,
+      "museum_source": "nga",
+      "museum_native_id": "72328",
+      "museum_name": "National Gallery of Art, Washington",
+      "rights_license": "Public Domain / NGA Open Access",
+      "rights_evidence_url": "https://www.nga.gov/artworks/free-images-and-open-access",
+      "source_dataset_sha": "2470472572fdca2a24a741bb50eaba7301c47fa9",
+      "source_image_uuid": "bef8c58d-15ae-4649-b2ff-ae0ead24714e",
+      "remote_preview_url": "https://api.nga.gov/iiif/bef8c58d-15ae-4649-b2ff-ae0ead24714e/full/256,/0/default.jpg",
+      "remote_full_url": "https://api.nga.gov/iiif/bef8c58d-15ae-4649-b2ff-ae0ead24714e/full/1000,/0/default.jpg",
+      "image_sha256": "11c17f0c32f9402f087e3bbbdd2c5072e67e07a09c0269a19b28541afab8b27b",
+      "color_metrics": {
+        "luminance": 0.67,
+        "saturation": 0.2597,
+        "dark_fraction": 0.0266,
+        "vivid_fraction": 0.2642,
+        "bright_color_pass": true,
+        "wave2_strict_bright_pass": true
+      },
+      "portrait_subject_candidate": false,
+      "public_domain_image_flag": true,
+      "publication_status": "HOLD_FINAL_RIGHTS_AND_VISUAL_QA",
+      "runtime_visible": false,
+      "curation_score": 0.4499
+    },
+    {
+      "native_id": "46481",
+      "title": "On the Beach",
+      "artist": "Eugène Boudin",
+      "year": 1894,
+      "date": "1894",
+      "classification": "Painting",
+      "medium": "oil on wood",
+      "metadata_score": 13,
+      "nga_url": "https://www.nga.gov/artworks/46481",
+      "id": 4000046481,
+      "museum_source": "nga",
+      "museum_native_id": "46481",
+      "museum_name": "National Gallery of Art, Washington",
+      "rights_license": "Public Domain / NGA Open Access",
+      "rights_evidence_url": "https://www.nga.gov/artworks/free-images-and-open-access",
+      "source_dataset_sha": "2470472572fdca2a24a741bb50eaba7301c47fa9",
+      "source_image_uuid": "23a2e880-4b64-4ac1-95de-42f391a759ea",
+      "remote_preview_url": "https://api.nga.gov/iiif/23a2e880-4b64-4ac1-95de-42f391a759ea/full/256,/0/default.jpg",
+      "remote_full_url": "https://api.nga.gov/iiif/23a2e880-4b64-4ac1-95de-42f391a759ea/full/1000,/0/default.jpg",
+      "image_sha256": "74cd9e5206b8eff8a3ddb199fd004fb244abbec673182153fde7b3d0e6eb1a10",
+      "color_metrics": {
+        "luminance": 0.5676,
+        "saturation": 0.1938,
+        "dark_fraction": 0.0457,
+        "vivid_fraction": 0.3466,
+        "bright_color_pass": true,
+        "wave2_strict_bright_pass": true
+      },
+      "portrait_subject_candidate": false,
+      "public_domain_image_flag": true,
+      "publication_status": "HOLD_FINAL_RIGHTS_AND_VISUAL_QA",
+      "runtime_visible": false,
+      "curation_score": 0.4137
+    },
+    {
+      "native_id": "195170",
+      "title": "On the Coast of New Jersey",
+      "artist": "William Trost Richards",
+      "year": 1883,
+      "date": "1883",
+      "classification": "Painting",
+      "medium": "oil on canvas",
+      "metadata_score": 13,
+      "nga_url": "https://www.nga.gov/artworks/195170",
+      "id": 4000195170,
+      "museum_source": "nga",
+      "museum_native_id": "195170",
+      "museum_name": "National Gallery of Art, Washington",
+      "rights_license": "Public Domain / NGA Open Access",
+      "rights_evidence_url": "https://www.nga.gov/artworks/free-images-and-open-access",
+      "source_dataset_sha": "2470472572fdca2a24a741bb50eaba7301c47fa9",
+      "source_image_uuid": "bbcdf5c0-104b-47c4-bd1c-dd4d3f66e8b7",
+      "remote_preview_url": "https://api.nga.gov/iiif/bbcdf5c0-104b-47c4-bd1c-dd4d3f66e8b7/full/256,/0/default.jpg",
+      "remote_full_url": "https://api.nga.gov/iiif/bbcdf5c0-104b-47c4-bd1c-dd4d3f66e8b7/full/1000,/0/default.jpg",
+      "image_sha256": "7b3525cdfe9aea68c9b5342895ae29ca4e6684e1d9782bce56b5a849e82f8ba0",
+      "color_metrics": {
+        "luminance": 0.6327,
+        "saturation": 0.2712,
+        "dark_fraction": 0.0552,
+        "vivid_fraction": 0.2332,
+        "bright_color_pass": true,
+        "wave2_strict_bright_pass": true
+      },
+      "portrait_subject_candidate": false,
+      "public_domain_image_flag": true,
+      "publication_status": "HOLD_FINAL_RIGHTS_AND_VISUAL_QA",
+      "runtime_visible": false,
+      "curation_score": 0.4003
+    },
+    {
+      "native_id": "89681",
+      "title": "View of the Louvre",
+      "artist": "Stanislas Lépine",
+      "year": 1880,
+      "date": "1880/1886",
+      "classification": "Painting",
+      "medium": "oil on board",
+      "metadata_score": 9,
+      "nga_url": "https://www.nga.gov/artworks/89681",
+      "id": 4000089681,
+      "museum_source": "nga",
+      "museum_native_id": "89681",
+      "museum_name": "National Gallery of Art, Washington",
+      "rights_license": "Public Domain / NGA Open Access",
+      "rights_evidence_url": "https://www.nga.gov/artworks/free-images-and-open-access",
+      "source_dataset_sha": "2470472572fdca2a24a741bb50eaba7301c47fa9",
+      "source_image_uuid": "3238d41c-6d94-49dc-8b3a-3d069210d022",
+      "remote_preview_url": "https://api.nga.gov/iiif/3238d41c-6d94-49dc-8b3a-3d069210d022/full/256,/0/default.jpg",
+      "remote_full_url": "https://api.nga.gov/iiif/3238d41c-6d94-49dc-8b3a-3d069210d022/full/1000,/0/default.jpg",
+      "image_sha256": "0dcca03400cbf09c0f2b9bb4a8d2b65722e2d989d670d63cedd20f42bf7d4804",
+      "color_metrics": {
+        "luminance": 0.6609,
+        "saturation": 0.2354,
+        "dark_fraction": 0.0348,
+        "vivid_fraction": 0.2121,
+        "bright_color_pass": true,
+        "wave2_strict_bright_pass": true
+      },
+      "portrait_subject_candidate": false,
+      "public_domain_image_flag": true,
+      "publication_status": "HOLD_FINAL_RIGHTS_AND_VISUAL_QA",
+      "runtime_visible": false,
+      "curation_score": 0.3887
+    },
+    {
+      "native_id": "61364",
+      "title": "Beach Scene at Trouville",
+      "artist": "Eugène Boudin",
+      "year": 1863,
+      "date": "1863",
+      "classification": "Painting",
+      "medium": "oil on wood",
+      "metadata_score": 10,
+      "nga_url": "https://www.nga.gov/artworks/61364",
+      "id": 4000061364,
+      "museum_source": "nga",
+      "museum_native_id": "61364",
+      "museum_name": "National Gallery of Art, Washington",
+      "rights_license": "Public Domain / NGA Open Access",
+      "rights_evidence_url": "https://www.nga.gov/artworks/free-images-and-open-access",
+      "source_dataset_sha": "2470472572fdca2a24a741bb50eaba7301c47fa9",
+      "source_image_uuid": "85f2142e-1b34-4e75-a077-62de44276f88",
+      "remote_preview_url": "https://api.nga.gov/iiif/85f2142e-1b34-4e75-a077-62de44276f88/full/256,/0/default.jpg",
+      "remote_full_url": "https://api.nga.gov/iiif/85f2142e-1b34-4e75-a077-62de44276f88/full/1000,/0/default.jpg",
+      "image_sha256": "f1cbf48dc2af793aa431df18d6e84f9517f07d84ddf30e5ffc47ff1c5897eb74",
+      "color_metrics": {
+        "luminance": 0.6276,
+        "saturation": 0.2124,
+        "dark_fraction": 0.0439,
+        "vivid_fraction": 0.2467,
+        "bright_color_pass": true,
+        "wave2_strict_bright_pass": true
+      },
+      "portrait_subject_candidate": false,
+      "public_domain_image_flag": true,
+      "publication_status": "HOLD_FINAL_RIGHTS_AND_VISUAL_QA",
+      "runtime_visible": false,
+      "curation_score": 0.3839
+    },
+    {
+      "native_id": "51139",
+      "title": "Composite Harbor Scene with Castle",
+      "artist": "Jurgan Frederick Huge",
+      "year": 1875,
+      "date": "c. 1875",
+      "classification": "Painting",
+      "medium": "oil on canvas",
+      "metadata_score": 14,
+      "nga_url": "https://www.nga.gov/artworks/51139",
+      "id": 4000051139,
+      "museum_source": "nga",
+      "museum_native_id": "51139",
+      "museum_name": "National Gallery of Art, Washington",
+      "rights_license": "Public Domain / NGA Open Access",
+      "rights_evidence_url": "https://www.nga.gov/artworks/free-images-and-open-access",
+      "source_dataset_sha": "2470472572fdca2a24a741bb50eaba7301c47fa9",
+      "source_image_uuid": "b1ba636f-04e3-4962-8343-a0f7127a8152",
+      "remote_preview_url": "https://api.nga.gov/iiif/b1ba636f-04e3-4962-8343-a0f7127a8152/full/256,/0/default.jpg",
+      "remote_full_url": "https://api.nga.gov/iiif/b1ba636f-04e3-4962-8343-a0f7127a8152/full/1000,/0/default.jpg",
+      "image_sha256": "52f0726b777f2ed215e5bff0c2a2568d8dd48e224b9e4ccf2724747639571c6f",
+      "color_metrics": {
+        "luminance": 0.6244,
+        "saturation": 0.2637,
+        "dark_fraction": 0.0962,
+        "vivid_fraction": 0.2423,
+        "bright_color_pass": true,
+        "wave2_strict_bright_pass": true
+      },
+      "portrait_subject_candidate": false,
+      "public_domain_image_flag": true,
+      "publication_status": "HOLD_FINAL_RIGHTS_AND_VISUAL_QA",
+      "runtime_visible": false,
+      "curation_score": 0.3726
+    }
+  ],
+  "hold_samples": [
+    {
+      "native_id": "1149",
+      "title": "The Forest of Coubron",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.483,
+        "saturation": 0.6732,
+        "dark_fraction": 0.2478,
+        "vivid_fraction": 0.5146,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "35085",
+      "title": "The Windmill",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.36,
+        "saturation": 0.4568,
+        "dark_fraction": 0.4168,
+        "vivid_fraction": 0.3698,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "35088",
+      "title": "Forest Scene",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.1808,
+        "saturation": 0.8306,
+        "dark_fraction": 0.9485,
+        "vivid_fraction": 0.0127,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "35091",
+      "title": "Landscape",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.3897,
+        "saturation": 0.4755,
+        "dark_fraction": 0.5266,
+        "vivid_fraction": 0.2922,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "35094",
+      "title": "Landscape with Boatman",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.5085,
+        "saturation": 0.3264,
+        "dark_fraction": 0.3163,
+        "vivid_fraction": 0.0988,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "42504",
+      "title": "Flowers and Fruit",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.3793,
+        "saturation": 0.6079,
+        "dark_fraction": 0.4108,
+        "vivid_fraction": 0.422,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "42928",
+      "title": "The Artist's Garden",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.4163,
+        "saturation": 0.4591,
+        "dark_fraction": 0.4825,
+        "vivid_fraction": 0.0612,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "42929",
+      "title": "Snow in New York",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.4134,
+        "saturation": 0.3127,
+        "dark_fraction": 0.3616,
+        "vivid_fraction": 0.2445,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "45867",
+      "title": "Vase of Flowers",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.2896,
+        "saturation": 0.3849,
+        "dark_fraction": 0.713,
+        "vivid_fraction": 0.0303,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "45872",
+      "title": "Morning Haze",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.8861,
+        "saturation": 0.0341,
+        "dark_fraction": 0.0,
+        "vivid_fraction": 0.0,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "46426",
+      "title": "Lake Albano, Sunset",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.475,
+        "saturation": 0.6689,
+        "dark_fraction": 0.4179,
+        "vivid_fraction": 0.5494,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "46428",
+      "title": "Street in Venice",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.3952,
+        "saturation": 0.2438,
+        "dark_fraction": 0.29,
+        "vivid_fraction": 0.3019,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "46485",
+      "title": "Beach in Normandy",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.5538,
+        "saturation": 0.276,
+        "dark_fraction": 0.2175,
+        "vivid_fraction": 0.197,
+        "bright_color_pass": true
+      }
+    },
+    {
+      "native_id": "46623",
+      "title": "Brittany Landscape",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.519,
+        "saturation": 0.1687,
+        "dark_fraction": 0.0316,
+        "vivid_fraction": 0.0663,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "46630",
+      "title": "The Bridge of Louis Philippe",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.5458,
+        "saturation": 0.2601,
+        "dark_fraction": 0.1148,
+        "vivid_fraction": 0.1356,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "46655",
+      "title": "The Seine at Giverny",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.6645,
+        "saturation": 0.1553,
+        "dark_fraction": 0.0001,
+        "vivid_fraction": 0.0435,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "46656",
+      "title": "Jerusalem Artichoke Flowers",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.4544,
+        "saturation": 0.4251,
+        "dark_fraction": 0.183,
+        "vivid_fraction": 0.3569,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "46657",
+      "title": "Palazzo da Mula, Venice",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.4319,
+        "saturation": 0.4627,
+        "dark_fraction": 0.072,
+        "vivid_fraction": 0.4696,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "46673",
+      "title": "Boulevard des Italiens, Morning, Sunlight",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.5037,
+        "saturation": 0.1575,
+        "dark_fraction": 0.0567,
+        "vivid_fraction": 0.0565,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "46690",
+      "title": "The Road in the Woods",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.4184,
+        "saturation": 0.2367,
+        "dark_fraction": 0.2877,
+        "vivid_fraction": 0.0637,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "46704",
+      "title": "Repast in a Garden",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.3838,
+        "saturation": 0.3334,
+        "dark_fraction": 0.3449,
+        "vivid_fraction": 0.2969,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "50299",
+      "title": "El Rio de Luz (The River of Light)",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.4191,
+        "saturation": 0.4623,
+        "dark_fraction": 0.3586,
+        "vivid_fraction": 0.3644,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "50312",
+      "title": "A Little Sioux Village",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.489,
+        "saturation": 0.4274,
+        "dark_fraction": 0.0509,
+        "vivid_fraction": 0.5972,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "50320",
+      "title": "A Sioux Village",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.425,
+        "saturation": 0.3672,
+        "dark_fraction": 0.2154,
+        "vivid_fraction": 0.0731,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "50322",
+      "title": "Sioux Village - Lac du Cygne",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.3938,
+        "saturation": 0.5374,
+        "dark_fraction": 0.25,
+        "vivid_fraction": 0.4227,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "50334",
+      "title": "A Small Crow Village",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.4645,
+        "saturation": 0.3755,
+        "dark_fraction": 0.119,
+        "vivid_fraction": 0.4691,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "50346",
+      "title": "Cheyenne Village",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.4173,
+        "saturation": 0.4837,
+        "dark_fraction": 0.0347,
+        "vivid_fraction": 0.302,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "50349",
+      "title": "A Small Cheyenne Village",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.4442,
+        "saturation": 0.6044,
+        "dark_fraction": 0.283,
+        "vivid_fraction": 0.3406,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "50387",
+      "title": "Mandan Village - A Distant View",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.4925,
+        "saturation": 0.367,
+        "dark_fraction": 0.0545,
+        "vivid_fraction": 0.6824,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "50436",
+      "title": "An Ojibbeway Village of Skin Tents",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.5254,
+        "saturation": 0.4808,
+        "dark_fraction": 0.1582,
+        "vivid_fraction": 0.4017,
+        "bright_color_pass": true
+      }
+    },
+    {
+      "native_id": "50506",
+      "title": "Nayas Village - Indians Bathing",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.417,
+        "saturation": 0.4449,
+        "dark_fraction": 0.23,
+        "vivid_fraction": 0.4751,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "50508",
+      "title": "An Apachee Village",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.4107,
+        "saturation": 0.5673,
+        "dark_fraction": 0.1761,
+        "vivid_fraction": 0.4417,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "50575",
+      "title": "Arowak Village",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.4174,
+        "saturation": 0.4693,
+        "dark_fraction": 0.2582,
+        "vivid_fraction": 0.4301,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "50578",
+      "title": "An Indian Village - Shore of the Amazon",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.3242,
+        "saturation": 0.3592,
+        "dark_fraction": 0.4633,
+        "vivid_fraction": 0.1101,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "50591",
+      "title": "A Yahua Village",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.3458,
+        "saturation": 0.3897,
+        "dark_fraction": 0.5446,
+        "vivid_fraction": 0.1901,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "50599",
+      "title": "A Small Tobos Village",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.5019,
+        "saturation": 0.3082,
+        "dark_fraction": 0.0563,
+        "vivid_fraction": 0.4482,
+        "bright_color_pass": true
+      }
+    },
+    {
+      "native_id": "50603",
+      "title": "A Connibo Village",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.306,
+        "saturation": 0.4558,
+        "dark_fraction": 0.5998,
+        "vivid_fraction": 0.2205,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "50609",
+      "title": "A Small Lengua Village",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.5052,
+        "saturation": 0.4015,
+        "dark_fraction": 0.0773,
+        "vivid_fraction": 0.6875,
+        "bright_color_pass": true
+      }
+    },
+    {
+      "native_id": "50610",
+      "title": "A Small Lengua Village, Uruguay",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.4668,
+        "saturation": 0.4081,
+        "dark_fraction": 0.0709,
+        "vivid_fraction": 0.5675,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "50611",
+      "title": "A Small Village - Payaguas Indians",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.4138,
+        "saturation": 0.4284,
+        "dark_fraction": 0.1372,
+        "vivid_fraction": 0.3497,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "50612",
+      "title": "A Small Village of Remos Indians",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.4766,
+        "saturation": 0.4149,
+        "dark_fraction": 0.0648,
+        "vivid_fraction": 0.536,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "50617",
+      "title": "Pacapacurus Village",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.4643,
+        "saturation": 0.4419,
+        "dark_fraction": 0.0626,
+        "vivid_fraction": 0.6835,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "50658",
+      "title": "A Crow Village of Skin Tents on the Salmon River",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.3921,
+        "saturation": 0.5274,
+        "dark_fraction": 0.1614,
+        "vivid_fraction": 0.2964,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "50673",
+      "title": "The Entrance to the Tautira River, Tahiti. Fisherman Spearing a Fish",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.4175,
+        "saturation": 0.2503,
+        "dark_fraction": 0.0768,
+        "vivid_fraction": 0.1224,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "52156",
+      "title": "Beach at Trouville",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.6048,
+        "saturation": 0.1556,
+        "dark_fraction": 0.0258,
+        "vivid_fraction": 0.0953,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "52158",
+      "title": "The Beach",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.5393,
+        "saturation": 0.2966,
+        "dark_fraction": 0.1429,
+        "vivid_fraction": 0.3015,
+        "bright_color_pass": true
+      }
+    },
+    {
+      "native_id": "52181",
+      "title": "Flowers in a Crystal Vase",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.4974,
+        "saturation": 0.1434,
+        "dark_fraction": 0.0644,
+        "vivid_fraction": 0.0285,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "52186",
+      "title": "Argenteuil",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.6225,
+        "saturation": 0.1983,
+        "dark_fraction": 0.1209,
+        "vivid_fraction": 0.1154,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "52192",
+      "title": "The Harbor at Lorient",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.6135,
+        "saturation": 0.1766,
+        "dark_fraction": 0.035,
+        "vivid_fraction": 0.1246,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "52203",
+      "title": "Regatta at Argenteuil",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.6673,
+        "saturation": 0.1904,
+        "dark_fraction": 0.0039,
+        "vivid_fraction": 0.109,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "52205",
+      "title": "Picking Flowers",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.457,
+        "saturation": 0.3487,
+        "dark_fraction": 0.1618,
+        "vivid_fraction": 0.3116,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "52209",
+      "title": "Landscape between Storms",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.4631,
+        "saturation": 0.3392,
+        "dark_fraction": 0.1956,
+        "vivid_fraction": 0.3054,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "52226",
+      "title": "Boulevard Héloïse, Argenteuil",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.6072,
+        "saturation": 0.1581,
+        "dark_fraction": 0.0065,
+        "vivid_fraction": 0.1417,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "52260",
+      "title": "Roses in a Vase",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.4041,
+        "saturation": 0.5673,
+        "dark_fraction": 0.4398,
+        "vivid_fraction": 0.2918,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "52446",
+      "title": "Madison Square, Snow",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.7373,
+        "saturation": 0.096,
+        "dark_fraction": 0.0,
+        "vivid_fraction": 0.004,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "52952",
+      "title": "Budd Doble Driving Goldsmith Maid at Belmont Driving Park",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.6235,
+        "saturation": 0.537,
+        "dark_fraction": 0.1492,
+        "vivid_fraction": 0.7189,
+        "bright_color_pass": true
+      }
+    },
+    {
+      "native_id": "53129",
+      "title": "Haystacks in Brittany",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.3985,
+        "saturation": 0.3359,
+        "dark_fraction": 0.3522,
+        "vivid_fraction": 0.0809,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "53813",
+      "title": "View of the Tiber near Perugia",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.4446,
+        "saturation": 0.3524,
+        "dark_fraction": 0.4986,
+        "vivid_fraction": 0.0723,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "54132",
+      "title": "Volendam Street Scene",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.4139,
+        "saturation": 0.4942,
+        "dark_fraction": 0.4062,
+        "vivid_fraction": 0.4228,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "56571",
+      "title": "Forest in the Morning Light",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.231,
+        "saturation": 0.5387,
+        "dark_fraction": 0.874,
+        "vivid_fraction": 0.0262,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "61361",
+      "title": "Coast of Brittany",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.6109,
+        "saturation": 0.1526,
+        "dark_fraction": 0.0762,
+        "vivid_fraction": 0.0177,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "61363",
+      "title": "Beach Scene",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.5483,
+        "saturation": 0.2177,
+        "dark_fraction": 0.0315,
+        "vivid_fraction": 0.1844,
+        "bright_color_pass": true
+      }
+    },
+    {
+      "native_id": "61366",
+      "title": "Entrance to the Harbor, Le Havre",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.7114,
+        "saturation": 0.0891,
+        "dark_fraction": 0.0248,
+        "vivid_fraction": 0.0076,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "61370",
+      "title": "Landscape at Le Pouldu",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.4451,
+        "saturation": 0.3064,
+        "dark_fraction": 0.0931,
+        "vivid_fraction": 0.193,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "61374",
+      "title": "The Bridge at Argenteuil",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.5353,
+        "saturation": 0.222,
+        "dark_fraction": 0.1217,
+        "vivid_fraction": 0.2603,
+        "bright_color_pass": true
+      }
+    },
+    {
+      "native_id": "61378",
+      "title": "Waterloo Bridge, London, at Sunset",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.6987,
+        "saturation": 0.0829,
+        "dark_fraction": 0.0,
+        "vivid_fraction": 0.0016,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "61382",
+      "title": "Flowers in a Vase",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.3571,
+        "saturation": 0.2528,
+        "dark_fraction": 0.2868,
+        "vivid_fraction": 0.1038,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "62641",
+      "title": "First Snow at Veneux-Nadon",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.6638,
+        "saturation": 0.1087,
+        "dark_fraction": 0.0035,
+        "vivid_fraction": 0.0001,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "66420",
+      "title": "Autumn",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.2111,
+        "saturation": 0.6892,
+        "dark_fraction": 0.941,
+        "vivid_fraction": 0.0113,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "66421",
+      "title": "View on the Outskirts of Caen",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.4294,
+        "saturation": 0.28,
+        "dark_fraction": 0.3743,
+        "vivid_fraction": 0.087,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "66425",
+      "title": "Cliffs at Pourville",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.6292,
+        "saturation": 0.1927,
+        "dark_fraction": 0.0133,
+        "vivid_fraction": 0.1515,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "66429",
+      "title": "The Fence",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.5163,
+        "saturation": 0.1725,
+        "dark_fraction": 0.0622,
+        "vivid_fraction": 0.0818,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "66430",
+      "title": "Charing Cross Bridge, London",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.763,
+        "saturation": 0.1127,
+        "dark_fraction": 0.0079,
+        "vivid_fraction": 0.0001,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "66436",
+      "title": "Flood at Port-Marly",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.6905,
+        "saturation": 0.1314,
+        "dark_fraction": 0.0095,
+        "vivid_fraction": 0.1248,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "72886",
+      "title": "Landscape at Les Pâtis, Pontoise",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.4819,
+        "saturation": 0.359,
+        "dark_fraction": 0.1573,
+        "vivid_fraction": 0.3038,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "73835",
+      "title": "Wild Olive Tree Roots, Valldemosa, Majorca",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.3354,
+        "saturation": 0.3763,
+        "dark_fraction": 0.4724,
+        "vivid_fraction": 0.168,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "82648",
+      "title": "Green River Cliffs, Wyoming",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.4228,
+        "saturation": 0.3811,
+        "dark_fraction": 0.3193,
+        "vivid_fraction": 0.1925,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "84783",
+      "title": "New York Harbor",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.6866,
+        "saturation": 0.11,
+        "dark_fraction": 0.0165,
+        "vivid_fraction": 0.0011,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "93668",
+      "title": "Landscape in Auvergne",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.4814,
+        "saturation": 0.2906,
+        "dark_fraction": 0.3548,
+        "vivid_fraction": 0.0538,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "103247",
+      "title": "Roadside Cottage",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.3714,
+        "saturation": 0.4136,
+        "dark_fraction": 0.4305,
+        "vivid_fraction": 0.1438,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "110067",
+      "title": "Dahlias, Garden at Petit Gennevilliers",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.4887,
+        "saturation": 0.3866,
+        "dark_fraction": 0.3137,
+        "vivid_fraction": 0.1838,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "126135",
+      "title": "Still Life of Flowers",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.3517,
+        "saturation": 0.3486,
+        "dark_fraction": 0.5395,
+        "vivid_fraction": 0.1253,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "127554",
+      "title": "Vase of Flowers",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.2978,
+        "saturation": 0.4231,
+        "dark_fraction": 0.6544,
+        "vivid_fraction": 0.1412,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "130842",
+      "title": "Red Path, St. Prex",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.4536,
+        "saturation": 0.422,
+        "dark_fraction": 0.197,
+        "vivid_fraction": 0.3126,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "136019",
+      "title": "George Moore in the Artist's Garden",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.4598,
+        "saturation": 0.2536,
+        "dark_fraction": 0.1834,
+        "vivid_fraction": 0.1236,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "164961",
+      "title": "The Watering Can - Garden at Le Raincy",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.4992,
+        "saturation": 0.3061,
+        "dark_fraction": 0.1165,
+        "vivid_fraction": 0.3923,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "166460",
+      "title": "Flowers on a Window Ledge",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.5124,
+        "saturation": 0.2917,
+        "dark_fraction": 0.0778,
+        "vivid_fraction": 0.3687,
+        "bright_color_pass": true
+      }
+    },
+    {
+      "native_id": "166496",
+      "title": "Sunset in the Woods",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.1995,
+        "saturation": 0.3931,
+        "dark_fraction": 0.9375,
+        "vivid_fraction": 0.017,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "166502",
+      "title": "Trout Brook in the Catskills",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.2303,
+        "saturation": 0.6272,
+        "dark_fraction": 0.903,
+        "vivid_fraction": 0.0051,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "174950",
+      "title": "In the Land of Promise, Castle Garden",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.3162,
+        "saturation": 0.3381,
+        "dark_fraction": 0.5734,
+        "vivid_fraction": 0.1723,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "176904",
+      "title": "Landscape",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.3802,
+        "saturation": 0.4071,
+        "dark_fraction": 0.3657,
+        "vivid_fraction": 0.1311,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "178080",
+      "title": "Fair in Brittany",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.4703,
+        "saturation": 0.253,
+        "dark_fraction": 0.2748,
+        "vivid_fraction": 0.1806,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "195026",
+      "title": "View of Mt. Washington",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.3744,
+        "saturation": 0.5289,
+        "dark_fraction": 0.3918,
+        "vivid_fraction": 0.1674,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "195138",
+      "title": "Landscape",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.4175,
+        "saturation": 0.3211,
+        "dark_fraction": 0.3642,
+        "vivid_fraction": 0.1008,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "195142",
+      "title": "Sunset on the River",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.3921,
+        "saturation": 0.4218,
+        "dark_fraction": 0.3584,
+        "vivid_fraction": 0.2764,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "195433",
+      "title": "Boathouse, Winter, Harlem River",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.7543,
+        "saturation": 0.0746,
+        "dark_fraction": 0.0005,
+        "vivid_fraction": 0.0102,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "195580",
+      "title": "The Boulevard",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.4671,
+        "saturation": 0.2548,
+        "dark_fraction": 0.0852,
+        "vivid_fraction": 0.2786,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "195785",
+      "title": "Landscape",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.246,
+        "saturation": 0.6456,
+        "dark_fraction": 0.7768,
+        "vivid_fraction": 0.0804,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "195850",
+      "title": "The Louvre, Afternoon, Rainy Weather",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.6536,
+        "saturation": 0.1216,
+        "dark_fraction": 0.0008,
+        "vivid_fraction": 0.0319,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "195858",
+      "title": "The Frog Pond",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.288,
+        "saturation": 0.7163,
+        "dark_fraction": 0.686,
+        "vivid_fraction": 0.0831,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "204911",
+      "title": "Palmer River",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.4757,
+        "saturation": 0.3507,
+        "dark_fraction": 0.3439,
+        "vivid_fraction": 0.0286,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "214137",
+      "title": "Buddha's Flowers: Lotus, Tokyo",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.3099,
+        "saturation": 0.3451,
+        "dark_fraction": 0.5531,
+        "vivid_fraction": 0.0568,
+        "bright_color_pass": false
+      }
+    },
+    {
+      "native_id": "230998",
+      "title": "American Landscape",
+      "reason": "NOT_BRIGHT_ENOUGH",
+      "color_metrics": {
+        "luminance": 0.3746,
+        "saturation": 0.5612,
+        "dark_fraction": 0.508,
+        "vivid_fraction": 0.3274,
+        "bright_color_pass": false
+      }
+    }
+  ]
+}
