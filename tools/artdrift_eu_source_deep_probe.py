@@ -3,7 +3,9 @@
 from __future__ import annotations
 import json,re,urllib.error,urllib.parse,urllib.request,xml.etree.ElementTree as ET
 from pathlib import Path
-from tools.artdrift_eu_source_probe import SOURCES
+import sys
+sys.path.insert(0,str(Path(__file__).resolve().parent))
+from artdrift_eu_source_probe import SOURCES
 ROOT=Path(__file__).resolve().parents[1]
 OUT=ROOT/"research/museums/20261126/eu_sample_object_schemas.json"
 def fetch(url,allowed,maxsize=700000):
