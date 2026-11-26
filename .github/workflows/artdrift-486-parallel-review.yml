@@ -1,0 +1,94 @@
+name: Art Drift — 486 individual image evidence, 18 parallel shards
+on:
+  push:
+    branches:
+      - qa/artdrift-486-parallel-review-20261126
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: artdrift-486-image-review-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  source-and-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --disable-pip-version-check Pillow==11.3.0
+      - run: python -m unittest tools/test_artdrift_486_parallel_gate.py -v
+
+  image-evidence:
+    needs: source-and-tests
+    strategy:
+      fail-fast: false
+      max-parallel: 6
+      matrix:
+        shard: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --disable-pip-version-check Pillow==11.3.0
+      - name: Fetch immutable 486-image inventory from PR 84 (not main)
+        run: |
+          git fetch --no-tags --depth=1 origin b82a4574db3d504141b6d2e95e403aa743c771e3
+          test "$(git rev-parse FETCH_HEAD)" = b82a4574db3d504141b6d2e95e403aa743c771e3
+          mkdir -p .artist-inventory
+          git show FETCH_HEAD:research/artists/20261126/artist_bulk_486_triage.json > .artist-inventory/queue.json
+          test -s .artist-inventory/queue.json
+      - name: Independently examine image subset without changing app/catalog
+        run: |
+          python -u tools/artdrift_486_parallel_gate.py --inventory .artist-inventory/queue.json --shard ${{ matrix.shard }} --shards 18 --out .artist-results
+      - name: Upload source-linked review rows and contact sheet
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: artist-review-shard-${{ matrix.shard }}
+          path: .artist-results/*
+          retention-days: 30
+          if-no-files-found: warn
+
+  reconcile:
+    if: always()
+    needs: [source-and-tests, image-evidence]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --disable-pip-version-check Pillow==11.3.0
+      - name: Fetch the same pinned candidate set
+        run: |
+          git fetch --no-tags --depth=1 origin b82a4574db3d504141b6d2e95e403aa743c771e3
+          test "$(git rev-parse FETCH_HEAD)" = b82a4574db3d504141b6d2e95e403aa743c771e3
+          mkdir -p .artist-inventory
+          git show FETCH_HEAD:research/artists/20261126/artist_bulk_486_triage.json > .artist-inventory/queue.json
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: artist-review-shard-*
+          merge-multiple: true
+          path: .artist-results
+      - name: Exact coverage and no-commercial-approval regression gate
+        run: |
+          python tools/artdrift_486_parallel_gate.py --inventory .artist-inventory/queue.json --aggregate-from .artist-results --shards 18 --out .artist-aggregate
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ARTDRIFT-486-REVIEW-QUEUE-AND-EVIDENCE
+          path: |
+            .artist-aggregate/*
+            .artist-results/contact_*.jpg
+          if-no-files-found: warn
+          retention-days: 30
