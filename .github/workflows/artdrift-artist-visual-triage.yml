@@ -1,0 +1,67 @@
+name: Art Drift — Exact-source visual editorial gate (no deploy)
+on:
+  push:
+    branches:
+      - research/artdrift-user-palette-artists-20261126
+    paths:
+      - research/artists/20261126/preliminary_visual_triage.json
+      - tools/artdrift_artist_visual_triage.py
+      - tools/test_artdrift_artist_visual_triage.py
+      - .github/workflows/artdrift-artist-visual-triage.yml
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: artdrift-user-artist-visual-editorial
+  cancel-in-progress: false
+jobs:
+  verify-decisions:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Confirm every judgement belongs to real image pixels
+        run: |
+          python -m py_compile tools/artdrift_artist_visual_triage.py
+          python -m unittest discover -s tools -p 'test_artdrift_artist_visual_triage.py' -v
+      - name: Build source-linked preliminary visual decision report
+        run: python -u tools/artdrift_artist_visual_triage.py
+      - name: Prohibit commercial release without item license and user approval
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          o=json.loads(Path('research/artists/20261126/curatorial_triage_verified.json').read_text())
+          assert o['reviewed_raster_samples']==14
+          assert o['commercially_approved']==0 and o['runtime_imported']==0
+          assert o['visual_decisions_are_not_user_acceptance'] is True
+          assert all(x['runtime_visible'] is False and x['commercially_approved'] is False
+                     for x in o['individual_decisions'])
+          print('VERIFIED source-backed decisions',o['categories'])
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ArtDrift-Artist-Source-Tied-Visual-Decisions
+          path: |
+            research/artists/20261126/preliminary_visual_triage.json
+            research/artists/20261126/curatorial_triage_verified.json
+          retention-days: 30
+          if-no-files-found: warn
+      - name: Save research-only decisions
+        if: success()
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          cp research/artists/20261126/curatorial_triage_verified.json /tmp/artist-reviewed-source.json
+          git fetch origin research/artdrift-user-palette-artists-20261126
+          git reset --hard FETCH_HEAD
+          cp /tmp/artist-reviewed-source.json research/artists/20261126/curatorial_triage_verified.json
+          git add research/artists/20261126/curatorial_triage_verified.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'research(artists): exact-raster matched preliminary curation'
+            git push origin HEAD:research/artdrift-user-palette-artists-20261126
+          fi
