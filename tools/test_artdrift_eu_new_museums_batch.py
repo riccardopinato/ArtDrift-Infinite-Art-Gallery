@@ -135,7 +135,7 @@ class EuropeanMuseumSourceTests(unittest.TestCase):
         <lido:eventSet><lido:event><lido:eventType><lido:term>Acquisition</lido:term></lido:eventType>
         <lido:earliestDate>1900</lido:earliestDate></lido:event></lido:eventSet>
         <lido:eventSet><lido:event><lido:eventType><lido:term>Work conception</lido:term></lido:eventType>
-        <lido:earliestDate>1872</lido:earliestDate></lido:event></lido:eventSet>
+        <lido:eventDate><lido:date><lido:earliestDate>1872</lido:earliestDate></lido:date></lido:eventDate></lido:event></lido:eventSet>
         <lido:resourceWrap><lido:linkResource>https://cdn.staedelmuseum.de/images/2442/thumb-xl.jpg</lido:linkResource></lido:resourceWrap>
         </lido:lido></metadata></record>"""
         rec=eu.staedel_parse(ET.fromstring(xml))
