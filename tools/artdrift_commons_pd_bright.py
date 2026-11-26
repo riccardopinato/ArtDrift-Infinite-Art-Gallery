@@ -120,7 +120,11 @@ def discover(shard):
                 pd,lic=licenses(ext)
                 if not pd:stats["non_pd_files"]+=1;continue
                 preview=str(info.get("thumburl") or "")
-                if not safe_thumb(preview):stats["bad_thumbnail"]+=1;continue
+                if not safe_thumb(preview):
+                    stats["bad_thumbnail"]+=1
+                    if stats["bad_thumbnail"]<=2:
+                        print("COMMONS_UNHANDLED_THUMB",repr(preview[:200]),flush=True)
+                    continue
                 att=strip_html((ext.get("Artist") or {}).get("value") or "")
                 last=cleaned(artist).split()[-1]
                 author_source=("explicit_commons_artist" if last in cleaned(att)
