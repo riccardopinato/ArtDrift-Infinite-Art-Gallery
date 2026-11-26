@@ -1,0 +1,321 @@
+{
+  "schema_version": 1,
+  "source": "smk",
+  "as_of": "2026-11-26",
+  "batches_received": 8,
+  "statistics": [
+    {
+      "batch": 0,
+      "search_statistics": {
+        "rows_seen": 2529,
+        "duplicates_existing": 24
+      },
+      "eligible_unique_non_main": 34,
+      "images_probed": 34,
+      "verified_bright_works": 1,
+      "hold_count": 33,
+      "unprobed": 0
+    },
+    {
+      "batch": 1,
+      "search_statistics": {
+        "rows_seen": 2086,
+        "duplicates_existing": 4
+      },
+      "eligible_unique_non_main": 7,
+      "images_probed": 7,
+      "verified_bright_works": 0,
+      "hold_count": 7,
+      "unprobed": 0
+    },
+    {
+      "batch": 2,
+      "search_statistics": {
+        "rows_seen": 700
+      },
+      "eligible_unique_non_main": 0,
+      "images_probed": 0,
+      "verified_bright_works": 0,
+      "hold_count": 0,
+      "unprobed": 0
+    },
+    {
+      "batch": 3,
+      "search_statistics": {
+        "rows_seen": 1625,
+        "duplicates_existing": 11
+      },
+      "eligible_unique_non_main": 23,
+      "images_probed": 23,
+      "verified_bright_works": 4,
+      "hold_count": 19,
+      "unprobed": 0
+    },
+    {
+      "batch": 4,
+      "search_statistics": {
+        "rows_seen": 1100,
+        "duplicates_existing": 1
+      },
+      "eligible_unique_non_main": 2,
+      "images_probed": 2,
+      "verified_bright_works": 0,
+      "hold_count": 2,
+      "unprobed": 0
+    },
+    {
+      "batch": 5,
+      "search_statistics": {
+        "rows_seen": 700,
+        "duplicates_existing": 1
+      },
+      "eligible_unique_non_main": 0,
+      "images_probed": 0,
+      "verified_bright_works": 0,
+      "hold_count": 0,
+      "unprobed": 0
+    },
+    {
+      "batch": 6,
+      "search_statistics": {
+        "rows_seen": 1167,
+        "duplicates_existing": 27
+      },
+      "eligible_unique_non_main": 15,
+      "images_probed": 15,
+      "verified_bright_works": 3,
+      "hold_count": 12,
+      "unprobed": 0
+    },
+    {
+      "batch": 7,
+      "search_statistics": {
+        "rows_seen": 1322,
+        "duplicates_existing": 8
+      },
+      "eligible_unique_non_main": 1,
+      "images_probed": 1,
+      "verified_bright_works": 0,
+      "hold_count": 1,
+      "unprobed": 0
+    }
+  ],
+  "duplicate_overlap_between_shards": 1,
+  "verified_bright_unique": 7,
+  "invalid_reports": [],
+  "runtime_imported": 0,
+  "territorial_rights_approved": 0,
+  "publication_status": "HOLD_FINAL_VISUAL_AND_RIGHTS_AUDIT",
+  "works": [
+    {
+      "source": "smk",
+      "museum_native_id": "KMS6449",
+      "title": "En rugmark ved landsbyen Ring",
+      "artist": "L.A. Ring",
+      "year": 1887,
+      "date": "1887",
+      "rights_license": "Public Domain Mark / CC0",
+      "rights_evidence_url": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "classification": "Painting",
+      "museum": "SMK – National Gallery of Denmark",
+      "remote_preview_url": "https://iip.smk.dk/iiif/jp2/tt44pr26k_kms6449.tif.jp2/full/300,/0/default.jpg",
+      "remote_full_url": "https://iip.smk.dk/iiif/jp2/tt44pr26k_kms6449.tif.jp2/full/1000,/0/default.jpg",
+      "museum_url": "https://open.smk.dk/en/artwork/image/KMS6449",
+      "medium": "Olie på pap",
+      "color_metrics": {
+        "luminance": 0.6514,
+        "saturation": 0.2513,
+        "dark_fraction": 0.0,
+        "very_dark_fraction": 0.0,
+        "vivid_fraction": 0.6038,
+        "bright_pass": true
+      },
+      "image_sha256": "08b6bdfd567f3f2b410dee484acee82cb9a9214d868399efb8f8ea62c306c9b7",
+      "curatorial_status": "HOLD_VISUAL_QA",
+      "rights_status": "HOLD_TERRITORY_CHECK",
+      "runtime_visible": false,
+      "worldwide_commercial_certified": false,
+      "curation_score": 0.45
+    },
+    {
+      "source": "smk",
+      "museum_native_id": "KMS4318",
+      "title": "Vid udsigt. Mols",
+      "artist": "Charles Godtfredsen",
+      "year": 1936,
+      "date": "1936",
+      "rights_license": "Public Domain Mark / CC0",
+      "rights_evidence_url": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "classification": "Painting",
+      "museum": "SMK – National Gallery of Denmark",
+      "remote_preview_url": "https://iip.smk.dk/iiif/jp2/0z7090120_KMS4318.tif.reconstructed.tif.jp2/full/300,/0/default.jpg",
+      "remote_full_url": "https://iip.smk.dk/iiif/jp2/0z7090120_KMS4318.tif.reconstructed.tif.jp2/full/1000,/0/default.jpg",
+      "museum_url": "https://open.smk.dk/en/artwork/image/KMS4318",
+      "medium": "Olie på lærred",
+      "color_metrics": {
+        "luminance": 0.6333,
+        "saturation": 0.2929,
+        "dark_fraction": 0.0007,
+        "very_dark_fraction": 0.0,
+        "vivid_fraction": 0.5415,
+        "bright_pass": true
+      },
+      "image_sha256": "4f9062336b931ddee600287d169b7c3816ea37726b4316f9d8daca0f4b80c397",
+      "curatorial_status": "HOLD_VISUAL_QA",
+      "rights_status": "HOLD_TERRITORY_CHECK",
+      "runtime_visible": false,
+      "worldwide_commercial_certified": false,
+      "curation_score": 0.4304
+    },
+    {
+      "source": "smk",
+      "museum_native_id": "KMS3097",
+      "title": "Marklandskab med en bro",
+      "artist": "Vilhelm Kyhn",
+      "year": 1858,
+      "date": "1858",
+      "rights_license": "Public Domain Mark / CC0",
+      "rights_evidence_url": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "classification": "Painting",
+      "museum": "SMK – National Gallery of Denmark",
+      "remote_preview_url": "https://iip.smk.dk/iiif/jp2/5425kd81z_KMS3097.tif.reconstructed.tif.jp2/full/300,/0/default.jpg",
+      "remote_full_url": "https://iip.smk.dk/iiif/jp2/5425kd81z_KMS3097.tif.reconstructed.tif.jp2/full/1000,/0/default.jpg",
+      "museum_url": "https://open.smk.dk/en/artwork/image/KMS3097",
+      "medium": "Olie på lærred",
+      "color_metrics": {
+        "luminance": 0.6766,
+        "saturation": 0.3457,
+        "dark_fraction": 0.0092,
+        "very_dark_fraction": 0.0,
+        "vivid_fraction": 0.4146,
+        "bright_pass": true
+      },
+      "image_sha256": "87ca984a8553d2f3e9b24d06124d025b9bab071dbc34704195a436fa4ef5d5be",
+      "curatorial_status": "HOLD_VISUAL_QA",
+      "rights_status": "HOLD_TERRITORY_CHECK",
+      "runtime_visible": false,
+      "worldwide_commercial_certified": false,
+      "curation_score": 0.4018
+    },
+    {
+      "source": "smk",
+      "museum_native_id": "KMS4012",
+      "title": "Jysk hedelandskab med kunstnerens vindskærm",
+      "artist": "Hans Smidth",
+      "year": 1908,
+      "date": "1908-1911",
+      "rights_license": "Public Domain Mark / CC0",
+      "rights_evidence_url": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "classification": "Painting",
+      "museum": "SMK – National Gallery of Denmark",
+      "remote_preview_url": "https://iip.smk.dk/iiif/jp2/2227ms76k_KMS4012.TIF.reconstructed.tif.jp2/full/300,/0/default.jpg",
+      "remote_full_url": "https://iip.smk.dk/iiif/jp2/2227ms76k_KMS4012.TIF.reconstructed.tif.jp2/full/1000,/0/default.jpg",
+      "museum_url": "https://open.smk.dk/en/artwork/image/KMS4012",
+      "medium": "Olie på lærred",
+      "color_metrics": {
+        "luminance": 0.6037,
+        "saturation": 0.2874,
+        "dark_fraction": 0.0026,
+        "very_dark_fraction": 0.0,
+        "vivid_fraction": 0.3211,
+        "bright_pass": true
+      },
+      "image_sha256": "56bc16dfc22ad8cbbd4b7728c12c877d077b89fdf91e2b0d47ff62c82c09c3e5",
+      "curatorial_status": "HOLD_VISUAL_QA",
+      "rights_status": "HOLD_TERRITORY_CHECK",
+      "runtime_visible": false,
+      "worldwide_commercial_certified": false,
+      "curation_score": 0.3404
+    },
+    {
+      "source": "smk",
+      "museum_native_id": "KMS4222",
+      "title": "Stendysse i udkanten af skoven. Dyrnæs",
+      "artist": "Poul S. Christiansen",
+      "year": 1919,
+      "date": "1919",
+      "rights_license": "Public Domain Mark / CC0",
+      "rights_evidence_url": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "classification": "Painting",
+      "museum": "SMK – National Gallery of Denmark",
+      "remote_preview_url": "https://iip.smk.dk/iiif/jp2/mc87pt79r_kms4222.tif.jp2/full/300,/0/default.jpg",
+      "remote_full_url": "https://iip.smk.dk/iiif/jp2/mc87pt79r_kms4222.tif.jp2/full/1000,/0/default.jpg",
+      "museum_url": "https://open.smk.dk/en/artwork/image/KMS4222",
+      "medium": "Olie på lærred",
+      "color_metrics": {
+        "luminance": 0.5667,
+        "saturation": 0.2757,
+        "dark_fraction": 0.0488,
+        "very_dark_fraction": 0.0,
+        "vivid_fraction": 0.3791,
+        "bright_pass": true
+      },
+      "image_sha256": "67def5711126e4ba083590f996a24bec311068568d70a87c46934ccceeeb117d",
+      "curatorial_status": "HOLD_VISUAL_QA",
+      "rights_status": "HOLD_TERRITORY_CHECK",
+      "runtime_visible": false,
+      "worldwide_commercial_certified": false,
+      "curation_score": 0.3181
+    },
+    {
+      "source": "smk",
+      "museum_native_id": "KMS7057",
+      "title": "Udsigt fra Slotspladsen, Cagnes",
+      "artist": "Niels Larsen Stevns",
+      "year": 1923,
+      "date": "1923",
+      "rights_license": "Public Domain Mark / CC0",
+      "rights_evidence_url": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "classification": "Painting",
+      "museum": "SMK – National Gallery of Denmark",
+      "remote_preview_url": "https://iip.smk.dk/iiif/jp2/p8418r53r_kms7057.tif.reconstructed.tif.jp2/full/300,/0/default.jpg",
+      "remote_full_url": "https://iip.smk.dk/iiif/jp2/p8418r53r_kms7057.tif.reconstructed.tif.jp2/full/1000,/0/default.jpg",
+      "museum_url": "https://open.smk.dk/en/artwork/image/KMS7057",
+      "medium": "Olie på lærred",
+      "color_metrics": {
+        "luminance": 0.6702,
+        "saturation": 0.2029,
+        "dark_fraction": 0.0133,
+        "very_dark_fraction": 0.0,
+        "vivid_fraction": 0.2512,
+        "bright_pass": true
+      },
+      "image_sha256": "b0b191fed65e6bd829b7ad7d0e2f608022df95b645e084a0d68b4b020f2bbb9c",
+      "curatorial_status": "HOLD_VISUAL_QA",
+      "rights_status": "HOLD_TERRITORY_CHECK",
+      "runtime_visible": false,
+      "worldwide_commercial_certified": false,
+      "curation_score": 0.3099
+    },
+    {
+      "source": "smk",
+      "museum_native_id": "KMS4776",
+      "title": "En allé. Kastrup",
+      "artist": "Theodor Philipsen",
+      "year": 1891,
+      "date": "1891",
+      "rights_license": "Public Domain Mark / CC0",
+      "rights_evidence_url": "https://creativecommons.org/publicdomain/mark/1.0/",
+      "classification": "Painting",
+      "museum": "SMK – National Gallery of Denmark",
+      "remote_preview_url": "https://iip.smk.dk/iiif/jp2/js956j63c_KMSKMS4776.tif.reconstructed.tif.jp2/full/300,/0/default.jpg",
+      "remote_full_url": "https://iip.smk.dk/iiif/jp2/js956j63c_KMSKMS4776.tif.reconstructed.tif.jp2/full/1000,/0/default.jpg",
+      "museum_url": "https://open.smk.dk/en/artwork/image/KMS4776",
+      "medium": "Olie på træ",
+      "color_metrics": {
+        "luminance": 0.5983,
+        "saturation": 0.1932,
+        "dark_fraction": 0.001,
+        "very_dark_fraction": 0.0,
+        "vivid_fraction": 0.2424,
+        "bright_pass": true
+      },
+      "image_sha256": "c2753b4ee3f44cd363a8b62820d05f0871ea234979239c3760f7a525072ca228",
+      "curatorial_status": "HOLD_VISUAL_QA",
+      "rights_status": "HOLD_TERRITORY_CHECK",
+      "runtime_visible": false,
+      "worldwide_commercial_certified": false,
+      "curation_score": 0.2928
+    }
+  ]
+}
