@@ -1,0 +1,158 @@
+{
+  "schema_version": 1,
+  "as_of": "2026-11-26",
+  "non_us_museums_checked": [
+    "belvedere",
+    "nationalmuseum_se",
+    "paris_musees",
+    "rijks",
+    "staedel"
+  ],
+  "source_diagnostics": {
+    "belvedere": {
+      "museum_key": "belvedere",
+      "source_url": "https://sammlung.belvedere.at/opencontent/images",
+      "source_host": "sammlung.belvedere.at",
+      "kind": "open_content_html",
+      "status": "HTTP_403",
+      "error": "Forbidden",
+      "metadata_only": true,
+      "runtime_imported": 0,
+      "licensed_artwork_images": 0
+    },
+    "nationalmuseum_se": {
+      "museum_key": "nationalmuseum_se",
+      "source_url": "https://commons.wikimedia.org/w/api.php?action=query&format=json&formatversion=2&generator=categorymembers&gcmtitle=Category%3AImages_from_the_Nationalmuseum_Stockholm&gcmtype=file&gcmlimit=20&prop=imageinfo&iiprop=extmetadata%7Curl%7Cmime&iiurlwidth=320",
+      "source_host": "commons.wikimedia.org",
+      "kind": "commons_json",
+      "status": "HTTP_200",
+      "media_type": "application/json; charset=utf-8",
+      "bytes": 187538,
+      "metadata_only": true,
+      "runtime_imported": 0,
+      "licensed_artwork_images": 0,
+      "root_fields": [
+        "batchcomplete",
+        "continue",
+        "query"
+      ],
+      "returned_file_pages": 20,
+      "sample_pages": [
+        {
+          "pageid": 52108539,
+          "title": "File:30th November. Sketch (Gustaf Cederström) - Nationalmuseum - 22259.tif",
+          "mime": "image/tiff",
+          "ext_metadata_keys": [
+            "Artist",
+            "Assessments",
+            "AttributionRequired",
+            "Categories",
+            "CommonsMetadataExtension",
+            "Copyrighted",
+            "Credit",
+            "DateTime",
+            "DateTimeOriginal",
+            "License",
+            "LicenseShortName",
+            "ObjectName"
+          ]
+        },
+        {
+          "pageid": 52111243,
+          "title": "File:A Card Game (Gabriel Metsu) - Nationalmuseum - 17513.tif",
+          "mime": "image/tiff",
+          "ext_metadata_keys": [
+            "Artist",
+            "Assessments",
+            "AttributionRequired",
+            "Categories",
+            "CommonsMetadataExtension",
+            "Copyrighted",
+            "Credit",
+            "DateTime",
+            "DateTimeOriginal",
+            "License",
+            "LicenseShortName",
+            "ObjectName"
+          ]
+        },
+        {
+          "pageid": 52111264,
+          "title": "File:A Cat and a Chaffinch. Five animal studies in one frame, NM 2223-2227 (Bruno Liljefors) - Nationalmuseum - 19285.tif",
+          "mime": "image/tiff",
+          "ext_metadata_keys": [
+            "Artist",
+            "Assessments",
+            "AttributionRequired",
+            "Categories",
+            "CommonsMetadataExtension",
+            "Copyrighted",
+            "Credit",
+            "DateTime",
+            "DateTimeOriginal",
+            "License",
+            "LicenseShortName",
+            "ObjectName"
+          ]
+        }
+      ]
+    },
+    "paris_musees": {
+      "museum_key": "paris_musees",
+      "source_url": "https://www.parismuseescollections.paris.fr/en",
+      "source_host": "www.parismuseescollections.paris.fr",
+      "kind": "portal_html",
+      "status": "HTTP_200",
+      "media_type": "text/html; charset=utf-8",
+      "bytes": 89781,
+      "metadata_only": true,
+      "runtime_imported": 0,
+      "licensed_artwork_images": 0,
+      "has_open_content": true,
+      "html_contains_object_links": false,
+      "probe_sample": "(window.NREUM||(NREUM={})).init={\"ajax\":{\"deny_list\":[\"bam.nr-data.net\"]},\"feature_flags\":[\"rum_v2\"]};"
+    },
+    "rijks": {
+      "museum_key": "rijks",
+      "source_url": "https://data.rijksmuseum.nl/search/collection?type=painting&imageAvailable=true&title=landschap",
+      "source_host": "data.rijksmuseum.nl",
+      "kind": "linked_art_json",
+      "status": "HTTP_200",
+      "media_type": "application/ld+json",
+      "bytes": 7884,
+      "metadata_only": true,
+      "runtime_imported": 0,
+      "licensed_artwork_images": 0,
+      "root_fields": [
+        "@context",
+        "id",
+        "next",
+        "orderedItems",
+        "partOf",
+        "type"
+      ],
+      "totalItems": 246,
+      "returned_identifier_count": 100,
+      "example_identifier": "https://id.rijksmuseum.nl/200106038",
+      "has_next": true
+    },
+    "staedel": {
+      "museum_key": "staedel",
+      "source_url": "https://sammlung.staedelmuseum.de/api/oai?verb=Identify",
+      "source_host": "sammlung.staedelmuseum.de",
+      "kind": "oai_xml",
+      "status": "HTTP_200",
+      "media_type": "text/xml; charset=UTF-8",
+      "bytes": 830,
+      "metadata_only": true,
+      "runtime_imported": 0,
+      "licensed_artwork_images": 0,
+      "has_open_content": true,
+      "html_contains_object_links": false,
+      "probe_sample": "2026-11-26T12:57:55Z  http://sammlung.staedelmuseum.de/api/oai   Städel Museum, Frankfurt</repositor"
+    }
+  },
+  "artworks_verified": 0,
+  "runtime_imported": 0,
+  "important": "No artworks imported; probe reports public endpoint accessibility only"
+}
