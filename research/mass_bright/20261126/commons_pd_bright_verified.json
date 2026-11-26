@@ -1,0 +1,256 @@
+{
+  "schema_version": 1,
+  "as_of": "2026-11-26",
+  "source": "commons",
+  "shards_received": 8,
+  "total_unique_pd_bright_raster": 4,
+  "overlap_files_across_search_batches": 0,
+  "provider_did_not_claim_legal_clearance": true,
+  "runtime_imported": 0,
+  "final_visual_review_pending": true,
+  "attribution_verification_pending": true,
+  "stats": [
+    {
+      "shard": 0,
+      "candidate_files": 152,
+      "images_probed": 152,
+      "bright_raster_pass": 1,
+      "dark_or_media_holds": 151,
+      "remaining_unprobed": 0,
+      "search_stats": {
+        "files_found": 952,
+        "bad_thumbnail": 334,
+        "non_pd_files": 114
+      }
+    },
+    {
+      "shard": 1,
+      "candidate_files": 4,
+      "images_probed": 4,
+      "bright_raster_pass": 0,
+      "dark_or_media_holds": 4,
+      "remaining_unprobed": 0,
+      "search_stats": {
+        "files_found": 892,
+        "bad_thumbnail": 424,
+        "non_pd_files": 134
+      }
+    },
+    {
+      "shard": 2,
+      "candidate_files": 2,
+      "images_probed": 2,
+      "bright_raster_pass": 0,
+      "dark_or_media_holds": 2,
+      "remaining_unprobed": 0,
+      "search_stats": {
+        "files_found": 508,
+        "bad_thumbnail": 276,
+        "non_pd_files": 46
+      }
+    },
+    {
+      "shard": 3,
+      "candidate_files": 20,
+      "images_probed": 20,
+      "bright_raster_pass": 0,
+      "dark_or_media_holds": 20,
+      "remaining_unprobed": 0,
+      "search_stats": {
+        "files_found": 651,
+        "bad_thumbnail": 272,
+        "non_pd_files": 72
+      }
+    },
+    {
+      "shard": 4,
+      "candidate_files": 3,
+      "images_probed": 3,
+      "bright_raster_pass": 2,
+      "dark_or_media_holds": 1,
+      "remaining_unprobed": 0,
+      "search_stats": {
+        "files_found": 606,
+        "bad_thumbnail": 333,
+        "non_pd_files": 20
+      }
+    },
+    {
+      "shard": 5,
+      "candidate_files": 7,
+      "images_probed": 7,
+      "bright_raster_pass": 0,
+      "dark_or_media_holds": 7,
+      "remaining_unprobed": 0,
+      "search_stats": {
+        "files_found": 600,
+        "bad_thumbnail": 345,
+        "non_pd_files": 27
+      }
+    },
+    {
+      "shard": 6,
+      "candidate_files": 26,
+      "images_probed": 26,
+      "bright_raster_pass": 1,
+      "dark_or_media_holds": 25,
+      "remaining_unprobed": 0,
+      "search_stats": {
+        "files_found": 771,
+        "bad_thumbnail": 445,
+        "non_pd_files": 35
+      }
+    },
+    {
+      "shard": 7,
+      "candidate_files": 1,
+      "images_probed": 1,
+      "bright_raster_pass": 0,
+      "dark_or_media_holds": 1,
+      "remaining_unprobed": 0,
+      "search_stats": {
+        "files_found": 804,
+        "bad_thumbnail": 233,
+        "non_pd_files": 30
+      }
+    }
+  ],
+  "works": [
+    {
+      "source": "commons",
+      "file_pageid": 87187097,
+      "file_title": "File:Klee Small Landscape with Garden Door, 1928.jpg",
+      "museum_native_id": "87187097",
+      "title": "Klee Small Landscape with Garden Door, 1928",
+      "artist": "Paul Klee",
+      "artist_death_year": 1940,
+      "artist_attribution_evidence": "explicit_commons_artist",
+      "artist_metadata": "Paul Klee",
+      "artist_is_eu_public_domain_by_year": true,
+      "subject_search": "garden",
+      "remote_preview_url": "https://upload.wikimedia.org/wikipedia/commons/5/59/Klee_Small_Landscape_with_Garden_Door%2C_1928.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+      "remote_full_url": "https://upload.wikimedia.org/wikipedia/commons/5/59/Klee_Small_Landscape_with_Garden_Door%2C_1928.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "museum_url": "https://commons.wikimedia.org/wiki/File:Klee_Small_Landscape_with_Garden_Door%2C_1928.jpg",
+      "rights_license": "public domain",
+      "rights_evidence_url": "",
+      "file_sha1": "2b1d42f678fdc2bd979babd7f48a0c883ac9c3ae",
+      "runtime_visible": false,
+      "worldwide_commercial_certified": false,
+      "color_metrics": {
+        "luminance": 0.654,
+        "saturation": 0.3363,
+        "dark_fraction": 0.0012,
+        "very_dark_fraction": 0.0,
+        "vivid_fraction": 0.7113,
+        "bright_pass": true
+      },
+      "image_sha256": "6b6a3271b272d10b1782d7f9254f2aed8f6ea5d79348e64d80b3a82a6489862d",
+      "curatorial_status": "HOLD_VISUAL_AND_ARTIST_ATTRIBUTION",
+      "rights_status": "HOLD_COUNTRY_BY_COUNTRY",
+      "museum": "Wikimedia Commons (community-sourced file)",
+      "curation_score": 0.5057
+    },
+    {
+      "source": "commons",
+      "file_pageid": 17898411,
+      "file_title": "File:Robert Delaunay Rythme I c1934.jpg",
+      "museum_native_id": "17898411",
+      "title": "Robert Delaunay Rythme I c1934",
+      "artist": "Robert Delaunay",
+      "artist_death_year": 1941,
+      "artist_attribution_evidence": "explicit_commons_artist",
+      "artist_metadata": "Robert Delaunay",
+      "artist_is_eu_public_domain_by_year": true,
+      "subject_search": "still life",
+      "remote_preview_url": "https://upload.wikimedia.org/wikipedia/commons/1/10/Robert_Delaunay_Rythme_I_c1934.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+      "remote_full_url": "https://upload.wikimedia.org/wikipedia/commons/1/10/Robert_Delaunay_Rythme_I_c1934.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "museum_url": "https://commons.wikimedia.org/wiki/File:Robert_Delaunay_Rythme_I_c1934.jpg",
+      "rights_license": "public domain",
+      "rights_evidence_url": "",
+      "file_sha1": "daf5536fd669ba4ebd2f2c79bfea4ea2f99b09c8",
+      "runtime_visible": false,
+      "worldwide_commercial_certified": false,
+      "color_metrics": {
+        "luminance": 0.6566,
+        "saturation": 0.4421,
+        "dark_fraction": 0.0439,
+        "very_dark_fraction": 0.0232,
+        "vivid_fraction": 0.4672,
+        "bright_pass": true
+      },
+      "image_sha256": "126c0ccf68f3ac8332e4c574bd2d9115477ba9c359c87e57d770f4736fcbb1bd",
+      "curatorial_status": "HOLD_VISUAL_AND_ARTIST_ATTRIBUTION",
+      "rights_status": "HOLD_COUNTRY_BY_COUNTRY",
+      "museum": "Wikimedia Commons (community-sourced file)",
+      "curation_score": 0.4115
+    },
+    {
+      "source": "commons",
+      "file_pageid": 65232179,
+      "file_title": "File:Sisley - The-Regattas-Moseley.jpg",
+      "museum_native_id": "65232179",
+      "title": "Sisley - The-Regattas-Moseley",
+      "artist": "Alfred Sisley",
+      "artist_death_year": 1899,
+      "artist_attribution_evidence": "explicit_commons_artist",
+      "artist_metadata": "Alfred Sisley",
+      "artist_is_eu_public_domain_by_year": true,
+      "subject_search": "seascape",
+      "remote_preview_url": "https://upload.wikimedia.org/wikipedia/commons/5/5c/Sisley_-_The-Regattas-Moseley.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+      "remote_full_url": "https://upload.wikimedia.org/wikipedia/commons/5/5c/Sisley_-_The-Regattas-Moseley.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "museum_url": "https://commons.wikimedia.org/wiki/File:Sisley_-_The-Regattas-Moseley.jpg",
+      "rights_license": "public domain",
+      "rights_evidence_url": "",
+      "file_sha1": "39de9b078445bfee170feaf27c36b3392866d66d",
+      "runtime_visible": false,
+      "worldwide_commercial_certified": false,
+      "color_metrics": {
+        "luminance": 0.6125,
+        "saturation": 0.2272,
+        "dark_fraction": 0.0089,
+        "very_dark_fraction": 0.0,
+        "vivid_fraction": 0.2659,
+        "bright_pass": true
+      },
+      "image_sha256": "c8e78a1bafa1ebedac7881de0ed1e75726c51f3510ab9a93adfd73d3ada7344f",
+      "curatorial_status": "HOLD_VISUAL_AND_ARTIST_ATTRIBUTION",
+      "rights_status": "HOLD_COUNTRY_BY_COUNTRY",
+      "museum": "Wikimedia Commons (community-sourced file)",
+      "curation_score": 0.3068
+    },
+    {
+      "source": "commons",
+      "file_pageid": 50782166,
+      "file_title": "File:Large Vase with Flowers -Odilon Redon.PNG",
+      "museum_native_id": "50782166",
+      "title": "Large Vase with Flowers -Odilon Redon",
+      "artist": "Odilon Redon",
+      "artist_death_year": 1916,
+      "artist_attribution_evidence": "explicit_commons_artist",
+      "artist_metadata": "Odilon Redon",
+      "artist_is_eu_public_domain_by_year": true,
+      "subject_search": "flowers",
+      "remote_preview_url": "https://upload.wikimedia.org/wikipedia/commons/f/fe/Large_Vase_with_Flowers_-Odilon_Redon.PNG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+      "remote_full_url": "https://upload.wikimedia.org/wikipedia/commons/f/fe/Large_Vase_with_Flowers_-Odilon_Redon.PNG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "museum_url": "https://commons.wikimedia.org/wiki/File:Large_Vase_with_Flowers_-Odilon_Redon.PNG",
+      "rights_license": "public domain",
+      "rights_evidence_url": "",
+      "file_sha1": "5f3e37178c61fe425fae7f1165b541962672d1fd",
+      "runtime_visible": false,
+      "worldwide_commercial_certified": false,
+      "color_metrics": {
+        "luminance": 0.6257,
+        "saturation": 0.2485,
+        "dark_fraction": 0.031,
+        "very_dark_fraction": 0.0097,
+        "vivid_fraction": 0.2327,
+        "bright_pass": true
+      },
+      "image_sha256": "5a8290ab0155233394582c9c30a376f1e1b618f4bc84852fbb07eef31ad5c23b",
+      "curatorial_status": "HOLD_VISUAL_AND_ARTIST_ATTRIBUTION",
+      "rights_status": "HOLD_COUNTRY_BY_COUNTRY",
+      "museum": "Wikimedia Commons (community-sourced file)",
+      "curation_score": 0.2882
+    }
+  ]
+}
