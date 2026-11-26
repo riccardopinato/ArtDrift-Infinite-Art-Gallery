@@ -4,8 +4,8 @@
   "cumulative_inventory_records": 308,
   "ready_to_import": 0,
   "priority_counts": {
-    "2": 13,
-    "3": 295
+    "2": 11,
+    "3": 297
   },
   "queue_limit": 120,
   "items_for_review": [
@@ -146,33 +146,6 @@
     },
     {
       "source": "te_papa",
-      "museum_native_id": "68461506",
-      "title": "Girolamo Nerli - Untitled (Bay landscape).jpg",
-      "artist": "Girolamo P. Nerli",
-      "year": null,
-      "creation_date_raw": "circa 1895 date QS:P571,+1895-00-00T00:00:00Z/9,P1480,Q5727902",
-      "record_url": "https://commons.wikimedia.org/w/index.php?curid=68461506",
-      "preview_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7a/Girolamo_Nerli_-_Untitled_%28Bay_landscape%29.jpg/330px-Girolamo_Nerli_-_Untitled_%28Bay_landscape%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
-      "image_sha256": "b42e8f1944e25531bed8105b76c32146465b65b854856c2035e869de4f330a62",
-      "technical_color_tier": "HOLD_DARK_OR_MUTED",
-      "color_metrics": {
-        "luminance": 0.2959,
-        "saturation": 0.3871,
-        "dark_fraction": 0.6547,
-        "very_dark_fraction": 0.3541,
-        "vivid_fraction": 0.0868,
-        "bright_pass": false
-      },
-      "license_statement": "public domain",
-      "rights_evidence_url": null,
-      "institutional_origin_confirmed": null,
-      "curatorial_priority": "METADATA_AND_IMAGE_REVIEW",
-      "decision": "HOLD_HUMAN_VISUAL_AUTHOR_RIGHTS_DEDUP",
-      "commercially_approved": false,
-      "runtime_visible": false
-    },
-    {
-      "source": "te_papa",
       "museum_native_id": "9913870",
       "title": "KarapiroStream-WaikatoRiver.jpg",
       "artist": "Gustavus von Tempsky",
@@ -235,33 +208,6 @@
         "dark_fraction": 0.2914,
         "very_dark_fraction": 0.0463,
         "vivid_fraction": 0.0281,
-        "bright_pass": false
-      },
-      "license_statement": "public domain",
-      "rights_evidence_url": null,
-      "institutional_origin_confirmed": true,
-      "curatorial_priority": "METADATA_AND_IMAGE_REVIEW",
-      "decision": "HOLD_HUMAN_VISUAL_AUTHOR_RIGHTS_DEDUP",
-      "commercially_approved": false,
-      "runtime_visible": false
-    },
-    {
-      "source": "te_papa",
-      "museum_native_id": "76872197",
-      "title": "MA I367280 Te Papa. Dart River. Untitled landscape Album.jpg",
-      "artist": " F. Finch",
-      "year": null,
-      "creation_date_raw": "circa 1880 date QS:P571,+1880-00-00T00:00:00Z/9,P1480,Q5727902",
-      "record_url": "https://commons.wikimedia.org/w/index.php?curid=76872197",
-      "preview_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/df/MA_I367280_Te_Papa._Dart_River._Untitled_landscape_Album.jpg/330px-MA_I367280_Te_Papa._Dart_River._Untitled_landscape_Album.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
-      "image_sha256": "66757a586dec260b3511f4d663de46c5583a72a79345a3b21260a03348f81532",
-      "technical_color_tier": "HOLD_DARK_OR_MUTED",
-      "color_metrics": {
-        "luminance": 0.5355,
-        "saturation": 0.2753,
-        "dark_fraction": 0.3468,
-        "very_dark_fraction": 0.2042,
-        "vivid_fraction": 0.0361,
         "bright_pass": false
       },
       "license_statement": "public domain",
