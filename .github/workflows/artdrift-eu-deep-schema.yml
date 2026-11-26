@@ -1,0 +1,38 @@
+name: Art Drift — deep schema of THREE new European collections
+on:
+  push:
+    branches: [research/artdrift-new-european-museums-20261126]
+    paths:
+      - tools/artdrift_eu_source_deep_probe.py
+      - .github/workflows/artdrift-eu-deep-schema.yml
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: artdrift-eu-deep-schema
+  cancel-in-progress: false
+jobs:
+  official-record-schema:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Official museum item and image metadata requests
+        run: python -u tools/artdrift_eu_source_deep_probe.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: EU-new-museum-official-record-schemas
+          path: research/museums/20261126/eu_sample_object_schemas.json
+          if-no-files-found: warn
+      - name: Persist evidence only
+        if: success()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add research/museums/20261126/eu_sample_object_schemas.json
+          if ! git diff --cached --quiet; then
+            git commit -m "research(europe): 3 new museum object schemas verified from official APIs"
+            git pull --rebase origin research/artdrift-new-european-museums-20261126
+            git push origin HEAD:research/artdrift-new-european-museums-20261126
+          fi
