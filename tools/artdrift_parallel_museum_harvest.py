@@ -151,24 +151,47 @@ def is_scenic(title: str) -> bool:
     return any(s in norm for s in SCENES)
 
 
-def get_image_pages(q: dict, max_pages: int) -> tuple[list[dict], int, list[str]]:
-    """Only Commons public MediaWiki API; follow its continuation as provided."""
+COMMONS_THROTTLED = False
+
+
+def get_image_pages(q: dict, max_pages: int, resume: dict | None = None):
+    """Bounded MediaWiki continuation, preserving cursor on API 429.
+
+    Return (files, pages_fetched, errors, next_cursor, exhausted).
+    An exhausted query is not proof that the museum catalog is exhaustive.
+    """
+    global COMMONS_THROTTLED
+    if COMMONS_THROTTLED:
+        return [], 0, ["COMMONS_API_THROTTLED_NO_FURTHER_REQUESTS"], resume, False
     q = {"action": "query", "format": "json", "formatversion": 2,
          "prop": "imageinfo", "iiprop": "url|mime|extmetadata|sha1",
          "iiurlwidth": 320, "iilimit": 1, **q}
+    if resume:
+        q.update(resume)
     results = {}
     errors = []
     pages = 0
     visited = set()
+    request_cursor = dict(resume) if resume else None
     for _ in range(max_pages):
         url = "https://commons.wikimedia.org/w/api.php?" + urllib.parse.urlencode(q)
         try:
             response = jget(url)
         except Exception as e:
-            errors.append(str(e)[:190])
+            msg = str(e)
+            if (getattr(e, "code", None) in (429, 503) or
+                    "HTTP Error 429" in msg or "HTTP Error 503" in msg):
+                COMMONS_THROTTLED = True
+                errors.append("COMMONS_HOST_THROTTLED_STOP__"+msg[:130])
+            else:
+                errors.append(msg[:190])
             break
         if response.get("error"):
-            errors.append(str(response["error"])[:190])
+            err = response["error"]
+            code = str(err.get("code", "")).lower() if isinstance(err, dict) else ""
+            if code in ("ratelimited", "maxlag"):
+                COMMONS_THROTTLED = True
+            errors.append(str(err)[:190])
             break
         pages += 1
         for item in (response.get("query") or {}).get("pages") or []:
@@ -177,15 +200,17 @@ def get_image_pages(q: dict, max_pages: int) -> tuple[list[dict], int, list[str]
                 results[pid] = item
         continuation = response.get("continue") or {}
         if not continuation:
-            break
+            return list(results.values()), pages, errors, None, True
         stamp = json.dumps(continuation, sort_keys=True)
         if stamp in visited:
             errors.append("REPEATED_COMMONS_CONTINUATION")
             break
         visited.add(stamp)
+        request_cursor = dict(continuation)
         q.update(continuation)
-        time.sleep(0.18)
-    return list(results.values()), pages, errors
+        time.sleep(0.35)
+    return list(results.values()), pages, errors, request_cursor, False
+
 
 
 def from_commons(p: dict, museum: str, origin: str, exact_category: bool) -> dict:
@@ -229,27 +254,52 @@ def discover_commons(museum: str, bound: int):
     candidates = {}
     stats = Counter()
     errors = []
+    old_report_path = OUT / (museum + ".json")
+    if old_report_path.is_file():
+        saved_report = json.loads(old_report_path.read_text(encoding="utf-8"))
+        if saved_report.get("provider") != museum:
+            raise ValueError("Prior source report provider mismatch")
+        saved_progress = saved_report.get("query_progress") or {}
+    else:
+        saved_progress = {}
+    progress = {}
     for category in cfg.get("categories", []):
         q = {"generator": "categorymembers", "gcmtitle": category,
              "gcmtype": "file", "gcmlimit": 50}
-        rows, pages, errs = get_image_pages(q, CATEGORY_BOUND)
+        old = saved_progress.get(category) or {}
+        if old.get("status") == "exhausted":
+            progress[category] = old
+            stats["queries_previously_exhausted"] += 1
+            continue
+        rows, pages, errs, cursor, exhausted = get_image_pages(
+            q, CATEGORY_BOUND, resume=old.get("cursor"))
         stats["category_pages"] += pages
         stats["category_file_hits"] += len(rows)
         errors.extend({"source": category, "error": e} for e in errs)
+        progress[category] = {"status": "exhausted" if exhausted else "partial",
+                              "cursor": cursor, "pages_in_this_run": pages}
         for row in rows:
             candidates[row["pageid"]] = from_commons(row, museum, category, True)
-        time.sleep(0.2)
+        time.sleep(0.30)
     for search in cfg["terms"]:
         q = {"generator": "search", "gsrnamespace": 6,
              "gsrsearch": search, "gsrlimit": 50}
-        rows, pages, errs = get_image_pages(q, 3)
+        old = saved_progress.get(search) or {}
+        if old.get("status") == "exhausted":
+            progress[search] = old
+            stats["queries_previously_exhausted"] += 1
+            continue
+        rows, pages, errs, cursor, exhausted = get_image_pages(
+            q, 3, resume=old.get("cursor"))
         stats["search_pages"] += pages
         stats["search_file_hits"] += len(rows)
         errors.extend({"source": search, "error": e} for e in errs)
+        progress[search] = {"status": "exhausted" if exhausted else "partial",
+                            "cursor": cursor, "pages_in_this_run": pages}
         for row in rows:
             if row["pageid"] not in candidates:
                 candidates[row["pageid"]] = from_commons(row, museum, search, False)
-        time.sleep(0.18)
+        time.sleep(0.30)
     all_rows = list(candidates.values())
     stats["unique_files_discovered"] = len(all_rows)
     stats["file_open_rights"] = sum(x["image_license_checked"] for x in all_rows)
@@ -267,7 +317,8 @@ def discover_commons(museum: str, bound: int):
         not x["image_license_checked"],
         x["institutional_provenance"] != "INSTITUTIONAL_CATEGORY",
         x["museum_native_id"]))
-    return all_rows[:bound], stats, errors
+    stats["source_host_throttled"] = int(COMMONS_THROTTLED)
+    return all_rows[:bound], stats, errors, progress
 
 
 def discover_rijks(bound: int):
@@ -403,7 +454,7 @@ def run(provider: str, max_records: int, max_images: int):
     elif provider == "staedel":
         candidates, stats, errs, raw_ids = discover_staedel(max_records)
     else:
-        candidates, stats, errs = discover_commons(provider, max_records)
+        candidates, stats, errs, query_progress = discover_commons(provider, max_records)
         raw_ids = [x["museum_native_id"] for x in candidates]
     stats = Counter(stats)
     previews = image_review(candidates, max_images, stats)
@@ -431,6 +482,8 @@ def run(provider: str, max_records: int, max_images: int):
         "runtime_imported": 0,
         "commercially_approved": 0,
     }
+    if provider not in ("rijks", "staedel"):
+        report["query_progress"] = query_progress
     OUT.mkdir(parents=True, exist_ok=True)
     path = OUT/(provider+".json")
     path.write_text(json.dumps(report, ensure_ascii=False, indent=2)+"\n",
