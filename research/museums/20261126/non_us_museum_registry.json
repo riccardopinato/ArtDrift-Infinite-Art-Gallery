@@ -65,8 +65,50 @@
       "image_license": "CC0 only for individual post-copyright works, not blanket for all",
       "policy": "https://sammlung.belvedere.at/opencontent/images",
       "endpoint": "https://sammlung.belvedere.at/opencontent/images",
-      "mode": "METADATA_PROBE_NO_SCRAPING_GUESS",
+      "mode": "PUBLIC_CC0_POLICY__HTTP_403_ON_AUTOMATED_COLLECTION_PAGE",
       "notes": "Austrian modern landscape and vivid floral paintings; require official item evidence before images"
+    },
+    {
+      "key": "finnish_national_gallery",
+      "name": "Finnish National Gallery (Ateneum, Sinebrychoff, Kiasma)",
+      "country": "Finland",
+      "city": "Helsinki",
+      "priority": "P1",
+      "data_access": "Official collection portal/data packages; API key may be required for machine access",
+      "image_access": "More than 36,000 images officially declared CC0; per-image Copyright Free badge",
+      "image_license": "CC0 for Copyright Free items, others remain In Copyright",
+      "policy": "https://kansallisgalleria.fi/en/photographic-service/",
+      "endpoint": "https://kokoelma.kansallisgalleria.fi/",
+      "mode": "API_ACCESS_RESEARCH_KEY_GATE",
+      "notes": "Prioritize Ateneum outdoor scenes and color; do not assume all 36,000 are modern or painting"
+    },
+    {
+      "key": "birmingham",
+      "name": "Birmingham Museums Trust / Birmingham Museum & Art Gallery",
+      "country": "United Kingdom",
+      "city": "Birmingham",
+      "priority": "P1",
+      "data_access": "Official searchable images and sound media portal",
+      "image_access": "Institution offers CC0 downloads for out-of-copyright works",
+      "image_license": "CC0 for individual public-domain items; verify record on media portal",
+      "policy": "https://www.birminghammuseums.org.uk/collection/picture-library",
+      "endpoint": "https://dams.birminghammuseums.org.uk",
+      "mode": "MEDIA_PORTAL_SOURCE_PROBE",
+      "notes": "Strong regional landscape/post-Impressionist potential; provenance and image rights must be checked"
+    },
+    {
+      "key": "te_papa",
+      "name": "Museum of New Zealand Te Papa Tongarewa",
+      "country": "New Zealand",
+      "city": "Wellington",
+      "priority": "P1",
+      "data_access": "Official Collections API 1.5.5, GET full-text search no token per documented quick start; advanced POST requires an API key",
+      "image_access": "ImageObject media with per-file rights, some restricted",
+      "image_license": "Metadata CC BY 4.0, image per-object PDM/CC0/CC BY/other; no blanket images",
+      "policy": "https://www.tepapa.govt.nz/learn/research/datasets/collections-api/api-terms-of-use",
+      "endpoint": "https://data.tepapa.govt.nz/collection/search",
+      "mode": "OFFICIAL_GET_SEARCH_SOURCE_PROBE",
+      "notes": "New Zealand regional landscapes; modern painting subjects, respect Māori and cultural permissions"
     },
     {
       "key": "staedel",
@@ -88,13 +130,27 @@
       "country": "France",
       "city": "Paris",
       "priority": "P2",
-      "data_access": "Official Paris Musées collection portal",
+      "data_access": "Official JSON Collections API, but requires account and authentication token; public portal accessible",
       "image_access": "Only individually public-domain images tagged unrestricted / CC0",
       "image_license": "Public-domain CC0 subset only, modern works often protected",
       "policy": "https://www.parismusees.paris.fr/",
       "endpoint": "https://www.parismuseescollections.paris.fr/en",
-      "mode": "SOURCE_LICENSE_RESEARCH",
+      "mode": "API_KEY_REQUIRED__NO_AUTO_BYPASS",
       "notes": "14 Paris civic museums; do not confuse Musée d'Orsay/Orangerie with Paris Musées civic network"
+    },
+    {
+      "key": "nasjonalmuseet",
+      "name": "Nasjonalmuseet / National Museum",
+      "country": "Norway",
+      "city": "Oslo",
+      "priority": "P2",
+      "data_access": "Collection metadata via DigitaltMuseum API; API key may be required",
+      "image_access": "DigitaltMuseum per-object images",
+      "image_license": "Mixed, check PDM/CC0 per work and per culture-related restrictions",
+      "policy": "https://beta.nasjonalmuseet.no/2021/18/nasjonalmuseets-api/",
+      "endpoint": "https://digitaltmuseum.no",
+      "mode": "API_ACCESS_RESEARCH_KEY_GATE",
+      "notes": "Nordic coastal landscapes but many mixed rights"
     },
     {
       "key": "national_gallery_london",
@@ -107,9 +163,23 @@
       "image_license": "CC BY-NC-ND prohibited for commercial/derivative integration without permissions",
       "policy": "https://www.nationalgallery.org.uk/documentation/ngacuk/licences",
       "mode": "NO_IMAGE_IMPORT"
+    },
+    {
+      "key": "national_gallery_victoria",
+      "name": "National Gallery of Victoria",
+      "country": "Australia",
+      "city": "Melbourne",
+      "priority": "EXCLUDED_COMMERCIAL",
+      "data_access": "Public online collection",
+      "image_access": "Public-domain image downloads advertised only for non-commercial usage",
+      "image_license": "Noncommercial limitation incompatible with assumed monetized Art Drift use",
+      "policy": "https://www.ngv.vic.gov.au/explore/collection/",
+      "mode": "NO_IMAGE_IMPORT"
     }
   ],
   "publication_mode": "RESEARCH_ONLY",
   "runtime_imported": 0,
-  "commercial_approved_count": 0
+  "commercial_approved_count": 0,
+  "prioritized_source_count": 9,
+  "actual_source_probe_result": "research/museums/20261126/non_us_source_access_results.json"
 }
