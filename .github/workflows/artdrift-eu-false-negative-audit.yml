@@ -1,0 +1,42 @@
+name: ArtDrift — Diagnose false negative museum selection
+on:
+  push:
+    branches: [research/artdrift-new-european-museums-20261126]
+    paths:
+      - tools/artdrift_eu_false_negative_audit.py
+      - .github/workflows/artdrift-eu-false-negative-audit.yml
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: artdrift-eu-false-negative-audit
+  cancel-in-progress: false
+jobs:
+  source-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --disable-pip-version-check Pillow==11.3.0
+      - run: |
+          python -m py_compile tools/artdrift_eu_false_negative_audit.py
+          python -u tools/artdrift_eu_false_negative_audit.py
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ArtDrift-European-Source-FalseNegatives
+          path: research/museums/20261126/false_negative_diagnostics.json
+          if-no-files-found: warn
+      - if: success()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add research/museums/20261126/false_negative_diagnostics.json
+          if ! git diff --cached --quiet; then
+            git commit -m "audit(artdrift): documented reasons museum sample selected zero"
+            git pull --rebase origin research/artdrift-new-european-museums-20261126
+            git push origin HEAD:research/artdrift-new-european-museums-20261126
+          fi
