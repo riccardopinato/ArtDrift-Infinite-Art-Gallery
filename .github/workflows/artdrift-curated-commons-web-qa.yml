@@ -1,0 +1,36 @@
+name: Art Drift — staged Commons rights-gate web QA (no deploy)
+on:
+  push:
+    branches:
+      - feat/artdrift-curated-commons-rights-gate-20261127
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  web:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: '3.50.1'
+          cache: true
+      - name: Flutter web analyze, tests and build
+        run: |
+          flutter create --project-name artdrift --org com.riccardopinato --platforms=web .
+          rm -f test/widget_test.dart
+          flutter pub get
+          (cd packages/drift_core && flutter pub get && flutter analyze --no-fatal-infos && flutter test)
+          flutter analyze --no-fatal-infos
+          flutter test
+          flutter build web --release
+      - name: Staging catalog must remain empty
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          assert json.loads(Path('assets/museums/catalog_curated_commons.json').read_text()) == []
+          print('STAGED_COMMONS_ZERO_PUBLICATION_PASS')
+          PY

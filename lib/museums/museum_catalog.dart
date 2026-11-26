@@ -15,6 +15,8 @@ class MuseumCatalog {
     for (final file in <String>[
       'assets/museums/catalog.json',
       'assets/museums/catalog_global.json',
+      // Intentionally empty until per-image provenance and rights approval.
+      'assets/museums/catalog_curated_commons.json',
     ]) {
       final isPreviewPack = file.endsWith('/catalog.json');
       try {
@@ -28,8 +30,14 @@ class MuseumCatalog {
               artwork.museumNativeId.trim().isEmpty ||
               artwork.rightsEvidenceUrl.trim().isEmpty) continue;
           final license = artwork.rightsLicense.toLowerCase();
-          if (!license.contains('cc0') &&
-              !license.contains('public domain')) continue;
+          if (artwork.isCuratedCommons) {
+            // CC BY / BY-SA are distinct from public domain. They require
+            // independently reviewed image credits and worldwide rights.
+            if (!artwork.curatedCommonsReleaseReady) continue;
+          } else if (!license.contains('cc0') &&
+              !license.contains('public domain')) {
+            continue;
+          }
           final rights = Uri.tryParse(artwork.rightsEvidenceUrl);
           if (rights == null || rights.scheme != 'https' ||
               rights.userInfo.isNotEmpty ||
