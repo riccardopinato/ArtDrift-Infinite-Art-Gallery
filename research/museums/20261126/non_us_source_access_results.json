@@ -104,11 +104,11 @@
       "kind": "portal_html",
       "status": "HTTP_200",
       "media_type": "text/html; charset=utf-8",
-      "bytes": 89781,
+      "bytes": 32768,
       "metadata_only": true,
       "runtime_imported": 0,
       "licensed_artwork_images": 0,
-      "has_open_content": true,
+      "has_open_content": false,
       "html_contains_object_links": false,
       "probe_sample": "(window.NREUM||(NREUM={})).init={\"ajax\":{\"deny_list\":[\"bam.nr-data.net\"]},\"feature_flags\":[\"rum_v2\"]};"
     },
@@ -149,7 +149,7 @@
       "licensed_artwork_images": 0,
       "has_open_content": true,
       "html_contains_object_links": false,
-      "probe_sample": "2026-11-26T12:57:55Z  http://sammlung.staedelmuseum.de/api/oai   Städel Museum, Frankfurt</repositor"
+      "probe_sample": "2026-11-26T13:05:37Z  http://sammlung.staedelmuseum.de/api/oai   Städel Museum, Frankfurt</repositor"
     }
   },
   "artworks_verified": 0,
