@@ -68,7 +68,7 @@ def safe_thumb(url):
     try:
         u=urlsplit(url)
         return (u.scheme=="https" and
-                u.hostname in ("upload.wikimedia.org","commons.wikimedia.org")
+                u.hostname in ("upload.wikimedia.org","thumb.wikimedia.org")
                 and u.path.startswith("/wikipedia/commons/") and
                 not u.username and not u.password and u.port in (None,443))
     except ValueError:return False
@@ -157,6 +157,9 @@ def thumb_probe(w):
     url=w["remote_preview_url"]
     if not safe_thumb(url):raise ValueError("unapproved Wikimedia image")
     req=Request(url,headers={"User-Agent":UA,"Accept":"image/jpeg,image/png"})
+    # Wikimedia's own 2026 thumbnail CDN now uses thumb.wikimedia.org.
+    # Keep one low-rate media request per worker; do not retry 429.
+    time.sleep(.8)
     with urlopen(req,timeout=18) as resp:
         if not safe_thumb(resp.url):raise ValueError("unexpected media redirect")
         if not resp.headers.get("Content-Type","").lower().startswith("image/"):
