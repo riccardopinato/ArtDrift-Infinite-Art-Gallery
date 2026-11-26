@@ -416,18 +416,39 @@ def run_sweden(shard,max_images):
 NS={"oai":"http://www.openarchives.org/OAI/2.0/",
     "lido":"http://www.lido-schema.org"}
 def staedel_records():
-    url="https://sammlung.staedelmuseum.de/api/oai?verb=ListRecords&metadataPrefix=lido"
-    records=[]
-    for page in range(2):
-        raw=fetch(url,limit=2_800_000,timeout=30)
-        root=ET.fromstring(raw)
-        records.extend(root.findall(".//oai:record",NS))
-        token=root.find(".//oai:resumptionToken",NS)
-        if token is None or not token.text:break
-        url=("https://sammlung.staedelmuseum.de/api/oai?"+
-             urllib.parse.urlencode({"verb":"ListRecords","resumptionToken":token.text}))
-        time.sleep(.2)
-    return records
+    """Only substantive OAI records, not deleted tombstones.
+
+    The first 200 historical OAI records in previous PR were all deleted
+    headers (no lido element), generating a fraudulent zero-artworks signal.
+    An OAI from filter is datestamp-based, not artwork creation date.
+    """
+    base="https://sammlung.staedelmuseum.de/api/oai?"
+    kept=[]
+    for from_date in ("2025-01-01","2023-01-01","2020-01-24"):
+        uri=base+urllib.parse.urlencode({"verb":"ListRecords",
+            "metadataPrefix":"lido","from":from_date})
+        for page in range(16):
+            raw=fetch(uri,limit=3_000_000,timeout=30)
+            root=ET.fromstring(raw)
+            errors=[(x.attrib.get("code"),x.text) for x in root.findall(".//oai:error",NS)]
+            if errors:break
+            records=root.findall(".//oai:record",NS)
+            for record in records:
+                head=record.find("./oai:header",NS)
+                if head is not None and head.attrib.get("status")=="deleted":
+                    continue
+                metadata=record.find("./oai:metadata",NS)
+                if metadata is None or not len(metadata):
+                    continue
+                kept.append(record)
+            if len(kept)>=450:break
+            token=root.find(".//oai:resumptionToken",NS)
+            if token is None or not token.text:break
+            uri=base+urllib.parse.urlencode(
+                {"verb":"ListRecords","resumptionToken":token.text})
+            time.sleep(.15)
+        if kept:break
+    return kept[:450]
 
 def staedel_parse(record):
     # LIDO metadata harvested under OAI official contract; CC0 metadata, CC BY-SA image.
