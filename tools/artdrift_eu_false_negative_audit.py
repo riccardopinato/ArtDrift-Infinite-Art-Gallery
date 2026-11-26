@@ -13,6 +13,14 @@ def staedel():
     try:record=staedel_records()
     except Exception as e:return {"error":str(e)[:250]}
     data["inspected_record_count"]=len(record)
+    if record:
+        first=record[0]
+        data["first_record_children"]=[{"tag":x.tag,"attrs":dict(x.attrib)} for x in first[:12]]
+        data["first_record_nested_tags"]=[
+            {"tag":x.tag,"text":str(x.text or "")[:120],"attrs":dict(x.attrib)}
+            for x in list(first.iter())[:35]]
+        data["metadata_child_tag"]=[x.tag for x in first.iter() if
+                                      isinstance(x.tag,str) and x.tag.endswith("metadata")][:3]
     for r in record:
         e=r.find(".//lido:lido",NS)
         if e is None:continue
