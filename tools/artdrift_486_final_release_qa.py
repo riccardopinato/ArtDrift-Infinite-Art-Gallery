@@ -154,7 +154,7 @@ def prepare(rights,shards,root,out):
 def parse_fields(wiki):
  result={}
  for name in ("source","author","artist","description","date","permission"):
-  x=re.search(r"(?im)^\s*\|\s*"+name+r"\s*=\s*(.*?)\s*$",wiki)
+  x=re.search(r"(?im)^[ \t]*\|[ \t]*"+name+r"[ \t]*=[ \t]*(.*?)[ \t]*$",wiki)
   if x:result[name]=re.sub(r"\s+"," ",html.unescape(x.group(1).strip()))[:650]
  return result
 def query_wikitext(ids):
