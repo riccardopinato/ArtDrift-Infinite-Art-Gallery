@@ -75,4 +75,89 @@ class EuropeanMuseumSourceTests(unittest.TestCase):
         obj["imageinfo"][0]["extmetadata"]["LicenseShortName"]["value"]="Public domain"
         obj["imageinfo"][0]["extmetadata"]["DateTimeOriginal"]["value"]="Unknown"
         self.assertIsNone(eu.sweden_object(obj))
+
+    def test_staedel_major_set_discards_deleted_records(self):
+        from unittest.mock import patch
+        from urllib.parse import parse_qs,urlsplit
+        ns='http://www.openarchives.org/OAI/2.0/'
+        lido='http://www.lido-schema.org'
+        raw=(f'<OAI-PMH xmlns="{ns}" xmlns:lido="{lido}"><ListRecords>'
+             '<record><header status="deleted"><identifier>oai:DE-MUS-048017:1</identifier></header></record>'
+             '<record><header><identifier>oai:DE-MUS-048017:2</identifier></header>'
+             '<metadata><lido:lido><lido:lidoRecID>DE-MUS-048017:2</lido:lidoRecID>'
+             '</lido:lido></metadata></record></ListRecords></OAI-PMH>').encode()
+        def fake(url,**kwargs):
+            q=parse_qs(urlsplit(url).query)
+            self.assertEqual(q.get('set'),['scope:major'])
+            self.assertEqual(q.get('verb'),['ListRecords'])
+            return raw
+        with patch.object(eu,'fetch',side_effect=fake):
+            rows=eu.staedel_records()
+        self.assertEqual(len(rows),1)
+
+    def test_staedel_identifiers_getrecord_fallback(self):
+        from unittest.mock import patch
+        from urllib.parse import parse_qs,urlsplit
+        ns='http://www.openarchives.org/OAI/2.0/'
+        lido='http://www.lido-schema.org'
+        wrap=lambda v,s:(f'<OAI-PMH xmlns="{ns}" xmlns:lido="{lido}">'
+                         f'<{v}>{s}</{v}></OAI-PMH>').encode()
+        calls=[]
+        def fake(url,**kwargs):
+            q=parse_qs(urlsplit(url).query);v=q['verb'][0];calls.append(v)
+            if v=='ListRecords':
+                return wrap(v,'<record><header status="deleted">'
+                    '<identifier>oai:DE-MUS-048017:1</identifier></header></record>')
+            if v=='ListIdentifiers':
+                return wrap(v,'<header status="deleted">'
+                    '<identifier>oai:DE-MUS-048017:1</identifier></header>'
+                    '<header><identifier>oai:DE-MUS-048017:2442</identifier></header>')
+            if v=='GetRecord':
+                self.assertEqual(q['identifier'],['oai:DE-MUS-048017:2442'])
+                return wrap(v,'<record><header><identifier>oai:DE-MUS-048017:2442</identifier>'
+                    '</header><metadata><lido:lido><lido:lidoRecID>DE-MUS-048017:2442'
+                    '</lido:lidoRecID></lido:lido></metadata></record>')
+            raise AssertionError(v)
+        with patch.object(eu,'fetch',side_effect=fake):
+            self.assertEqual(len(eu.staedel_records()),1)
+        self.assertIn('ListIdentifiers',calls)
+        self.assertIn('GetRecord',calls)
+
+    def test_staedel_uses_subject_creation_date_and_cdn(self):
+        from xml.etree import ElementTree as ET
+        ns='http://www.openarchives.org/OAI/2.0/'
+        lido='http://www.lido-schema.org'
+        xml=f"""<record xmlns="{ns}" xmlns:lido="{lido}">
+        <header><identifier>oai:DE-MUS-048017:2442</identifier></header>
+        <metadata><lido:lido><lido:lidoRecID>DE-MUS-048017:2442</lido:lidoRecID>
+        <lido:titleSet><lido:appellationValue xml:lang="en">A quiet view</lido:appellationValue></lido:titleSet>
+        <lido:objectRelationWrap><lido:subjectConcept><lido:term>river</lido:term></lido:subjectConcept></lido:objectRelationWrap>
+        <lido:eventSet><lido:event><lido:eventType><lido:term>Acquisition</lido:term></lido:eventType>
+        <lido:earliestDate>1900</lido:earliestDate></lido:event></lido:eventSet>
+        <lido:eventSet><lido:event><lido:eventType><lido:term>Work conception</lido:term></lido:eventType>
+        <lido:earliestDate>1872</lido:earliestDate></lido:event></lido:eventSet>
+        <lido:resourceWrap><lido:linkResource>https://cdn.staedelmuseum.de/images/2442/thumb-xl.jpg</lido:linkResource></lido:resourceWrap>
+        </lido:lido></metadata></record>"""
+        rec=eu.staedel_parse(ET.fromstring(xml))
+        self.assertIsNotNone(rec)
+        self.assertEqual(rec['year'],1872)
+        self.assertEqual(rec['matched_title_or_subject'],'subject')
+        self.assertFalse(rec['commercially_approved'])
+        self.assertTrue(eu.allow('https://cdn.staedelmuseum.de/images/a.jpg'))
+        self.assertFalse(eu.allow('https://cdn.staedelmuseum.de.evil.test/a.jpg'))
+
+    def test_staedel_no_acquisition_date_as_creation(self):
+        from xml.etree import ElementTree as ET
+        ns='http://www.openarchives.org/OAI/2.0/'
+        lido='http://www.lido-schema.org'
+        xml=f"""<record xmlns="{ns}" xmlns:lido="{lido}">
+        <header><identifier>oai:DE-MUS-048017:10</identifier></header>
+        <metadata><lido:lido><lido:lidoRecID>DE-MUS-048017:10</lido:lidoRecID>
+        <lido:titleSet><lido:appellationValue>River landscape</lido:appellationValue></lido:titleSet>
+        <lido:eventSet><lido:event><lido:eventType><lido:term>Acquisition</lido:term></lido:eventType>
+        <lido:earliestDate>1900</lido:earliestDate></lido:event></lido:eventSet>
+        <lido:resourceWrap><lido:linkResource>https://cdn.staedelmuseum.de/images/10.jpg</lido:linkResource></lido:resourceWrap>
+        </lido:lido></metadata></record>"""
+        self.assertIsNone(eu.staedel_parse(ET.fromstring(xml)))
+
 if __name__=="__main__":unittest.main()

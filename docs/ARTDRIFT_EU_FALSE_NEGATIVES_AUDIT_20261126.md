@@ -42,3 +42,15 @@ File `research/museums/20261126/official_artwork_counterexamples.json` — 9 ope
 
 ## P1 fix aggiuntivo: near-miss ad alta vivacità
 Nella pipeline per il Rijksmuseum è stato introdotto `visual_review_exception()`: fra i casi scartati dal gate automatico, vengono recuperati **esclusivamente come HOLD di visione** gli oggetti con superfici molto scure ≤20%, media luminanza ≥46%, saturazione ≥30% e pixel vivaci ≥35%. L'obiettivo è non eliminare *Landscape on the Oise* (SK-A-2288: dark 19,06%, lum 49,35%, sat 53,89%, vivid 56,14%). I candidati sono etichettati `HOLD_HIGH_CHROMA_VISUAL_REVIEW__MEAN_LUMINANCE_ONLY` e la CI prepara un `visual_review_high_chroma.jpg` separato dal contact sheet delle immagini formalmente PASS. **Questa misura non cambia la soglia già approvata dall'utente, non importa opere e non autorizza immagini con copyright.** Aggiunto regression test nel suite `test_artdrift_eu_new_museums_batch.py`.
+
+
+## P0 Städel follow-up: major works, GetRecord, CDN
+The research collector now queries the museum's official scope:major OAI set,
+ignores deleted tombstones, follows bounded resumptionToken pages and falls back
+to ListIdentifiers + GetRecord for active LIDO records. The CDN of the official
+museum is allowlisted with strict HTTPS and redirect checks. Metadata matches
+titles or controlled LIDO subject terms; the painting year is taken only from
+the Work conception/creation event, never from acquisition. OAI image links
+are declared CC BY-SA 4.0 at feed level; per-image reuse and credit remain
+HOLD. No app runtime assets, release, or canonical artwork imports are changed.
+See https://sammlung.staedelmuseum.de/en/oai/guide .

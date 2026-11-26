@@ -23,7 +23,7 @@ from artdrift_dark_threshold_ab import pixel_eligible,color_tier
 from artdrift_commons_pd_bright import licenses,strip_html,safe_thumb
 OUT=ROOT/".artdrift_eu/batches"
 API_HOSTS={"data.rijksmuseum.nl","iiif.micr.io","commons.wikimedia.org",
-           "thumb.wikimedia.org","sammlung.staedelmuseum.de"}
+           "thumb.wikimedia.org","sammlung.staedelmuseum.de","cdn.staedelmuseum.de"}
 ART_URL_LICENSE={
  "rijks":"https://data.rijksmuseum.nl/about/",
  "nationalmuseum_se":"https://www.nationalmuseum.se/en/explore-art-and-design/images",
@@ -441,76 +441,148 @@ def run_sweden(shard,max_images):
 NS={"oai":"http://www.openarchives.org/OAI/2.0/",
     "lido":"http://www.lido-schema.org"}
 def staedel_records():
-    """Only substantive OAI records, not deleted tombstones.
+    """Bounded OAI major-works harvest; tombstones must not look like missing art.
 
-    The first 200 historical OAI records in previous PR were all deleted
-    headers (no lido element), generating a fraudulent zero-artworks signal.
-    An OAI from filter is datestamp-based, not artwork creation date.
+    Museum documentation specifies set=scope:major, ListIdentifiers,
+    GetRecord and resumptionToken. No exhaustive-coverage claim is made.
     """
     base="https://sammlung.staedelmuseum.de/api/oai?"
-    kept=[]
-    for from_date in ("2025-01-01T00:00:00Z","2023-01-01T00:00:00Z","2020-01-24T15:45:21Z"):
-        uri=base+urllib.parse.urlencode({"verb":"ListRecords",
-            "metadataPrefix":"lido","from":from_date})
-        for page in range(16):
-            raw=fetch(uri,limit=3_000_000,timeout=30)
-            root=ET.fromstring(raw)
-            errors=[(x.attrib.get("code"),x.text) for x in root.findall(".//oai:error",NS)]
-            if errors:
-                raise ValueError("OAI source response error: "+str(errors[:2]))
-            records=root.findall(".//oai:record",NS)
-            for record in records:
-                head=record.find("./oai:header",NS)
-                if head is not None and head.attrib.get("status")=="deleted":
-                    continue
-                metadata=record.find("./oai:metadata",NS)
-                if metadata is None or not len(metadata):
-                    continue
-                kept.append(record)
+    kept=[];seen=set();problems=[]
+    def request(params):
+        url=base+urllib.parse.urlencode(params)
+        root=ET.fromstring(fetch(url,limit=3_000_000,timeout=30))
+        errors=[(x.attrib.get("code") or "",(x.text or "").strip())
+                for x in root.findall(".//oai:error",NS)]
+        unexpected=[x for x in errors if x[0]!="noRecordsMatch"]
+        if unexpected:raise ValueError("STAEDEL_OAI_ERROR_"+str(unexpected[:2])[:160])
+        return root
+    def pages(verb,params,limit):
+        args={"verb":verb,"metadataPrefix":"lido",**params}
+        used=set()
+        for _ in range(limit):
+            root=request(args)
+            yield root
+            tok=root.find(".//oai:resumptionToken",NS)
+            if tok is None or not (tok.text or "").strip():break
+            t=tok.text.strip()
+            if t in used:raise ValueError("STAEDEL_OAI_REPEATED_RESUMPTION_TOKEN")
+            used.add(t)
+            args={"verb":verb,"resumptionToken":t}
+            time.sleep(.12)
+    def accept(record):
+        header=record.find("./oai:header",NS)
+        if header is None or header.attrib.get("status")=="deleted":return
+        ident=header.findtext("./oai:identifier",default="",namespaces=NS)
+        if not ident or ident in seen:return
+        metadata=record.find("./oai:metadata",NS)
+        if metadata is None or metadata.find(".//lido:lido",NS) is None:return
+        seen.add(ident);kept.append(record)
+    try:
+        for root in pages("ListRecords",{"set":"scope:major"},8):
+            for r in root.findall(".//oai:record",NS):
+                accept(r)
+                if len(kept)>=450:break
             if len(kept)>=450:break
-            token=root.find(".//oai:resumptionToken",NS)
-            if token is None or not token.text:break
-            uri=base+urllib.parse.urlencode(
-                {"verb":"ListRecords","resumptionToken":token.text})
-            time.sleep(.15)
-        if kept:break
+    except Exception as ex:
+        problems.append("ListRecords: "+str(ex)[:155])
     if not kept:
-        raise ValueError("STAEDEL_SOURCE_NO_ACTIVE_LIDO_RECORDS_NOT_ZERO_VALID_ARTWORKS")
+        ids=[];known=set()
+        try:
+            for root in pages("ListIdentifiers",{"set":"scope:major"},8):
+                for h in root.findall(".//oai:header",NS):
+                    if h.attrib.get("status")=="deleted":continue
+                    ident=h.findtext("./oai:identifier",default="",namespaces=NS).strip()
+                    if (re.fullmatch(r"oai:DE-MUS-048017:[A-Za-z0-9._-]{1,70}",ident)
+                            and ident not in known):
+                        known.add(ident);ids.append(ident)
+                if len(ids)>=180:break
+        except Exception as ex:
+            problems.append("ListIdentifiers: "+str(ex)[:155])
+        def retrieve(ident):
+            root=request({"verb":"GetRecord","metadataPrefix":"lido","identifier":ident})
+            return root.findall(".//oai:record",NS)
+        with ThreadPoolExecutor(max_workers=4) as exe:
+            futures={exe.submit(retrieve,ident):ident for ident in ids[:180]}
+            for future in as_completed(futures):
+                try:
+                    for record in future.result():accept(record)
+                except Exception as ex:
+                    if len(problems)<8:problems.append("GetRecord: "+str(ex)[:125])
+    if not kept:
+        detail=" | ".join(problems[:3])
+        raise ValueError("STAEDEL_SOURCE_NO_ACTIVE_LIDO_RECORDS_NOT_ZERO_VALID_ARTWORKS"+
+                         (" :: "+detail if detail else ""))
     return kept[:450]
 
+
 def staedel_parse(record):
-    # LIDO metadata harvested under OAI official contract; CC0 metadata, CC BY-SA image.
+    """LIDO subject or title match, dated by creation event, not acquisition."""
     e=record.find(".//lido:lido",NS)
     if e is None:return None
     ident=e.find(".//lido:lidoRecID",NS)
-    if ident is None or not (ident.text or "").strip():return None
-    key=(ident.text or "").strip()
-    tags=[x.text.strip() for x in e.findall(".//lido:titleSet/lido:appellationValue",NS)
-          if x.text and x.text.strip()]
-    title=next((x for x in tags if scene_title(x)),None)
-    if not title:return None
-    dates=[x.text or "" for x in e.findall(".//lido:earliestDate",NS)]
-    yr=next((date_year(x) for x in dates if date_year(x)),None)
-    if yr is None:return None
+    key=(ident.text or "").strip() if ident is not None else ""
+    if not key:return None
+    values=e.findall(".//lido:titleSet/lido:appellationValue",NS)
+    titles=[(x.text.strip(),x.attrib.get("{http://www.w3.org/XML/1998/namespace}lang",""))
+            for x in values if x.text and x.text.strip()]
+    title=next((v for v,lang in titles if lang.lower().startswith("en")),
+               titles[0][0] if titles else "")
+    if not title or AVOID_RE.search(cleaned(title)):return None
+    subjects=[x.text.strip() for x in
+              e.findall(".//lido:objectRelationWrap//lido:subjectConcept//lido:term",NS)
+              if x.text and x.text.strip()]
+    if not scene_title(title) and not SCENE_RE.search(cleaned(" ".join(subjects))):
+        return None
+    years=[]
+    for event in e.findall(".//lido:eventSet",NS):
+        kinds=[x.text.strip().lower() for x in
+               event.findall(".//lido:eventType//lido:term",NS)
+               if x.text and x.text.strip()]
+        if any(any(word in kind for word in
+                   ("conception","creation","production","entstehung","herstellung"))
+               for kind in kinds):
+            for date in event.findall(".//lido:earliestDate",NS):
+                year=date_year(date.text)
+                if year is not None:years.append(year)
+    if not years:return None
     actors=[x.text.strip() for x in e.findall(".//lido:displayActorInRole",NS)
             if x.text and x.text.strip()]
-    artist=actors[0] if actors else ""
-    links=[x.text.strip() for x in e.findall(".//lido:linkResource",NS)
+    links=[x.text.strip() for x in
+           e.findall(".//lido:resourceWrap//lido:linkResource",NS)
            if x.text and x.text.strip()]
-    image=next((x for x in links if allow(x)),None)
-    if not image:return None
+    images=[url for url in links if allow(url) and
+            re.search(r"\.(?:jpg|jpeg|png|webp)(?:\?|$)",url,re.I)]
+    if not images:return None
+    official=[x.text.strip() for x in
+              e.findall(".//lido:relatedWorksWrap//lido:objectWebResource",NS)
+              if x.text and x.text.strip() and
+              x.text.strip().startswith("https://www.staedelmuseum.de/go/ds/")]
+    oai_id=record.findtext("./oai:header/oai:identifier",default="",namespaces=NS)
+    rights=" ".join((x.text or "").strip() for r in
+                   e.findall(".//lido:resourceWrap//lido:rightsResource",NS)
+                   for x in r.iter() if x.text and x.text.strip())[:400]
     return {"source":"staedel","museum_native_id":key,
-            "title":title,"artist":artist,"year":yr,"museum":"Städel Museum, Frankfurt",
-            "museum_url":"https://sammlung.staedelmuseum.de/en",
-            "remote_preview_url":image,"remote_full_url":image,
+            "title":title,"artist":actors[0] if actors else "",
+            "year":min(years),"museum":"Städel Museum, Frankfurt",
+            "museum_url":official[0] if official else "https://sammlung.staedelmuseum.de/en",
+            "record_api_url":("https://sammlung.staedelmuseum.de/api/oai?"+
+                             urllib.parse.urlencode({"verb":"GetRecord",
+                              "metadataPrefix":"lido","identifier":oai_id}))
+                             if oai_id else None,
+            "remote_preview_url":images[0],"remote_full_url":images[0],
+            "matched_title_or_subject":"title" if scene_title(title) else "subject",
             "image_license_per_item":"CC BY-SA 4.0",
+            "image_license_evidence":"OFFICIAL_OAI_FEED__ITEM_RIGHTS_RECHECK_REQUIRED",
+            "source_item_rights_text":rights,
             "rights_evidence_url":ART_URL_LICENSE["staedel"],
-            "copyright_hold":"HOLD_CC_BY_SA_SHARE_ALIKE_IMPL_AND_CROSS_PROVIDER"}
+            "copyright_hold":"HOLD_CC_BY_SA_SHARE_ALIKE_IMPL_AND_CROSS_PROVIDER",
+            "runtime_visible":False,"commercially_approved":False}
+
 
 def run_staedel(shard,max_images):
     stats=Counter();holds=[];accepted=[];thumbs={};failed=[]
     try:records=staedel_records()
-    except Exception as ex:return [],[],stats,{},[{"reason":str(ex)[:150]}]
+    except Exception as ex:return [],[],stats,{},[{"reason":str(ex)[:400]}]
     stats["oai_records_read"]=len(records)
     recs=[staedel_parse(x) for x in records]
     recs=[x for x in recs if x]
@@ -521,9 +593,12 @@ def run_staedel(shard,max_images):
             stats["duplicate_main"]+=1;continue
         try:c,sha,img=image_raster(rec["remote_preview_url"])
         except Exception as ex:
-            holds.append({"id":rec["museum_native_id"],"reason":"IMAGE_HOST_OR_FORMAT_HOLD_"+str(ex)[:140]});continue
+            holds.append({"id":rec["museum_native_id"],
+                          "reason":"IMAGE_HOST_OR_FORMAT_HOLD_"+str(ex)[:140]});continue
+        stats["pixels_sampled"]+=1
         if color_tier(c).startswith("HOLD"):
-            holds.append({"id":rec["museum_native_id"],"reason":"DARK_OR_MUTED","metrics":c});continue
+            holds.append({"id":rec["museum_native_id"],"reason":"DARK_OR_MUTED","metrics":c})
+            continue
         rec.update(color_metrics=c,image_sha256=sha,color_tier=color_tier(c),
                    curatorial_status="HOLD_FINAL_VISUAL_LICENSE_AND_CREDIT",
                    runtime_visible=False,commercially_approved=False)
