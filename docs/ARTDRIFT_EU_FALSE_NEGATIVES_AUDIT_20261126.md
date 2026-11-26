@@ -39,3 +39,6 @@ File `research/museums/20261126/official_artwork_counterexamples.json` — 9 ope
 6. Nessun risultato va presentato come esaustivo senza provare la copertura del denominatore.
 
 **Esito:** diagnosi con falsi negativi confermati; correzione Swedish validata su GitHub; Städel bloccato nei feed attivi e con artwork documentato dal sito; sampling Rijks parzialmente corretto ma il gate cromatico necessita di valutazione curatoriale dei near-miss. Non dichiarare cataloghi vuoti o app aggiornata.
+
+## P1 fix aggiuntivo: near-miss ad alta vivacità
+Nella pipeline per il Rijksmuseum è stato introdotto `visual_review_exception()`: fra i casi scartati dal gate automatico, vengono recuperati **esclusivamente come HOLD di visione** gli oggetti con superfici molto scure ≤20%, media luminanza ≥46%, saturazione ≥30% e pixel vivaci ≥35%. L'obiettivo è non eliminare *Landscape on the Oise* (SK-A-2288: dark 19,06%, lum 49,35%, sat 53,89%, vivid 56,14%). I candidati sono etichettati `HOLD_HIGH_CHROMA_VISUAL_REVIEW__MEAN_LUMINANCE_ONLY` e la CI prepara un `visual_review_high_chroma.jpg` separato dal contact sheet delle immagini formalmente PASS. **Questa misura non cambia la soglia già approvata dall'utente, non importa opere e non autorizza immagini con copyright.** Aggiunto regression test nel suite `test_artdrift_eu_new_museums_batch.py`.
