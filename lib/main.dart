@@ -19,6 +19,7 @@ import 'services/catalog_service.dart';
 import 'services/favorites.dart';
 import 'services/art_offline_thumbnail_index.dart';
 import 'services/art_visual_color_selection.dart';
+import 'services/art_joyful_palette.dart';
 import 'services/art_mobile_canvas_selection.dart';
 import 'services/art_joyful_start.dart';
 
@@ -78,7 +79,12 @@ class _GalleryHomeState extends State<GalleryHome> {
       // First installs get a carefully selected, image-backed color canvas.
       // Saved artdrift.camera coordinates or ID playlists retain the exact
       // previous ordering so no user's existing world tiles are remapped.
-      final color = await ArtVisualColorSelection.select(works);
+      // Read-only pixel chroma scores are bound to an exact catalog identity.
+      // Fail closed to the previous vetted 2,400-ID manifest on any mismatch.
+      final pixelScores = await ArtJoyfulPalette.load(works);
+      final measured = ArtJoyfulPalette.select(works, pixelScores);
+      final color = measured.isNotEmpty ? measured :
+          await ArtVisualColorSelection.select(works);
       final canvas = await ArtMobileCanvasSelection.select(works,
         initialColorPlaylist: color);
       if (!mounted) return;
@@ -88,7 +94,7 @@ class _GalleryHomeState extends State<GalleryHome> {
           final prefs = await SharedPreferences.getInstance();
           if (prefs.getBool(ArtJoyfulStart.enabledKey) == true) {
             launch = await ArtJoyfulStart.chooseForLaunch(canvas,
-              viewport: MediaQuery.sizeOf(context));
+              viewport: MediaQuery.sizeOf(context), pixelScores: pixelScores);
           }
         } catch (_) {
           // Preference failures do not block the original offline canvas.
