@@ -29,6 +29,7 @@ class DriftCanvas<T> extends StatefulWidget {
     this.onCanvasGestureStart,
     this.onImmersiveChanged,
     this.museumControls = false,
+    this.initialWorldCenter,
   });
 
   final List<T> items;
@@ -44,6 +45,10 @@ class DriftCanvas<T> extends StatefulWidget {
   final VoidCallback? onCanvasGestureStart;
   final ValueChanged<bool>? onImmersiveChanged;
   final bool museumControls;
+
+  /// Explicitly opted-in Art-only discovery center. When null, restore the
+  /// existing camera unmodified (including every GalleryDrift consumer).
+  final Offset? initialWorldCenter;
 
   @override
   State<DriftCanvas<T>> createState() => _DriftCanvasState<T>();
@@ -207,7 +212,8 @@ class _DriftCanvasState<T> extends State<DriftCanvas<T>>
       if (speed != null && const [25, 50, 75, 100].contains(speed)) {
         _autoSpeed = speed;
       }
-      if (prefs.containsKey('${widget.cameraKey}.x')) {
+      if (widget.initialWorldCenter == null &&
+          prefs.containsKey('${widget.cameraKey}.x')) {
         _offset = Offset(
           prefs.getDouble('${widget.cameraKey}.x') ?? 0,
           prefs.getDouble('${widget.cameraKey}.y') ?? 0);
@@ -467,7 +473,9 @@ class _DriftCanvasState<T> extends State<DriftCanvas<T>>
     return LayoutBuilder(builder: (context, constraints) {
       _viewport = Size(constraints.maxWidth, constraints.maxHeight);
       if (!_cameraInitialized) {
-        _offset = Offset(_viewport.width / 2, _viewport.height / 2);
+        final center = widget.initialWorldCenter ?? Offset.zero;
+        _offset = Offset(_viewport.width / 2 - center.dx * _zoom,
+            _viewport.height / 2 - center.dy * _zoom);
         _cameraInitialized = true;
       }
       // Narrow render overdraw stays bounded; separate prefetch is farther out.

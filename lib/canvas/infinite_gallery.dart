@@ -18,11 +18,13 @@ class InfiniteGallery extends StatefulWidget {
     required this.artworks,
     required this.onOpen,
     this.cameraKey = 'artdrift.camera',
+    this.initialWorldCenter,
   });
 
   final List<Artwork> artworks;
   final ValueChanged<Artwork> onOpen;
   final String cameraKey;
+  final Offset? initialWorldCenter;
 
   @override
   State<InfiniteGallery> createState() => _InfiniteGalleryState();
@@ -148,6 +150,7 @@ class _InfiniteGalleryState extends State<InfiniteGallery> {
           onCanvasGestureStart: _hidePlaque,
           onImmersiveChanged: (_) => _hidePlaque(),
           museumControls: true,
+          initialWorldCenter: widget.initialWorldCenter,
           tileBuilder: (context, art, zoom) => _tileImage(art, zoom),
           prefetchItem: ArtThumbnailPrefetch.instance.warm,
           cameraKey: widget.cameraKey,
