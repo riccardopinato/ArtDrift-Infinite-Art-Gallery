@@ -29,6 +29,23 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('random visits never overwrite the existing saved camera',
+      (tester) async {
+    SharedPreferences.setMockInitialValues({
+      'test.random.x': 44.0, 'test.random.y': 22.0,
+      'test.random.zoom': 1.45,
+    });
+    await tester.pumpWidget(canvas(start: const Offset(1300, 900)));
+    await tester.pump();
+    await tester.drag(find.byType(DriftCanvas<String>),
+      const Offset(30, 0));
+    await tester.pump();
+    final prefs = await SharedPreferences.getInstance();
+    expect(prefs.getDouble('test.random.x'), 44.0);
+    expect(prefs.getDouble('test.random.y'), 22.0);
+    expect(prefs.getDouble('test.random.zoom'), 1.45);
+  });
+
   testWidgets('default camera contract remains unchanged',
       (tester) async {
     SharedPreferences.setMockInitialValues({

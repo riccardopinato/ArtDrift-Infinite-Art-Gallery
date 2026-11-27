@@ -225,6 +225,10 @@ class _DriftCanvasState<T> extends State<DriftCanvas<T>>
   }
 
   Future<void> _saveCamera() async {
+    // Opted-in new-region sessions are deliberately ephemeral. Do not
+    // overwrite the saved personal camera: turning the mode OFF must restore
+    // precisely the viewport that existed before enabling random discovery.
+    if (widget.initialWorldCenter != null) return;
     final prefs = await SharedPreferences.getInstance();
     await prefs.setDouble('${widget.cameraKey}.x', _offset.dx);
     await prefs.setDouble('${widget.cameraKey}.y', _offset.dy);
@@ -235,7 +239,10 @@ class _DriftCanvasState<T> extends State<DriftCanvas<T>>
     _pauseAuto();
     _momentum.stop();
     setState(() {
-      _offset = Offset(_viewport.width / 2, _viewport.height / 2);
+      final center = widget.initialWorldCenter ?? Offset.zero;
+      _offset = Offset(
+        _viewport.width / 2 - center.dx,
+        _viewport.height / 2 - center.dy);
       _zoom = 1;
     });
     _saveCamera();
