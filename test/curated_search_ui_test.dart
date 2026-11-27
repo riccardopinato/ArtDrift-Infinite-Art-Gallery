@@ -85,4 +85,20 @@ void main() {
     expect(find.text('Settings'), findsOneWidget);
     expect(find.text('Current plan: Free'), findsOneWidget);
   });
+  test('Italian scene queries retrieve documented English museum subjects', () {
+    const sunset = Artwork(
+      id: 401, title: 'Sunset over a lake', artist: 'Painter', date: '',
+      imageId: 'abcdefab-cdef-abcd-1234-abcd1234abcd',
+      publicDomain: true, artworkType: 'Painting',
+      bootstrapAsset: 'assets/gallery/thumbs/401.webp',
+      subjectTerms: ['evening', 'water'],
+    );
+    final search = GallerySearch([sunset]);
+    expect(GallerySearch.expandSubject('tramonto'), contains('sunset'));
+    expect(GallerySearch.expandSubject('cascata'), contains('waterfall'));
+    expect(search.find('tramonto', scope: ArtworkSearchScope.subject),
+      [sunset]);
+    expect(search.find('mare', scope: ArtworkSearchScope.artist), isEmpty);
+  });
+
 }
