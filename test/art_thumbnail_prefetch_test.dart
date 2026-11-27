@@ -92,7 +92,7 @@ void main() {
     final art = Artwork(
       id: 501, title: 'Verified preview', artist: '', date: '',
       imageId: '', publicDomain: true, artworkType: 'Painting',
-      museumSource: 'met', bootstrapAsset: 'assets/gallery/thumbs/501.webp',
+      museumSource: 'met', bootstrapAsset: 'assets/museums/thumbs/met_501.webp',
       remotePreviewUrl: 'https://images.metmuseum.org/example/501.jpg',
     );
     await prefetcher.warm(context, art, 1.0);
