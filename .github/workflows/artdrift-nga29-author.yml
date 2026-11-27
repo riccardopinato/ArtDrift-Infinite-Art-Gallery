@@ -1,0 +1,58 @@
+name: Art Drift — Author 29 pinned NGA open-access image records
+on:
+  push:
+    branches:
+      - feat/artdrift-nga29-openaccess-official-20261127
+    paths:
+      - scripts/artdrift_nga29_source_import.py
+      - .github/workflows/artdrift-nga29-author.yml
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: artdrift-author-nga29-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  author:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/download-artifact@v4
+        with:
+          name: ArtDrift-NGA-Official-7-Artists-OpenAccess-Discovery
+          run-id: '45970465626'
+          repository: ${{ github.repository }}
+          github-token: ${{ github.token }}
+          path: official-source
+      - uses: actions/download-artifact@v4
+        with:
+          name: ArtDrift-NGA-29-Live-IIIF-Final-Validation
+          run-id: '45971101406'
+          repository: ${{ github.repository }}
+          github-token: ${{ github.token }}
+          path: live-media
+      - name: Materialize exact 29 approved institutionally sourced photographs
+        run: |
+          python3 scripts/artdrift_nga29_source_import.py \
+            --source official-source/nga_7artists_new_openaccess_candidates.json \
+            --media live-media/nga_29_live_media_review.json \
+            --out assets/museums/catalog_nga_openaccess_20261127.json
+          python3 scripts/artdrift_nga29_source_import.py --verify \
+            --source official-source/nga_7artists_new_openaccess_candidates.json \
+            --media live-media/nga_29_live_media_review.json \
+            --out assets/museums/catalog_nga_openaccess_20261127.json
+      - name: Commit only the generated source-pinned catalog to this PR branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/museums/catalog_nga_openaccess_20261127.json
+          if git diff --cached --quiet; then
+            echo "Source-identical NGA data; no changes"
+          else
+            git commit -m "data(nga): integrate 29 official openaccess=1 primary-image records"
+            git push origin HEAD:refs/heads/feat/artdrift-nga29-openaccess-official-20261127
+          fi

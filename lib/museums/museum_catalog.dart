@@ -17,6 +17,8 @@ class MuseumCatalog {
       'assets/museums/catalog_global.json',
       // Intentionally empty until per-image provenance and rights approval.
       'assets/museums/catalog_curated_commons.json',
+      // Official NGA image records: only visible with explicit release flag.
+      'assets/museums/catalog_nga_openaccess_20261127.json',
     ]) {
       final isPreviewPack = file.endsWith('/catalog.json');
       try {
@@ -30,6 +32,8 @@ class MuseumCatalog {
               artwork.museumNativeId.trim().isEmpty ||
               artwork.rightsEvidenceUrl.trim().isEmpty) continue;
           final license = artwork.rightsLicense.toLowerCase();
+          if (artwork.isCuratedOfficialNga &&
+              !artwork.curatedNgaReleaseReady) continue;
           if (artwork.isCuratedCommons) {
             // CC BY / BY-SA are distinct from public domain. They require
             // independently reviewed image credits and worldwide rights.

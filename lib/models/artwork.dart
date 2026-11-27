@@ -139,8 +139,51 @@ class Artwork {
   }
 
   /// Do not offer exports where required CC attribution cannot be retained.
+  /// Existing NGA records without sourceIdentity stay untouched.
+  bool get isCuratedOfficialNga =>
+      museumSource == 'nga' && sourceIdentity.startsWith('nga:');
+
+  bool get curatedNgaRightsEvidenceComplete {
+    if (!isCuratedOfficialNga || !publicDomain ||
+        artworkType.toLowerCase() != 'painting' ||
+        !commerciallyApproved || !provenanceVerified ||
+        !worldwideDistributionReviewed ||
+        rightsLicense != 'CC0 1.0' ||
+        imageLicenseUrl != 'https://creativecommons.org/publicdomain/zero/1.0/' ||
+        imageCreator.trim().isEmpty || imageAttribution.trim().isEmpty ||
+        rightsReviewReference !=
+            'docs/ARTDRIFT_NGA_29_OPEN_ACCESS_SOURCE_VERIFIED_20261127.md' ||
+        artist.trim().isEmpty || creditLine.trim().isEmpty ||
+        museumName.trim().isEmpty) return false;
+    final native = int.tryParse(museumNativeId);
+    if (native == null || native <= 0 ||
+        id != 4000000000 + native ||
+        sourceIdentity != 'nga:' + native.toString()) return false;
+    final source = Uri.tryParse(rightsEvidenceUrl);
+    final original = Uri.tryParse(remoteMuseumUrl);
+    return source != null &&
+        source.scheme == 'https' &&
+        source.host == 'www.nga.gov' &&
+        source.path == '/artworks/free-images-and-open-access' &&
+        original != null && original.scheme == 'https' &&
+        original.host == 'www.nga.gov' &&
+        original.path ==
+            '/collection/art-object-page.' + native.toString() + '.html' &&
+        officialImageUrl(remotePreviewUrl, 'nga') &&
+        officialImageUrl(remoteFullUrl, 'nga') &&
+        Uri.parse(remotePreviewUrl).path.startsWith('/iiif/') &&
+        Uri.parse(remoteFullUrl).path.startsWith('/iiif/');
+  }
+
+  /// A separate test/release-only flag is essential for new NGA additions.
+  bool get curatedNgaReleaseReady =>
+      const bool.fromEnvironment(
+          'ARTDRIFT_ENABLE_INSTITUTIONAL_NGA', defaultValue: false) &&
+      curatedNgaRightsEvidenceComplete;
+
   bool get wallpaperAllowed =>
-      museumSource != 'commons' && museumSource != 'staedel';
+      museumSource != 'commons' && museumSource != 'staedel' &&
+      !isCuratedOfficialNga;
 
   String get catalogKey => '$museumSource:$id';
 
@@ -174,6 +217,7 @@ class Artwork {
   bool get displayable {
     if (id <= 0 || !publicDomain) return false;
     if (isCuratedCommons) return curatedCommonsReleaseReady;
+    if (isCuratedOfficialNga) return curatedNgaReleaseReady;
     // Museum reproduction licence mismatch still unresolved.
     if (museumSource == 'staedel') return false;
     if (museumSource == 'aic') {
