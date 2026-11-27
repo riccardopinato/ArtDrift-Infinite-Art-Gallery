@@ -3,6 +3,7 @@ import 'package:flutter/painting.dart';
 
 import 'canvas/infinite_gallery.dart';
 import 'screens/search_sheet.dart';
+import 'screens/doppleganger.dart';
 import 'screens/collection_canvas.dart';
 import 'collections/art_collections.dart';
 import 'screens/settings_sheet.dart';
@@ -10,6 +11,7 @@ import 'screens/favorites_sheet.dart';
 import 'ui/gallery_toolbar.dart';
 import 'ui/localization.dart';
 import 'ui/museum_portal.dart';
+import 'ui/parchment.dart';
 import 'models/artwork.dart';
 import 'screens/artwork_detail.dart';
 import 'services/catalog_service.dart';
@@ -159,6 +161,30 @@ class _GalleryHomeState extends State<GalleryHome> {
           onSearch: _openSearch,
           onFavorites: _openFavorites,
           onSettings: () => showArtDriftSettings(context),
+        ))),
+      // An unobtrusive curiosity entry, not a second bottom navigation bar.
+      Positioned(left: 14, bottom: 76,
+        child: SafeArea(top: false, child: Material(
+          color: Colors.transparent,
+          child: Semantics(button: true, label: 'Doppleganger',
+            child: InkWell(
+              key: const Key('artdrift-open-doppleganger'),
+              borderRadius: BorderRadius.circular(12),
+              onTap: () => Navigator.of(context).push<void>(
+                MaterialPageRoute(builder: (_) => const DopplegangerScreen())),
+              child: const OrnateFrame(
+                padding: EdgeInsets.symmetric(horizontal: 14, vertical: 9),
+                child: Row(mainAxisSize: MainAxisSize.min, children: [
+                  Icon(Icons.theater_comedy_outlined,
+                    color: ArtPaper.ink, size: 19),
+                  SizedBox(width: 8),
+                  Text('Doppleganger', style: TextStyle(
+                    color: ArtPaper.ink, fontSize: 13,
+                    fontWeight: FontWeight.w600, fontFamily: 'serif')),
+                ]),
+              ),
+            ),
+          ),
         ))),
     ]));
   }
