@@ -13,11 +13,13 @@ class ArtCollectionCanvasScreen extends StatelessWidget {
     required this.collection,
     required this.artworks,
     required this.onOpen,
+    this.onOpenAtRect,
   });
 
   final ArtCollection collection;
   final List<Artwork> artworks;
   final void Function(Artwork, List<Artwork>) onOpen;
+  final void Function(Artwork, Rect, List<Artwork>)? onOpenAtRect;
 
   @override
   Widget build(BuildContext context) {
@@ -27,6 +29,8 @@ class ArtCollectionCanvasScreen extends StatelessWidget {
         InfiniteGallery(
           artworks: artworks,
           onOpen: (art) => onOpen(art, artworks),
+          onOpenAtRect: onOpenAtRect == null ? null
+              : (art, rect) => onOpenAtRect!(art, rect, artworks),
           cameraKey: 'artdrift.collection.${collection.id}.camera',
         ),
         // Reserve the top-left area for the shared canvas brand, Auto
