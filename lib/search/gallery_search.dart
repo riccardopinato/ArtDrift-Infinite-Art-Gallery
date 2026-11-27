@@ -37,7 +37,7 @@ class GallerySearch {
     'fiume':'river rivers rivière rio',
     'oceano':'ocean sea marine coast océano',
     'onde':'waves wave sea swell ocean',
-    'tramonto':'sunset dusk twilight evening coucher sole',
+    'tramonto':'sunset dusk twilight evening',
     'alba':'sunrise dawn morning aurora',
     'cascata':'waterfall falls cascade',
     'montagne':'mountains mountain alps peaks',
