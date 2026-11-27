@@ -1,0 +1,120 @@
+name: Art Drift — CC0 Institutional Batch 2 · 485 sources / 5 waves / Web + Android
+on:
+  push:
+    branches:
+      - feat/artdrift-institutional-cc0-batch2-20261127
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: artdrift-batch2-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  reconcile-all:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 -m py_compile scripts/artdrift_wave2_fast_import.py
+      - uses: actions/download-artifact@v4
+        with:
+          name: ArtDrift-485-FastTrack-ALL-with-3-Waves
+          run-id: '45962610069'
+          repository: ${{ github.repository }}
+          github-token: ${{ github.token }}
+          path: candidate-source
+      - name: Review all historical images and approved six-file catalog
+        run: |
+          python3 scripts/artdrift_wave2_fast_import.py \
+            --root . --source candidate-source/fasttrack_485.json --out wave2-results
+          python3 scripts/artdrift_wave2_fast_import.py --out wave2-results --verify 0
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ArtDrift-Wave2-485-Rights-and-Exceptions-Ledger
+          path: wave2-results/*
+          if-no-files-found: error
+          retention-days: 60
+  wave-qa:
+    needs: reconcile-all
+    strategy:
+      max-parallel: 3
+      fail-fast: false
+      matrix:
+        wave: [1,2,3,4,5]
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: ArtDrift-Wave2-485-Rights-and-Exceptions-Ledger
+          path: wave2-results
+      - name: Validate disjoint hundred-source wave
+        run: |
+          python3 scripts/artdrift_wave2_fast_import.py \
+            --out wave2-results --verify ${{ matrix.wave }}
+  web:
+    needs: [reconcile-all,wave-qa]
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: '3.50.1'
+          cache: true
+      - name: Prepare Flutter web
+        run: |
+          flutter create --project-name artdrift --org com.riccardopinato --platforms=web .
+          rm -f test/widget_test.dart
+          flutter pub get
+          cd packages/drift_core && flutter pub get
+      - name: Analyze and regressions, standard and six-file builds
+        run: |
+          (cd packages/drift_core && flutter analyze --no-fatal-infos && flutter test)
+          flutter analyze --no-fatal-infos
+          flutter test
+          flutter test --dart-define=ARTDRIFT_ENABLE_CURATED_COMMONS=true \
+            test/sisley_commons_approved_test.dart
+          flutter build web --release \
+            --dart-define=ARTDRIFT_ENABLE_CURATED_COMMONS=true
+  android-arm64:
+    needs: [reconcile-all,wave-qa]
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: '3.50.1'
+          cache: true
+      - name: Prepare Flutter Android
+        run: |
+          flutter create --project-name artdrift --org com.riccardopinato --platforms=android .
+          rm -f test/widget_test.dart
+          python3 scripts/patch_android.py
+          flutter pub get
+          cd packages/drift_core && flutter pub get
+      - name: Analyze all source and regression tests, then new catalog smoke
+        run: |
+          flutter analyze --no-fatal-infos
+          flutter test
+          flutter test --dart-define=ARTDRIFT_ENABLE_CURATED_COMMONS=true \
+            test/sisley_commons_approved_test.dart
+      - name: Build ARM64 internal APK with 4,505 artworks visible
+        run: |
+          flutter build apk --release --target-platform android-arm64 \
+            --dart-define=ARTDRIFT_ENABLE_CURATED_COMMONS=true
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ArtDrift-4505-Institutional-CC0-ARM64-${{ github.sha }}
+          path: build/app/outputs/flutter-apk/app-release.apk
+          if-no-files-found: error
+          retention-days: 30

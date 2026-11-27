@@ -111,5 +111,38 @@
     "source_provenance_verified": true,
     "worldwide_distribution_reviewed": true,
     "rights_review_reference": "docs/ARTDRIFT_BATCH_283_CERTIFICATION_AND_3_RELEASE_20261127.md"
+  },
+  {
+    "id": 80538945,
+    "title": "Decorative Landscape",
+    "artist_title": "Ludvig Karsten",
+    "date_display": "1909",
+    "image_id": "",
+    "is_public_domain": true,
+    "medium_display": "Oil on canvas",
+    "dimensions_display": "93.5 × 98.5 cm",
+    "artwork_type_title": "Painting",
+    "thumbnail": {
+      "width": 4000,
+      "height": 3888
+    },
+    "credit_line": "Ludvig Karsten, Decorative Landscape (1909); Finnish National Gallery / Ateneum Art Museum, A II 1275. Digital reproduction CC0 1.0.",
+    "museum_source": "commons",
+    "museum_name": "Finnish National Gallery / Ateneum Art Museum",
+    "museum_native_id": "80538945",
+    "source_identity": "commons:80538945",
+    "remote_preview_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e9/Ludvig_Karsten_-_Decorative_Landscape_-_A_II_1275_-_Finnish_National_Gallery.jpg/330px-Ludvig_Karsten_-_Decorative_Landscape_-_A_II_1275_-_Finnish_National_Gallery.jpg",
+    "remote_full_url": "https://upload.wikimedia.org/wikipedia/commons/e/e9/Ludvig_Karsten_-_Decorative_Landscape_-_A_II_1275_-_Finnish_National_Gallery.jpg",
+    "remote_museum_url": "https://commons.wikimedia.org/wiki/File:Ludvig_Karsten_-_Decorative_Landscape_-_A_II_1275_-_Finnish_National_Gallery.jpg",
+    "rights_evidence_url": "https://commons.wikimedia.org/wiki/File:Ludvig_Karsten_-_Decorative_Landscape_-_A_II_1275_-_Finnish_National_Gallery.jpg",
+    "rights_license": "CC0 1.0",
+    "image_license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "image_creator": "Finnish National Gallery",
+    "image_attribution": "Ludvig Karsten, Decorative Landscape (1909), Finnish National Gallery / Ateneum Art Museum, A II 1275. Digital reproduction released under CC0 1.0.",
+    "image_modifications": "Wikimedia Commons thumbnail resized for display; no further modifications claimed.",
+    "commercially_approved": true,
+    "source_provenance_verified": true,
+    "worldwide_distribution_reviewed": true,
+    "rights_review_reference": "docs/ARTDRIFT_OPEN_ACCESS_BATCH2_NGA_FNG_20261127.md"
   }
 ]
