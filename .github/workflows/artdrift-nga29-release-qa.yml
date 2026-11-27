@@ -1,0 +1,99 @@
+name: Art Drift — 29 NGA institutional CC0 release-gated Web and ARM64
+on:
+  push:
+    branches:
+      - feat/artdrift-nga29-openaccess-official-20261127
+    paths:
+      - assets/museums/catalog_nga_openaccess_20261127.json
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  verify-source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: ArtDrift-NGA-Official-7-Artists-OpenAccess-Discovery
+          run-id: '45970465626'
+          repository: ${{ github.repository }}
+          github-token: ${{ github.token }}
+          path: official-source
+      - uses: actions/download-artifact@v4
+        with:
+          name: ArtDrift-NGA-29-Live-IIIF-Final-Validation
+          run-id: '45971101406'
+          repository: ${{ github.repository }}
+          github-token: ${{ github.token }}
+          path: live-media
+      - name: Source-identical proof for 29 import rows
+        run: |
+          python3 scripts/artdrift_nga29_source_import.py --verify \
+            --source official-source/nga_7artists_new_openaccess_candidates.json \
+            --media live-media/nga_29_live_media_review.json \
+            --out assets/museums/catalog_nga_openaccess_20261127.json
+  web:
+    needs: verify-source
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: '3.50.1'
+          cache: true
+      - run: |
+          flutter create --project-name artdrift --org com.riccardopinato --platforms=web .
+          rm -f test/widget_test.dart
+          flutter pub get
+          cd packages/drift_core && flutter pub get
+      - run: |
+          (cd packages/drift_core && flutter analyze --no-fatal-infos && flutter test)
+          flutter analyze --no-fatal-infos
+          flutter test
+          flutter test --dart-define=ARTDRIFT_ENABLE_INSTITUTIONAL_NGA=true \
+            --dart-define=ARTDRIFT_ENABLE_CURATED_COMMONS=true \
+            test/nga_29_openaccess_test.dart
+          flutter build web --release \
+            --dart-define=ARTDRIFT_ENABLE_INSTITUTIONAL_NGA=true \
+            --dart-define=ARTDRIFT_ENABLE_CURATED_COMMONS=true
+  android:
+    needs: verify-source
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: '3.50.1'
+          cache: true
+      - run: |
+          flutter create --project-name artdrift --org com.riccardopinato --platforms=android .
+          rm -f test/widget_test.dart
+          python3 scripts/patch_android.py
+          flutter pub get
+          cd packages/drift_core && flutter pub get
+      - run: |
+          flutter analyze --no-fatal-infos
+          flutter test
+          flutter test --dart-define=ARTDRIFT_ENABLE_INSTITUTIONAL_NGA=true \
+            --dart-define=ARTDRIFT_ENABLE_CURATED_COMMONS=true \
+            test/nga_29_openaccess_test.dart
+          flutter build apk --release --target-platform android-arm64 \
+            --dart-define=ARTDRIFT_ENABLE_INSTITUTIONAL_NGA=true \
+            --dart-define=ARTDRIFT_ENABLE_CURATED_COMMONS=true
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ArtDrift-4534-NGA29-CC0-ARM64-${{ github.sha }}
+          path: build/app/outputs/flutter-apk/app-release.apk
+          if-no-files-found: error
+          retention-days: 30
