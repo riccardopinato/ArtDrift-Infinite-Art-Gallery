@@ -24,7 +24,7 @@ jobs:
           flutter analyze --no-fatal-infos
           flutter test
           flutter build web --release
-      - name: Capture 390 and 820 px real viewport screenshots, Chrome headless
+      - name: Capture 320, 390 and 820 px real viewport screenshots, Chrome headless
         run: |
           set -euo pipefail
           CHROME="$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)"
@@ -35,7 +35,7 @@ jobs:
           trap 'kill "$SERVER" 2>/dev/null || true' EXIT
           sleep 3
           curl --fail --silent http://127.0.0.1:8765/ >/dev/null
-          for viewport in '390,844' '820,1180'; do
+          for viewport in '320,640' '390,844' '820,1180'; do
             tag="$(echo "$viewport" | tr ',' 'x')"
             "$CHROME" --headless --no-sandbox --disable-dev-shm-usage \
               --disable-extensions --hide-scrollbars --window-size="$viewport" \
@@ -60,7 +60,7 @@ jobs:
               assert row['width']>=300 and row['height']>=400
               assert row['pixel_variance']>25,'Blank render'
               rows.append(row)
-          assert len(rows)==2
+          assert len(rows)==3
           Path('build/ui-snapshots/screenshot-evidence.json').write_text(json.dumps(rows,indent=2))
           print('ARTDRIFT_FLUTTER_WEB_SCREENSHOT_EVIDENCE_PASS',len(rows))
           PY
