@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:collection';
 
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 
 import '../models/artwork.dart';
@@ -12,7 +13,8 @@ import 'art_image_warm_native.dart'
 /// directly by the widgets. Warmups are never allowed to occupy all available
 /// network slots or cache every artwork at startup.
 typedef ArtWarmLoader = Future<bool> Function(
-    BuildContext context, Artwork artwork, bool bundledPreview);
+    BuildContext context, Artwork artwork, bool bundledPreview,
+    bool highDetail);
 
 class ArtThumbnailPrefetch {
   ArtThumbnailPrefetch._() : _warmer = _defaultWarm;
@@ -44,17 +46,27 @@ class ArtThumbnailPrefetch {
     final localAsset = art.hasBundledPreview
         ? art.bootstrapAsset
         : ArtOfflineThumbnailIndex.instance.assetFor(art);
-    final bundledPreview = localAsset != null && zoom <= 1.65;
+    // ArtRemoteImage renders same-origin Web thumbnails at width 400 even
+    // above zoom 1.65; only native tiles request remote detail at that zoom.
+    // Never prefetch a remote image that the visible Web tile won't display.
+    final webThumbnail = ArtOfflineThumbnailIndex.instance.urlFor(art);
+    final highDetail = zoom > 1.65 && !(kIsWeb && webThumbnail != null);
+    final bundledPreview = localAsset != null && !highDetail;
+    // Align the cache identity with the actual image source being warmed.
+    // On Web a small zoom can use the offline thumbnail URL; high zoom
+    // must warm the remote detail that the visible tile will request.
+    final localUrl = highDetail ? null : webThumbnail;
     final key = bundledPreview
         ? 'asset:$localAsset'
-        : 'url:${art.imageUrl(width: 400)}';
+        : 'url:${localUrl ?? art.imageUrl(width: 400)}';
     final now = DateTime.now();
     final until = _cooldownUntil[key];
     if (_inFlight.contains(key) ||
         (until != null && now.isBefore(until)) ||
         _waiting.length >= maxQueued) return Future.value();
 
-    final request = _WarmArt(key, context, art, bundledPreview);
+    final request = _WarmArt(key, context, art, bundledPreview,
+        highDetail);
     _inFlight.add(key);
     _waiting.addLast(request);
     _pump();
@@ -74,6 +86,7 @@ class ArtThumbnailPrefetch {
       if (request.context.mounted) {
         success = await _warmer(
           request.context, request.art, request.bundledPreview,
+          request.highDetail,
         ).timeout(const Duration(seconds: 8), onTimeout: () => false);
       }
     } catch (_) {
@@ -94,10 +107,12 @@ class ArtThumbnailPrefetch {
   }
 
   static Future<bool> _defaultWarm(
-      BuildContext context, Artwork art, bool bundledPreview) async {
+      BuildContext context, Artwork art, bool bundledPreview,
+      bool highDetail) async {
     if (!context.mounted) return false;
     if (!bundledPreview) {
-      final localUrl = ArtOfflineThumbnailIndex.instance.urlFor(art);
+      final localUrl = highDetail ? null :
+          ArtOfflineThumbnailIndex.instance.urlFor(art);
       if (localUrl != null) {
         var failed = false;
         try {
@@ -130,11 +145,13 @@ class ArtThumbnailPrefetch {
 }
 
 class _WarmArt {
-  _WarmArt(this.key, this.context, this.art, this.bundledPreview);
+  _WarmArt(this.key, this.context, this.art, this.bundledPreview,
+      this.highDetail);
 
   final String key;
   final BuildContext context;
   final Artwork art;
   final bool bundledPreview;
+  final bool highDetail;
   final Completer<void> completer = Completer<void>();
 }
