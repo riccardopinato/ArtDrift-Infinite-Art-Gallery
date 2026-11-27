@@ -3,6 +3,8 @@ import 'package:flutter/painting.dart';
 
 import 'canvas/infinite_gallery.dart';
 import 'screens/search_sheet.dart';
+import 'screens/collection_canvas.dart';
+import 'collections/art_collections.dart';
 import 'screens/settings_sheet.dart';
 import 'screens/favorites_sheet.dart';
 import 'ui/gallery_toolbar.dart';
@@ -74,7 +76,12 @@ class _GalleryHomeState extends State<GalleryHome> {
   }
 
   Future<void> _openSearch() async {
-    final selected = await showArtSearchSheet(context, _artworks);
+    final collectionArtworks = _artworks.where((art) =>
+      art.hasBundledPreview || ArtOfflineThumbnailIndex.instance.has(art))
+      .toList(growable: false);
+    final selected = await showArtSearchSheet(context, _artworks,
+      collectionCatalog: collectionArtworks,
+      onOpenCollection: _openCollection);
     if (!mounted || selected == null) return;
     _open(selected);
   }
@@ -92,10 +99,24 @@ class _GalleryHomeState extends State<GalleryHome> {
     _open(selected);
   }
 
-  void _open(Artwork artwork) {
-    final index = _artworks.indexWhere((a) => a.catalogKey == artwork.catalogKey);
-    // Remote discoveries open in detail without perturbing the pinned canvas.
-    final group = index < 0 ? <Artwork>[artwork] : _artworks;
+  void _open(Artwork artwork) => _openArtworkInGroup(artwork, _artworks);
+
+  void _openCollection(ArtCollection collection) {
+    final available = _artworks.where((art) =>
+      art.hasBundledPreview || ArtOfflineThumbnailIndex.instance.has(art));
+    final works = ArtCollections.members(collection, available);
+    if (works.isEmpty || !mounted) return;
+    Navigator.of(context).push(MaterialPageRoute<void>(
+      builder: (_) => ArtCollectionCanvasScreen(
+        collection: collection, artworks: works,
+        onOpen: _openArtworkInGroup,
+      ),
+    ));
+  }
+
+  void _openArtworkInGroup(Artwork artwork, List<Artwork> artworks) {
+    final index = artworks.indexWhere((a) => a.catalogKey == artwork.catalogKey);
+    final group = index < 0 ? <Artwork>[artwork] : artworks;
     final start = index < 0 ? 0 : index;
     Navigator.of(context).push(PageRouteBuilder<void>(
       pageBuilder: (context, animation, secondaryAnimation) => ArtworkDetail(
