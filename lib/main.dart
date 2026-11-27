@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'canvas/infinite_gallery.dart';
 import 'screens/search_sheet.dart';
@@ -18,6 +19,7 @@ import 'services/favorites.dart';
 import 'services/art_offline_thumbnail_index.dart';
 import 'services/art_visual_color_selection.dart';
 import 'services/art_mobile_canvas_selection.dart';
+import 'services/art_joyful_start.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -55,6 +57,7 @@ class _GalleryHomeState extends State<GalleryHome> {
   final Favorites _favorites = Favorites();
   List<Artwork> _artworks = [];
   List<Artwork> _canvasArtworks = [];
+  Offset? _launchWorldCenter;
   bool _loading = true;
   String? _error;
 
@@ -78,7 +81,25 @@ class _GalleryHomeState extends State<GalleryHome> {
       final canvas = await ArtMobileCanvasSelection.select(works,
         initialColorPlaylist: color);
       if (!mounted) return;
-      setState(() { _artworks = works; _canvasArtworks = canvas; _loading = false; });
+      var launch = _launchWorldCenter;
+      if (launch == null) {
+        try {
+          final prefs = await SharedPreferences.getInstance();
+          if (prefs.getBool(ArtJoyfulStart.enabledKey) == true) {
+            launch = await ArtJoyfulStart.chooseForLaunch(canvas,
+              viewport: MediaQuery.sizeOf(context));
+          }
+        } catch (_) {
+          // Preference failures do not block the original offline canvas.
+        }
+      }
+      if (!mounted) return;
+      setState(() {
+        _artworks = works;
+        _canvasArtworks = canvas;
+        _launchWorldCenter = launch;
+        _loading = false;
+      });
     } catch (error) {
       if (!mounted) return;
       setState(() { _loading = false; _error = '$error'; });
@@ -161,7 +182,8 @@ class _GalleryHomeState extends State<GalleryHome> {
       return MuseumPortal.unavailable(onRetry: _initialize);
     }
     return Scaffold(body: Stack(fit: StackFit.expand, children: [
-      InfiniteGallery(artworks: _canvasArtworks, onOpen: _open),
+      InfiniteGallery(artworks: _canvasArtworks, onOpen: _open,
+        initialWorldCenter: _launchWorldCenter),
       Positioned(top: 0, left: 0, right: 0,
         child: SafeArea(bottom: false, child: ArtDriftToolbar(
           onSearch: _openSearch,

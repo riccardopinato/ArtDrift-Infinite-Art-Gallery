@@ -1,10 +1,12 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../services/art_frame_performance.dart';
 import '../services/art_image_delivery_metrics.dart';
 import '../ui/localization.dart';
 import '../ui/parchment.dart';
+import '../services/art_joyful_start.dart';
 
 Future<void> showArtDriftSettings(BuildContext context) =>
     showModalBottomSheet<void>(
@@ -21,6 +23,46 @@ class _ArtDriftSettingsSheet extends StatefulWidget {
 
 class _ArtDriftSettingsState extends State<_ArtDriftSettingsSheet> {
   static String t(String key) => ArtDriftLocale.text(key);
+  bool _randomOpening = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadOpeningPreference();
+  }
+
+  Future<void> _loadOpeningPreference() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      if (mounted) setState(() {
+        _randomOpening = prefs.getBool(ArtJoyfulStart.enabledKey) ?? false;
+      });
+    } catch (_) {}
+  }
+
+  Future<void> _setRandomOpening(bool value) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      if (await prefs.setBool(ArtJoyfulStart.enabledKey, value) && mounted) {
+        setState(() => _randomOpening = value);
+      }
+    } catch (_) {}
+  }
+
+  static const _randomCopy = <String, List<String>>{
+    'it': ['Nuova zona a ogni apertura',
+      'Facoltativo · Riparti ogni volta da opere diverse; la posizione salvata resta conservata.'],
+    'en': ['Fresh region at each launch',
+      'Optional · Begin with a new part of the museum while keeping your saved camera.'],
+    'fr': ['Nouvelle région à chaque ouverture',
+      'Facultatif · Recommencer ailleurs sans effacer la position enregistrée.'],
+    'es': ['Nueva zona en cada apertura',
+      'Opcional · Empezar en otra zona sin borrar la posición guardada.'],
+    'de': ['Neuer Bereich bei jedem Start',
+      'Optional · Neu entdecken, ohne die gespeicherte Position zu löschen.'],
+    'pt': ['Nova zona em cada abertura',
+      'Opcional · Começa noutra zona sem apagar a posição guardada.'],
+  };
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.sizeOf(context).height;
@@ -62,7 +104,21 @@ class _ArtDriftSettingsState extends State<_ArtDriftSettingsSheet> {
             const SizedBox(height: 9),
             Text(t('languageNote'), style: const TextStyle(
               color: Color(0xFF725B40), fontSize: 12)),
-            const SizedBox(height: 24),
+            const SizedBox(height: 17),
+            SwitchListTile.adaptive(
+              key: const Key('artdrift-random-start'),
+              value: _randomOpening,
+              onChanged: _setRandomOpening,
+              activeTrackColor: const Color(0xFFC9A574),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 2),
+              title: Text((_randomCopy[ArtDriftLocale.current.value] ??
+                  _randomCopy['en']!)[0], style: const TextStyle(
+                    color: ArtPaper.ink, fontSize: 15, fontFamily: 'serif')),
+              subtitle: Text((_randomCopy[ArtDriftLocale.current.value] ??
+                  _randomCopy['en']!)[1], style: const TextStyle(
+                    color: Color(0xFF725B40), fontSize: 11, height: 1.4)),
+            ),
+            const SizedBox(height: 16),
             _ActionTile(
               icon: Icons.speed_rounded,
               title: _performanceTitle(),
