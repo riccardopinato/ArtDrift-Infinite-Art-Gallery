@@ -22,7 +22,7 @@ void main() {
     var peak = 0;
     var started = 0;
     final prefetcher = ArtThumbnailPrefetch.testing(
-      warmer: (_, artwork, bundled) async {
+      warmer: (_, artwork, bundled, highDetail) async {
         inFlight++;
         started++;
         if (inFlight > peak) peak = inFlight;
@@ -60,7 +60,7 @@ void main() {
       (tester) async {
     var started = 0;
     final prefetcher = ArtThumbnailPrefetch.testing(
-      warmer: (_, art, bundled) async {
+      warmer: (_, art, bundled, highDetail) async {
         started++;
         return true;
       },
@@ -75,4 +75,32 @@ void main() {
     await prefetcher.warm(context, remoteArt(5), 1);
     expect(started, 1);
   });
+  testWidgets('prefetch switches to the actual high-detail source at zoom',
+      (tester) async {
+    final seen = <String>[];
+    final prefetcher = ArtThumbnailPrefetch.testing(
+      warmer: (_, artwork, bundled, highDetail) async {
+        seen.add('bundle:$bundled/detail:$highDetail');
+        return true;
+      },
+    );
+    late BuildContext context;
+    await tester.pumpWidget(MaterialApp(home: Builder(builder: (c) {
+      context = c;
+      return const SizedBox();
+    })));
+    final art = Artwork(
+      id: 501, title: 'Verified preview', artist: '', date: '',
+      imageId: '', publicDomain: true, artworkType: 'Painting',
+      museumSource: 'met', bootstrapAsset: 'assets/gallery/thumbs/501.webp',
+      remotePreviewUrl: 'https://images.metmuseum.org/example/501.jpg',
+    );
+    await prefetcher.warm(context, art, 1.0);
+    await prefetcher.warm(context, art, 2.0);
+    expect(seen, ['bundle:true/detail:false',
+      'bundle:false/detail:true']);
+    await prefetcher.warm(context, art, 2.0);
+    expect(seen.length, 2); // High-detail cooldown deduplicates.
+  });
+
 }
