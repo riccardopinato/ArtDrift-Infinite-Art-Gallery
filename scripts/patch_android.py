@@ -13,6 +13,20 @@ for permission in ('android.permission.INTERNET', 'android.permission.SET_WALLPA
             f'<uses-permission android:name="{permission}" />\n    <application', 1)
 if '<uses-permission android:name="android.permission.INTERNET"' not in source:
     raise SystemExit('Failed to install internet permission')
+# Android browser OAuth callback is opt-in and never uses private credentials.
+if 'android:scheme="com.riccardopinato.artdrift"' not in source:
+    callback = '''
+            <intent-filter android:autoVerify="false">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="com.riccardopinato.artdrift"
+                    android:host="login-callback" />
+            </intent-filter>
+'''
+    if '</activity>' not in source:
+        raise SystemExit('Missing MainActivity for OAuth callback')
+    source = source.replace('</activity>', callback + '        </activity>', 1)
 manifest.write_text(source, encoding='utf-8')
 
 native = root / 'android_source/MainActivity.kt'
