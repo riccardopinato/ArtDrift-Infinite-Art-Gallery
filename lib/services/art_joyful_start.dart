@@ -28,6 +28,7 @@ abstract final class ArtJoyfulStart {
     math.Random? random,
     Offset? previous,
     bool Function(Artwork)? imageAvailable,
+    Map<String, int> pixelScores = const {},
   }) {
     if (artworks.isEmpty) return Offset.zero;
     final rng = random ?? math.Random();
@@ -59,7 +60,16 @@ abstract final class ArtJoyfulStart {
       for (final tile in tiles) {
         if (!unique.add(tile.artworkIndex) || !tile.rect.overlaps(view)) continue;
         final art = artworks[tile.artworkIndex];
-        total += hasImage(art) ? 5 : -30;
+        // Real source pixels outrank title-only color/scene classifications.
+        final score = pixelScores[art.catalogKey];
+        if (!hasImage(art)) {
+          total -= 30;
+        } else if (score == null) {
+          total += 5;
+        } else {
+          total += 5 + (score / 255.0 * 24);
+          if (score < 50) total -= 8;
+        }
         final name = '${art.title} ${art.subjectTerms.join(' ')}';
         if (_landscape.hasMatch(name)) total += 4;
         if (_portrait.hasMatch(art.title)) total -= 3;
@@ -79,6 +89,7 @@ abstract final class ArtJoyfulStart {
 
   static Future<Offset> chooseForLaunch(List<Artwork> artworks, {
     required Size viewport, math.Random? random,
+    Map<String, int> pixelScores = const {},
   }) async {
     SharedPreferences? prefs;
     Offset? previous;
@@ -90,7 +101,8 @@ abstract final class ArtJoyfulStart {
       }
     } catch (_) {}
     final selected = choose(artworks,
-      viewport: viewport, random: random, previous: previous);
+      viewport: viewport, random: random, previous: previous,
+      pixelScores: pixelScores);
     try {
       if (prefs != null) {
         await prefs.setDouble(_lastX, selected.dx);

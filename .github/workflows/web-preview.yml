@@ -18,6 +18,8 @@ jobs:
           channel: stable
           flutter-version: '3.50.1'
           cache: true
+      - name: Validate source-bound image color scores
+        run: python3 scripts/validate_visual_palette.py
       - name: Prepare Flutter Web, analyze and test
         run: |
           flutter create --project-name artdrift --org com.riccardopinato --platforms=web .

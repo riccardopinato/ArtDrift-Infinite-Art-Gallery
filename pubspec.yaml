@@ -29,6 +29,7 @@ flutter:
     - assets/gallery/thumbs/
     - assets/museums/catalog.json
     - assets/museums/canvas_visual_color_v1.json
+    - assets/museums/canvas_joyful_pixel_scores_v2.json
     - assets/museums/catalog_global.json
     - assets/museums/catalog_curated_commons.json
     - assets/museums/catalog_nga_openaccess_20261127.json
