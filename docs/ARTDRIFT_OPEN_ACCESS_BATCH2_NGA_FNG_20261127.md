@@ -13,26 +13,21 @@
 - Autore quadro 1876–1926: dipinto 1909; il termine ordinario dei diritti d'autore sul quadro è scaduto in Italia e in Finlandia. Crediti fattuali dell'artista e istituzione conservati nella UI.
 - **Scelta immagine**: la fotografia ufficiale in formato JPEG, non il testo del museo né una fotografia secondaria; versione SHA-1 pinned. Nessuna cornice alternativa.
 
-### 2. Claude Monet — Banks of the Seine, Vétheuil (1880) · National Gallery of Art, Washington
+### 2. Claude Monet — Banks of the Seine, Vétheuil (1880): NON IMPORTARE, già presente nel catalogo
 
-- Commons file **pageID 81308959**, SHA-1 storico **8f3f33e2b9387b296a06cb87f7ef80ec329d7dcf**, JPG 4000×2915, immagine donata da **National Gallery of Art**, licenza digitale esplicita **CC0 1.0**. Il precedente flag testuale `LICENSE_METADATA_CONFLICT` riflette un'etichetta PD nella ricerca iniziale vs CC0 nella pagina corrente; è riconciliato con file specifico, attribuzione e policy del donatore.
-- Pagina Commons: https://commons.wikimedia.org/wiki/File:Claude_Monet,_Banks_of_the_Seine,_V%C3%A9theuil,_1880,_NGA_46652.jpg
-- Scheda istituzionale https://www.nga.gov/artworks/46652-banks-seine-vetheuil ; autore Claude Monet, opera **1880**, inventario **1963.10.177**, donazione Chester Dale Collection. La pagina permette il download e dichiara espressamente *media free and in the public domain*.
-- Politica NGA https://www.nga.gov/terms-and-notices : le immagini della collezione in **Open Access** sono CC0 e autorizzate anche per riusi **commerciali**; l'istituzione incoraggia credito di cortesia, che la UI Art Drift include.
-- L'immagine NGA è distinta dall'altra riproduzione Flickr della stessa opera, con licenza CC BY 2.0: non importare la variante per non duplicare quadro e crediti.
-- Questa è l'unica rappresentazione della specifica opera NGA 46652 ammessa nel lotto.
+Il file Commons `commons:81308959` è autenticamente CC0 e donato dalla National Gallery of Art (https://commons.wikimedia.org/wiki/File:Claude_Monet,_Banks_of_the_Seine,_V%C3%A9theuil,_1880,_NGA_46652.jpg), ma la **CI di deduplicazione** del run 45969608428 ha rilevato lo **stesso quadro già registrato** tra le 4.500 opere esistenti, con identificativo `4000046652`. La licenza è idonea; l'opera non è nuova. Perciò è **esclusa dal nuovo catalogo Commons** senza penalizzarne il copyright. Eventuali upgrade della foto NGA sulla scheda esistente richiedono un distinto intervento di sostituzione con identità e geometria stabili.
 
 ## Metodo massivo, non seriale
 
-Il job GitHub riconcilia **485** record del lotto iniziale (escluso il primo Sisley), quindi verifica cinque shard disgiunti da 100/100/100/100/85: **5 approvati nel sottoinsieme** (3 già ammessi nel precedente lotto, 2 nuovi), **480 non ammessi o esclusi**, fra cui le 2 riproduzioni duplicate del Sisley. Aggiungendo il primo Sisley esterno al lotto dei 485, il catalogo conta **6 immagini in totale**; dei 486 file originali, **6 integrati**, **2 versioni duplicate escluse** e **478 in HOLD per diritti, provenienza o qualità**. Nessuna immagine HOLD/EXCLUDED entra nel catalogo Flutter.
+Il job GitHub riconcilia **485** record del lotto iniziale, divisi in cinque gruppi disgiunti da 100/100/100/100/85. Nel sottoinsieme: **3 immagini già approvate**, **1 nuova immagine Karsten approvata**, **1 variante NGA già presente fra le 4.500**, **2 duplicati di Sisley esclusi** e **478 in HOLD per diritti, provenienza o qualità**. Il Sisley originario è esterno a quei 485; il catalogo Commons contiene **5 immagini**, di cui **una nuova**. Nessuna immagine HOLD entra nel catalogo Flutter.
 
-La seconda wave approva 2 file con fonti indipendenti; per gli altri 480 del set di 485, rimangono i metadati/sorgenti precedenti e un HOLD conservativo. La priorità futura resta ricercare direttamente le banche dati aperte **NGA e Finnish National Gallery** a livello di file invece di controllare manualmente siti d'asta.
+La seconda wave approva 1 file con fonte primaria; per gli altri 481 del set di 485, rimangono i metadati/sorgenti precedenti e un HOLD conservativo. La priorità futura resta ricercare direttamente le banche dati aperte **NGA e Finnish National Gallery** a livello di file invece di controllare manualmente siti d'asta.
 
 ## Gates di distribuzione
 
-- Catalogo `assets/museums/catalog_curated_commons.json`: ora 6 immagini, di cui 2 nuove.
+- Catalogo `assets/museums/catalog_curated_commons.json`: ora 5 immagini, di cui 1 nuova.
 - Build standard: flag `ARTDRIFT_ENABLE_CURATED_COMMONS=false` → 4.500 opere.
-- Build test: flag `ARTDRIFT_ENABLE_CURATED_COMMONS=true` → 4.506 opere (se source/build QA PASS).
+- Build test: flag `ARTDRIFT_ENABLE_CURATED_COMMONS=true` → 4.505 opere (se source/build QA PASS).
 - Attribuzione e fonte visibili; wallpaper disabilitato sulle Commons; attribuzioni CC0 di cortesia. No scraping di contenuti testuali artistici.
 - Non dichiarare certificazione Play Store, worldwide legal warranty o test fisico da CI. Non abilitare la release pubblica senza verificare il build e i requisiti commerciali generali.
 

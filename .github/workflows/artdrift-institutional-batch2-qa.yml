@@ -108,13 +108,13 @@ jobs:
           flutter test
           flutter test --dart-define=ARTDRIFT_ENABLE_CURATED_COMMONS=true \
             test/sisley_commons_approved_test.dart
-      - name: Build ARM64 internal APK with 4,506 artworks visible
+      - name: Build ARM64 internal APK with 4,505 artworks visible
         run: |
           flutter build apk --release --target-platform android-arm64 \
             --dart-define=ARTDRIFT_ENABLE_CURATED_COMMONS=true
       - uses: actions/upload-artifact@v4
         with:
-          name: ArtDrift-4506-Institutional-CC0-ARM64-${{ github.sha }}
+          name: ArtDrift-4505-Institutional-CC0-ARM64-${{ github.sha }}
           path: build/app/outputs/flutter-apk/app-release.apk
           if-no-files-found: error
           retention-days: 30

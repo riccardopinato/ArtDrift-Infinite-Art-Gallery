@@ -144,38 +144,5 @@
     "source_provenance_verified": true,
     "worldwide_distribution_reviewed": true,
     "rights_review_reference": "docs/ARTDRIFT_OPEN_ACCESS_BATCH2_NGA_FNG_20261127.md"
-  },
-  {
-    "id": 81308959,
-    "title": "Banks of the Seine, Vétheuil",
-    "artist_title": "Claude Monet",
-    "date_display": "1880",
-    "image_id": "",
-    "is_public_domain": true,
-    "medium_display": "Oil on canvas",
-    "dimensions_display": "73.4 × 100.5 cm",
-    "artwork_type_title": "Painting",
-    "thumbnail": {
-      "width": 4000,
-      "height": 2915
-    },
-    "credit_line": "Claude Monet, Banks of the Seine, Vétheuil (1880); National Gallery of Art, Washington, Chester Dale Collection, 1963.10.177. Digital image CC0 1.0.",
-    "museum_source": "commons",
-    "museum_name": "National Gallery of Art, Washington",
-    "museum_native_id": "81308959",
-    "source_identity": "commons:81308959",
-    "remote_preview_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7e/Claude_Monet%2C_Banks_of_the_Seine%2C_V%C3%A9theuil%2C_1880%2C_NGA_46652.jpg/500px-Claude_Monet%2C_Banks_of_the_Seine%2C_V%C3%A9theuil%2C_1880%2C_NGA_46652.jpg",
-    "remote_full_url": "https://upload.wikimedia.org/wikipedia/commons/7/7e/Claude_Monet%2C_Banks_of_the_Seine%2C_V%C3%A9theuil%2C_1880%2C_NGA_46652.jpg",
-    "remote_museum_url": "https://commons.wikimedia.org/wiki/File:Claude_Monet,_Banks_of_the_Seine,_V%C3%A9theuil,_1880,_NGA_46652.jpg",
-    "rights_evidence_url": "https://commons.wikimedia.org/wiki/File:Claude_Monet,_Banks_of_the_Seine,_V%C3%A9theuil,_1880,_NGA_46652.jpg",
-    "rights_license": "CC0 1.0",
-    "image_license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
-    "image_creator": "National Gallery of Art, Washington",
-    "image_attribution": "Claude Monet, Banks of the Seine, Vétheuil (1880), National Gallery of Art, Washington, Chester Dale Collection, 1963.10.177. Courtesy National Gallery of Art. Digital image CC0 1.0.",
-    "image_modifications": "Wikimedia Commons thumbnail resized for display; no further modifications claimed.",
-    "commercially_approved": true,
-    "source_provenance_verified": true,
-    "worldwide_distribution_reviewed": true,
-    "rights_review_reference": "docs/ARTDRIFT_OPEN_ACCESS_BATCH2_NGA_FNG_20261127.md"
   }
 ]
