@@ -24,6 +24,11 @@ class _DopplegangerScreenState extends State<DopplegangerScreen> {
   List<String>? _choices;
   String? _answer;
   bool _revealed = false;
+  int _correct = 0;
+  static const _scoreWords = <String, String>{
+    'it': 'corrette', 'en': 'correct', 'fr': 'bonnes réponses',
+    'es': 'aciertos', 'de': 'richtig', 'pt': 'certas',
+  };
   String _text(String key) => ArtDriftLocale.text(key);
 
   Future<List<Map<String, dynamic>>> _load() async {
@@ -41,6 +46,7 @@ class _DopplegangerScreenState extends State<DopplegangerScreen> {
 
   void _next(int total) {
     setState(() {
+      if (_index + 1 >= total) _correct = 0;
       _index = (_index + 1) % total;
       _choices = null;
       _answer = null;
@@ -145,6 +151,14 @@ class _DopplegangerScreenState extends State<DopplegangerScreen> {
             const Text('ARTDRIFT  ·  CURIOSITÀ', style: TextStyle(
               color: ArtPaper.gold, fontSize: 10, letterSpacing: 2)),
             const SizedBox(height: 9),
+            Text(
+              '${_index + 1}/${rows.length}  ·  $_correct '
+              '${_scoreWords[ArtDriftLocale.current.value] ?? _scoreWords['en']}',
+              key: const Key('dopple-progress'),
+              style: const TextStyle(color: ArtPaper.faded,
+                fontSize: 12, letterSpacing: .2),
+            ),
+            const SizedBox(height: 8),
             Text(_text('doppleQuestion'), style: const TextStyle(
               color: ArtPaper.ivory, fontSize: 27,
               fontFamily: 'serif', height: 1.18)),
@@ -161,6 +175,7 @@ class _DopplegangerScreenState extends State<DopplegangerScreen> {
                   onPressed: () => setState(() {
                     _answer = option;
                     _revealed = true;
+                    if (option == correct) _correct++;
                   }),
                   child: Text(option),
                 ),
