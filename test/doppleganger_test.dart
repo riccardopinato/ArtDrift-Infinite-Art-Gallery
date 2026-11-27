@@ -69,7 +69,10 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('1/87  ·  0 corrette'), findsOneWidget);
     final person = (rows.first['person'] as Map)['name'] as String;
-    await tester.tap(find.widgetWithText(OutlinedButton, person));
+    final choice = find.widgetWithText(OutlinedButton, person);
+    await tester.ensureVisible(choice);
+    await tester.pumpAndSettle();
+    await tester.tap(choice);
     await tester.pumpAndSettle();
     expect(find.text('1/87  ·  1 corrette'), findsOneWidget);
     final next = find.text('Prossimo ritratto');
