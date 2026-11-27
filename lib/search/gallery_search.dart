@@ -35,6 +35,15 @@ class GallerySearch {
     'natura':'nature natural landscape paysage',
     'lago':'lake lakes lac lago',
     'fiume':'river rivers rivière rio',
+    'oceano':'ocean sea marine coast océano',
+    'onde':'waves wave sea swell ocean',
+    'tramonto':'sunset dusk twilight evening',
+    'alba':'sunrise dawn morning aurora',
+    'cascata':'waterfall falls cascade',
+    'montagne':'mountains mountain alps peaks',
+    'nebbia':'mist fog haze brume',
+    'pioggia':'rain rainy pluie lluvia',
+    'autoritratto':'self portrait self-portrait autoportrait',
   };
 
   static String expandSubject(String query) {

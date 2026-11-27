@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -24,6 +25,15 @@ class _DopplegangerScreenState extends State<DopplegangerScreen> {
   List<String>? _choices;
   String? _answer;
   bool _revealed = false;
+  int _correct = 0;
+  // Reuse the same decoded bytes for repeated reveals and back-to-back
+  // widget rebuilds. All 87 embedded image pairs total about 1 MB as JSON;
+  // entries are created lazily and never trigger a network read.
+  final _decodedImages = <String, Uint8List>{};
+  static const _scoreWords = <String, String>{
+    'it': 'corrette', 'en': 'correct', 'fr': 'bonnes réponses',
+    'es': 'aciertos', 'de': 'richtig', 'pt': 'certas',
+  };
   String _text(String key) => ArtDriftLocale.text(key);
 
   Future<List<Map<String, dynamic>>> _load() async {
@@ -41,6 +51,7 @@ class _DopplegangerScreenState extends State<DopplegangerScreen> {
 
   void _next(int total) {
     setState(() {
+      if (_index + 1 >= total) _correct = 0;
       _index = (_index + 1) % total;
       _choices = null;
       _answer = null;
@@ -48,8 +59,11 @@ class _DopplegangerScreenState extends State<DopplegangerScreen> {
     });
   }
 
-  Widget _image(Map<String, dynamic> data, {required String label}) =>
-      DecoratedBox(
+  Widget _image(Map<String, dynamic> data, {required String label}) {
+    final encoded = data['image'] as String;
+    final bytes = _decodedImages.putIfAbsent(encoded,
+      () => base64Decode(encoded));
+    return DecoratedBox(
         decoration: BoxDecoration(
           color: const Color(0xFF1E1B20),
           border: Border.all(color: const Color(0xFFC9A574), width: 1.2),
@@ -60,7 +74,7 @@ class _DopplegangerScreenState extends State<DopplegangerScreen> {
           child: ClipRRect(
             borderRadius: BorderRadius.circular(3),
             child: Image.memory(
-              base64Decode(data['image'] as String),
+              bytes,
               height: MediaQuery.sizeOf(context).height < 700 ? 164 : 230,
               width: double.infinity,
               fit: BoxFit.contain, semanticLabel: label,
@@ -71,6 +85,7 @@ class _DopplegangerScreenState extends State<DopplegangerScreen> {
           ),
         ),
       );
+  }
 
   Widget _credits(Map<String, dynamic> data) {
     final links = (data['links'] as Map).cast<String, String>();
@@ -145,6 +160,14 @@ class _DopplegangerScreenState extends State<DopplegangerScreen> {
             const Text('ARTDRIFT  ·  CURIOSITÀ', style: TextStyle(
               color: ArtPaper.gold, fontSize: 10, letterSpacing: 2)),
             const SizedBox(height: 9),
+            Text(
+              '${_index + 1}/${rows.length}  ·  $_correct '
+              '${_scoreWords[ArtDriftLocale.current.value] ?? _scoreWords['en']}',
+              key: const Key('dopple-progress'),
+              style: const TextStyle(color: ArtPaper.faded,
+                fontSize: 12, letterSpacing: .2),
+            ),
+            const SizedBox(height: 8),
             Text(_text('doppleQuestion'), style: const TextStyle(
               color: ArtPaper.ivory, fontSize: 27,
               fontFamily: 'serif', height: 1.18)),
@@ -158,10 +181,15 @@ class _DopplegangerScreenState extends State<DopplegangerScreen> {
                     foregroundColor: ArtPaper.ivory,
                     side: const BorderSide(color: Color(0xFF94703F)),
                     padding: const EdgeInsets.symmetric(vertical: 14)),
-                  onPressed: () => setState(() {
-                    _answer = option;
-                    _revealed = true;
-                  }),
+                  onPressed: () {
+                    // A second queued tap in the same frame cannot score twice.
+                    if (_revealed) return;
+                    setState(() {
+                      _answer = option;
+                      _revealed = true;
+                      if (option == correct) _correct++;
+                    });
+                  },
                   child: Text(option),
                 ),
               TextButton(

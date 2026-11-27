@@ -116,16 +116,21 @@ class ArtCollections {
     switch (collection.id) {
       case 'landscapes':
         return _hasTokens(art, ['landscape','landscapes','paesaggio',
-          'paesaggi','paysage','paisaje','landschaft','landschap']);
+          'paesaggi','paysage','paisaje','landschaft','landschap',
+          'mountain','mountains','montagna','montagne','forest',
+          'foresta','bosco','valley','valle']);
       case 'portraits':
         return _hasTokens(art, ['portrait','portraits','ritratto','ritratti',
           'retrato','porträt','portraiture','self portrait']);
       case 'flowers':
         return _hasTokens(art, ['flower','flowers','fiore','fiori','floral',
-          'garden','gardens','giardino','giardini','fleur','fleurs','blumen']);
+          'garden','gardens','giardino','giardini','fleur','fleurs',
+          'blumen','rose','roses','iris','tulip','tulips','lilies']);
       case 'seascapes':
         return _hasTokens(art, ['sea','seascape','marine','ocean','coast',
-          'shore','river','lake','mare','marina','lago','fiume','mer']);
+          'shore','river','lake','mare','marina','lago','fiume','mer',
+          'oceano','ocean','beach','spiaggia','waterfall','cascata',
+          'pond','stagno']);
       case 'still-life':
         return _hasTokens(art, ['still life','stillleben','natura morta',
           'nature morte','bodegón','bodegon','stilleven','naturaleza muerta']);

@@ -73,4 +73,17 @@ void main() {
     expect(options.any((x) => x.id == 'portraits'), isTrue);
     expect(options.any((x) => x.id == 'seascapes'), isFalse);
   });
+  test('documented multilingual scene terms enrich collections without guesses', () {
+    final seascapes = ArtCollections.all.singleWhere(
+      (c) => c.id == 'seascapes');
+    final landscapes = ArtCollections.all.singleWhere(
+      (c) => c.id == 'landscapes');
+    final flowers = ArtCollections.all.singleWhere(
+      (c) => c.id == 'flowers');
+    expect(seascapes.contains(art(51, 'Cascata nel bosco')), isTrue);
+    expect(landscapes.contains(art(52, 'Mountain valley')), isTrue);
+    expect(flowers.contains(art(53, 'Tulips in a vase')), isTrue);
+    expect(seascapes.contains(art(54, 'Oceania portrait')), isFalse);
+  });
+
 }
