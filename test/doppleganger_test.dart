@@ -57,4 +57,32 @@ void main() {
     expect(find.byType(OutlinedButton), findsNothing);
     expect(tester.takeException(), isNull);
   });
+  testWidgets('a correct match updates the session score; reveal does not',
+      (tester) async {
+    final raw = await tester.runAsync(() =>
+      rootBundle.loadString('assets/doppleganger.json'));
+    final rows = (jsonDecode(raw!) as List<dynamic>)
+      .cast<Map<String, dynamic>>()
+      .where((row) => row['status'] == 'verified').toList();
+    await tester.pumpWidget(MaterialApp(home: DopplegangerScreen(
+      catalogLoader: () async => rows)));
+    await tester.pumpAndSettle();
+    expect(find.text('1/87  ·  0 corrette'), findsOneWidget);
+    final person = (rows.first['person'] as Map)['name'] as String;
+    await tester.tap(find.widgetWithText(OutlinedButton, person));
+    await tester.pumpAndSettle();
+    expect(find.text('1/87  ·  1 corrette'), findsOneWidget);
+    final next = find.text('Prossimo ritratto');
+    await tester.scrollUntilVisible(next, 150);
+    await tester.ensureVisible(next);
+    await tester.tap(next);
+    await tester.pumpAndSettle();
+    expect(find.text('2/87  ·  1 corrette'), findsOneWidget);
+    final reveal = find.text('Mostra la risposta');
+    await tester.ensureVisible(reveal);
+    await tester.tap(reveal);
+    await tester.pumpAndSettle();
+    expect(find.text('2/87  ·  1 corrette'), findsOneWidget);
+  });
+
 }
