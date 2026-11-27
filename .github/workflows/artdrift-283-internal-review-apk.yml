@@ -1,0 +1,68 @@
+name: Art Drift — Internal 283-image review canvas ARM64
+on:
+  push:
+    branches:
+      - qa/artdrift-283-internal-canvas-preview-20261127
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: artdrift-internal-283-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  internal-283-apk:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: '3.50.1'
+          cache: true
+      - uses: actions/download-artifact@v4
+        with:
+          name: ArtDrift-485-FastTrack-ALL-with-3-Waves
+          run-id: '45962610069'
+          repository: ${{ github.repository }}
+          github-token: ${{ github.token }}
+          path: fasttrack
+      - name: Materialize 283 UNAPPROVED Commons research cards
+        run: |
+          python3 tools/artdrift_internal_review_pack.py \
+            --source fasttrack/fasttrack_eligible.json \
+            --out assets/museums/catalog_curated_commons_review.json
+          python3 tools/artdrift_internal_review_pack.py \
+            --out assets/museums/catalog_curated_commons_review.json --verify
+      - name: Prepare Flutter Android
+        run: |
+          flutter create --project-name artdrift --org com.riccardopinato --platforms=android .
+          rm -f test/widget_test.dart
+          python3 scripts/patch_android.py
+          flutter pub get
+          cd packages/drift_core && flutter pub get
+      - name: Analyze Flutter
+        run: flutter analyze --no-fatal-infos
+      - name: Test release-mode rights gate remains closed
+        run: flutter test test/curated_commons_rights_test.dart
+      - name: Verify all 283 images in explicit internal review mode
+        run: |
+          flutter test --dart-define=ARTDRIFT_INTERNAL_ART_REVIEW=true \
+             --dart-define=ARTDRIFT_ENABLE_CURATED_COMMONS=true \
+             test/research_preview_283_test.dart
+      - name: Build ARM64 internal QA, not commercial
+        run: |
+          flutter build apk --release --target-platform android-arm64 \
+             --dart-define=ARTDRIFT_INTERNAL_ART_REVIEW=true \
+             --dart-define=ARTDRIFT_ENABLE_CURATED_COMMONS=true
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ArtDrift-INTERNAL-283-Review-ARM64-${{ github.sha }}
+          path: build/app/outputs/flutter-apk/app-release.apk
+          if-no-files-found: error
+          retention-days: 15
