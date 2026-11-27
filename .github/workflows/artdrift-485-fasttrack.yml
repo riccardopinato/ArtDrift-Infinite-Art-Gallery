@@ -1,0 +1,100 @@
+name: Art Drift — 485-file parallel Fast Track triage (100 x 3)
+on:
+  push:
+    branches:
+      - qa/artdrift-485-fasttrack-batch-20261127
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: artdrift-fasttrack-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  assemble-485:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 -m py_compile tools/artdrift_485_fasttrack.py
+      - name: Fetch pinned original 486 candidates
+        run: |
+          git fetch --no-tags --depth=1 origin b82a4574db3d504141b6d2e95e403aa743c771e3
+          test "$(git rev-parse FETCH_HEAD)" = b82a4574db3d504141b6d2e95e403aa743c771e3
+          mkdir -p inputs
+          git show FETCH_HEAD:research/artists/20261126/artist_bulk_486_triage.json > inputs/inventory.json
+      - uses: actions/download-artifact@v4
+        with:
+          name: ARTDRIFT-486-LICENSE-RIGHTS-EVIDENCE-REPORT
+          run-id: '45907246535'
+          repository: ${{ github.repository }}
+          github-token: ${{ github.token }}
+          path: rights
+      - uses: actions/download-artifact@v4
+        with:
+          name: ArtDrift-486-Final-Release-Preflight
+          run-id: '45908681652'
+          repository: ${{ github.repository }}
+          github-token: ${{ github.token }}
+          path: preflight
+      - uses: actions/download-artifact@v4
+        with:
+          name: ArtDrift-486-Final-Source-Provenance
+          run-id: '45908681652'
+          repository: ${{ github.repository }}
+          github-token: ${{ github.token }}
+          path: wiki
+      - uses: actions/download-artifact@v4
+        with:
+          name: ARTDRIFT-486-REVIEW-QUEUE-AND-EVIDENCE
+          run-id: '45905782588'
+          repository: ${{ github.repository }}
+          github-token: ${{ github.token }}
+          path: pixel
+      - uses: actions/download-artifact@v4
+        with:
+          name: ARTDRIFT-429-RATE-LIMIT-RETRY-RECONCILED
+          run-id: '45906699779'
+          repository: ${{ github.repository }}
+          github-token: ${{ github.token }}
+          path: retry
+      - name: Reconcile all 485 sources and create the 3 priority blocks
+        run: |
+          python3 tools/artdrift_485_fasttrack.py --root . --out fasttrack-results
+          python3 tools/artdrift_485_fasttrack.py --out fasttrack-results --verify 0
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ArtDrift-485-FastTrack-ALL-with-3-Waves
+          path: fasttrack-results/*
+          if-no-files-found: error
+          retention-days: 60
+  wave-qa:
+    needs: assemble-485
+    strategy:
+      max-parallel: 3
+      fail-fast: false
+      matrix:
+        wave: [1,2,3]
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: ArtDrift-485-FastTrack-ALL-with-3-Waves
+          path: fasttrack-results
+      - name: Verify independent 100-item wave and default rights HOLD
+        run: |
+          python3 tools/artdrift_485_fasttrack.py \
+            --out fasttrack-results --verify ${{ matrix.wave }}
+  summary:
+    needs: [assemble-485,wave-qa]
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - run: |
+          test "${{ needs.assemble-485.result }}" = success
+          test "${{ needs.wave-qa.result }}" = success
+          echo "485 image identities preserved; 3 independent QA waves passed."
+          echo "Zero images authorized or imported by this workflow."
