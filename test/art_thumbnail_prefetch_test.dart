@@ -1,6 +1,8 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:artdrift/services/art_offline_thumbnail_index.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:artdrift/models/artwork.dart';
@@ -101,6 +103,36 @@ void main() {
       'bundle:false/detail:true']);
     await prefetcher.warm(context, art, 2.0);
     expect(seen.length, 2); // High-detail cooldown deduplicates.
+  });
+
+  testWidgets('on Web offline-manifest tiles keep the same prefetch source at high zoom',
+      (tester) async {
+    if (!kIsWeb) return;
+    ArtOfflineThumbnailIndex.instance.loadFromManifest(
+      '{"schema_version":1,"keys":["met:502"]}');
+    final calls = <String>[];
+    final prefetcher = ArtThumbnailPrefetch.testing(
+      warmer: (_, artwork, bundled, highDetail) async {
+        calls.add('bundle:$bundled/detail:$highDetail');
+        return true;
+      },
+    );
+    late BuildContext context;
+    await tester.pumpWidget(MaterialApp(home: Builder(builder: (c) {
+      context = c;
+      return const SizedBox();
+    })));
+    final artwork = Artwork(
+      id: 502, title: 'Offline source preview', artist: '', date: '',
+      imageId: '', publicDomain: true, artworkType: 'Painting',
+      museumSource: 'met',
+      remotePreviewUrl: 'https://images.metmuseum.org/example/502.jpg',
+    );
+    expect(ArtOfflineThumbnailIndex.instance.urlFor(artwork), isNotNull);
+    await prefetcher.warm(context, artwork, 1.0);
+    await prefetcher.warm(context, artwork, 2.0);
+    expect(calls, ['bundle:false/detail:false'],
+      reason: 'high zoom still renders the cached same-origin Web thumbnail');
   });
 
 }
