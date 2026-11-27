@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -6,6 +7,7 @@ import '../models/artwork.dart';
 import '../ui/art_remote_image.dart';
 import '../ui/artwork_preview_image.dart';
 import '../services/wallpaper.dart';
+import '../ui/museum_wood_frame.dart';
 
 /// Full-screen viewer inspired by the reference interaction, with our own UI,
 /// factual caption and independent open-access catalogue.
@@ -31,6 +33,16 @@ class _ArtworkDetailState extends State<ArtworkDetail> {
   void initState() {
     super.initState();
     _index = widget.initialIndex;
+  }
+
+  // Keep the frame geometry stable when changing paintings; the content
+  // itself is always contained and never cropped.
+  double get _museumFrameAspect {
+    final initial = widget.artworks[widget.initialIndex];
+    final w = initial.imageWidth;
+    final h = initial.imageHeight;
+    if (w == null || h == null || w <= 0 || h <= 0) return 1.0;
+    return (w / h).clamp(0.45, 1.8).toDouble();
   }
 
   Artwork get art => widget.artworks[_index];
@@ -137,6 +149,30 @@ class _ArtworkDetailState extends State<ArtworkDetail> {
             ),
           )),
         ));
+
+        // The decorative walnut surrounds the artwork, not the entire
+        // screen. Caption and rights remain the established original UI.
+        final museumPainting = LayoutBuilder(builder: (context, bounds) {
+          final maxW = math.max(1.0, bounds.maxWidth - 18);
+          final maxH = math.max(1.0, bounds.maxHeight - 18);
+          final ratio = _museumFrameAspect;
+          final width = math.min(maxW, maxH * ratio);
+          return Center(child: SizedBox(
+            width: width,
+            height: width / ratio,
+            child: MuseumWoodFrame(child: AnimatedSwitcher(
+              key: const Key('artdrift-detail-museum-switcher'),
+              duration: MediaQuery.disableAnimationsOf(context)
+                ? Duration.zero : const Duration(milliseconds: 180),
+              transitionBuilder: (child, animation) =>
+                FadeTransition(opacity: animation, child: child),
+              child: SizedBox.expand(
+                key: ValueKey(current.catalogKey),
+                child: painting,
+              ),
+            )),
+          ));
+        });
         return Stack(children: [
           Padding(
             padding: EdgeInsets.only(top: _contemplation ? 0 : 56),
@@ -144,12 +180,12 @@ class _ArtworkDetailState extends State<ArtworkDetail> {
                 ? Row(children: [
                     SizedBox(width: 290, child: caption),
                     Expanded(child: Padding(
-                      padding: const EdgeInsets.all(14), child: painting)),
+                      padding: const EdgeInsets.all(14), child: museumPainting)),
                   ])
                 : Column(children: [
                     Expanded(child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 10),
-                      child: painting)),
+                      child: museumPainting)),
                     SizedBox(height: constraints.maxHeight * 0.31, child: caption),
                   ]),
           ),
