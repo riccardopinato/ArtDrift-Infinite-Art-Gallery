@@ -13,6 +13,8 @@ import 'screens/artwork_detail.dart';
 import 'services/catalog_service.dart';
 import 'services/favorites.dart';
 import 'services/art_offline_thumbnail_index.dart';
+import 'services/art_visual_color_selection.dart';
+import 'services/art_mobile_canvas_selection.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -49,6 +51,7 @@ class _GalleryHomeState extends State<GalleryHome> {
   final CatalogService _catalog = CatalogService();
   final Favorites _favorites = Favorites();
   List<Artwork> _artworks = [];
+  List<Artwork> _canvasArtworks = [];
   bool _loading = true;
   String? _error;
 
@@ -65,8 +68,14 @@ class _GalleryHomeState extends State<GalleryHome> {
       // Fetch a tiny same-origin index before mounting remote image widgets.
       await ArtOfflineThumbnailIndex.instance.initialize();
       final works = await _catalog.load(refresh: refresh);
+      // First installs get a carefully selected, image-backed color canvas.
+      // Saved artdrift.camera coordinates or ID playlists retain the exact
+      // previous ordering so no user's existing world tiles are remapped.
+      final color = await ArtVisualColorSelection.select(works);
+      final canvas = await ArtMobileCanvasSelection.select(works,
+        initialColorPlaylist: color);
       if (!mounted) return;
-      setState(() { _artworks = works; _loading = false; });
+      setState(() { _artworks = works; _canvasArtworks = canvas; _loading = false; });
     } catch (error) {
       if (!mounted) return;
       setState(() { _loading = false; _error = '$error'; });
@@ -123,7 +132,7 @@ class _GalleryHomeState extends State<GalleryHome> {
       return MuseumPortal.unavailable(onRetry: _initialize);
     }
     return Scaffold(body: Stack(fit: StackFit.expand, children: [
-      InfiniteGallery(artworks: _artworks, onOpen: _open),
+      InfiniteGallery(artworks: _canvasArtworks, onOpen: _open),
       Positioned(top: 0, left: 0, right: 0,
         child: SafeArea(bottom: false, child: ArtDriftToolbar(
           onSearch: _openSearch,
