@@ -11,7 +11,6 @@ import 'screens/favorites_sheet.dart';
 import 'ui/gallery_toolbar.dart';
 import 'ui/localization.dart';
 import 'ui/museum_portal.dart';
-import 'ui/parchment.dart';
 import 'models/artwork.dart';
 import 'screens/artwork_detail.dart';
 import 'services/catalog_service.dart';
@@ -86,13 +85,20 @@ class _GalleryHomeState extends State<GalleryHome> {
     }
   }
 
+  void _openDoppleganger() {
+    if (!mounted) return;
+    Navigator.of(context).push<void>(MaterialPageRoute(
+      builder: (_) => const DopplegangerScreen()));
+  }
+
   Future<void> _openSearch() async {
     final collectionArtworks = _artworks.where((art) =>
       art.hasBundledPreview || ArtOfflineThumbnailIndex.instance.has(art))
       .toList(growable: false);
     final selected = await showArtSearchSheet(context, _artworks,
       collectionCatalog: collectionArtworks,
-      onOpenCollection: _openCollection);
+      onOpenCollection: _openCollection,
+      onOpenDoppleganger: _openDoppleganger);
     if (!mounted || selected == null) return;
     _open(selected);
   }
@@ -161,30 +167,6 @@ class _GalleryHomeState extends State<GalleryHome> {
           onSearch: _openSearch,
           onFavorites: _openFavorites,
           onSettings: () => showArtDriftSettings(context),
-        ))),
-      // An unobtrusive curiosity entry, not a second bottom navigation bar.
-      Positioned(left: 14, bottom: 76,
-        child: SafeArea(top: false, child: Material(
-          color: Colors.transparent,
-          child: Semantics(button: true, label: 'Doppleganger',
-            child: InkWell(
-              key: const Key('artdrift-open-doppleganger'),
-              borderRadius: BorderRadius.circular(12),
-              onTap: () => Navigator.of(context).push<void>(
-                MaterialPageRoute(builder: (_) => const DopplegangerScreen())),
-              child: const OrnateFrame(
-                padding: EdgeInsets.symmetric(horizontal: 14, vertical: 9),
-                child: Row(mainAxisSize: MainAxisSize.min, children: [
-                  Icon(Icons.theater_comedy_outlined,
-                    color: ArtPaper.ink, size: 19),
-                  SizedBox(width: 8),
-                  Text('Doppleganger', style: TextStyle(
-                    color: ArtPaper.ink, fontSize: 13,
-                    fontWeight: FontWeight.w600, fontFamily: 'serif')),
-                ]),
-              ),
-            ),
-          ),
         ))),
     ]));
   }
