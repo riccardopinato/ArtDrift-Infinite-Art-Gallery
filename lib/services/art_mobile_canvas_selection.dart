@@ -9,6 +9,7 @@ class ArtMobileCanvasSelection {
   ArtMobileCanvasSelection._();
 
   static const preferenceKey = 'artdrift.canvas.offline.v1.keys';
+  // Retained for compatibility with the first-install migration marker.
   static const extendedKey = 'artdrift.canvas.bento.v2.supplemented';
 
   static Future<List<Artwork>> select(List<Artwork> catalog, {
@@ -27,22 +28,11 @@ class ArtMobileCanvasSelection {
         if (artwork != null && seen.add(id)) pinned.add(artwork);
       }
       if (pinned.isNotEmpty) {
-        // v2 deliberately changes Art tile geometry. Preserve every pinned
-        // source ID and order, then append verified discoveries only once.
-        if (additionalColorPlaylist.isNotEmpty &&
-            prefs.getBool(extendedKey) != true && pinned.length < 3200) {
-          for (final candidate in additionalColorPlaylist) {
-            final art = byKey[candidate.catalogKey];
-            if (art != null && seen.add(art.catalogKey) &&
-                (art.hasBundledPreview ||
-                 ArtOfflineThumbnailIndex.instance.has(art))) {
-              pinned.add(art);
-            }
-          }
-          await prefs.setStringList(preferenceKey,
-              pinned.map((art) => art.catalogKey).toList(growable: false));
-          await prefs.setBool(extendedKey, true);
-        }
+        // The layout chooses index = tileHash % playlist.length. Appending
+        // even one source ID changes the divisor and remaps existing tiles,
+        // including the neighborhood of a saved camera. Freeze the ordered
+        // playlist for every returning install; new works remain available
+        // through museum search/collections, not by mutating its world.
         return List.unmodifiable(pinned);
       }
     }
