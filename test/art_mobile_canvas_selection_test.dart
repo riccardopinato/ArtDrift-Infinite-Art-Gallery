@@ -54,4 +54,26 @@ void main() {
     expect(selected.map((x) => x.catalogKey).toSet(),
       (originals).map((x) => x.catalogKey).toSet());
   });
+  test('legacy pinned canvas never appends supplements and remaps the camera',
+      () async {
+    final original = List.generate(320, (i) => _painting(i + 1));
+    final extras = List.generate(80, (i) => _painting(i + 321));
+    SharedPreferences.setMockInitialValues({
+      ArtMobileCanvasSelection.preferenceKey:
+          original.map((a) => a.catalogKey).toList(),
+      ArtMobileCanvasSelection.extendedKey: false,
+      'artdrift.camera.x': 982.0,
+      'artdrift.camera.y': -417.0,
+    });
+    final selected = await ArtMobileCanvasSelection.select(
+      [...original, ...extras], additionalColorPlaylist: extras);
+    expect(selected.map((a) => a.catalogKey).toList(),
+      original.map((a) => a.catalogKey).toList());
+    final prefs = await SharedPreferences.getInstance();
+    expect(prefs.getStringList(ArtMobileCanvasSelection.preferenceKey),
+      original.map((a) => a.catalogKey).toList());
+    expect(prefs.getDouble('artdrift.camera.x'), 982.0);
+    expect(prefs.getDouble('artdrift.camera.y'), -417.0);
+  });
+
 }
