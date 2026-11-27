@@ -1,0 +1,47 @@
+name: Art Drift — Official NGA Open Access artist discovery (source only)
+on:
+  push:
+    branches:
+      - qa/artdrift-nga-official-openaccess-bulk-20261127
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Checkout exact museum data commit (official source; no floating HEAD)
+        uses: actions/checkout@v4
+        with:
+          repository: NationalGalleryOfArt/opendata
+          ref: 3a187753c941dd153c2632cffc15d802f171e012
+          path: .nga-official-data
+          fetch-depth: 1
+          sparse-checkout: data
+          filter: blob:none
+      - name: Verify exact primary-source commit
+        run: |
+          test "$(git -C .nga-official-data rev-parse HEAD)" = "3a187753c941dd153c2632cffc15d802f171e012"
+          python3 -m py_compile scripts/artdrift_nga_official_discovery.py
+      - name: Source and image rights classification for all seven painters
+        run: |
+          python3 scripts/artdrift_nga_official_discovery.py \
+            --nga .nga-official-data/data --art . --out nga-discovery
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          s=json.loads(Path('nga-discovery/nga_7artists_summary.json').read_text())
+          a=json.loads(Path('nga-discovery/nga_7artists_all.json').read_text())
+          assert len(a)==s['artist_paintings_in_official_data']
+          assert s['images_eligible_for_immediate_commercial_merge']==0
+          assert all(x['commercially_approved'] is False for x in a)
+          print("7_ARTISTS_OFFICIAL_NGA_SOURCE_ONLY_QA_PASS")
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ArtDrift-NGA-Official-7-Artists-OpenAccess-Discovery
+          path: nga-discovery/*
+          if-no-files-found: error
+          retention-days: 60
