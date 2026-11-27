@@ -7,7 +7,6 @@ signed-off official NGA dataset. Network failures remain HOLD.
 from __future__ import annotations
 import argparse,collections,io,json,time,urllib.error,urllib.parse,urllib.request
 from pathlib import Path
-from PIL import Image,UnidentifiedImageError
 
 SOURCE_SHA="3a187753c941dd153c2632cffc15d802f171e012"
 N=29
@@ -18,6 +17,7 @@ def write(p,x):
  p=Path(p);p.parent.mkdir(parents=True,exist_ok=True)
  p.write_text(json.dumps(x,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
 def probe(item):
+ from PIL import Image,UnidentifiedImageError
  oo=item["nga_objectid"]
  imgs=item["images"]
  if len(imgs)!=1 or not imgs[0]["openaccess"]:
