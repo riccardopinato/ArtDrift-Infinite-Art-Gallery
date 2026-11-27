@@ -6,17 +6,23 @@ import '../services/art_frame_performance.dart';
 import '../services/art_image_delivery_metrics.dart';
 import '../ui/localization.dart';
 import '../ui/parchment.dart';
+import '../services/artdrift_account.dart';
+import '../services/favorite_cloud_sync.dart';
+import 'account_card.dart';
 import '../services/art_joyful_start.dart';
 
-Future<void> showArtDriftSettings(BuildContext context) =>
+Future<void> showArtDriftSettings(BuildContext context, {
+  FavoriteSyncController? sync,
+}) =>
     showModalBottomSheet<void>(
       context: context, backgroundColor: Colors.transparent,
       isScrollControlled: true, useSafeArea: true,
-      builder: (context) => const _ArtDriftSettingsSheet(),
+      builder: (context) => _ArtDriftSettingsSheet(sync: sync),
     );
 
 class _ArtDriftSettingsSheet extends StatefulWidget {
-  const _ArtDriftSettingsSheet();
+  const _ArtDriftSettingsSheet({this.sync});
+  final FavoriteSyncController? sync;
   @override
   State<_ArtDriftSettingsSheet> createState() => _ArtDriftSettingsState();
 }
@@ -119,6 +125,22 @@ class _ArtDriftSettingsState extends State<_ArtDriftSettingsSheet> {
                     color: Color(0xFF725B40), fontSize: 11, height: 1.4)),
             ),
             const SizedBox(height: 16),
+            if (ArtDriftAccount.configured) ...[
+              const Divider(color: ArtPaper.gold),
+              const SizedBox(height: 14),
+              Text(
+                ArtDriftLocale.current.value == 'it'
+                    ? 'ACCOUNT E PREFERITI'
+                    : 'ACCOUNT & FAVORITES',
+                style: const TextStyle(
+                  color: ArtPaper.gold,
+                  letterSpacing: 1.8,
+                  fontSize: 10,
+                  fontWeight: FontWeight.w600)),
+              const SizedBox(height: 12),
+              ArtDriftAccountCard(sync: widget.sync),
+              const SizedBox(height: 18),
+            ],
             _ActionTile(
               icon: Icons.speed_rounded,
               title: _performanceTitle(),
