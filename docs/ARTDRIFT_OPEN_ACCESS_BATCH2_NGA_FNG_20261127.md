@@ -24,7 +24,7 @@
 
 ## Metodo massivo, non seriale
 
-Il job GitHub scarica e riconcilia **485** record dell'inventario iniziale e confronta le decisioni dei **6** file ammessi con la tabella completa; quindi verifica in parallelo i 5 shard da 100/100/100/100/85 e aggrega **6 nell'elenco pubblicabile**, **479 HOLD/EXCLUDED** all'interno di quei 485 (il Sisley non fa parte dei 485; il sesto record è lo stesso Sisley già su main, per cui il totale unico in origine è **486**). A livello dell'intero inventario: **6 ammessi**, **2 duplicati di Sisley esclusi**, **478 non approvati o tecnicamente bloccati**. Nessuno dei file HOLD/EXCLUDED viene materializzato nel catalogo Flutter.
+Il job GitHub riconcilia **485** record del lotto iniziale (escluso il primo Sisley), quindi verifica cinque shard disgiunti da 100/100/100/100/85: **5 approvati nel sottoinsieme** (3 già ammessi nel precedente lotto, 2 nuovi), **480 non ammessi o esclusi**, fra cui le 2 riproduzioni duplicate del Sisley. Aggiungendo il primo Sisley esterno al lotto dei 485, il catalogo conta **6 immagini in totale**; dei 486 file originali, **6 integrati**, **2 versioni duplicate escluse** e **478 in HOLD per diritti, provenienza o qualità**. Nessuna immagine HOLD/EXCLUDED entra nel catalogo Flutter.
 
 La seconda wave approva 2 file con fonti indipendenti; per gli altri 480 del set di 485, rimangono i metadati/sorgenti precedenti e un HOLD conservativo. La priorità futura resta ricercare direttamente le banche dati aperte **NGA e Finnish National Gallery** a livello di file invece di controllare manualmente siti d'asta.
 
