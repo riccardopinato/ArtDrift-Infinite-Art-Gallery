@@ -8,7 +8,7 @@ acceptance by the product owner.
 ## Implemented in this change
 
 - A permanent dataset integrity test checks 87 canonical unique IDs, required
-  credits, URLs, image decodability and the rejected *exact pair* contract.
+  credits, URLs, WebP signatures and the rejected *exact pair* contract.
 - Rejected historical pairings remain excluded; an individual person is not
   automatically banned from a different artwork pairing.
 - In the game, a small localized counter shows round progress and correctly
