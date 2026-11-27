@@ -27,8 +27,13 @@ void main() {
       for (final item in [art, person]) {
         expect((item['name'] as String).trim(), isNotEmpty);
         expect((item['credit'] as String).trim(), isNotEmpty);
-        expect(base64Decode(item['image'] as String).length,
-            greaterThan(150), reason: 'invalid image payload at $id');
+        final bytes = base64Decode(item['image'] as String);
+        expect(bytes.length, greaterThan(150),
+            reason: 'invalid image payload at $id');
+        // Real packaged portrait bytes must have a WebP RIFF header. This
+        // checks packaging identity, not visual/subject/editorial accuracy.
+        expect(utf8.decode(bytes.sublist(0, 4)), 'RIFF');
+        expect(utf8.decode(bytes.sublist(8, 12)), 'WEBP');
         final links = (item['links'] as Map).cast<String, String>();
         for (final key in ['doppleSource', 'doppleLicense']) {
           final uri = Uri.tryParse(links[key] ?? '');
