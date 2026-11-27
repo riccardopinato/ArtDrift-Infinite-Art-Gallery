@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:collection';
 
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 
 import '../models/artwork.dart';
@@ -45,13 +46,16 @@ class ArtThumbnailPrefetch {
     final localAsset = art.hasBundledPreview
         ? art.bootstrapAsset
         : ArtOfflineThumbnailIndex.instance.assetFor(art);
-    final highDetail = zoom > 1.65;
+    // ArtRemoteImage renders same-origin Web thumbnails at width 400 even
+    // above zoom 1.65; only native tiles request remote detail at that zoom.
+    // Never prefetch a remote image that the visible Web tile won't display.
+    final webThumbnail = ArtOfflineThumbnailIndex.instance.urlFor(art);
+    final highDetail = zoom > 1.65 && !(kIsWeb && webThumbnail != null);
     final bundledPreview = localAsset != null && !highDetail;
     // Align the cache identity with the actual image source being warmed.
     // On Web a small zoom can use the offline thumbnail URL; high zoom
     // must warm the remote detail that the visible tile will request.
-    final localUrl = highDetail ? null :
-        ArtOfflineThumbnailIndex.instance.urlFor(art);
+    final localUrl = highDetail ? null : webThumbnail;
     final key = bundledPreview
         ? 'asset:$localAsset'
         : 'url:${localUrl ?? art.imageUrl(width: 400)}';
