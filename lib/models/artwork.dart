@@ -32,6 +32,7 @@ class Artwork {
     this.provenanceVerified = false,
     this.worldwideDistributionReviewed = false,
     this.rightsReviewReference = '',
+    this.researchOnly = false,
     this.dimensions = '',
     this.technique = '',
     this.remoteFullUrl = '',
@@ -68,6 +69,7 @@ class Artwork {
   final bool commerciallyApproved, provenanceVerified;
   final bool worldwideDistributionReviewed;
   final String rightsReviewReference;
+  final bool researchOnly;
   final String dimensions;
   final String technique;
   final String remoteFullUrl;
@@ -103,7 +105,7 @@ class Artwork {
 
   /// Legal/evidence checks for a specific file, independent of visibility.
   bool get curatedCommonsRightsEvidenceComplete {
-    if (!isCuratedCommons || !publicDomain ||
+    if (researchOnly || !isCuratedCommons || !publicDomain ||
         artworkType.toLowerCase() != 'painting' ||
         !commerciallyApproved || !provenanceVerified ||
         !worldwideDistributionReviewed ||
@@ -127,6 +129,23 @@ class Artwork {
       const bool.fromEnvironment(
           'ARTDRIFT_ENABLE_CURATED_COMMONS', defaultValue: false) &&
       curatedCommonsRightsEvidenceComplete;
+
+  /// Internal editor-only QA: never a copyright or publication clearance.
+  bool get internalResearchVisible =>
+      const bool.fromEnvironment(
+          'ARTDRIFT_INTERNAL_ART_REVIEW', defaultValue: false) &&
+      researchOnly && !commerciallyApproved && !provenanceVerified &&
+      !worldwideDistributionReviewed && isCuratedCommons && publicDomain &&
+      id > 0 && museumNativeId == id.toString() &&
+      sourceIdentity == 'commons:' + id.toString() &&
+      artworkType.toLowerCase() == 'painting' &&
+      artist.trim().isNotEmpty &&
+      creditLine.trim().isNotEmpty &&
+      imageAttribution.trim().isNotEmpty &&
+      const <String>{'Public Domain','CC0 1.0'}.contains(rightsLicense) &&
+      officialImageUrl(remotePreviewUrl, 'commons') &&
+      officialCommonsFilePage(remoteMuseumUrl) &&
+      officialCommonsFilePage(rightsEvidenceUrl);
 
   static bool officialCommonsFilePage(String url) {
     final uri = Uri.tryParse(url);
@@ -173,7 +192,10 @@ class Artwork {
   static final RegExp _imageIdPattern = RegExp(r'^[0-9a-fA-F-]{16,64}$');
   bool get displayable {
     if (id <= 0 || !publicDomain) return false;
-    if (isCuratedCommons) return curatedCommonsReleaseReady;
+    if (isCuratedCommons) {
+      return (researchOnly && internalResearchVisible) ||
+          (!researchOnly && curatedCommonsReleaseReady);
+    }
     // Museum reproduction licence mismatch still unresolved.
     if (museumSource == 'staedel') return false;
     if (museumSource == 'aic') {
@@ -302,6 +324,7 @@ class Artwork {
       worldwideDistributionReviewed:
           json['worldwide_distribution_reviewed'] == true,
       rightsReviewReference: _str(json['rights_review_reference']),
+      researchOnly: json['artdrift_research_only'] == true,
       dimensions: _str(json['dimensions_display']),
       technique: _str(json['technique_display']),
       remoteMuseumUrl: _str(json['remote_museum_url']),
@@ -345,6 +368,7 @@ class Artwork {
           'worldwide_distribution_reviewed': true,
         if (rightsReviewReference.isNotEmpty)
           'rights_review_reference': rightsReviewReference,
+        if (researchOnly) 'artdrift_research_only': true,
         if (dimensions.isNotEmpty) 'dimensions_display': dimensions,
         if (technique.isNotEmpty) 'technique_display': technique,
       };

@@ -17,6 +17,7 @@ class MuseumCatalog {
       'assets/museums/catalog_global.json',
       // Intentionally empty until per-image provenance and rights approval.
       'assets/museums/catalog_curated_commons.json',
+      'assets/museums/catalog_curated_commons_review.json',
     ]) {
       final isPreviewPack = file.endsWith('/catalog.json');
       try {
@@ -33,7 +34,8 @@ class MuseumCatalog {
           if (artwork.isCuratedCommons) {
             // CC BY / BY-SA are distinct from public domain. They require
             // independently reviewed image credits and worldwide rights.
-            if (!artwork.curatedCommonsReleaseReady) continue;
+            if (!artwork.curatedCommonsReleaseReady &&
+                !artwork.internalResearchVisible) continue;
           } else if (!license.contains('cc0') &&
               !license.contains('public domain')) {
             continue;

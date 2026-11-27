@@ -198,7 +198,18 @@ class _Caption extends StatelessWidget {
       child: SingleChildScrollView(child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('ARTDRIFT · L’OPERA',
+          if (artwork.researchOnly) ...[
+             const Text('REVISIONE INTERNA — NON PUBBLICARE',
+               key: Key('artdrift-research-only-banner'),
+               style: TextStyle(color: Color(0xFFFFBD80),
+                 fontSize: 12, fontWeight: FontWeight.w700)),
+             const SizedBox(height: 8),
+             const Text('Licenza e provenienza non ancora approvate. '
+               'Questa immagine è mostrata soltanto nella build di controllo.',
+               style: TextStyle(color: Colors.white70, fontSize: 11)),
+             const SizedBox(height: 12),
+           ],
+           const Text('ARTDRIFT · L’OPERA',
             style: TextStyle(color: Colors.white54,
               fontSize: 10, letterSpacing: 2)),
           const SizedBox(height: 15),
