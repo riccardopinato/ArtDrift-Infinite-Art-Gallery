@@ -166,7 +166,7 @@ class _InfiniteGalleryState extends State<InfiniteGallery> {
               child: OrnateFrame(
                 padding: const EdgeInsets.fromLTRB(17, 15, 17, 12),
                 child: ConstrainedBox(
-                  constraints: BoxConstraints(maxHeight: math.max(120, maxH - 24)),
+                  constraints: BoxConstraints(maxHeight: math.max(120.0, maxH - 24.0)),
                   child: SingleChildScrollView(child: Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
