@@ -3,6 +3,7 @@ import 'package:flutter/painting.dart';
 
 import 'canvas/infinite_gallery.dart';
 import 'screens/search_sheet.dart';
+import 'screens/doppleganger.dart';
 import 'screens/collection_canvas.dart';
 import 'collections/art_collections.dart';
 import 'screens/settings_sheet.dart';
@@ -84,13 +85,20 @@ class _GalleryHomeState extends State<GalleryHome> {
     }
   }
 
+  void _openDoppleganger() {
+    if (!mounted) return;
+    Navigator.of(context).push<void>(MaterialPageRoute(
+      builder: (_) => const DopplegangerScreen()));
+  }
+
   Future<void> _openSearch() async {
     final collectionArtworks = _artworks.where((art) =>
       art.hasBundledPreview || ArtOfflineThumbnailIndex.instance.has(art))
       .toList(growable: false);
     final selected = await showArtSearchSheet(context, _artworks,
       collectionCatalog: collectionArtworks,
-      onOpenCollection: _openCollection);
+      onOpenCollection: _openCollection,
+      onOpenDoppleganger: _openDoppleganger);
     if (!mounted || selected == null) return;
     _open(selected);
   }

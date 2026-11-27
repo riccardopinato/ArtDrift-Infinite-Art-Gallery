@@ -13,6 +13,7 @@ import '../ui/parchment.dart';
 Future<Artwork?> showArtSearchSheet(BuildContext context,
     List<Artwork> catalog, {
       void Function(ArtCollection)? onOpenCollection,
+      VoidCallback? onOpenDoppleganger,
       List<Artwork>? collectionCatalog,
     }) =>
     showModalBottomSheet<Artwork>(
@@ -22,6 +23,7 @@ Future<Artwork?> showArtSearchSheet(BuildContext context,
         artworks: catalog,
         collectionCatalog: collectionCatalog ?? catalog,
         onOpenCollection: onOpenCollection,
+        onOpenDoppleganger: onOpenDoppleganger,
       ),
     );
 
@@ -30,10 +32,12 @@ class _SearchSheet extends StatefulWidget {
     required this.artworks,
     required this.collectionCatalog,
     this.onOpenCollection,
+    this.onOpenDoppleganger,
   });
   final List<Artwork> artworks;
   final List<Artwork> collectionCatalog;
   final void Function(ArtCollection)? onOpenCollection;
+  final VoidCallback? onOpenDoppleganger;
   @override
   State<_SearchSheet> createState() => _SearchSheetState();
 }
@@ -171,6 +175,8 @@ class _SearchSheetState extends State<_SearchSheet> {
           const SizedBox(height: 8),
           Expanded(child: ListView(children: [
             if (_text.text.trim().isEmpty) ...[
+              if (widget.onOpenDoppleganger != null)
+                _dopplegangerRow(),
               if (_collections.isNotEmpty) ...[
                 _section(_collectionHeader()),
                 for (final collection in _collections)
@@ -254,6 +260,40 @@ class _SearchSheetState extends State<_SearchSheet> {
           Center(child: Text(t('offline'),
             style: const TextStyle(color: Color(0xFF80684B),fontSize:10))),
         ])),
+      ),
+    );
+  }
+
+  Widget _dopplegangerRow() {
+    const subtitles = <String, String>{
+      'it': 'Un ritratto, un volto celebre. Indovina il sosia.',
+      'en': 'One portrait, one familiar face. Guess the match.',
+      'fr': 'Un portrait, un visage connu. Devinez la ressemblance.',
+      'es': 'Un retrato, un rostro famoso. Adivina el parecido.',
+      'de': 'Ein Porträt, ein bekanntes Gesicht. Rate mit.',
+      'pt': 'Um retrato, um rosto famoso. Adivinha a semelhança.',
+    };
+    final subtitle = subtitles[ArtDriftLocale.current.value] ??
+        subtitles['en']!;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: OrnateFrame(shadow: false, padding: EdgeInsets.zero,
+        child: ListTile(
+          key: const Key('artdrift-doppleganger-entry'),
+          leading: const Icon(Icons.theater_comedy_outlined,
+            color: ArtPaper.gold),
+          title: const Text('Doppleganger', style: TextStyle(
+            color: ArtPaper.ink, fontFamily: 'serif',
+            fontSize: 17, fontWeight: FontWeight.w600)),
+          subtitle: Text(subtitle, style: const TextStyle(
+            color: Color(0xFF785C3C), fontSize: 11)),
+          trailing: const Icon(Icons.open_in_new_rounded,
+            color: ArtPaper.gold, size: 18),
+          onTap: () {
+            Navigator.of(context).pop();
+            widget.onOpenDoppleganger?.call();
+          },
+        ),
       ),
     );
   }
