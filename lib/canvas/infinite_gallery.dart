@@ -19,12 +19,15 @@ class InfiniteGallery extends StatefulWidget {
     required this.onOpen,
     this.cameraKey = 'artdrift.camera',
     this.initialWorldCenter,
+    this.onOpenAtRect,
   });
 
   final List<Artwork> artworks;
   final ValueChanged<Artwork> onOpen;
   final String cameraKey;
   final Offset? initialWorldCenter;
+  /// Real global screen rect of the selected painted tile.
+  final void Function(Artwork, Rect)? onOpenAtRect;
 
   @override
   State<InfiniteGallery> createState() => _InfiniteGalleryState();
@@ -142,9 +145,17 @@ class _InfiniteGalleryState extends State<InfiniteGallery> {
         DriftCanvas<Artwork>(
           items: widget.artworks,
           onOpen: widget.onOpen,
-          onOpenAtRect: (art, _) {
+          onOpenAtRect: (art, localRect) {
             _hidePlaque();
-            widget.onOpen(art);
+            final box = context.findRenderObject();
+            final global = box is RenderBox
+                ? localRect.shift(box.localToGlobal(Offset.zero))
+                : localRect;
+            if (widget.onOpenAtRect != null) {
+              widget.onOpenAtRect!(art, global);
+            } else {
+              widget.onOpen(art);
+            }
           },
           onTileLongPress: _inspect,
           onCanvasGestureStart: _hidePlaque,

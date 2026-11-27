@@ -14,6 +14,7 @@ import 'ui/localization.dart';
 import 'ui/museum_portal.dart';
 import 'models/artwork.dart';
 import 'screens/artwork_detail.dart';
+import 'ui/tile_origin_flight.dart';
 import 'services/catalog_service.dart';
 import 'services/favorites.dart';
 import 'services/art_offline_thumbnail_index.dart';
@@ -148,25 +149,49 @@ class _GalleryHomeState extends State<GalleryHome> {
       builder: (_) => ArtCollectionCanvasScreen(
         collection: collection, artworks: works,
         onOpen: _openArtworkInGroup,
+        onOpenAtRect: _openCollectionFromTile,
       ),
     ));
   }
 
-  void _openArtworkInGroup(Artwork artwork, List<Artwork> artworks) {
+  void _openCollectionFromTile(Artwork artwork,
+      Rect origin, List<Artwork> collection) {
+    _openArtworkInGroup(artwork, collection, tileRect: origin);
+  }
+
+  void _openArtworkInGroup(Artwork artwork, List<Artwork> artworks,
+      {Rect? tileRect}) {
     final index = artworks.indexWhere((a) => a.catalogKey == artwork.catalogKey);
     final group = index < 0 ? <Artwork>[artwork] : artworks;
     final start = index < 0 ? 0 : index;
-    Navigator.of(context).push(PageRouteBuilder<void>(
+    final identity = ValueNotifier<String>(artwork.catalogKey);
+    final motionDisabled = MediaQuery.disableAnimationsOf(context);
+    final route = PageRouteBuilder<void>(
       pageBuilder: (context, animation, secondaryAnimation) => ArtworkDetail(
         artworks: group,
         initialIndex: start,
         isFavorite: _favorites.contains,
         onToggleFavorite: _toggleFavorite,
+        onArtworkChanged: (next) => identity.value = next.catalogKey,
       ),
       transitionsBuilder: (context, animation, secondaryAnimation, child) =>
-        FadeTransition(opacity: animation, child: child),
-      transitionDuration: const Duration(milliseconds: 200),
-    ));
+        tileRect == null
+            ? FadeTransition(opacity: animation, child: child)
+            : TileOriginFlight(
+                animation: animation,
+                originRect: tileRect,
+                originArtwork: artwork,
+                originalArtworkKey: artwork.catalogKey,
+                currentArtworkKey: identity,
+                child: child,
+              ),
+      transitionDuration: motionDisabled ? Duration.zero
+          : const Duration(milliseconds: 330),
+      reverseTransitionDuration: motionDisabled ? Duration.zero
+          : const Duration(milliseconds: 300),
+    );
+    Navigator.of(context).push(route);
+    route.completed.then((_) => identity.dispose());
   }
 
   @override
@@ -182,8 +207,13 @@ class _GalleryHomeState extends State<GalleryHome> {
       return MuseumPortal.unavailable(onRetry: _initialize);
     }
     return Scaffold(body: Stack(fit: StackFit.expand, children: [
-      InfiniteGallery(artworks: _canvasArtworks, onOpen: _open,
-        initialWorldCenter: _launchWorldCenter),
+      InfiniteGallery(
+        artworks: _canvasArtworks,
+        onOpen: _open,
+        initialWorldCenter: _launchWorldCenter,
+        onOpenAtRect: (artwork, rect) =>
+            _openArtworkInGroup(artwork, _artworks, tileRect: rect),
+      ),
       Positioned(top: 0, left: 0, right: 0,
         child: SafeArea(bottom: false, child: ArtDriftToolbar(
           onSearch: _openSearch,
