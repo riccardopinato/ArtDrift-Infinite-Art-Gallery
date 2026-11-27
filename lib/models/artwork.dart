@@ -23,6 +23,15 @@ class Artwork {
     this.museumNativeId = '',
     this.rightsLicense = '',
     this.rightsEvidenceUrl = '',
+    this.imageCreator = '',
+    this.imageAttribution = '',
+    this.imageLicenseUrl = '',
+    this.imageModifications = '',
+    this.sourceIdentity = '',
+    this.commerciallyApproved = false,
+    this.provenanceVerified = false,
+    this.worldwideDistributionReviewed = false,
+    this.rightsReviewReference = '',
     this.dimensions = '',
     this.technique = '',
     this.remoteFullUrl = '',
@@ -49,12 +58,22 @@ class Artwork {
   final List<String> subjectTerms;
   final String museumName;
   final String museumNativeId;
+  /// Specific digital-image rights: separate from the public-domain painting.
   final String rightsLicense;
   final String rightsEvidenceUrl;
+  final String imageCreator, imageAttribution, imageLicenseUrl;
+  final String imageModifications, sourceIdentity;
+
+  /// Source-controlled release gates. Commons metadata never sets these.
+  final bool commerciallyApproved, provenanceVerified;
+  final bool worldwideDistributionReviewed;
+  final String rightsReviewReference;
   final String dimensions;
   final String technique;
   final String remoteFullUrl;
   String get displayedMuseum => museumName.isNotEmpty ? museumName :
+      museumSource == 'commons' ? 'Wikimedia Commons' :
+      museumSource == 'staedel' ? 'Städel Museum' :
       museumSource == 'met' ? 'The Metropolitan Museum of Art' :
       museumSource == 'cleveland' ? 'Cleveland Museum of Art' :
       museumSource == 'rijks' ? 'Rijksmuseum' :
@@ -66,7 +85,63 @@ class Artwork {
       museumSource == 'walters' ? 'The Walters Art Museum' :
       'Art Institute of Chicago';
   String get displayedLicense => rightsLicense.isNotEmpty ? rightsLicense :
-      museumSource == 'aic' ? 'Public Domain' : 'CC0';
+      museumSource == 'aic' && publicDomain
+          ? 'Public Domain' : 'Licenza immagine da verificare';
+
+  bool get isCuratedCommons => museumSource == 'commons';
+  bool get imageLicenseRequiresAttribution =>
+      RegExp(r'^CC BY(?:-SA)? (?:2[.]0|2[.]5|3[.]0|4[.]0)$')
+          .hasMatch(rightsLicense);
+
+  bool get validImageLicenseLink {
+    if (!imageLicenseRequiresAttribution) return true;
+    final version = rightsLicense.split(' ').last;
+    final family = rightsLicense.startsWith('CC BY-SA') ? 'by-sa' : 'by';
+    return imageLicenseUrl ==
+        'https://creativecommons.org/licenses/' + family + '/' + version + '/';
+  }
+
+  /// Legal/evidence checks for a specific file, independent of visibility.
+  bool get curatedCommonsRightsEvidenceComplete {
+    if (!isCuratedCommons || !publicDomain ||
+        artworkType.toLowerCase() != 'painting' ||
+        !commerciallyApproved || !provenanceVerified ||
+        !worldwideDistributionReviewed ||
+        rightsReviewReference.trim().isEmpty ||
+        sourceIdentity != 'commons:' + id.toString() ||
+        museumNativeId != id.toString() ||
+        artist.trim().isEmpty || creditLine.trim().isEmpty ||
+        imageAttribution.trim().isEmpty ||
+        !(const <String>{'Public Domain', 'Public domain', 'CC0', 'CC0 1.0'}
+          .contains(rightsLicense) || imageLicenseRequiresAttribution) ||
+        !validImageLicenseLink) return false;
+    return officialImageUrl(remotePreviewUrl, 'commons') &&
+        (remoteFullUrl.isEmpty ||
+         officialImageUrl(remoteFullUrl, 'commons')) &&
+        officialCommonsFilePage(remoteMuseumUrl) &&
+        officialCommonsFilePage(rightsEvidenceUrl);
+  }
+
+  /// A deliberate release-only build flag is required even after approval.
+  bool get curatedCommonsReleaseReady =>
+      const bool.fromEnvironment(
+          'ARTDRIFT_ENABLE_CURATED_COMMONS', defaultValue: false) &&
+      curatedCommonsRightsEvidenceComplete;
+
+  static bool officialCommonsFilePage(String url) {
+    final uri = Uri.tryParse(url);
+    return uri != null && uri.scheme == 'https' &&
+        uri.userInfo.isEmpty && (!uri.hasPort || uri.port == 443) &&
+        uri.host.toLowerCase() == 'commons.wikimedia.org' &&
+        (uri.path.startsWith('/wiki/File:') ||
+         (uri.path == '/w/index.php' &&
+          uri.queryParameters.containsKey('curid')));
+  }
+
+  /// Do not offer exports where required CC attribution cannot be retained.
+  bool get wallpaperAllowed =>
+      museumSource != 'commons' && museumSource != 'staedel';
+
   String get catalogKey => '$museumSource:$id';
 
   static bool officialImageUrl(String url, String museum) {
@@ -85,7 +160,10 @@ class Artwork {
       'smk': {'iip.smk.dk', 'iip-thumb.smk.dk'},
       'mia': {'api.artsmia.org'},
       'walters': {'images.thewalters.org', 'art.thewalters.org'},
+      'commons': {'upload.wikimedia.org', 'thumb.wikimedia.org'},
     };
+    if (museum == 'commons' &&
+        !uri.path.startsWith('/wikipedia/commons/')) return false;
     return hosts[museum]?.contains(uri.host.toLowerCase()) ?? false;
   }
   bool get hasBundledPreview => museumSource == 'aic'
@@ -95,6 +173,9 @@ class Artwork {
   static final RegExp _imageIdPattern = RegExp(r'^[0-9a-fA-F-]{16,64}$');
   bool get displayable {
     if (id <= 0 || !publicDomain) return false;
+    if (isCuratedCommons) return curatedCommonsReleaseReady;
+    // Museum reproduction licence mismatch still unresolved.
+    if (museumSource == 'staedel') return false;
     if (museumSource == 'aic') {
       return _imageIdPattern.hasMatch(imageId) &&
           (artworkType.isEmpty || artworkType.toLowerCase() == 'painting') &&
@@ -118,7 +199,7 @@ class Artwork {
   String imageUrl({int width = 400}) {
     if (museumSource != 'aic') {
       if (width >= 600 && remoteFullUrl.isNotEmpty &&
-         (museumSource == 'rijks' || museumSource == 'nga' ||
+         (museumSource == 'commons' || museumSource == 'rijks' || museumSource == 'nga' ||
           museumSource == 'getty' || museumSource == 'smk' ||
           museumSource == 'smithsonian')) return remoteFullUrl;
       return remotePreviewUrl;
@@ -146,6 +227,8 @@ class Artwork {
       'smk': {'open.smk.dk', 'www.open.smk.dk', 'www.smk.dk', 'smk.dk'},
       'mia': {'collections.artsmia.org'},
       'walters': {'art.thewalters.org', 'www.thewalters.org'},
+      'commons': {'commons.wikimedia.org'},
+      'staedel': {'sammlung.staedelmuseum.de'},
     };
     if (uri != null && uri.scheme == 'https' && uri.userInfo.isEmpty &&
         (hosts[museumSource]?.contains(uri.host) ?? false)) {
@@ -161,6 +244,8 @@ class Artwork {
       'smk':'https://open.smk.dk/',
       'mia':'https://collections.artsmia.org/',
       'walters':'https://art.thewalters.org/',
+      'commons':'https://commons.wikimedia.org/',
+      'staedel':'https://sammlung.staedelmuseum.de/',
     };
     return home[museumSource] ?? 'https://www.artic.edu/';
   }
@@ -174,7 +259,7 @@ class Artwork {
     final how = method.isEmpty ? '' : ' Tecnica e materiali: $method.';
     final scale = dimensions.isEmpty ? '' : ' Dimensioni: $dimensions.';
     final where = origin.isEmpty ? '' : ' Origine: $origin.';
-    final museum = museumSource == 'aic' ? '' :
+    final museum = (museumSource == 'aic' || isCuratedCommons) ? '' :
         ' Conservata presso $displayedMuseum.';
     return '«$title» è un’opera attribuita a $creator$when.$how$scale$where$museum';
   }
@@ -207,6 +292,16 @@ class Artwork {
       museumNativeId: _str(json['museum_native_id']),
       rightsLicense: _str(json['rights_license']),
       rightsEvidenceUrl: _str(json['rights_evidence_url']),
+      imageCreator: _str(json['image_creator']),
+      imageAttribution: _str(json['image_attribution']),
+      imageLicenseUrl: _str(json['image_license_url']),
+      imageModifications: _str(json['image_modifications']),
+      sourceIdentity: _str(json['source_identity']),
+      commerciallyApproved: json['commercially_approved'] == true,
+      provenanceVerified: json['source_provenance_verified'] == true,
+      worldwideDistributionReviewed:
+          json['worldwide_distribution_reviewed'] == true,
+      rightsReviewReference: _str(json['rights_review_reference']),
       dimensions: _str(json['dimensions_display']),
       technique: _str(json['technique_display']),
       remoteMuseumUrl: _str(json['remote_museum_url']),
@@ -238,6 +333,18 @@ class Artwork {
         if (museumNativeId.isNotEmpty) 'museum_native_id': museumNativeId,
         if (rightsLicense.isNotEmpty) 'rights_license': rightsLicense,
         if (rightsEvidenceUrl.isNotEmpty) 'rights_evidence_url': rightsEvidenceUrl,
+        if (imageCreator.isNotEmpty) 'image_creator': imageCreator,
+        if (imageAttribution.isNotEmpty) 'image_attribution': imageAttribution,
+        if (imageLicenseUrl.isNotEmpty) 'image_license_url': imageLicenseUrl,
+        if (imageModifications.isNotEmpty)
+          'image_modifications': imageModifications,
+        if (sourceIdentity.isNotEmpty) 'source_identity': sourceIdentity,
+        if (commerciallyApproved) 'commercially_approved': true,
+        if (provenanceVerified) 'source_provenance_verified': true,
+        if (worldwideDistributionReviewed)
+          'worldwide_distribution_reviewed': true,
+        if (rightsReviewReference.isNotEmpty)
+          'rights_review_reference': rightsReviewReference,
         if (dimensions.isNotEmpty) 'dimensions_display': dimensions,
         if (technique.isNotEmpty) 'technique_display': technique,
       };

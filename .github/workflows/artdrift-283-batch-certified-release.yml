@@ -1,0 +1,133 @@
+name: Art Drift — Certify 283 x 3 waves, integrate 3 verified, Web and ARM64
+on:
+  push:
+    branches:
+      - feat/artdrift-283-verified-batch-20261127
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: artdrift-approved-3-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  certify-waves:
+    strategy:
+      max-parallel: 3
+      fail-fast: false
+      matrix:
+        wave: [1,2,3]
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 -m py_compile scripts/artdrift_283_mass_certify.py
+      - uses: actions/download-artifact@v4
+        with:
+          name: ArtDrift-485-FastTrack-ALL-with-3-Waves
+          run-id: '45962610069'
+          repository: ${{ github.repository }}
+          github-token: ${{ github.token }}
+          path: candidate-source
+      - name: Certify 100 independent source items (83 in wave 3)
+        run: |
+          python3 scripts/artdrift_283_mass_certify.py --action wave \
+            --input candidate-source/FAST_0${{ matrix.wave }}.json \
+            --wave ${{ matrix.wave }} --out completed-waves
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ArtDrift-283-Rights-Wave-${{ matrix.wave }}
+          path: completed-waves/verified_wave_*.json
+          if-no-files-found: error
+          retention-days: 60
+  reconcile:
+    needs: certify-waves
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: ArtDrift-283-Rights-Wave-*
+          merge-multiple: true
+          path: completed-waves
+      - name: Strict reconciliation of 283 records and three signoffs
+        run: |
+          python3 scripts/artdrift_283_mass_certify.py --action aggregate \
+            --wave-dir completed-waves --out certification-report
+          python3 scripts/artdrift_283_mass_certify.py --action catalog \
+            --input certification-report/rights_batch_3_approved.json --root .
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ArtDrift-283-Compliance-Full-Report-3-Approved
+          path: certification-report/*
+          if-no-files-found: error
+          retention-days: 60
+  test-web:
+    needs: reconcile
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: '3.50.1'
+          cache: true
+      - name: Prepare Web Flutter
+        run: |
+          flutter create --project-name artdrift --org com.riccardopinato --platforms=web .
+          rm -f test/widget_test.dart
+          flutter pub get
+          cd packages/drift_core && flutter pub get
+      - name: Analyze and regression tests in default blocked mode
+        run: |
+          (cd packages/drift_core && flutter analyze --no-fatal-infos && flutter test)
+          flutter analyze --no-fatal-infos
+          flutter test
+      - name: Four-approved-image enabled smoke tests and Web build
+        run: |
+          flutter test --dart-define=ARTDRIFT_ENABLE_CURATED_COMMONS=true \
+            test/sisley_commons_approved_test.dart
+          flutter build web --release \
+            --dart-define=ARTDRIFT_ENABLE_CURATED_COMMONS=true
+  android-arm64:
+    needs: reconcile
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: '3.50.1'
+          cache: true
+      - name: Prepare Android Flutter
+        run: |
+          flutter create --project-name artdrift --org com.riccardopinato --platforms=android .
+          rm -f test/widget_test.dart
+          python3 scripts/patch_android.py
+          flutter pub get
+          cd packages/drift_core && flutter pub get
+      - name: Full regression and default-off gate
+        run: |
+          flutter analyze --no-fatal-infos
+          flutter test
+      - name: Test newly approved catalog with release-only flag
+        run: |
+          flutter test --dart-define=ARTDRIFT_ENABLE_CURATED_COMMONS=true \
+            test/sisley_commons_approved_test.dart
+      - name: Build ARM64 test APK with 4,504 paintings
+        run: |
+          flutter build apk --release --target-platform android-arm64 \
+            --dart-define=ARTDRIFT_ENABLE_CURATED_COMMONS=true
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ArtDrift-4504-Verified-ARM64-Internal-${{ github.sha }}
+          path: build/app/outputs/flutter-apk/app-release.apk
+          if-no-files-found: error
+          retention-days: 30
